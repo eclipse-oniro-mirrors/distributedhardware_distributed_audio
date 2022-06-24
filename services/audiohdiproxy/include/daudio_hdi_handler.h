@@ -1,0 +1,60 @@
+/*
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef OHOS_DAUDIO_HDI_HANDLER_H
+#define OHOS_DAUDIO_HDI_HANDLER_H
+
+#include <map>
+#include <mutex>
+#include <set>
+
+#include "audio_event.h"
+#include "daudio_manager_callback.h"
+#include "idaudio_hdi_callback.h"
+#include "single_instance.h"
+#include "v1_0/daudio_callback_stub.h"
+#include "v1_0/id_audio_manager.h"
+
+namespace OHOS {
+namespace DistributedHardware {
+using OHOS::HDI::Distributedaudio::Audioext::V1_0::IDAudioManager;
+using OHOS::HDI::Distributedaudio::Audioext::V1_0::IDAudioCallback;
+class DAudioHdiHandler {
+    DECLARE_SINGLE_INSTANCE_BASE(DAudioHdiHandler);
+
+public:
+    int32_t InitHdiHandler();
+
+    int32_t RegisterAudioDevice(const std::string &devId, int32_t dhId, const std::string &capability,
+        const std::shared_ptr<IDAudioHdiCallback> &callbackObjParam);
+
+    int32_t UnRegisterAudioDevice(const std::string &devId, int32_t dhId);
+
+    int32_t NotifyEvent(const std::string &devId, int32_t dhId, std::shared_ptr<AudioEvent> &audioEvent);
+
+private:
+    DAudioHdiHandler();
+    ~DAudioHdiHandler();
+
+    static const constexpr char *LOG_TAG = "DAudioHdiHandler";
+    const std::string HDF_AUDIO_SERVICE_NAME = "daudio_ext_service";
+    std::mutex devMapMtx_;
+    sptr<IDAudioManager> audioSrvHdf_;
+    std::map<std::string, sptr<DAudioManagerCallback>> mapAudioMgrCallback_;
+    std::map<std::string, std::set<int32_t>> mapAudioMgrDhIds_;
+};
+} // DistributedHardware
+} // OHOS
+#endif // OHOS_DAUDIO_HDI_HANDLER_H
