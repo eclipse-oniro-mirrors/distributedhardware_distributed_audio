@@ -1,0 +1,117 @@
+import("//build/ohos.gni")
+import("//build/ohos_var.gni")
+import(
+    "//foundation/distributedhardware/distributedaudio/distributedaudio.gni")
+
+ohos_shared_library("distributed_audio_manager_sink") {
+    include_dirs = [
+        "//utils/native/base/include",
+        "include",
+        "${common_path}/include",
+        "${services_path}/audiocontrol/controlsink/include",
+        "${services_path}/audioclient/clientmic/include",
+        "${services_path}/audioclient/clientspk/include",
+        "${services_path}/common/taskProcessor/include",
+        "${services_path}/common/audioparam",
+        "${services_path}/common/audioeventcallback",
+        "//third_party/json/include",
+        "${distributedaudio_path}/interfaces/inner_kits/native_cpp/audio_source/include",
+        "${services_path}/audiotransport/audioctrltransport/include",
+        "${services_path}/audiotransport/audioctrltransport/interface",
+        "${services_path}/audiotransport/interface",
+        "${services_path}/audioclient/transport/include",
+        "${services_path}/audiotransport/encodetransport/include",
+        "${services_path}/audiotransport/decodetransport/include",
+        #mic client
+        "//foundation/multimedia/audio_standard/interfaces/inner_api/native/audiocapturer/include",
+        "//foundation/multimedia/audio_standard/interfaces/inner_api/native/audiocommon/include",
+        "//foundation/distributedhardware/distributedaudio/services/audiotransport/encodetransport/include",
+        "//foundation/distributedhardware/distributedaudio/common/include",
+        "//foundation/distributedhardware/distributedaudio/services/audioclient/clientmic/include",
+        "//foundation/distributedhardware/distributedaudio/services/common/audiodata/include",
+        "//foundation/distributedhardware/distributedaudio/services/common/audioparam",
+        "//foundation/distributedhardware/distributedaudio/services/audiotransport/encodetransport/includ",
+        "//foundation/distributedhardware/distributedaudio/services/audiotransport/interface",
+        "//foundation/distributedhardware/distributedaudio/services/common/audioeventcallback",
+        "//foundation/distributedhardware/distributedaudio/services/audiotransport/audio_channel/include",
+        "${common_path}/include",
+        "${services_path}/common/audioparam",
+        "${services_path}/common/audiodata/include",
+        "${services_path}/audiotransport/audio_channel/include",
+        "${services_path}/audiotransport/audiodatachannel/include",
+        "${services_path}/audiotransport/encodetransport/include",
+        "${services_path}/audiotransport/interface",
+        "${services_path}/audioprocessor/encodeprocessor/include",
+        "${softbusadapter_path}/include",
+        "${fwk_common_path}/utils/include",
+        #speaker client
+        "//foundation/distributedhardware/distributedaudio/common/include",
+        "//foundation/distributedhardware/distributedaudio/services/audioclient/clientspk/include",
+        "//foundation/distributedhardware/distributedaudio/services/common/audiodata/include",
+        "//foundation/distributedhardware/distributedaudio/services/common/audioparam",
+        "//foundation/distributedhardware/distributedaudio/services/audiotransport/decodetransport/include",
+        "//foundation/distributedhardware/distributedaudio/services/audiotransport/interface",
+        "//foundation/distributedhardware/distributedaudio/services/common/audioeventcallback",
+        "//foundation/distributedhardware/distributedaudio/services/audiotransport/audio_channel/include",
+        "${common_path}/include",
+        "${services_path}/common/audioparam",
+        "${services_path}/common/audiodata/include",
+        "${services_path}/audiotransport/audio_channel/include",
+        "${services_path}/audiotransport/audiodatachannel/include",
+        "${services_path}/audiotransport/decodetransport/include",
+        "${services_path}/audiotransport/interface",
+        "${services_path}/audioprocessor/decodeprocessor/include",
+        "${softbusadapter_path}/include",
+        "${fwk_common_path}/utils/include",
+        "//foundation/multimedia/audio_standard/interfaces/inner_api/native/audiorenderer/include",
+        "//foundation/multimedia/audio_standard/interfaces/inner_api/native/audiocommon/include",
+        "//foundation/multimedia/audio_standard/interfaces/inner_api/native/audiomanager/include",
+        # audio_encodetronsport
+        "${services_path}/common/audiodata/include",
+        "${services_path}/audiotransport/audiodatachannel/include",
+        "${services_path}/audioprocessor/encodeprocessor/include",
+        #decodetransport
+        "//foundation/communication/dsoftbus/interfaces/kits/transport",
+        "${services_path}/common/audioparam",
+        "${services_path}/audiotransport/audio_channel/include",
+        "${services_path}/audiotransport/audiodatachannel/include",
+        "${services_path}/audiotransport/decodetransport/include",
+    ]
+
+    sources = [
+        "src/daudio_sink_dev.cpp",
+        "src/daudio_sink_manager.cpp",
+    ]
+
+    deps = [
+        "//utils/native/base:utils",
+        "${common_path}:distributed_audio_utils",
+        "//drivers/interface/distributedaudio/audioext/v1_0:libdaudioext_proxy_1.0",
+        "//foundation/distributedhardware/distributedaudio/services/common:distributed_audio_service_common",
+        "//foundation/distributedhardware/distributedaudio/services/audiocontrol/controlsink:distributed_audio_sink_ctrl",
+
+        "//foundation/distributedhardware/distributedaudio/services/audiotransport/decodetransport:distributed_audio_decode_transport",
+        "//foundation/multimedia/audio_standard/interfaces/inner_api/native/audiomanager:audio_client",
+        "//foundation/multimedia/audio_standard/interfaces/inner_api/native/audiorenderer:audio_renderer",
+        "//foundation/distributedhardware/distributedaudio/common:distributed_audio_utils",
+        "//foundation/distributedhardware/distributedaudio/services/audioclient/clientmic:dmic_client",
+        "//foundation/distributedhardware/distributedaudio/services/audioclient/clientspk:dspeaker_client",
+    ]
+
+    external_deps = [
+        "hiviewdfx_hilog_native:libhilog",
+        "ipc:ipc_core",
+        "safwk:system_ability_fwk",
+        "samgr_standard:samgr_proxy",
+    ]
+
+    defines = [
+        "HI_LOG_ENABLE",
+        "DH_LOG_TAG=\"daudioSinkManager\"",
+        "LOG_DOMAIN=0xD004100",
+    ]
+
+    subsystem_name = "distributedhardware"
+
+    part_name = "distributed_audio"
+}
