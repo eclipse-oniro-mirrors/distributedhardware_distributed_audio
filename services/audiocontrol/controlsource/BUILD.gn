@@ -1,0 +1,58 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import("//build/ohos_var.gni")
+import(
+    "//foundation/distributedhardware/distributedaudio/distributedaudio.gni")
+
+ohos_shared_library("distributed_audio_source_ctrl") {
+    include_dirs = [
+        "//utils/native/base/include",
+        "${fwk_common_path}/utils/include",
+        "${common_path}/include",
+        "include",
+        "${services_path}/common/audioparam",
+        "${services_path}/common/audioeventcallback",
+        "${services_path}/audiotransport/audioctrltransport/include",
+        "${services_path}/audiotransport/audioctrltransport/interface",
+        "${services_path}/audioclient/transport/include",
+        "${services_path}/audiotransport/interface",
+        "${services_path}/audiotransport/audio_channel/include",
+        "${services_path}/common/audiodata/include",
+    ]
+
+    sources = [
+        "src/daudio_source_dev_ctrl_manager.cpp",
+    ]
+
+    deps = [
+        "//utils/native/base:utils",
+        "${common_path}:distributed_audio_utils",
+        "${services_path}/audiotransport/audioctrltransport:distributed_audio_ctrl_transport",
+    ]
+
+    external_deps = [
+        "hiviewdfx_hilog_native:libhilog",
+    ]
+
+    defines = [
+        "HI_LOG_ENABLE",
+        "DH_LOG_TAG=\"daudioSourceCtrl\"",
+        "LOG_DOMAIN=0xD004100",
+    ]
+
+    subsystem_name = "distributedhardware"
+
+    part_name = "distributed_audio"
+}
