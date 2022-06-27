@@ -1,0 +1,52 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import("//build/ohos_var.gni")
+import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+
+ohos_shared_library("distributed_audio_service_common") {
+  include_dirs = [
+    "audiodata/include",
+    "audioparam",
+    "//third_party/json/include",
+    "taskProcessor/include",
+    "//foundation/distributedhardware/distributed_audio/common/include",
+  ]
+
+  sources = [
+      "audiodata/src/audio_data.cpp",
+      "taskProcessor/src/task_impl.cpp",
+      "taskProcessor/src/task_queue.cpp",
+  ]
+
+  deps = [
+    "//utils/native/base:utils",
+    "//foundation/distributedhardware/distributed_audio/common:distributed_audio_utils",
+  ]
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_single",
+    "utils_base:utils",
+  ]
+
+  defines = [
+      "HI_LOG_ENABLE",
+      "DH_LOG_TAG=\"daduio_services_common\"",
+      "LOG_DOMAIN=0xD004100",
+  ]
+
+  subsystem_name = "distributedhardware"
+  part_name = "distributed_audio"
+}
