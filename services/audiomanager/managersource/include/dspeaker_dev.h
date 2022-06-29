@@ -68,13 +68,7 @@ private:
     std::shared_ptr<IAudioDataTransport> speakerTrans_;
 
     // Speaker render parameters
-    AudioSampleRate sampleRate_;
-    AudioChannel channelMask_;
-    AudioSampleFormat bitFormat_;
-    StreamUsage streamUsage_;
-    uint32_t frameSize_;
-    uint32_t period_;
-    std::string extParam_;
+    AudioParamHDF audioParamHDF_;
 
     bool isTransReady_ = false;
     bool isOpened_ = false;

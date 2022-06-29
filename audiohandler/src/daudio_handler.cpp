@@ -49,7 +49,7 @@ int32_t DAudioHandler::Initialize()
     DHLOGI("%s: Initialize.", LOG_TAG);
     int32_t ret = QueryCodecInfo();
     if (ret != DH_SUCCESS) {
-        DHLOGI("%s: QueryCodecInfo failed.", LOG_TAG);
+        DHLOGE("%s: QueryCodecInfo failed.", LOG_TAG);
         return ret;
     }
     ret = QueryAudioInfo();
@@ -97,15 +97,14 @@ std::vector<DHItem> DAudioHandler::Query()
         dhItem.dhId = std::to_string(dhId);
         dhItem.attrs = infoJson.dump();
         dhItemVec.push_back(dhItem);
-        DHLOGD("%s: Query result: dhId: %d, attrs: %s.", LOG_TAG, GetAnonyString(dhId).c_str(),
-            infoJson.dump().c_str());
+        DHLOGD("%s: Query result: dhId: %d, attrs: %s.", LOG_TAG, dhId, infoJson.dump().c_str());
     }
     return dhItemVec;
 }
 
 int32_t DAudioHandler::QueryCodecInfo()
 {
-    DHLOGI("%s: QueryCodecInfo", LOG_TAG);
+    DHLOGI("%s: QueryCodecInfo.", LOG_TAG);
     auto avCodecList = Media::AVCodecListFactory::CreateAVCodecList();
     if (avCodecList == nullptr) {
         DHLOGE("%s: Query avcodec info failed.", LOG_TAG);
@@ -114,7 +113,8 @@ int32_t DAudioHandler::QueryCodecInfo()
 
     bool queryFlag = false;
     for (auto codec : avCodecList->GetAudioEncoderCaps()) {
-        if (codec == nullptr || codec->GetCodecInfo() == nullptr || codec->GetCodecInfo()->GetName() != AVENC_AAC) {
+        DHLOGE("%s: check encoder.", LOG_TAG);
+        if (codec->GetCodecInfo()->GetName() != AVENC_AAC || codec == nullptr || codec->GetCodecInfo() == nullptr) {
             continue;
         }
         encoderInfos_.sampleRates = codec->GetSupportedSampleRates();
@@ -125,7 +125,8 @@ int32_t DAudioHandler::QueryCodecInfo()
     }
 
     for (auto codec : avCodecList->GetAudioDecoderCaps()) {
-        if (codec == nullptr || codec->GetCodecInfo() == nullptr || codec->GetCodecInfo()->GetName() != AVENC_AAC) {
+        DHLOGE("%s: check decoder.", LOG_TAG);
+        if (codec->GetCodecInfo()->GetName() != AVENC_AAC || codec == nullptr || codec->GetCodecInfo() == nullptr) {
             continue;
         }
         decoderInfos_.sampleRates = codec->GetSupportedSampleRates();
@@ -135,7 +136,7 @@ int32_t DAudioHandler::QueryCodecInfo()
         queryFlag = true;
     }
 
-    if (!queryFlag) {
+    if (queryFlag == false) {
         DHLOGE("%s: QueryCodecInfo failed.", LOG_TAG);
         return ERR_DH_AUDIO_FAILED;
     }

@@ -29,7 +29,6 @@ public:
     void Run() override;
 
 private:
-    static const constexpr char *LOG_TAG = "TaskImpl";
     std::function<int32_t()> taskFunc_ = nullptr;
     std::function<void(int32_t)> taskCallback_ = nullptr;
 };
@@ -46,7 +45,7 @@ std::shared_ptr<TaskImplInterface> GenerateTask(
         (void)funcName;
     })
 {
-    std::shared_ptr<TaskImplInterface> task = std::make_shared<TaskImpl>(std::bind(taskFunc, object, args),
+    auto task = std::make_shared<TaskImpl>(std::bind(taskFunc, object, args),
         std::bind(taskCallback, object, std::placeholders::_1, args, funcName));
     return task;
 }

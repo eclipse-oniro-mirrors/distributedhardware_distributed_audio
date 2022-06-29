@@ -40,7 +40,7 @@ private:
     static const constexpr char *LOG_TAG = "DAudioSinkStub";
     using DAudioSinkServiceFunc = int32_t (DAudioSinkStub::*)(MessageParcel &data, MessageParcel &reply,
         MessageOption &option);
-    std::unorder_map<int32_t, DAudioSinkServiceFunc> memberFuncMap_;
+    std::unordered_map<int32_t, DAudioSinkServiceFunc> memberFuncMap_;
 };
 } // DistributedHardware
 } // OHOS

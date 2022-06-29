@@ -245,8 +245,8 @@ std::shared_ptr<AudioParam> DMicDev::GetAudioParam()
     param->comParam.sampleRate = sampleRate_;
     param->comParam.channelMask = channelMask_;
     param->comParam.bitFormat = bitFormat_;
-    param->renderOpts.contentType = CONTENT_TYPE_UNKNOWN;
-    param->renderOpts.streamUsage = STREAM_USAGE_UNKNOWN;
+    param->renderOpts.contentType = CONTENT_TYPE_MUSIC;
+    param->renderOpts.streamUsage = STREAM_USAGE_MEDIA;
     return param;
 }
 

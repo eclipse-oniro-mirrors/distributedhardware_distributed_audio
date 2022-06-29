@@ -156,16 +156,16 @@ bool DAudioSinkDevCtrlMgr::IsOpened()
 void DAudioSinkDevCtrlMgr::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("%s: OnEventReceived.", LOG_TAG);
-    audioEventCallback_->NotifyEvent(audioEvent_);
+    audioEventCallback_->NotifyEvent(event);
 }
 
-int32_t DAudioSinkDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent> &audioEvent_)
+int32_t DAudioSinkDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("%s: SendAudioEvent.", LOG_TAG);
     if (audioCtrlTrans_ == nullptr) {
         return ERR_DH_AUDIO_SA_SINK_CTRL_TRANS_NULL;
     }
-    int32_t ret = audioCtrlTrans_->SendAudioEvent(audioEvent_);
+    int32_t ret = audioCtrlTrans_->SendAudioEvent(event);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: SendAudioEvent is error.", LOG_TAG);
         return ret;

@@ -166,7 +166,7 @@ int32_t SoftbusAdapter::CloseSoftbusSession(int32_t sessionId)
     mapSessListeners_.erase(sessionId);
 
     if (mapSessListeners_.empty()) {
-        DHLOGI("%s: Stop softbus send thread.");
+        DHLOGI("%s: Stop softbus send thread.", LOG_TAG);
         isAudioDataReady_ = false;
         if (sendDataThread_.joinable()) {
             sendDataThread_.join();

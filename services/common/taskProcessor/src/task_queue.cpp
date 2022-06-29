@@ -47,7 +47,7 @@ void TaskQueue::Run()
 {
     DHLOGI("%s: mainThread running...", LOG_TAG);
     while (taskQueueReady_) {
-        std::shared_ptr<TaskImplInterface> task;
+        std::shared_ptr<TaskImplInterface> task = nullptr;
         {
             std::unique_lock<std::mutex> lock(taskQueueMutex_);
             taskQueueCond_.wait_for(lock, std::chrono::seconds(TASK_WAIT_SECONDS),

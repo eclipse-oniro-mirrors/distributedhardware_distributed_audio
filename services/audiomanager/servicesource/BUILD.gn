@@ -14,7 +14,7 @@
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
 import(
-    "//foundation/distributedhardware/distributedaudio/distributedaudio.gni")
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_source") {
     include_dirs = [
@@ -60,9 +60,9 @@ ohos_shared_library("distributed_audio_source") {
     deps = [
         "//utils/native/base:utils",
         "${common_path}:distributed_audio_utils",
-        "//foundation/distributedhardware/distributedaudio/services/common:distributed_audio_service_common",
-        "//drivers/interface/distributedaudio/audioext/v1_0:libdaudioext_proxy_1.0",
-        "//foundation/distributedhardware/distributedaudio/services/audiomanager/managersource:distributed_audio_manager_source",
+        "//foundation/distributedhardware/distributed_audio/services/common:distributed_audio_service_common",
+        "//drivers/interface/distributed_audio/audioext/v1_0:libdaudioext_proxy_1.0",
+        "//foundation/distributedhardware/distributed_audio/services/audiomanager/managersource:distributed_audio_manager_source",
     ]
 
     external_deps = [

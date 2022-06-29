@@ -28,9 +28,7 @@ TaskImpl::TaskImpl(std::function<int32_t()> taskFunc, std::function<void(int32_t
 
 void TaskImpl::Run()
 {
-    DHLOGI("%s: task run.", LOG_TAG);
     if (taskFunc_ == nullptr) {
-        DHLOGE("%s: task function is null", LOG_TAG);
         return;
     }
     int32_t ret = taskFunc_();

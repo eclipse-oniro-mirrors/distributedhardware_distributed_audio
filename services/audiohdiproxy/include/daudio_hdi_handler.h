@@ -29,8 +29,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-using OHOS::HDI::Distributedaudio::Audioext::V1_0::IDAudioManager;
-using OHOS::HDI::Distributedaudio::Audioext::V1_0::IDAudioCallback;
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioManager;
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
 class DAudioHdiHandler {
     DECLARE_SINGLE_INSTANCE_BASE(DAudioHdiHandler);
 

@@ -63,9 +63,9 @@ private:
     static const constexpr uint8_t SESSION_WAIT_SECONDS = 5;
     static const constexpr char *LOG_TAG = "AudioEncodeTransport";
 
-    std::unique_ptr<IAudioDataTransCallback> dataTransCallback_ = nullptr;
-    std::unique_ptr<IAudioChannel> audioChannel_ = nullptr;
-    std::unique_ptr<IAudioProcessor> processor_ = nullptr;
+    std::shared_ptr<IAudioDataTransCallback> dataTransCallback_ = nullptr;
+    std::shared_ptr<IAudioChannel> audioChannel_ = nullptr;
+    std::shared_ptr<IAudioProcessor> processor_ = nullptr;
     std::string peerDevId_;
 };
 } // namespace DistributedHardware

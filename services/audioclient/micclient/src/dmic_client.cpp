@@ -55,17 +55,19 @@ int32_t DMicClient::OnStateChange(int32_t type)
 int32_t DMicClient::SetUp(const AudioParam &param)
 {
     DHLOGI("%s: Set mic client parameters {sampleRate: %d, bitFormat: %d, channelMask: %d, sourceType: %d}.", LOG_TAG,
-        audioParam_.comParam.sampleRate, audioParam_.comParam.bitFormat, audioParam_.comParam.channelMask,
-        audioParam_.CaptureOpts.sourceType);
+        param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.CaptureOpts.sourceType);
     audioParam_ = param;
     AudioStandard::AudioCapturerOptions capturerOptions = {
         {
-            AudioStreamInfo : static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
+            static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
             AudioStandard::AudioEncodingType::ENCODING_PCM,
             static_cast<AudioStandard::AudioSampleFormat>(audioParam_.comParam.bitFormat),
-            static_cast<AudioStandard::AudioChannel>(audioParam_.comParam.channelMask)
+            static_cast<AudioStandard::AudioChannel>(audioParam_.comParam.channelMask),
         },
-        { AudioCapturerInfo : static_cast<AudioStandard::SourceType>(audioParam_.CaptureOpts.sourceType), NUMBER_ZERO }
+        {
+            static_cast<AudioStandard::SourceType>(audioParam_.CaptureOpts.sourceType),
+            NUMBER_ZERO,
+        }
     };
     audioCapturer_ = AudioStandard::AudioCapturer::Create(capturerOptions);
     if (audioCapturer_ == nullptr) {

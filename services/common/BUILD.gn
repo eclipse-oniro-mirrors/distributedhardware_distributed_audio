@@ -22,6 +22,7 @@ ohos_shared_library("distributed_audio_service_common") {
     "//third_party/json/include",
     "taskProcessor/include",
     "//foundation/distributedhardware/distributed_audio/common/include",
+    "${common_path}/include",
   ]
 
   sources = [

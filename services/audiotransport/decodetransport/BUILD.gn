@@ -13,14 +13,11 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributedaudio/distributedaudio.gni")
+import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_decode_transport") {
     include_dirs = [
         "//foundation/communication/dsoftbus/interfaces/kits/transport",
-    ]
-
-    include_dirs += [
         "${common_path}/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/audiodata/include",
@@ -35,7 +32,7 @@ ohos_shared_library("distributed_audio_decode_transport") {
     ]
 
     sources = [
-          "${services_path}/audiotransport/decodetransport/src/audio_decode_transport.cpp",
+        "${services_path}/audiotransport/decodetransport/src/audio_decode_transport.cpp",
     ]
 
     deps = [

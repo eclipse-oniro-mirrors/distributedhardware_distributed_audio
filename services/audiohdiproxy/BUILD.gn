@@ -34,7 +34,7 @@ ohos_shared_library("distributed_audio_hdi_proxy") {
     "//utils/native/base:utils",
     "${common_path}:distributed_audio_utils",
     "//foundation/distributedhardware/distributed_audio/services/common:distributed_audio_service_common",
-    "//drivers/interface/distributedaudio/audioext/v1_0:libdaudioext_proxy_1.0",
+    "//drivers/interface/distributed_audio/audioext/v1_0:libdaudioext_proxy_1.0",
   ]
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",

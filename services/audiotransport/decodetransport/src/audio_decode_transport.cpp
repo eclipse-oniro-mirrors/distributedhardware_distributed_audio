@@ -15,8 +15,6 @@
 
 #include "audio_decode_transport.h"
 
-#include <cstdlib.h>
-
 #include "audio_data_channel.h"
 #include "audio_decoder_processor.h"
 #include "audio_param.h"

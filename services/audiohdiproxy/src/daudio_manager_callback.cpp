@@ -23,7 +23,7 @@
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 
-using OHOS::HDI::Distributedaudio::Audioext::V1_0::AudioParameter;
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter;
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -83,7 +83,7 @@ int32_t DAudioManagerCallback::SetParameters(const std::string& adpName, int32_t
 }
 
 int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t devId,
-    const OHOS::HDI::Distributedaudio::Audioext::V1_0::AudioEvent& event)
+    const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent& event)
 {
     DHLOGI("%s: NotifyEvent", LOG_TAG);
     if (callback_ == nullptr) {
@@ -103,7 +103,7 @@ int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t d
 }
 
 int32_t DAudioManagerCallback::WriteStreamData(const std::string &adpName, int32_t devId,
-    const OHOS::HDI::Distributedaudio::Audioext::V1_0::AudioData &data)
+    const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData &data)
 {
     DHLOGI("%s: Write Stream Data.", LOG_TAG);
     if (callback_ == nullptr) {
@@ -130,7 +130,7 @@ int32_t DAudioManagerCallback::WriteStreamData(const std::string &adpName, int32
 }
 
 int32_t DAudioManagerCallback::ReadStreamData(const std::string &adpName, int32_t devId,
-    OHOS::HDI::Distributedaudio::Audioext::V1_0::AudioData &data)
+    OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData &data)
 {
     DHLOGI("%s: Read Stream Data", LOG_TAG);
     if (callback_ == nullptr) {

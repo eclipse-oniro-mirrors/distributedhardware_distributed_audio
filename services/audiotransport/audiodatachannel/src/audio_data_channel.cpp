@@ -47,7 +47,7 @@ int32_t AudioDataChannel::CreateSession(const std::shared_ptr<IAudioChannelListe
 
 int32_t AudioDataChannel::ReleaseSession()
 {
-    DHLOGI("%s: ReleaseSession, peerDevId: %d.", LOG_TAG, GetAnonyString(peerDevId_).c_str());
+    DHLOGI("%s: ReleaseSession, peerDevId: %s.", LOG_TAG, GetAnonyString(peerDevId_).c_str());
     int32_t ret = SoftbusAdapter::GetInstance().RemoveSoftbusSessionServer(PKG_NAME, DATA_SESSION_NAME, peerDevId_);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Release softbus session failed ret: %d.", LOG_TAG, ret);

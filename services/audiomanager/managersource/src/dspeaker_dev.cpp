@@ -122,15 +122,8 @@ int32_t DSpeakerDev::SetParameters(const std::string &devId, const int32_t dhId,
         DHLOGE("%s: Device Id is wrong, set speaker parameters failed.", LOG_TAG);
         return ERR_DH_AUDIO_FAILED;
     }
-
     curPort_ = dhId;
-    sampleRate_ = param.sampleRate;
-    channelMask_ = param.channelMask;
-    bitFormat_ = AudioSampleFormat::SAMPLE_S16LE;
-    streamUsage_ = param.streamUsage;
-    period_ = param.period;
-    frameSize_ = param.period;
-    extParam_ = param.ext;
+    audioParamHDF_ = param;
     return DH_SUCCESS;
 }
 
@@ -155,9 +148,9 @@ int32_t DSpeakerDev::SetUp()
     }
 
     AudioParam param;
-    param.comParam.sampleRate = sampleRate_;
-    param.comParam.channelMask = channelMask_;
-    param.comParam.bitFormat = bitFormat_;
+    param.comParam.sampleRate = audioParamHDF_.sampleRate;
+    param.comParam.channelMask = audioParamHDF_.channelMask;
+    param.comParam.bitFormat = audioParamHDF_.bitFormat;
     param.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
     int32_t ret = speakerTrans_->SetUp(param, param, shared_from_this());
     if (ret != DH_SUCCESS) {
@@ -206,6 +199,7 @@ int32_t DSpeakerDev::Stop()
         return ret;
     }
     isOpened_ = false;
+    isTransReady_ = false;
     return DH_SUCCESS;
 }
 
@@ -255,11 +249,11 @@ int32_t DSpeakerDev::WriteStreamData(const std::string &devId, const int32_t dhI
 std::shared_ptr<AudioParam> DSpeakerDev::GetAudioParam()
 {
     std::shared_ptr<AudioParam> param = std::make_shared<AudioParam>();
-    param->comParam.sampleRate = sampleRate_;
-    param->comParam.channelMask = channelMask_;
-    param->comParam.bitFormat = bitFormat_;
-    param->renderOpts.contentType = CONTENT_TYPE_UNKNOWN;
-    param->renderOpts.streamUsage = STREAM_USAGE_UNKNOWN;
+    param->comParam.sampleRate = audioParamHDF_.sampleRate;
+    param->comParam.channelMask = audioParamHDF_.channelMask;
+    param->comParam.bitFormat = audioParamHDF_.bitFormat;
+    param->renderOpts.contentType = CONTENT_TYPE_MUSIC;
+    param->renderOpts.streamUsage = STREAM_USAGE_MEDIA;
     return param;
 }
 
@@ -281,6 +275,7 @@ int32_t DSpeakerDev::OnStateChange(int32_t type)
             channelWaitCond_.notify_all();
             break;
         case AudioEventType::DATA_CLOSED:
+            isOpened_ = false;
             isTransReady_ = false;
             break;
         default:

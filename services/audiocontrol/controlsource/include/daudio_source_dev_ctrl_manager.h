@@ -34,7 +34,7 @@ public:
     ~DAudioSourceDevCtrlMgr();
 
     void OnStateChange(int32_t type) override;
-    void OnEventReceived(const std::shared_ptr<AudioEvent> &audioEvent) override;
+    void OnEventReceived(const std::shared_ptr<AudioEvent> &event) override;
     int32_t Init();
     int32_t UnInit();
     int32_t SetUp();
@@ -42,7 +42,7 @@ public:
     int32_t Stop();
     int32_t Release();
     bool IsOpened();
-    int32_t SendAudioEvent(const std::shared_ptr<AudioEvent> &audioEvent);
+    int32_t SendAudioEvent(const std::shared_ptr<AudioEvent> &event);
 
 private:
     static const constexpr char *LOG_TAG = "DAudioSourceDevCtrlMgr";

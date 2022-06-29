@@ -22,7 +22,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-class DAudioManagerCallback : public OHOS::HDI::Distributedaudio::Audioext::V1_0::IDAudioCallback {
+class DAudioManagerCallback : public OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback {
 public:
     DAudioManagerCallback(const std::shared_ptr<IDAudioHdiCallback> callback) : callback_(callback){};
     ~DAudioManagerCallback() = default;
@@ -32,16 +32,16 @@ public:
     int32_t CloseDevice(const std::string& adpName, int32_t devId) override;
 
     int32_t SetParameters(const std::string& adpNam, int32_t devId,
-        const OHOS::HDI::Distributedaudio::Audioext::V1_0::AudioParameter& param) override;
+        const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter& param) override;
 
     int32_t NotifyEvent(const std::string& adpNam, int32_t devId,
-        const OHOS::HDI::Distributedaudio::Audioext::V1_0::AudioEvent& event) override;
+        const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent& event) override;
 
     int32_t WriteStreamData(const std::string& adpNam, int32_t devId,
-	    const OHOS::HDI::Distributedaudio::Audioext::V1_0::AudioData& data) override;
+	    const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData& data) override;
 
     int32_t ReadStreamData(const std::string& adpName, int32_t devId,
-	    OHOS::HDI::Distributedaudio::Audioext::V1_0::AudioData& data) override;
+	    OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData& data) override;
 private:
     static const constexpr char *LOG_TAG = "HDI Proxy: DAudioManagerCallback";
     std::shared_ptr<IDAudioHdiCallback> callback_;

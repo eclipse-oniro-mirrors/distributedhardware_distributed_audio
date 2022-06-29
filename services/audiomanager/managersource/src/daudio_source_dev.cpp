@@ -117,16 +117,16 @@ int32_t DAudioSourceDev::HandleOpenDSpeaker(const std::shared_ptr<AudioEvent> &e
         return ERR_DH_AUDIO_SA_OPEN_CTRL_FAILED;
     }
 
-    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::TaskOpenDSpeaker, event->content,
-        "Source OpenDSpeaker", &DAudioSourceDev::OnTaskResult);
+    auto task = GenerateTask(this, &DAudioSourceDev::TaskOpenDSpeaker, event->content, "OpenDSpeaker",
+        &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSourceDev::HandleCloseDSpeaker(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("%s: Close speaker device.", LOG_TAG);
-    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::TaskCloseDSpeaker, event->content,
-        "Source CloseDSpeaker", &DAudioSourceDev::OnTaskResult);
+    auto task = GenerateTask(this, &DAudioSourceDev::TaskCloseDSpeaker, event->content, "CloseDSpeaker",
+        &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
@@ -145,32 +145,32 @@ int32_t DAudioSourceDev::HandleOpenDMic(const std::shared_ptr<AudioEvent> &event
         return ERR_DH_AUDIO_SA_OPEN_CTRL_FAILED;
     }
 
-    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::TaskOpenDMic, event->content,
-        "Source OpenDMic", &DAudioSourceDev::OnTaskResult);
+    auto task =
+        GenerateTask(this, &DAudioSourceDev::TaskOpenDMic, event->content, "OpenDMic", &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSourceDev::HandleCloseDMic(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("%s: Close mic device.", LOG_TAG);
-    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::TaskCloseDMic, event->content,
-        "Source CloseDMic", &DAudioSourceDev::OnTaskResult);
+    auto task = GenerateTask(this, &DAudioSourceDev::TaskCloseDMic, event->content, "CloseDMic",
+        &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSourceDev::HandleOpenCtrlTrans(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("%s: Open control trans.", LOG_TAG);
-    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::TaskOpenCtrlChannel, event->content,
-        "OpenCtrlTrans", &DAudioSourceDev::OnTaskResult);
+    auto task = GenerateTask(this, &DAudioSourceDev::TaskOpenCtrlChannel, event->content, "OpenCtrlTrans",
+        &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSourceDev::HandleCloseCtrlTrans()
 {
     DHLOGI("%s: Close control trans.", LOG_TAG);
-    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::TaskCloseCtrlChannel, "",
-        "CloseCtrlTrans", &DAudioSourceDev::OnTaskResult);
+    auto task = GenerateTask(this, &DAudioSourceDev::TaskCloseCtrlChannel, "", "CloseCtrlTrans",
+        &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
@@ -230,10 +230,10 @@ int32_t DAudioSourceDev::WaitForRPC(const AudioEventType type)
         return ERR_DH_AUDIO_SA_RPC_WAIT_TIMEOUT;
     }
     if (rpcResult_) {
-        DHLOGE("%s: RPC notify Result Success.", LOG_TAG, RPC_WAIT_SECONDS);
+        DHLOGI("%s: RPC notify Result Success.", LOG_TAG);
         return DH_SUCCESS;
     }
-    DHLOGI("%s: RPC notify Result Failed.", LOG_TAG, RPC_WAIT_SECONDS);
+    DHLOGI("%s: RPC notify Result Failed.", LOG_TAG);
     return ERR_DH_AUDIO_FAILED;
 }
 

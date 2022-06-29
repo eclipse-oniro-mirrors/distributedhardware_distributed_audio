@@ -20,15 +20,15 @@
 #include "nlohmann/json.hpp"
 
 #include "audio_event.h"
+#include "daudio_source_dev_ctrl_manager.h"
+#include "daudio_source_mgr_callback.h"
+#include "dmic_dev.h"
+#include "dspeaker_dev.h"
 #include "iaudio_event_callback.h"
 #include "iaudio_datatrans_callback.h"
 #include "iaudio_data_transport.h"
 #include "idaudio_ipc_callback.h"
 #include "idaudio_hdi_callback.h"
-#include "daudio_source_dev_ctrl_manager.h"
-#include "daudio_source_mgr_callback.h"
-#include "dmic_dev.h"
-#include "dspeaker_dev.h"
 #include "task_queue.h"
 
 using json = nlohmann::json;
@@ -84,10 +84,10 @@ private:
     std::string localDevId_;
     std::shared_ptr<DAudioSourceMgrCallback> mgrCallback_;
     std::shared_ptr<TaskQueue> taskQueue_;
-    std::shared_ptr<DSpeakerDev> speaker_ = nullptr;
-    std::shared_ptr<DMicDev> mic_ = nullptr;
+    std::shared_ptr<DSpeakerDev> speaker_;
+    std::shared_ptr<DMicDev> mic_;
 
-    std::shared_ptr<DAudioSourceDevCtrlMgr> audioSourceCtrlMgr_ = nullptr;
+    std::shared_ptr<DAudioSourceDevCtrlMgr> audioSourceCtrlMgr_;
     std::mutex taskQueueMutex_;
 
     std::mutex rpcWaitMutex_;

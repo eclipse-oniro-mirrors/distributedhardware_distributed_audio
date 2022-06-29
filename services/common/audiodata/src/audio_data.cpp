@@ -60,6 +60,54 @@ int32_t AudioData::SetRange(size_t offset, size_t size)
     return DH_SUCCESS;
 }
 
+void AudioData::SetInt32(const string name, int32_t value)
+{
+    int32Map_[name] = value;
+}
+
+void AudioData::SetInt64(const string name, int64_t value)
+{
+    int64Map_[name] = value;
+}
+
+void AudioData::SetString(const string name, string value)
+{
+    stringMap_[name] = value;
+}
+
+bool AudioData::FindInt32(const string &name, int32_t &value)
+{
+    if (int32Map_.count(name) != 0) {
+        value = int32Map_[name];
+        return true;
+    } else {
+        value = 0;
+        return false;
+    }
+}
+
+bool AudioData::FindInt64(const string &name, int64_t &value)
+{
+    if (int64Map_.count(name) != 0) {
+        value = int64Map_[name];
+        return true;
+    } else {
+        value = 0;
+        return false;
+    }
+}
+
+bool AudioData::FindString(const string &name, string &value)
+{
+    if (stringMap_.count(name) != 0) {
+        value = stringMap_[name];
+        return true;
+    } else {
+        value = "";
+        return false;
+    }
+}
+
 AudioData::~AudioData()
 {
     if (data_ != nullptr) {

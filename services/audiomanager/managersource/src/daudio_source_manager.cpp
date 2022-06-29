@@ -43,18 +43,18 @@ int32_t DAudioSourceManager::Init(const sptr<IDAudioIpcCallback> &callback)
         DHLOGE("%s: Callback is nullptr.", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
-    remoteSvrRecipient_ = new (std::nothrow) RemoteSinkSvrRecipient();
-    daudioMgrCallback_ = std::make_shared<DAudioSourceMgrCallback>();
-    if (remoteSvrRecipient_ == nullptr || daudioMgrCallback_== nullptr) {
-        DHLOGE("%s: RemoteSvrRecipient or mangerCallback is nullptr.", LOG_TAG);
-        return ERR_DH_AUDIO_NULLPTR;
-    }
     int32_t ret = DAudioHdiHandler::GetInstance().InitHdiHandler();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Init Hdi handler failed.", LOG_TAG);
         return ret;
     }
+    remoteSvrRecipient_ = new (std::nothrow) RemoteSinkSvrRecipient();
+    if (remoteSvrRecipient_ == nullptr) {
+        DHLOGE("%s: RemoteSvrRecipient is nullptr.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     daudioIpcCallback_ = callback;
+    daudioMgrCallback_ = std::make_shared<DAudioSourceMgrCallback>();
     return DH_SUCCESS;
 }
 

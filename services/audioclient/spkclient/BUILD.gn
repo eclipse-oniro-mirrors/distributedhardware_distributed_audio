@@ -25,7 +25,7 @@ ohos_shared_library("dspeaker_client") {
 
     include_dirs += [
         "${common_path}/include",
-        "${services_path}/audioclient/speclient/include",
+        "${services_path}/audioclient/spkclient/include",
         "${services_path}/common/audiodata/include",
         "${services_path}/common/audioparam",
         "${services_path}/audiotransport/decodetransport/include",
@@ -40,7 +40,7 @@ ohos_shared_library("dspeaker_client") {
     ]
 
     sources = [
-        "${services_path}/audioclient/speclient/src/dspeaker_client.cpp",
+        "${services_path}/audioclient/spkclient/src/dspeaker_client.cpp",
         "${services_path}/common/audiodata/src/audio_data.cpp",
     ]
 

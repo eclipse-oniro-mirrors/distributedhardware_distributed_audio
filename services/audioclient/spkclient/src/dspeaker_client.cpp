@@ -14,6 +14,9 @@
  */
 
 #include "dspeaker_client.h"
+
+#include "daudio_constants.h"
+
 namespace OHOS {
 namespace DistributedHardware {
 DSpeakerClient::~DSpeakerClient()
@@ -26,25 +29,25 @@ DSpeakerClient::~DSpeakerClient()
 
 int32_t DSpeakerClient::SetUp(const AudioParam &param)
 {
-    DHLOGI("%s: Set speaker client parameters, {sampleRate: %d, bitFormat: %d, \
-        channelMask: %d, contentType: %d, streamUsage: %d}.",
-        LOG_TAG, audioParam_.comParam.sampleRate, audioParam_.comParam.bitFormat, audioParam_.comParam.channelMask,
-        audioParam_.renderOpts.contentType, audioParam_.renderOpts.streamUsage);
+    DHLOGI("%s: Set speaker client parameters, {sampleRate: %d, bitFormat: %d, channelMask: %d, contentType: %d, "
+        "streamUsage: %d}.",
+        LOG_TAG, param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask,
+        param.renderOpts.contentType, param.renderOpts.streamUsage);
+
     audioParam_ = param;
     AudioStandard::AudioRendererOptions rendererOptions = {
         {
-            AudioStreamInfo : static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
+            static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
             AudioStandard::AudioEncodingType::ENCODING_PCM,
-            static_cast<AudioStandard::AudioSampleFormat>(audioParam_.comParam.bitFormat),
-            static_cast<AudioStandard::AudioChannel>(audioParam_.comParam.channelMask)
+            static_cast<AudioStandard::AudioSampleFormat>(SAMPLE_FORMAT_DEFAULT),
+            static_cast<AudioStandard::AudioChannel>(audioParam_.comParam.channelMask),
         },
         {
-            AudioRendererInfo : static_cast<AudioStandard::ContentType>(audioParam_.renderOpts.contentType),
+            static_cast<AudioStandard::ContentType>(audioParam_.renderOpts.contentType),
             static_cast<AudioStandard::StreamUsage>(audioParam_.renderOpts.streamUsage),
-            NUMBER_ZERO
+            NUMBER_ZERO,
         }
     };
-
     audioRenderer_ = AudioStandard::AudioRenderer::Create(rendererOptions);
     if (audioRenderer_ == nullptr) {
         DHLOGE("%s: Audio renderer create failed.", LOG_TAG);
@@ -88,7 +91,7 @@ int32_t DSpeakerClient::StartRender()
             DHLOGE("%s: Audio renderer release failed.", LOG_TAG);
             return ERR_DH_AUDIO_CLIENT_RENDER_RELEASE_FAILED;
         }
-        return ERR_DH_AUDIO_CLIENT_RENDER_START_FAILED;
+        return ERR_DH_AUDIO_CLIENT_RENDER_STARTUP_FAILURE;
     }
 
     isRenderReady_ = true;
@@ -105,7 +108,7 @@ int32_t DSpeakerClient::StopRender()
         renderDataThread_.join();
     }
 
-    if (audioRenderer_ == nullptr || speakerTrans_ != nullptr) {
+    if (audioRenderer_ == nullptr || speakerTrans_ == nullptr) {
         DHLOGE("%s: Audio renderer or speaker trans is nullptr.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL;
     }

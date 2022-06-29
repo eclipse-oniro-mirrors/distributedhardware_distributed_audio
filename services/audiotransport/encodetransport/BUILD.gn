@@ -13,16 +13,13 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributedaudio/distributedaudio.gni")
+import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_encode_transport") {
     include_dirs = [
         "//foundation/communication/dsoftbus/interfaces/kits/transport",
-    ]
-
-    include_dirs += [
+        "include",
         "${common_path}/include",
-        "//foundation/distributedhardware/distributedaudio/services/audiotransport/audio_channel/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/audiodata/include",
         "${services_path}/audiotransport/audio_channel/include",

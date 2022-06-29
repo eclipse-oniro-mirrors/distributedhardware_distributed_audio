@@ -105,6 +105,7 @@ int32_t DAudioSourceDevCtrlMgr::Stop()
         DHLOGE("%s: audio ctrl trans is null, no need stop", LOG_TAG);
         return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
     }
+    isOpened_ = false;
 
     return audioCtrlTrans_->Stop();
 }
@@ -124,7 +125,7 @@ bool DAudioSourceDevCtrlMgr::IsOpened()
     return isOpened_;
 }
 
-int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent> &audioEvent)
+int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("%s: SendAudioEvent.", LOG_TAG);
     if (audioCtrlTrans_ == nullptr) {
@@ -132,7 +133,7 @@ int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent>
         return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
     }
 
-    return audioCtrlTrans_->SendAudioEvent(audioEvent);
+    return audioCtrlTrans_->SendAudioEvent(event);
 }
 
 void DAudioSourceDevCtrlMgr::OnStateChange(int32_t type)
@@ -147,10 +148,10 @@ void DAudioSourceDevCtrlMgr::OnStateChange(int32_t type)
     }
 }
 
-void DAudioSourceDevCtrlMgr::OnEventReceived(const std::shared_ptr<AudioEvent> &audioEvent)
+void DAudioSourceDevCtrlMgr::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("%s: OnEventReceived", LOG_TAG);
-    audioEventCallback_->NotifyEvent(audioEvent);
+    audioEventCallback_->NotifyEvent(event);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

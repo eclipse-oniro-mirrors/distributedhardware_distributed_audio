@@ -13,7 +13,7 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributedaudio/distributedaudio.gni")
+import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_utils") {
     include_dirs = [
@@ -33,7 +33,7 @@ ohos_shared_library("distributed_audio_utils") {
     ]
 
     external_deps = [
-        "dsoftbus_standard:softbus_client",
+        "dsoftbus:softbus_client",
         "hiviewdfx_hilog_native:libhilog",
     ]
 

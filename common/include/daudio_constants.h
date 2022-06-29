@@ -50,7 +50,7 @@ constexpr int32_t PIN_IN_MIC = 134217729;
 
 constexpr uint32_t SAMPLE_RATE_DEFAULT = 48000;
 constexpr uint32_t CHANNEL_COUNT_DEFAULT = 2;
-constexpr uint32_t SAMPLE_FORMAT_DEFAULT = 16;
+constexpr uint32_t SAMPLE_FORMAT_DEFAULT = 1;
 
 constexpr uint32_t DAUDIO_MAX_SESSION_NAME_LEN = 50;
 constexpr uint32_t DAUDIO_MAX_DEVICE_ID_LEN = 100;
@@ -72,7 +72,7 @@ const std::string SUPPORTED_CHANNEL_MIN = "supportedChannelMin";
 const std::string SUPPORTED_BITRATE_MAX = "supportedBirteMax";
 const std::string SUPPORTED_BITRATE_MIN = "supportedBirteMin";
 const std::string MINE_TYPE = "mineType";
-const std::string AVENC_AAC = "avencAac";
+const std::string AVENC_AAC = "avenc_aac";
 const std::string NAME = "name";
 const std::string KEY_CODECTYPE = "codecType";
 const std::string KEY_DEVICE_TYPE = "deviceType";
@@ -82,7 +82,7 @@ constexpr int32_t SINGLE_ITEM = 1;
 
 const std::string HDF_EVENT_OPEN_MIC = "OPEN_MIC";
 const std::string HDF_EVENT_OPEN_SPEAKER = "OPEN_SPEAKER";
-const std::string HDF_EVENT_UNKNOWN = "unknown";
+const std::string HDF_EVENT_UNKNOWN = "UNKNOWN";
 const std::string HDF_EVENT_RESULT_SUCCESS = "DH_SUCCESS";
 const std::string HDF_EVENT_RESULT_FAILED = "DH_FAILED";
 } // namespace DistributedHardware

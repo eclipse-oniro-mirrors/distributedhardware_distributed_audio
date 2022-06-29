@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DAUDIO_DATA_H
-#define OHOS_DAUDIO_DATA_H
+#ifndef OHOS_AUDIO_DATA_H
+#define OHOS_AUDIO_DATA_H
 
 #include <map>
 #include <string>
 
-using std::map;
 using std::string;
+using std::map;
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -35,15 +35,26 @@ public:
     uint8_t *Data() const;
     int32_t SetRange(size_t offset, size_t size);
 
+    void SetInt32(const string name, int32_t value);
+    void SetInt64(const string name, int64_t value);
+    void SetString(const string name, string value);
+    bool FindInt32(const string &name, int32_t &value);
+    bool FindInt64(const string &name, int64_t &value);
+    bool FindString(const string &name, string &value);
+
 private:
     size_t capacity_ = 0;
     size_t rangeOffset_ = 0;
     size_t rangeLength_ = 0;
     uint8_t *data_ = nullptr;
 
+    map<string, int32_t> int32Map_;
+    map<string, int64_t> int64Map_;
+    map<string, string> stringMap_;
+
     AudioData(const AudioData &) = delete;
     AudioData &operator = (const AudioData &) = delete;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif // OHOS_DAUDIO_DATA_H
+#endif // OHOS_AUDIO_DATA_H
