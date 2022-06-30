@@ -99,14 +99,7 @@ int32_t AudioDecoder::SetDecoderFormat(const AudioCommonParam &codecParam)
         codecParam.channelMask, codecParam.sampleRate, codecParam.bitFormat);
     cfgFormat_.PutIntValue("channel_count", codecParam.channelMask);
     cfgFormat_.PutIntValue("sample_rate", codecParam.sampleRate);
-    switch (codecParam.bitFormat) {
-        case SAMPLE_S16LE:
-            cfgFormat_.PutIntValue("audio_sample_format", AudioStandard::SAMPLE_S16LE);
-            break;
-        default:
-            DHLOGE("%s: Invalid sample format %d.", LOG_TAG, codecParam.bitFormat);
-            return ERR_DH_AUDIO_BAD_VALUE;
-    }
+    cfgFormat_.PutIntValue("audio_sample_format", AudioStandard::SAMPLE_S16LE);
 
     int32_t ret = audioDecoder_->Configure(cfgFormat_);
     if (ret != Media::MSERR_OK) {

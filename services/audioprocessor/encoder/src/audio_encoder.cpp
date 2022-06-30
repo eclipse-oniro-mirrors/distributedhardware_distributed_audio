@@ -99,14 +99,7 @@ int32_t AudioEncoder::SetEncoderFormat(const AudioCommonParam &codecParam)
 
     cfgFormat_.PutIntValue("channel_count", codecParam.channelMask);
     cfgFormat_.PutIntValue("sample_rate", codecParam.sampleRate);
-    switch (codecParam.bitFormat) {
-        case SAMPLE_S16LE:
-            cfgFormat_.PutIntValue("audio_sample_format", AudioStandard::SAMPLE_S16LE);
-            break;
-        default:
-            DHLOGE("%s: Invalid sample format %d.", LOG_TAG, codecParam.bitFormat);
-            return ERR_DH_AUDIO_BAD_VALUE;
-    }
+    cfgFormat_.PutIntValue("audio_sample_format", AudioStandard::SAMPLE_S16LE);
 
     int32_t ret = audioEncoder_->Configure(cfgFormat_);
     if (ret != Media::MSERR_OK) {
@@ -214,6 +207,7 @@ void AudioEncoder::StopInputThread()
     std::lock_guard<std::mutex> dataLock(mtxData_);
     std::queue<uint32_t>().swap(bufIndexQueue_);
     std::queue<std::shared_ptr<AudioData>>().swap(inputBufQueue_);
+    DHLOGI("%s: Stop input thread success.", LOG_TAG);
 }
 
 int32_t AudioEncoder::FeedAudioData(const std::shared_ptr<AudioData> &inputData)

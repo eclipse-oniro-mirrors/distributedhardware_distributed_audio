@@ -65,7 +65,7 @@ private:
 private:
     constexpr static const char *LOG_TAG = "AudioDecoder";
     constexpr static int32_t AUDIO_DECODER_QUEUE_MAX = 100;
-    constexpr static uint32_t DECODE_WAIT_MILLISECONDS = 5000;
+    constexpr static uint32_t DECODE_WAIT_MILLISECONDS = 50;
     constexpr static int32_t INVALID_MEMORY_SIZE = -1;
     const static std::string DECODE_MIME_AAC;
 

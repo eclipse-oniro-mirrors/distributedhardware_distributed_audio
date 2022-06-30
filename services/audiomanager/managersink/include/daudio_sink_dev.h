@@ -49,7 +49,9 @@ public:
 
 private:
     int32_t NotifyOpenCtrlChannel(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyCloseCtrlChannel();
+    int32_t NotifyCloseCtrlChannel(const std::shared_ptr<AudioEvent> &audioEvent);
+    int32_t NotifyCtrlOpened(const std::shared_ptr<AudioEvent> &audioEvent);
+    int32_t NotifyCtrlClosed(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyOpenSpeaker(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyCloseSpeaker(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifySpeakerOpened(const std::shared_ptr<AudioEvent> &audioEvent);

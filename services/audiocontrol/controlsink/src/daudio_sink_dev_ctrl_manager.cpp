@@ -47,6 +47,10 @@ DAudioSinkDevCtrlMgr::~DAudioSinkDevCtrlMgr()
 void DAudioSinkDevCtrlMgr::OnStateChange(int32_t type)
 {
     DHLOGI("%s: SinkDevCtrlMgr OnStateChange, type: %d.", LOG_TAG, type);
+    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    event->type = static_cast<AudioEventType>(type);
+    event->content = "";
+    audioEventCallback_->NotifyEvent(event);
     switch (type) {
         case AudioEventType::CTRL_OPENED:
             isOpened_ = true;

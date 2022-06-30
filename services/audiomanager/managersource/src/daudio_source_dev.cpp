@@ -408,7 +408,7 @@ int32_t DAudioSourceDev::TaskOpenDSpeaker(const std::string &args)
     }
     event->content = HDF_EVENT_RESULT_SUCCESS;
     speaker_->NotifyHdfAudioEvent(event);
-    DHLOGE("%s: TaskOpenDSpeaker Finish.", LOG_TAG);
+    DHLOGI("%s: TaskOpenDSpeaker Finish.", LOG_TAG);
     return DH_SUCCESS;
 }
 

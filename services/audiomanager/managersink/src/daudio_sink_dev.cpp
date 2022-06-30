@@ -61,7 +61,13 @@ void DAudioSinkDev::NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent)
             NotifyOpenCtrlChannel(audioEvent);
             break;
         case CLOSE_CTRL:
-            NotifyCloseCtrlChannel();
+            NotifyCloseCtrlChannel(audioEvent);
+            break;
+        case CTRL_OPENED:
+            NotifyCtrlOpened(audioEvent);
+            break;
+        case CTRL_CLOSED:
+            NotifyCtrlClosed(audioEvent);
             break;
         case OPEN_SPEAKER:
             NotifyOpenSpeaker(audioEvent);
@@ -112,12 +118,32 @@ int32_t DAudioSinkDev::NotifyOpenCtrlChannel(const std::shared_ptr<AudioEvent> &
     return produceTaskRet;
 }
 
-int32_t DAudioSinkDev::NotifyCloseCtrlChannel()
+int32_t DAudioSinkDev::NotifyCloseCtrlChannel(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("%s: NotifyCloseCtrlChannel.", LOG_TAG);
+    (void) audioEvent;
     auto task =
         GenerateTask(this, &DAudioSinkDev::CloseCtrlChannelTask, "", "Sink Close Ctrl", &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
+}
+
+int32_t DAudioSinkDev::NotifyCtrlOpened(const std::shared_ptr<AudioEvent> &audioEvent)
+{
+    DHLOGI("%s: NotifyCtrlOpened.", LOG_TAG);
+    (void) audioEvent;
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSinkDev::NotifyCtrlClosed(const std::shared_ptr<AudioEvent> &audioEvent)
+{
+    DHLOGI("%s: NotifyCtrlClosed.", LOG_TAG);
+    (void) audioEvent;
+    std::string arg = "";
+    int32_t ret = CloseCtrlChannelTask(arg);
+    if (ret != DH_SUCCESS) {
+        DHLOGI("%s: NotifyCtrlOpened failed.", LOG_TAG);
+    }
+    return ret;
 }
 
 int32_t DAudioSinkDev::NotifyOpenSpeaker(const std::shared_ptr<AudioEvent> &audioEvent)
