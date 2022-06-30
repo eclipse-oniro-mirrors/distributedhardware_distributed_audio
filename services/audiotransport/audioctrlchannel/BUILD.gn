@@ -19,9 +19,7 @@ ohos_shared_library("distributed_audio_ctrl_channel") {
     include_dirs = [
         "//foundation/communication/dsoftbus/interfaces/kits/transport",
         "${fwk_common_path}/utils/include",
-    ]
-
-    include_dirs += [
+        "//third_party/json/include",
         "${common_path}/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/audiodata/include",
@@ -31,8 +29,7 @@ ohos_shared_library("distributed_audio_ctrl_channel") {
     ]
 
     sources = [
-          "${services_path}/common/audiodata/src/audio_data.cpp",
-          "${services_path}/audiotransport/audioctrlchannel/src/audio_ctrl_channel.cpp",
+        "${services_path}/audiotransport/audioctrlchannel/src/audio_ctrl_channel.cpp",
     ]
 
     deps = [

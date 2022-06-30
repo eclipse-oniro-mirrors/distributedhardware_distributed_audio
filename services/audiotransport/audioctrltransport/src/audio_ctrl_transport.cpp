@@ -181,12 +181,11 @@ int32_t AudioCtrlTransport::RegisterChannelListener()
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
-    int32_t ret = audioChannel_->CreateSession(listener);
+    int32_t ret = audioChannel_->CreateSession(listener, CTRL_SESSION_NAME);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Create session failed ret: %d.", LOG_TAG);
         return ret;
     }
-
     return DH_SUCCESS;
 }
 } // namespace DistributedHardware

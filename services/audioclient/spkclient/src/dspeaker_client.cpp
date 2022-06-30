@@ -64,7 +64,7 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
     if (speakerTrans_ == nullptr) {
         speakerTrans_ = std::make_shared<AudioDecodeTransport>(devId_);
     }
-    ret = speakerTrans_->SetUp(audioParam_, audioParam_, shared_from_this());
+    ret = speakerTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), "speaker");
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Speaker trans setup failed.", LOG_TAG);
         return ret;

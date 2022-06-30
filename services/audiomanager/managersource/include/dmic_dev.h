@@ -79,4 +79,4 @@ private:
 };
 } // DistributedHardware
 } // OHOS
-#endif
+#endif // OHOS_DAUDIO_DMIC_DEV_H

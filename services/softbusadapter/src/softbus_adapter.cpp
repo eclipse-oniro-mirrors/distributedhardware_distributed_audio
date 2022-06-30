@@ -127,7 +127,7 @@ int32_t SoftbusAdapter::OpenSoftbusSession(const std::string &localSessionName, 
         peerSessionName.c_str(), GetAnonyString(peerDevId).c_str());
     int dataType = TYPE_BYTES;
     int streamType = -1;
-    if (localSessionName == DATA_SESSION_NAME) {
+    if (localSessionName != CTRL_SESSION_NAME) {
         dataType = TYPE_STREAM;
         streamType = RAW_STREAM;
     }

@@ -455,6 +455,7 @@ int32_t DAudioSinkDev::SetParameterTask(const std::string &args)
         return ERR_DH_AUDIO_SA_ENABLE_PARAM_INVALID;
     }
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    // todo modify
     event->type = AudioEventType::CTRL_OPENED;
     event->content = args;
 
@@ -468,6 +469,7 @@ int32_t DAudioSinkDev::SendParameterTask(const std::string &args)
 {
     DHLOGI("%s: SendParameterTask", LOG_TAG);
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    // todo modify
     event->type = AudioEventType::CTRL_OPENED;
     event->content = args;
     if (dAudioSinkDevCtrlMgr_ == nullptr) {
@@ -505,6 +507,7 @@ void from_json(const json &j, AudioParam &audioParam)
     j.at("format").get_to(audioParam.comParam.bitFormat);
     j.at("samplingRate").get_to(audioParam.comParam.sampleRate);
     j.at("streamUsage").get_to(audioParam.renderOpts.streamUsage);
+    j.at("sourceType").get_to(audioParam.CaptureOpts.sourceType);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

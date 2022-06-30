@@ -24,14 +24,14 @@
 namespace OHOS {
 namespace DistributedHardware {
 int32_t AudioDecodeTransport::SetUp(const AudioParam &localParam, const AudioParam &remoteParam,
-    const std::shared_ptr<IAudioDataTransCallback> &callback)
+    const std::shared_ptr<IAudioDataTransCallback> &callback, const std::string &role)
 {
     if (callback == nullptr) {
         DHLOGE("%s: The parameter is empty.", LOG_TAG);
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
     dataTransCallback_ = callback;
-    auto ret = InitAudioDecodeTransport(localParam, remoteParam);
+    auto ret = InitAudioDecodeTransport(localParam, remoteParam, role);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Init audio encode transport, ret: %d.", LOG_TAG, ret);
         return ret;
@@ -187,9 +187,10 @@ void AudioDecodeTransport::OnStateNotify(const AudioEvent &event)
     (void)event;
 }
 
-int32_t AudioDecodeTransport::InitAudioDecodeTransport(const AudioParam &localParam, const AudioParam &remoteParam)
+int32_t AudioDecodeTransport::InitAudioDecodeTransport(const AudioParam &localParam,
+    const AudioParam &remoteParam, const std::string &role)
 {
-    int32_t ret = RegisterChannelListener();
+    int32_t ret = RegisterChannelListener(role);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Register channel listener failed, ret: %d.", LOG_TAG, ret);
         audioChannel_ = nullptr;
@@ -206,7 +207,7 @@ int32_t AudioDecodeTransport::InitAudioDecodeTransport(const AudioParam &localPa
     return DH_SUCCESS;
 }
 
-int32_t AudioDecodeTransport::RegisterChannelListener()
+int32_t AudioDecodeTransport::RegisterChannelListener(const std::string &role)
 {
     DHLOGI("%s: Register Channel Listener.", LOG_TAG);
     audioChannel_ = std::make_shared<AudioDataChannel>(peerDevId_);
@@ -215,7 +216,12 @@ int32_t AudioDecodeTransport::RegisterChannelListener()
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
 
-    auto result = audioChannel_->CreateSession(shared_from_this());
+    int32_t result;
+    if (role == "speaker") {
+        result = audioChannel_->CreateSession(shared_from_this(), DATA_SPEAKER_SESSION_NAME);
+    } else {
+        result = audioChannel_->CreateSession(shared_from_this(), DATA_MIC_SESSION_NAME);
+    }
     if (result != DH_SUCCESS) {
         DHLOGE("%s: CreateSession failed.", LOG_TAG);
         return ERR_DH_AUDIO_TRANS_ERROR;

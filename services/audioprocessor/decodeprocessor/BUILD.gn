@@ -35,13 +35,13 @@ ohos_shared_library("distributed_audio_decoder_processor") {
         "${audio_processor_path}/decodeprocessor/src/audio_decoder_processor.cpp",
         "${audio_processor_path}/decoder/src/audio_decoder.cpp",
         "${audio_processor_path}/decoder/src/audio_decoder_callback.cpp",
-        "${services_path}/common/audiodata/src/audio_data.cpp",
     ]
 
     deps = [
         "//utils/native/base:utils",
         "${fwk_utils_path}:distributedhardwareutils",
         "${common_path}:distributed_audio_utils",
+        "${services_path}/common:distributed_audio_service_common",
     ]
 
     external_deps = [

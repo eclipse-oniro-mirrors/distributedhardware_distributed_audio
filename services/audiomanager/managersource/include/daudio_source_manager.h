@@ -73,4 +73,4 @@ private:
 };
 } // DistributedHardware
 } // OHOS
-#endif
+#endif // OHOS_DAUDIO_SINK_MANAGER_H

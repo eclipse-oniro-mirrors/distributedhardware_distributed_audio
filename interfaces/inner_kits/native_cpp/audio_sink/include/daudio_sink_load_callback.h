@@ -32,4 +32,4 @@ private:
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
+#endif // OHOS_DAUDIO_SINK_LOAD_CALLBACK_H

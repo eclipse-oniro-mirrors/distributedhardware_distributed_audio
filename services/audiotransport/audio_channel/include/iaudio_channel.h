@@ -26,7 +26,8 @@ class IAudioChannel {
 public:
     virtual ~IAudioChannel() = default;
 
-    virtual int32_t CreateSession(const std::shared_ptr<IAudioChannelListener> &listener) = 0;
+    virtual int32_t CreateSession(const std::shared_ptr<IAudioChannelListener> &listener,
+        const std::string &sessionName) = 0;
     virtual int32_t ReleaseSession() = 0;
     virtual int32_t OpenSession() = 0;
     virtual int32_t CloseSession() = 0;

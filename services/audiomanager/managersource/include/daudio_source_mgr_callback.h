@@ -30,4 +30,4 @@ public:
 };
 } // DistributedHardware
 } // OHOS
-#endif
+#endif // OHOS_DAUDIO_SOURCE_MGR_CALLBACK_H

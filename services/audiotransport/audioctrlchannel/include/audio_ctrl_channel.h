@@ -29,7 +29,8 @@ public:
     explicit AudioCtrlChannel(const std::string &peerDevId) : peerDevId_(peerDevId) {};
     ~AudioCtrlChannel() = default;
 
-    int32_t CreateSession(const std::shared_ptr<IAudioChannelListener> &listener) override;
+    int32_t CreateSession(const std::shared_ptr<IAudioChannelListener> &listener,
+        const std::string &sessionName) override;
     int32_t ReleaseSession() override;
     int32_t OpenSession() override;
     int32_t CloseSession() override;
@@ -47,6 +48,7 @@ private:
 
     const std::string peerDevId_;
     int32_t sessionId_ = 0;
+    std::string sessionName_;
     std::weak_ptr<IAudioChannelListener> channelListener_;
 };
 } // namespace DistributedHardware

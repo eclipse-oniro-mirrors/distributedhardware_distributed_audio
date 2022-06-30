@@ -41,7 +41,6 @@ ohos_shared_library("dspeaker_client") {
 
     sources = [
         "${services_path}/audioclient/spkclient/src/dspeaker_client.cpp",
-        "${services_path}/common/audiodata/src/audio_data.cpp",
     ]
 
     deps = [
@@ -49,6 +48,7 @@ ohos_shared_library("dspeaker_client") {
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager:audio_client",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer:audio_renderer",
         "${distributedaudio_path}/common:distributed_audio_utils",
+        "${services_path}/common:distributed_audio_service_common",
     ]
 
     defines = [

@@ -40,7 +40,8 @@ ohos_shared_library("distributed_audio_encode_transport") {
         "//utils/native/base:utils",
         "${common_path}:distributed_audio_utils",
         "${services_path}/audiotransport/audiodatachannel:distributed_audio_data_channel",
-        "${services_path}/audioprocessor/encodeprocessor:distributed_audio_encoder_processor"
+        "${services_path}/audioprocessor/encodeprocessor:distributed_audio_encoder_processor",
+        "${services_path}/common:distributed_audio_service_common",
     ]
 
     defines = [

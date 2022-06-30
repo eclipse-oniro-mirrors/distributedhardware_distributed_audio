@@ -42,13 +42,13 @@ ohos_shared_library("dmic_client") {
 
     sources = [
         "${services_path}/audioclient/micclient/src/dmic_client.cpp",
-        "${services_path}/common/audiodata/src/audio_data.cpp",
     ]
 
     deps = [
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocapturer:audio_capturer",
         "${services_path}/audiotransport/encodetransport:distributed_audio_encode_transport",
         "${distributedaudio_path}/common:distributed_audio_utils",
+        "${services_path}/common:distributed_audio_service_common",
     ]
 
     defines = [

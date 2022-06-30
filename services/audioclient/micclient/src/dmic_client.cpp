@@ -15,6 +15,8 @@
 
 #include "dmic_client.h"
 
+#include "daudio_constants.h"
+
 #include <chrono>
 
 namespace OHOS {
@@ -61,7 +63,7 @@ int32_t DMicClient::SetUp(const AudioParam &param)
         {
             static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
             AudioStandard::AudioEncodingType::ENCODING_PCM,
-            static_cast<AudioStandard::AudioSampleFormat>(audioParam_.comParam.bitFormat),
+            static_cast<AudioStandard::AudioSampleFormat>(SAMPLE_FORMAT_DEFAULT),
             static_cast<AudioStandard::AudioChannel>(audioParam_.comParam.channelMask),
         },
         {
@@ -78,7 +80,7 @@ int32_t DMicClient::SetUp(const AudioParam &param)
     if (micTrans_ == nullptr) {
         micTrans_ = std::make_shared<AudioEncodeTransport>(devId_);
     }
-    int32_t ret = micTrans_->SetUp(audioParam_, audioParam_, shared_from_this());
+    int32_t ret = micTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), "mic");
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Mic trans setup failed.", LOG_TAG);
         return ret;

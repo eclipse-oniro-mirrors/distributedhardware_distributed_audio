@@ -44,4 +44,4 @@ private:
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
+#endif // OHOS_DAUDIO_SOURCE_PROXY_H

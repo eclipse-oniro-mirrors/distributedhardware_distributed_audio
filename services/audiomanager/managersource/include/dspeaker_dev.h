@@ -77,4 +77,4 @@ private:
 };
 } // DistributedHardware
 } // OHOS
-#endif
+#endif // OHOS_DAUDIO_DSPEAKER_DEV_H

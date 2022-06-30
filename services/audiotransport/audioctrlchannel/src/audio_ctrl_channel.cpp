@@ -17,7 +17,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListener> &listener)
+int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListener> &listener,
+    const std::string &sessionName)
 {
     DHLOGI("%s: CreateSession, peerDevId: %s.", LOG_TAG, GetAnonyString(peerDevId_).c_str());
     if (!listener) {
@@ -26,34 +27,35 @@ int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListe
     }
 
     int32_t ret =
-        SoftbusAdapter::GetInstance().CreateSoftbusSessionServer(PKG_NAME, CTRL_SESSION_NAME, peerDevId_);
+        SoftbusAdapter::GetInstance().CreateSoftbusSessionServer(PKG_NAME, sessionName, peerDevId_);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Create softbus session failed ret: %d.", LOG_TAG, ret);
         return ret;
     }
 
     std::shared_ptr<ISoftbusListener> softbusListener = shared_from_this();
-    ret = SoftbusAdapter::GetInstance().RegisterSoftbusListener(softbusListener, CTRL_SESSION_NAME, peerDevId_);
+    ret = SoftbusAdapter::GetInstance().RegisterSoftbusListener(softbusListener, sessionName, peerDevId_);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Register softbus adapter listener failed ret: %d.", LOG_TAG, ret);
         return ret;
     }
 
     channelListener_ = listener;
+    sessionName_ = sessionName;
     DHLOGI("%s: Create softbus session success.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t AudioCtrlChannel::ReleaseSession()
 {
-    DHLOGI("%s: ReleaseSession, peerDevId: %d", LOG_TAG, GetAnonyString(peerDevId_).c_str());
-    int32_t ret = SoftbusAdapter::GetInstance().RemoveSoftbusSessionServer(PKG_NAME, CTRL_SESSION_NAME, peerDevId_);
+    DHLOGI("%s: ReleaseSession, peerDevId: %s", LOG_TAG, GetAnonyString(peerDevId_).c_str());
+    int32_t ret = SoftbusAdapter::GetInstance().RemoveSoftbusSessionServer(PKG_NAME, sessionName_, peerDevId_);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Release softbus session failed ret: %d.", LOG_TAG, ret);
         return ret;
     }
 
-    ret = SoftbusAdapter::GetInstance().UnRegisterSoftbusListener(CTRL_SESSION_NAME, peerDevId_);
+    ret = SoftbusAdapter::GetInstance().UnRegisterSoftbusListener(sessionName_, peerDevId_);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: UnRegister softbus adapter listener failed ret: %d.", LOG_TAG, ret);
         return ret;
@@ -68,7 +70,7 @@ int32_t AudioCtrlChannel::OpenSession()
 {
     DHLOGI("%s: OpenSession, peerDevId: %s.", LOG_TAG, GetAnonyString(peerDevId_).c_str());
     int32_t sessionId =
-        SoftbusAdapter::GetInstance().OpenSoftbusSession(CTRL_SESSION_NAME, CTRL_SESSION_NAME, peerDevId_);
+        SoftbusAdapter::GetInstance().OpenSoftbusSession(sessionName_, sessionName_, peerDevId_);
     if (sessionId < 0) {
         DHLOGE("%s: Open ctrl session failed, ret: %d.", LOG_TAG, sessionId);
         return ERR_DH_AUDIO_TRANS_ERROR;

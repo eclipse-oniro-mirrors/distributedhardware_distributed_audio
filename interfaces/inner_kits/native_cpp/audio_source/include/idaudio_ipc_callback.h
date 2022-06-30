@@ -36,4 +36,4 @@ public:
 };
 } // DistributedHardware
 } // OHOS
-#endif
+#endif // OHOS_IDAUDIO_IPC_CALLBACK_H

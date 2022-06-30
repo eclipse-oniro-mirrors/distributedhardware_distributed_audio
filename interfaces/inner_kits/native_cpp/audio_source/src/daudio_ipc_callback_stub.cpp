@@ -33,7 +33,7 @@ int32_t DAudioIpcCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &dat
     std::u16string desc = DAudioIpcCallbackStub::GetDescriptor();
     std::u16string remoteDesc = data.ReadInterfaceToken();
     if (desc != remoteDesc) {
-        DHLOGE("%s: remoteDesc is invalid.", LOG_TAG);
+        DHLOGE("%s: RemoteDesc is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_INVALID_INTERFACE_TOKEN;
     }
 

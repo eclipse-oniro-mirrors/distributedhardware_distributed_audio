@@ -105,7 +105,7 @@ int32_t DMicDev::CloseDevice(const std::string &devId, const int32_t dhId)
         return ERR_DH_AUDIO_FAILED;
     }
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    event->type = AudioEventType::CLOSE_SPEAKER;
+    event->type = AudioEventType::CLOSE_MIC;
     cbObj->NotifyEvent(event);
     return DH_SUCCESS;
 }
@@ -156,7 +156,7 @@ int32_t DMicDev::SetUp()
     param.comParam.channelMask = channelMask_;
     param.comParam.bitFormat = bitFormat_;
     param.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
-    int32_t ret = micTrans_->SetUp(param, param, shared_from_this());
+    int32_t ret = micTrans_->SetUp(param, param, shared_from_this(), "mic");
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Mic trans set up failed. ret: %d.", LOG_TAG, ret);
         return ret;
@@ -247,6 +247,8 @@ std::shared_ptr<AudioParam> DMicDev::GetAudioParam()
     param->comParam.bitFormat = bitFormat_;
     param->renderOpts.contentType = CONTENT_TYPE_MUSIC;
     param->renderOpts.streamUsage = STREAM_USAGE_MEDIA;
+    param->CaptureOpts.sourceType = SOURCE_TYPE_MIC;
+    param->CaptureOpts.capturerFlags = 0;
     return param;
 }
 

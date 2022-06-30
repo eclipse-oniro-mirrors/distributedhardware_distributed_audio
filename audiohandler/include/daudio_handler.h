@@ -75,6 +75,6 @@ __attribute__((visibility("default"))) IHardwareHandler *GetHardwareHandler();
 #ifdef __cplusplus
 }
 #endif
-}
+} // DistributedHardware
 } // OHOS
 #endif // OHOS_DAUDIO_HANDLER_H

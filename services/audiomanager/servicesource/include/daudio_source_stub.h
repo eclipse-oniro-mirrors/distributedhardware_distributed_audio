@@ -45,4 +45,4 @@ private:
 };
 } // DistributedHardware
 } // OHOS
-#endif
+#endif // OHOS_DAUDIO_SOURCE_STUB_H

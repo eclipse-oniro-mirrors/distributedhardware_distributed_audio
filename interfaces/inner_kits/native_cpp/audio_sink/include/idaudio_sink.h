@@ -41,4 +41,4 @@ public:
 };
 } // DistributedHardware
 } // OHOS
-#endif
+#endif // OHOS_IDAUDIO_SINK_H

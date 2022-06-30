@@ -152,7 +152,7 @@ int32_t DSpeakerDev::SetUp()
     param.comParam.channelMask = audioParamHDF_.channelMask;
     param.comParam.bitFormat = audioParamHDF_.bitFormat;
     param.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
-    int32_t ret = speakerTrans_->SetUp(param, param, shared_from_this());
+    int32_t ret = speakerTrans_->SetUp(param, param, shared_from_this(), "speaker");
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Speaker trans set up failed. ret:%d", LOG_TAG, ret);
         return ret;
@@ -254,6 +254,8 @@ std::shared_ptr<AudioParam> DSpeakerDev::GetAudioParam()
     param->comParam.bitFormat = audioParamHDF_.bitFormat;
     param->renderOpts.contentType = CONTENT_TYPE_MUSIC;
     param->renderOpts.streamUsage = STREAM_USAGE_MEDIA;
+    param->CaptureOpts.sourceType = SOURCE_TYPE_MIC;
+    param->CaptureOpts.capturerFlags = 0;
     return param;
 }
 

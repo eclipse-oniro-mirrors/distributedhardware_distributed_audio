@@ -459,7 +459,7 @@ int32_t DAudioSourceDev::TaskOpenDMic(const std::string &args)
     json jParam = json::parse(args, nullptr, false);
     jParam["eventType"] = AudioEventType::OPEN_MIC;
     jParam["networkId"] = localDevId_;
-    jParam["audioParam"] = "jAudioParam";
+    jParam["audioParam"] = jAudioParam;
     DAudioSourceManager::GetInstance().DAudioNotify(devId_, jParam["dhId"], AudioEventType::OPEN_MIC, jParam.dump());
     ret = WaitForRPC(AudioEventType::NOTIFY_OPEN_MIC_RESULT);
     if (ret != DH_SUCCESS) {
@@ -569,6 +569,7 @@ void to_json(json &j, const AudioParam &audioParam)
         {"channels", audioParam.comParam.channelMask},
         {"contentType", audioParam.renderOpts.contentType},
         {"streamUsage", audioParam.renderOpts.streamUsage},
+        {"sourceType", audioParam.CaptureOpts.sourceType},
     };
 }
 
@@ -579,6 +580,7 @@ void from_json(const json &j, AudioParam &audioParam)
     j.at("channels").get_to(audioParam.comParam.channelMask);
     j.at("contentType").get_to(audioParam.renderOpts.contentType);
     j.at("streamUsage").get_to(audioParam.renderOpts.streamUsage);
+    j.at("sourceType").get_to(audioParam.CaptureOpts.sourceType);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

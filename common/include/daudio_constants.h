@@ -25,7 +25,8 @@ namespace DistributedHardware {
 /* Audio package name */
 const std::string PKG_NAME = "ohos.dhardware.daudio";
 /* Audio data session name */
-const std::string DATA_SESSION_NAME = "ohos.dhardware.daudio.data";
+const std::string DATA_SPEAKER_SESSION_NAME = "ohos.dhardware.daudio.speakerdata";
+const std::string DATA_MIC_SESSION_NAME = "ohos.dhardware.daudio.micdata";
 /* Audio ctrl session name */
 const std::string CTRL_SESSION_NAME = "ohos.dhardware.daudio.ctrl";
 

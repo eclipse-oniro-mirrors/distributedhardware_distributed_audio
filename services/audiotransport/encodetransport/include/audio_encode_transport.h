@@ -39,7 +39,7 @@ public:
     explicit AudioEncodeTransport(const std::string peerDevId) : peerDevId_(peerDevId) {}
     ~AudioEncodeTransport() = default;
     int32_t SetUp(const AudioParam &localParam, const AudioParam &remoteParam,
-        const std::shared_ptr<IAudioDataTransCallback> &callback) override;
+        const std::shared_ptr<IAudioDataTransCallback> &callback, const std::string &role) override;
     int32_t Start() override;
     int32_t Stop() override;
     int32_t Release() override;
@@ -55,8 +55,8 @@ public:
     void OnStateNotify(const AudioEvent &event) override;
 
 private:
-    int32_t InitAudioEncodeTrans(const AudioParam &localParam, const AudioParam &remoteParam);
-    int32_t RegisterChannelListener();
+    int32_t InitAudioEncodeTrans(const AudioParam &localParam, const AudioParam &remoteParam, const std::string &role);
+    int32_t RegisterChannelListener(const std::string &role);
     int32_t RegisterProcessorListener(const AudioParam &localParam, const AudioParam &remoteParam);
 
 private:
