@@ -61,6 +61,8 @@ private:
     int32_t TaskCloseDSpeaker(const std::string &args);
     int32_t TaskOpenDMic(const std::string &args);
     int32_t TaskCloseDMic(const std::string &args);
+    int32_t SetVolumeTask(const std::string &args);
+    int32_t ChangeVolumeTask(const std::string &args);
 
     void OnDisableTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
     void OnEnableTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
@@ -74,6 +76,8 @@ private:
     int32_t HandleCloseCtrlTrans();
     int32_t HandleNotifyRPC(const std::shared_ptr<AudioEvent> &event);
     int32_t WaitForRPC(const AudioEventType type);
+    int32_t HandleVolumeSet(const std::shared_ptr<AudioEvent> &event);
+    int32_t HandleVolumeChange(const std::shared_ptr<AudioEvent> &event);
 
 private:
     static const constexpr char *LOG_TAG = "DAudioSourceDev";

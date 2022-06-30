@@ -267,7 +267,7 @@ int32_t DSpeakerClient::SetAudioParameters(const std::shared_ptr<AudioEvent> &ev
 
 void DSpeakerClient::StringSplit(const std::string &str, const uint8_t &splits, std::vector<std::string> &res)
 {
-    if (splits != '=' || splits != ';') {
+    if (splits != '=' && splits != ';') {
         DHLOGI("%s: Splits error.", LOG_TAG);
         return;
     }

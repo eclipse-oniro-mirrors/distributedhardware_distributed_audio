@@ -136,6 +136,8 @@ int32_t DSpeakerDev::NotifyEvent(const std::string &devId, int32_t dhId, const A
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
     std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
+    audioEvent->type = event.type;
+    audioEvent->content = event.content;
     cbObj->NotifyEvent(audioEvent);
     return DH_SUCCESS;
 }

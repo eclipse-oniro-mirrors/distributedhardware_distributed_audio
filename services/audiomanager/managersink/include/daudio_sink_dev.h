@@ -36,6 +36,7 @@ public:
     ~DAudioSinkDev();
 
     void NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent) override;
+    void NotifyEventSub(const std::shared_ptr<AudioEvent> &audioEvent);
 
     int32_t OpenCtrlChannelTask(const std::string &args);
     int32_t CloseCtrlChannelTask(const std::string &args);
@@ -44,7 +45,8 @@ public:
     int32_t OpenDMicTask(const std::string &args);
     int32_t CloseDMicTask(const std::string &args);
     int32_t SetParameterTask(const std::string &args);
-    int32_t SendParameterTask(const std::string &args);
+    int32_t VolumeChangeTask(const std::string &args);
+    int32_t SetVolumeTask(const std::string &args);
     void OnTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
 
 private:
@@ -58,7 +60,8 @@ private:
     int32_t NotifySpeakerClosed(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyOpenMic(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyCloseMic(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyParam(const std::shared_ptr<AudioEvent> &audioEvent);
+    int32_t NotifySetVolume(const std::shared_ptr<AudioEvent> &audioEvent);
+    int32_t NotifyVolumeChange(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifySetParam(const std::shared_ptr<AudioEvent> &audioEvent);
     bool JudgeJsonValid(const json &resultJson);
 

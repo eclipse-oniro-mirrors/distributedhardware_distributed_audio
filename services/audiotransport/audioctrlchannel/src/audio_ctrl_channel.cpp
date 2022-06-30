@@ -13,8 +13,11 @@
  * limitations under the License.
  */
 
+#include <securec.h>
+
 #include "audio_ctrl_channel.h"
 
+using json = nlohmann::json;
 namespace OHOS {
 namespace DistributedHardware {
 int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListener> &listener,
@@ -108,22 +111,42 @@ int32_t AudioCtrlChannel::SendData(const std::shared_ptr<AudioData> &data)
 }
 int32_t AudioCtrlChannel::SendEvent(const std::shared_ptr<AudioEvent> &audioEvent)
 {
-    DHLOGI("%s: SendEvent, sessionId: %d.", LOG_TAG, sessionId_);
+    DHLOGI("%s: Send event, sessionId: %d.", LOG_TAG, sessionId_);
     if (!audioEvent) {
         DHLOGE("%s: Audio event is null.", LOG_TAG);
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
-    void *data = audioEvent.get();
-    uint32_t dataLen = (audioEvent->content).length() + sizeof(audioEvent->type);
-
-    int32_t ret = SoftbusAdapter::GetInstance().SendSoftbusBytes(sessionId_, data, dataLen);
+    json jAudioEvent;
+    to_audioEventJson(jAudioEvent, audioEvent);
+    std::string message = jAudioEvent.dump();
+    int ret = SendMsg(message);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Send audio event failed ret: %d.", LOG_TAG, ret);
         return ret;
     }
 
     return DH_SUCCESS;
+}
+
+int32_t AudioCtrlChannel::SendMsg(string &message)
+{
+    DHLOGI("%s: Start SendMsg.", LOG_TAG);
+    uint8_t *buf = (uint8_t *)calloc((MSG_MAX_SIZE), sizeof(uint8_t));
+    if (buf == nullptr) {
+        DHLOGE("%s: SendMsg: malloc memory failed", LOG_TAG);
+        return ERR_DH_AUDIO_CTRL_CHANNEL_SEND_MSG_FAIL;
+    }
+    int32_t outLen = 0;
+    if (memcpy_s(buf, MSG_MAX_SIZE, (const uint8_t *)message.c_str(), message.size()) != DH_SUCCESS) {
+        DHLOGE("%s: SendMsg: memcpy memory failed", LOG_TAG);
+        free(buf);
+        return ERR_DH_AUDIO_CTRL_CHANNEL_SEND_MSG_FAIL;
+    }
+    outLen = (int32_t)message.size();
+    int32_t ret = SoftbusAdapter::GetInstance().SendSoftbusBytes(sessionId_, buf, outLen);
+    free(buf);
+    return ret;
 }
 
 void AudioCtrlChannel::OnSessionOpened(int32_t sessionId, int32_t result)
@@ -157,21 +180,36 @@ void AudioCtrlChannel::OnSessionClosed(int32_t sessionId)
 
 void AudioCtrlChannel::OnBytesReceived(int32_t sessionId, const void *data, uint32_t dataLen)
 {
-    if (data == nullptr) {
-        DHLOGE("%s: Bytes data is null.", LOG_TAG);
+    DHLOGI("%s: OnBytesReceived, sessionId: %d, dataLen: %d.", LOG_TAG, sessionId, dataLen);
+    if (sessionId < 0 || data == nullptr || dataLen <= 0) {
+        DHLOGE("%s: OnBytesReceived param check failed", LOG_TAG);
         return;
     }
-
     std::shared_ptr<IAudioChannelListener> listener = channelListener_.lock();
     if (!listener) {
         DHLOGE("%s: Channel listener is null.", LOG_TAG);
         return;
     }
 
-    AudioEvent *event = (AudioEvent*)data;
-    auto audioEvent = std::make_shared<AudioEvent>();
-    audioEvent->type = event->type;
-    audioEvent->content = event->content;
+    uint8_t *buf = (uint8_t *)calloc(dataLen + 1, sizeof(uint8_t));
+    if (buf == nullptr) {
+        DHLOGE("%s: OnBytesReceived: malloc memory failed.", LOG_TAG);
+        return;
+    }
+
+    if (memcpy_s(buf, dataLen + 1, (const uint8_t *)data, dataLen) != DH_SUCCESS) {
+        DHLOGE("%s: OnBytesReceived: memcpy memory failed.", LOG_TAG);
+        free(buf);
+        return;
+    }
+
+    std::string message(buf, buf + dataLen);
+    DHLOGI("%s: OnBytesReceived message: %s.", LOG_TAG, message.c_str());
+    json jParam = json::parse(message, nullptr, false);
+    std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
+    from_audioEventJson(jParam, audioEvent);
+    free(buf);
+    DHLOGI("%s: OnBytesReceived end", LOG_TAG);
 
     listener->OnEventReceived(audioEvent);
 }
@@ -185,6 +223,20 @@ void AudioCtrlChannel::OnStreamReceived(int32_t sessionId, const StreamData *dat
     (void) streamFrameInfo;
 
     DHLOGI("%s: OnAudioStreamReceived ctrl channel not support yet.", LOG_TAG);
+}
+
+void to_audioEventJson(json &j, const std::shared_ptr<AudioEvent> &audioEvent)
+{
+    j = json {
+        { "type", audioEvent->type },
+        { "content", audioEvent->content },
+    };
+}
+
+void from_audioEventJson(const json &j, std::shared_ptr<AudioEvent> &audioEvent)
+{
+    j.at("type").get_to(audioEvent->type);
+    j.at("content").get_to(audioEvent->content);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

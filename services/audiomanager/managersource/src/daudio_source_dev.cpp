@@ -97,6 +97,15 @@ void DAudioSourceDev::NotifyEvent(const std::shared_ptr<AudioEvent> &event)
         case AudioEventType::NOTIFY_OPEN_CTRL_RESULT:
             HandleNotifyRPC(event);
             break;
+        case AudioEventType::VOLUME_SET:
+            HandleVolumeSet(event);
+            break;
+        case AudioEventType::VOLUME_MUTE_SET:
+            HandleVolumeSet(event);
+            break;
+        case AudioEventType::VOLUME_CHANGE:
+            HandleVolumeChange(event);
+            break;
         default:
             DHLOGE("%s: Unknown event type.", LOG_TAG);
     }
@@ -207,6 +216,22 @@ int32_t DAudioSourceDev::HandleNotifyRPC(const std::shared_ptr<AudioEvent> &even
     }
     rpcWaitCond_.notify_all();
     return DH_SUCCESS;
+}
+
+int32_t DAudioSourceDev::HandleVolumeSet(const std::shared_ptr<AudioEvent> &event)
+{
+    DHLOGI("%s: Start handle volume set.", LOG_TAG);
+    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::SetVolumeTask, event->content,
+        "set volume", &DAudioSourceDev::OnTaskResult);
+    return taskQueue_->Produce(task);
+}
+
+int32_t DAudioSourceDev::HandleVolumeChange(const std::shared_ptr<AudioEvent> &event)
+{
+    DHLOGI("%s: Start handle volume change.", LOG_TAG);
+    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::ChangeVolumeTask, event->content,
+        "volume change", &DAudioSourceDev::OnTaskResult);
+    return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSourceDev::WaitForRPC(const AudioEventType type)
@@ -549,6 +574,42 @@ int32_t DAudioSourceDev::TaskCloseCtrlChannel(const std::string &args)
         return ret;
     }
     DHLOGI("%s: TaskCloseCtrlChannel success.", LOG_TAG);
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSourceDev::SetVolumeTask(const std::string &args)
+{
+    DHLOGI("%s: start set volume task.", LOG_TAG);
+    if (audioSourceCtrlMgr_ == nullptr) {
+        DHLOGE("%s: AudioSourceCtrlMgr not init.", LOG_TAG);
+        return ERR_DH_AUDIO_SA_SOURCECTRLMGR_NOT_INIT;
+    }
+    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    event->type = VOLUME_SET;
+    event->content = args;
+    int32_t ret = audioSourceCtrlMgr_->SendAudioEvent(event);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: SendAudioEvent failed.", LOG_TAG);
+        return ret;
+    }
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSourceDev::ChangeVolumeTask(const std::string &args)
+{
+    DHLOGI("%s: Start change volume task.", LOG_TAG);
+    if (speaker_ == nullptr) {
+        DHLOGE("%s: Speaker device not init", LOG_TAG);
+        return ERR_DH_AUDIO_SA_SPEAKER_DEVICE_NOT_INIT;
+    }
+    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    event->type = VOLUME_CHANGE;
+    event->content = args;
+    int32_t ret = speaker_->NotifyHdfAudioEvent(event);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: ChangeVolumeTask failed.", LOG_TAG);
+        return ret;
+    }
     return DH_SUCCESS;
 }
 

@@ -16,10 +16,13 @@
 #ifndef OHOS_AUDIO_CTRL_CHANNEL_H
 #define OHOS_AUDIO_CTRL_CHANNEL_H
 
+#include "nlohmann/json.hpp"
+
 #include "iaudio_channel_listener.h"
 #include "iaudio_channel.h"
 #include "softbus_adapter.h"
 
+using json = nlohmann::json;
 namespace OHOS {
 namespace DistributedHardware {
 class AudioCtrlChannel : public IAudioChannel,
@@ -46,11 +49,16 @@ public:
 private:
     static const constexpr char *LOG_TAG = "AudioCtrlChannel";
 
+    int32_t SendMsg(string &message);
+    const int32_t MSG_MAX_SIZE = 45 * 1024;
     const std::string peerDevId_;
     int32_t sessionId_ = 0;
     std::string sessionName_;
     std::weak_ptr<IAudioChannelListener> channelListener_;
 };
+
+void to_audioEventJson(json &j, const std::shared_ptr<AudioEvent> &audioEvent);
+void from_audioEventJson(const json &j, std::shared_ptr<AudioEvent> &audioEvent);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_AUDIO_CTRL_CHANNEL_H

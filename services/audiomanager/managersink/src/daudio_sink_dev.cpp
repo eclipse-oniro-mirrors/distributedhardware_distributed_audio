@@ -87,11 +87,25 @@ void DAudioSinkDev::NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent)
         case CLOSE_MIC:
             NotifyCloseMic(audioEvent);
             break;
+        default:
+            NotifyEventSub(audioEvent);
+    }
+}
+void DAudioSinkDev::NotifyEventSub(const std::shared_ptr<AudioEvent> &audioEvent)
+{
+    DHLOGI("%s: NotifyEventSub.", LOG_TAG);
+    switch (audioEvent->type) {
         case SET_PARAM:
             NotifySetParam(audioEvent);
             break;
-        case SEND_PARAM:
-            NotifyParam(audioEvent);
+        case VOLUME_SET:
+            NotifySetVolume(audioEvent);
+            break;
+        case VOLUME_MUTE_SET:
+            NotifySetVolume(audioEvent);
+            break;
+        case VOLUME_CHANGE:
+            NotifyVolumeChange(audioEvent);
             break;
         default:
             DHLOGE("%s: Unknown event type: %d", LOG_TAG, (int32_t)audioEvent->type);
@@ -245,15 +259,19 @@ int32_t DAudioSinkDev::NotifySetParam(const std::shared_ptr<AudioEvent> &audioEv
     return taskQueue_->Produce(task);
 }
 
-int32_t DAudioSinkDev::NotifyParam(const std::shared_ptr<AudioEvent> &audioEvent)
+int32_t DAudioSinkDev::NotifySetVolume(const std::shared_ptr<AudioEvent> &audioEvent)
 {
-    DHLOGI("%s: NotifyParam", LOG_TAG);
-    if (audioEvent == nullptr) {
-        DHLOGE("%s: audioEvent is null.", LOG_TAG);
-        return ERR_DH_AUDIO_NULLPTR;
-    }
-    auto task = GenerateTask(this, &DAudioSinkDev::SendParameterTask, audioEvent->content, "Sink NotifyParam",
-        &DAudioSinkDev::OnTaskResult);
+    DHLOGI("%s: Start notifySetVolume.", LOG_TAG);
+    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::SetVolumeTask, audioEvent->content,
+        "Sink NotifySetVolume", &DAudioSinkDev::OnTaskResult);
+    return taskQueue_->Produce(task);
+}
+
+int32_t DAudioSinkDev::NotifyVolumeChange(const std::shared_ptr<AudioEvent> &audioEvent)
+{
+    DHLOGI("%s: Start NotifyVolumeChange.", LOG_TAG);
+    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::VolumeChangeTask, audioEvent->content,
+        "Sink NotifyVolumeChange", &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
@@ -465,12 +483,30 @@ int32_t DAudioSinkDev::SetParameterTask(const std::string &args)
     return speakerClient_->SetAudioParameters(event);
 }
 
-int32_t DAudioSinkDev::SendParameterTask(const std::string &args)
+int32_t DAudioSinkDev::SetVolumeTask(const std::string &args)
 {
-    DHLOGI("%s: SendParameterTask", LOG_TAG);
+    DHLOGI("%s:Begin setVolumeTask.", LOG_TAG);
+    if (speakerClient_ == nullptr) {
+        speakerClient_ = std::make_shared<DSpeakerClient>(devId_, shared_from_this());
+    }
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    // todo modify
-    event->type = AudioEventType::CTRL_OPENED;
+    event->type = AudioEventType::VOLUME_SET;
+    event->content = args;
+    int32_t ret = speakerClient_->SetAudioParameters(event);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Volume set failed.", LOG_TAG);
+        return ret;
+    }
+
+    DHLOGI("%s: Volume set success.", LOG_TAG);
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSinkDev::VolumeChangeTask(const std::string &args)
+{
+    DHLOGI("%s: VolumeChangeTask begin.", LOG_TAG);
+    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    event->type = AudioEventType::VOLUME_CHANGE;
     event->content = args;
     if (dAudioSinkDevCtrlMgr_ == nullptr) {
         return ERR_DH_AUDIO_SA_SINKCTRLMGR_NOT_INIT;
