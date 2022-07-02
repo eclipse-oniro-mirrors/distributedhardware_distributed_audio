@@ -87,6 +87,12 @@ void DAudioSinkDev::NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent)
         case CLOSE_MIC:
             NotifyCloseMic(audioEvent);
             break;
+        case MIC_OPENED:
+            NotifyMicOpened(audioEvent);
+            break;
+        case MIC_CLOSED:
+            NotifyMicClosed(audioEvent);
+            break;
         default:
             NotifyEventSub(audioEvent);
     }
@@ -196,10 +202,10 @@ int32_t DAudioSinkDev::NotifySpeakerOpened(const std::shared_ptr<AudioEvent> &au
     }
     int32_t ret = speakerClient_->StartRender();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: NotifySpeakerOpend start Render failed. ret: %d.", LOG_TAG, ret);
+        DHLOGE("%s: NotifySpeakerOpened start Render failed. ret: %d.", LOG_TAG, ret);
         return ret;
     }
-    DHLOGI("%s: NotifySpeakerOpend start Render success.", LOG_TAG);
+    DHLOGI("%s: NotifySpeakerOpened start Render success.", LOG_TAG);
     return DH_SUCCESS;
 }
 
@@ -216,6 +222,29 @@ int32_t DAudioSinkDev::NotifySpeakerClosed(const std::shared_ptr<AudioEvent> &au
         return ret;
     }
     DHLOGI("%s: SpeakerClient stop success.", LOG_TAG);
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSinkDev::NotifyMicOpened(const std::shared_ptr<AudioEvent> &audioEvent)
+{
+    (void)audioEvent;
+    DHLOGI("%s: NotifyMicOpened.", LOG_TAG);
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSinkDev::NotifyMicClosed(const std::shared_ptr<AudioEvent> &audioEvent)
+{
+    (void)audioEvent;
+    DHLOGI("%s: NotifyMicClosed.", LOG_TAG);
+    if (micClient_ == nullptr) {
+        return ERR_DH_AUDIO_SA_SPEAKER_CLIENT_NOT_INIT;
+    }
+    int32_t ret = micClient_->StopCapture();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: MicClient stop failed. ret: %d", LOG_TAG, ret);
+        return ret;
+    }
+    DHLOGI("%s: MicClient stop success.", LOG_TAG);
     return DH_SUCCESS;
 }
 

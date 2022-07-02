@@ -60,6 +60,8 @@ private:
     int32_t NotifySpeakerClosed(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyOpenMic(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyCloseMic(const std::shared_ptr<AudioEvent> &audioEvent);
+    int32_t NotifyMicOpened(const std::shared_ptr<AudioEvent> &audioEvent);
+    int32_t NotifyMicClosed(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifySetVolume(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyVolumeChange(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifySetParam(const std::shared_ptr<AudioEvent> &audioEvent);

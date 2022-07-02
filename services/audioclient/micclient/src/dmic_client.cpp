@@ -44,6 +44,10 @@ int32_t DMicClient::OnStateChange(int32_t type)
             return DH_SUCCESS;
         }
         case AudioEventType::DATA_CLOSED: {
+            std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+            event->type = AudioEventType::MIC_CLOSED;
+            event->content = "";
+            eventCallback_->NotifyEvent(event);
             DHLOGI("%s: Data closed.", LOG_TAG);
             return DH_SUCCESS;
         }
@@ -51,7 +55,6 @@ int32_t DMicClient::OnStateChange(int32_t type)
             DHLOGE("%s: Invalid parameter type: %d.", LOG_TAG, type);
             return ERR_DH_AUDIO_CLIENT_STATE_IS_INVALID;
     }
-    return DH_SUCCESS;
 }
 
 int32_t DMicClient::SetUp(const AudioParam &param)
