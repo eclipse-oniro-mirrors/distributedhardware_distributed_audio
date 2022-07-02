@@ -1,0 +1,51 @@
+{
+    "name": "drivers_peripheral_distributed_audio",
+    "description": "distributed audo device driver",
+    "version": "3.1",
+    "license": "Apache License 2.0",
+    "component": {
+      "name": "drivers_peripheral_distributed_audio",
+      "subsystem": "distributedhardware",
+      "syscap": [ "" ],
+      "adapter_system_type": ["standard"],
+      "rom": "1000KB",
+      "ram": "8000KB",
+      "deps": {
+        "components": [
+          "ipc",
+          "hdf_core",
+          "hiviewdfx_hilog_native",
+          "utils_base"
+        ],
+        "third_part": [
+          "bounds_checking_function"
+        ]
+      },
+      "build": {
+        "sub_component": [
+          "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio:distributed_audio_entry",
+          "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client:daudio_client",
+          "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common:libdaudio_hdf_utils"
+        ],
+        "test": [],
+        "inner_kits": [
+          {
+            "name": "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audio/v1_0:libdaudio_proxy_1.0",
+            "header": {
+              "header_files": [
+              ],
+              "header_base": "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audio"
+            }
+          },
+          {
+            "name": "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audioext/v1_0:libdaudioext_proxy_1.0",
+            "header": {
+              "header_files": [
+              ],
+              "header_base": "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audioext"
+            }
+          }
+        ]
+      }
+    }
+}
