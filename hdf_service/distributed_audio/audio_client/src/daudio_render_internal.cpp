@@ -1,0 +1,208 @@
+/*
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+#include "daudio_render_internal.h"
+
+#include <securec.h>
+
+#include "daudio_attribute_internal.h"
+#include "daudio_control_internal.h"
+#include "daudio_errcode.h"
+#include "daudio_log.h"
+#include "daudio_scene_internal.h"
+#include "daudio_volume_internal.h"
+
+namespace OHOS {
+namespace DistributedHardware {
+static const char * const AUDIO_LOG = "DAudioRenderInternal";
+
+static int32_t GetLatencyInternal(struct AudioRender *render, uint32_t *ms)
+{
+    if (render == nullptr || ms == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    return context->proxy_->GetLatency(*ms);
+}
+
+static int32_t RenderFrameInternal(struct AudioRender *render, const void *frame, uint64_t requestBytes,
+    uint64_t *replyBytes)
+{
+    DHLOGI("%s: RenderFrameInternal enter", AUDIO_LOG);
+    if (render == nullptr || frame == nullptr || requestBytes == 0 || replyBytes == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    const uint8_t *uframe = reinterpret_cast<const uint8_t *>(frame);
+    std::vector<uint8_t> frameHal(requestBytes);
+    int32_t ret = memcpy_s(frameHal.data(), requestBytes, uframe, requestBytes);
+    if (ret != EOK) {
+        DHLOGE("%s: DaudioRenderInternal renderFrameInternal memcpy_s failed ret: %d.", AUDIO_LOG, ret);
+        return ERR_DH_AUDIO_HDF_FAILURE;
+    }
+    return context->proxy_->RenderFrame(frameHal, requestBytes, *replyBytes);
+}
+
+static int32_t GetRenderPositionInternal(struct AudioRender *render, uint64_t *frames, struct AudioTimeStamp *time)
+{
+    if (render == nullptr || frames == nullptr || time == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    AudioTimeStampHAL timeHal;
+    int32_t ret = context->proxy_->GetRenderPosition(*frames, timeHal);
+    if (ret != DH_SUCCESS) {
+        return ret;
+    }
+    time->tvSec = timeHal.tvSec;
+    time->tvNSec = timeHal.tvNSec;
+    return DH_SUCCESS;
+}
+
+static int32_t SetRenderSpeedInternal(struct AudioRender *render, float speed)
+{
+    if (render == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    return context->proxy_->SetRenderSpeed(speed);
+}
+
+static int32_t GetRenderSpeedInternal(struct AudioRender *render, float *speed)
+{
+    if (render == nullptr || speed == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    return context->proxy_->GetRenderSpeed(*speed);
+}
+
+static int32_t SetChannelModeInternal(struct AudioRender *render, enum AudioChannelMode mode)
+{
+    if (render == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    return context->proxy_->SetChannelMode(static_cast<AudioChannelModeHAL>(mode));
+}
+
+static int32_t GetChannelModeInternal(struct AudioRender *render, enum AudioChannelMode *mode)
+{
+    if (render == nullptr || mode == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    return context->proxy_->GetChannelMode(*(reinterpret_cast<AudioChannelModeHAL *>(mode)));
+}
+
+static int32_t RegCallbackInternal(struct AudioRender *render, RenderCallback callback, void *cookie)
+{
+    if (render == nullptr || callback == nullptr || cookie == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    std::lock_guard<std::mutex> lock(context->mtx_);
+    if (context->callbackInternal_ == nullptr) {
+        context->callbackInternal_ = std::make_unique<AudioRenderCallbackContext>(callback, cookie);
+    } else if (callback != context->callback_) {
+        context->callbackInternal_ = nullptr;
+        context->callbackInternal_ = std::make_unique<AudioRenderCallbackContext>(callback, cookie);
+    } else {
+        return DH_SUCCESS;
+    }
+
+    if (context->callbackInternal_->callbackStub_ == nullptr) {
+        context->callbackInternal_ = nullptr;
+        return ERR_DH_AUDIO_HDF_FAILURE;
+    }
+    int32_t ret = context->proxy_->RegCallback(context->callbackInternal_->callbackStub_);
+    if (ret == DH_SUCCESS) {
+        context->callback_ = callback;
+    } else {
+        context->callbackInternal_ = nullptr;
+    }
+    return ret;
+}
+
+static int32_t DrainBufferInternal(struct AudioRender *render, enum AudioDrainNotifyType *type)
+{
+    if (render == nullptr || type == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    return context->proxy_->DrainBuffer(*(reinterpret_cast<AudioDrainNotifyTypeHAL *>(type)));
+}
+
+AudioRenderContext::AudioRenderContext()
+{
+    instance_.GetLatency = GetLatencyInternal;
+    instance_.RenderFrame = RenderFrameInternal;
+    instance_.GetRenderPosition = GetRenderPositionInternal;
+    instance_.SetRenderSpeed = SetRenderSpeedInternal;
+    instance_.GetRenderSpeed = GetRenderSpeedInternal;
+    instance_.SetChannelMode = SetChannelModeInternal;
+    instance_.GetChannelMode = GetChannelModeInternal;
+    instance_.RegCallback = RegCallbackInternal;
+    instance_.DrainBuffer = DrainBufferInternal;
+
+    instance_.control.Start = AudioControlInternal<AudioRenderContext>::Start;
+    instance_.control.Stop = AudioControlInternal<AudioRenderContext>::Stop;
+    instance_.control.Pause = AudioControlInternal<AudioRenderContext>::Pause;
+    instance_.control.Resume = AudioControlInternal<AudioRenderContext>::Resume;
+    instance_.control.Flush = AudioControlInternal<AudioRenderContext>::Flush;
+    instance_.control.TurnStandbyMode = AudioControlInternal<AudioRenderContext>::TurnStandbyMode;
+    instance_.control.AudioDevDump = AudioControlInternal<AudioRenderContext>::AudioDevDump;
+
+    instance_.attr.GetFrameSize = AudioAttributeInternal<AudioRenderContext>::GetFrameSize;
+    instance_.attr.GetFrameCount = AudioAttributeInternal<AudioRenderContext>::GetFrameCount;
+    instance_.attr.SetSampleAttributes = AudioAttributeInternal<AudioRenderContext>::SetSampleAttributes;
+    instance_.attr.GetSampleAttributes = AudioAttributeInternal<AudioRenderContext>::GetSampleAttributes;
+    instance_.attr.GetCurrentChannelId = AudioAttributeInternal<AudioRenderContext>::GetCurrentChannelId;
+    instance_.attr.SetExtraParams = AudioAttributeInternal<AudioRenderContext>::SetExtraParams;
+    instance_.attr.GetExtraParams = AudioAttributeInternal<AudioRenderContext>::GetExtraParams;
+    instance_.attr.ReqMmapBuffer = AudioAttributeInternal<AudioRenderContext>::ReqMmapBuffer;
+    instance_.attr.GetMmapPosition = AudioAttributeInternal<AudioRenderContext>::GetMmapPosition;
+
+    instance_.scene.SelectScene = AudioSceneInternal<AudioRenderContext>::SelectScene;
+    instance_.scene.CheckSceneCapability = AudioSceneInternal<AudioRenderContext>::CheckSceneCapability;
+
+    instance_.volume.SetMute = AudioVolumeInternal<AudioRenderContext>::SetMute;
+    instance_.volume.GetMute = AudioVolumeInternal<AudioRenderContext>::GetMute;
+    instance_.volume.SetVolume = AudioVolumeInternal<AudioRenderContext>::SetVolume;
+    instance_.volume.GetVolume = AudioVolumeInternal<AudioRenderContext>::GetVolume;
+    instance_.volume.GetGainThreshold = AudioVolumeInternal<AudioRenderContext>::GetGainThreshold;
+    instance_.volume.SetGain = AudioVolumeInternal<AudioRenderContext>::SetGain;
+    instance_.volume.GetGain = AudioVolumeInternal<AudioRenderContext>::GetGain;
+}
+AudioRenderContext::~AudioRenderContext() {}
+} // namespace DistributedHardware
+} // namespace OHOS
