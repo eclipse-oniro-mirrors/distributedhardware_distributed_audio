@@ -221,7 +221,7 @@ int32_t DAudioSourceDev::HandleNotifyRPC(const std::shared_ptr<AudioEvent> &even
 int32_t DAudioSourceDev::HandleVolumeSet(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("%s: Start handle volume set.", LOG_TAG);
-    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::SetVolumeTask, event->content,
+    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::TaskSetVolume, event->content,
         "set volume", &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
@@ -229,7 +229,7 @@ int32_t DAudioSourceDev::HandleVolumeSet(const std::shared_ptr<AudioEvent> &even
 int32_t DAudioSourceDev::HandleVolumeChange(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("%s: Start handle volume change.", LOG_TAG);
-    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::ChangeVolumeTask, event->content,
+    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSourceDev::TaskChangeVolume, event->content,
         "volume change", &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
@@ -577,7 +577,7 @@ int32_t DAudioSourceDev::TaskCloseCtrlChannel(const std::string &args)
     return DH_SUCCESS;
 }
 
-int32_t DAudioSourceDev::SetVolumeTask(const std::string &args)
+int32_t DAudioSourceDev::TaskSetVolume(const std::string &args)
 {
     DHLOGI("%s: start set volume task.", LOG_TAG);
     if (audioSourceCtrlMgr_ == nullptr) {
@@ -595,7 +595,7 @@ int32_t DAudioSourceDev::SetVolumeTask(const std::string &args)
     return DH_SUCCESS;
 }
 
-int32_t DAudioSourceDev::ChangeVolumeTask(const std::string &args)
+int32_t DAudioSourceDev::TaskChangeVolume(const std::string &args)
 {
     DHLOGI("%s: Start change volume task.", LOG_TAG);
     if (speaker_ == nullptr) {
@@ -607,7 +607,7 @@ int32_t DAudioSourceDev::ChangeVolumeTask(const std::string &args)
     event->content = args;
     int32_t ret = speaker_->NotifyHdfAudioEvent(event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: ChangeVolumeTask failed.", LOG_TAG);
+        DHLOGE("%s: TaskChangeVolume failed.", LOG_TAG);
         return ret;
     }
     return DH_SUCCESS;

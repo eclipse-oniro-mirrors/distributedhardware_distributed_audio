@@ -38,15 +38,15 @@ public:
     void NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent) override;
     void NotifyEventSub(const std::shared_ptr<AudioEvent> &audioEvent);
 
-    int32_t OpenCtrlChannelTask(const std::string &args);
-    int32_t CloseCtrlChannelTask(const std::string &args);
-    int32_t OpenDSpeakerTask(const std::string &args);
-    int32_t CloseDSpeakerTask(const std::string &args);
-    int32_t OpenDMicTask(const std::string &args);
-    int32_t CloseDMicTask(const std::string &args);
-    int32_t SetParameterTask(const std::string &args);
-    int32_t VolumeChangeTask(const std::string &args);
-    int32_t SetVolumeTask(const std::string &args);
+    int32_t TaskOpenCtrlChannel(const std::string &args);
+    int32_t TaskCloseCtrlChannel(const std::string &args);
+    int32_t TaskOpenDSpeaker(const std::string &args);
+    int32_t TaskCloseDSpeaker(const std::string &args);
+    int32_t TaskOpenDMic(const std::string &args);
+    int32_t TaskCloseDMic(const std::string &args);
+    int32_t TaskSetParameter(const std::string &args);
+    int32_t TaskVolumeChange(const std::string &args);
+    int32_t TaskSetVolume(const std::string &args);
     void OnTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
 
 private:

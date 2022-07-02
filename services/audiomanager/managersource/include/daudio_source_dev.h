@@ -61,8 +61,8 @@ private:
     int32_t TaskCloseDSpeaker(const std::string &args);
     int32_t TaskOpenDMic(const std::string &args);
     int32_t TaskCloseDMic(const std::string &args);
-    int32_t SetVolumeTask(const std::string &args);
-    int32_t ChangeVolumeTask(const std::string &args);
+    int32_t TaskSetVolume(const std::string &args);
+    int32_t TaskChangeVolume(const std::string &args);
 
     void OnDisableTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
     void OnEnableTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
