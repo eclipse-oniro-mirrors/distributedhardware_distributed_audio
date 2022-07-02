@@ -1,0 +1,12 @@
+package ohos.hdi.distributed_audio.audioext.v1_0;
+
+import ohos.hdi.distributed_audio.audioext.v1_0.Types;
+
+[callback] interface IDAudioCallback {
+    OpenDevice([in] String adpName,[in] int devId);
+    CloseDevice([in] String adpName,[in] int devId);
+    SetParameters([in] String adpNam,[in] int devId,[in] struct AudioParameter param);
+    NotifyEvent([in] String adpNam,[in] int devId,[in] struct AudioEvent event);
+    WriteStreamData([in] String adpNam,[in] int devId,[in] struct AudioData data);
+    ReadStreamData([in] String adpNam,[in] int devId,[out] struct AudioData data);
+}

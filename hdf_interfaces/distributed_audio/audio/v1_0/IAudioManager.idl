@@ -1,0 +1,10 @@
+package ohos.hdi.distributed_audio.audio.v1_0;
+
+import ohos.hdi.distributed_audio.audio.v1_0.IAudioAdapter;
+import ohos.hdi.distributed_audio.audio.v1_0.Types;
+
+interface IAudioManager {
+    GetAllAdapters([out] struct AudioAdapterDescriptorHAL[] descriptors);
+    LoadAdapter([in] struct AudioAdapterDescriptorHAL descriptor,[out] IAudioAdapter adapter);
+    UnloadAdapter([in] String adpName);
+}

@@ -1,0 +1,9 @@
+package ohos.hdi.distributed_audio.audio.v1_0;
+
+[callback] interface IAudioRenderCallback {
+    OnAudioWriteCompleted();
+    OnAudioDrainCompleted();
+    OnAudioFlushCompleted();
+    OnAudioRenderFull();
+    OnAudioErrorOccur();
+}

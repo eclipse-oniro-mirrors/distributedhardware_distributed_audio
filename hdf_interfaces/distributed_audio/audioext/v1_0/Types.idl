@@ -1,0 +1,18 @@
+package ohos.hdi.distributed_audio.audioext.v1_0;
+struct AudioParameter {
+    unsigned int format;
+    unsigned int channelCount;
+    unsigned int sampleRate;
+    unsigned int period;
+    unsigned int frameSize;
+    unsigned int streamUsage;
+    String ext;
+};
+struct AudioData {
+    struct AudioParameter param;
+    unsigned char[] data;
+};
+struct AudioEvent {
+    int type;
+    String content;
+};

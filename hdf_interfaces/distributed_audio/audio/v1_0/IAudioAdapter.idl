@@ -1,0 +1,22 @@
+package ohos.hdi.distributed_audio.audio.v1_0;
+
+import ohos.hdi.distributed_audio.audio.v1_0.IAudioCapture;
+import ohos.hdi.distributed_audio.audio.v1_0.IAudioRender;
+import ohos.hdi.distributed_audio.audio.v1_0.IAudioParamCallback;
+import ohos.hdi.distributed_audio.audio.v1_0.Types;
+
+interface IAudioAdapter {
+    InitAllPorts();
+    CreateRender([in] struct AudioDeviceDescriptorHAL desc,[in] struct AudioSampleAttributesHAL attrs,[out] IAudioRender render);
+    DestoryRender([in] struct AudioDeviceDescriptorHAL desc);
+    CreateCapture([in] struct AudioDeviceDescriptorHAL desc,[in] struct AudioSampleAttributesHAL attrs,[out] IAudioCapture capture);
+    DestoryCapture([in] struct AudioDeviceDescriptorHAL desc);
+    GetPortCapability([in] struct AudioPortHAL port,[out] struct AudioPortCapabilityHAl capability);
+    SetPassthroughMode([in] struct AudioPortHAL port,[in] enum AudioPortPassthroughModeHAL mode);
+    GetPassthroughMode([in] struct AudioPortHAL port,[out] enum AudioPortPassthroughModeHAL mode);
+    UpdateAudioRoute([in] struct AudioRouteHAL route,[out] int handle);
+    ReleaseAudioRoute([in] int handle);
+    SetAudioParameters([in] enum AudioExtParamKey key,[in] String condition, [in] String value);
+    GetAudioParameters([in] enum AudioExtParamKey key,[in] String condition, [out] String value);
+    RegAudioParamObserver([in] IAudioParamCallback cbObj);
+}

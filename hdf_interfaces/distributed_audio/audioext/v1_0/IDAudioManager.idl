@@ -1,0 +1,10 @@
+package ohos.hdi.distributed_audio.audioext.v1_0;
+
+import ohos.hdi.distributed_audio.audioext.v1_0.IDAudioCallback;
+import ohos.hdi.distributed_audio.audioext.v1_0.Types;
+
+interface IDAudioManager {
+    RegisterAudioDevice([in] String adpName,[in] int devId,[in] String capability,[in] IDAudioCallback callbackObj);
+    UnRegisterAudioDevice([in] String adpName,[in] int devId);
+    NotifyEvent([in] String adpName,[in] int devId,[in] struct AudioEvent event);
+}

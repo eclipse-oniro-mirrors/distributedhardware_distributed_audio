@@ -1,0 +1,37 @@
+package ohos.hdi.distributed_audio.audio.v1_0;
+
+import ohos.hdi.distributed_audio.audio.v1_0.Types;
+
+interface IAudioCapture {
+    GetCapturePosition([out] unsigned long frames,[out] struct AudioTimeStampHAL time);
+    CaptureFrame([out] unsigned char[] frame,[in] unsigned long requestBytes,[out] unsigned long replyBytes);
+
+    Start();
+    Stop();
+    Pause();
+    Resume();
+    Flush();
+    TurnStandbyMode();
+    AudioDevDump([in] int range,[in] int fd);
+
+    CheckSceneCapability([in] struct AudioSceneDescriptorHAL scene,[out] boolean support);
+    SelectScene([in] struct AudioSceneDescriptorHAL scene);
+
+    SetMute([in] boolean mute);
+    GetMute([out] boolean mute);
+    SetVolume([in] float volume);
+    GetVolume([out] float volume);
+    GetGainThreshold([out] float min,[out] float max);
+    SetGain([in] float gain);
+    GetGain([out] float gain);
+
+    GetFrameSize([out] unsigned long size);
+    GetFrameCount([out] unsigned long count);
+    SetSampleAttributes([in] struct AudioSampleAttributesHAL attrs);
+    GetSampleAttributes([out] struct AudioSampleAttributesHAL attrs);
+    GetCurrentChannelId([out] unsigned int channelId);
+    SetExtraParams([in] String keyValueList);
+    GetExtraParams([out] String keyValueList);
+    ReqMmapBuffer([in] int reqSize,[out] struct AudioMmapBufferDescripterHAL desc);
+    GetMmapPosition([out] unsigned long frames,[out] struct AudioTimeStampHAL time);
+}
