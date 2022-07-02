@@ -49,6 +49,9 @@ constexpr int32_t PIN_OUT_DAUDIO_DEFAULT = 64;
 constexpr int32_t PIN_IN_DAUDIO_DEFAULT = 134217744;
 constexpr int32_t PIN_IN_MIC = 134217729;
 
+constexpr int32_t NONE_ITEM = 0;
+constexpr int32_t SINGLE_ITEM = 1;
+
 constexpr uint32_t SAMPLE_RATE_DEFAULT = 48000;
 constexpr uint32_t CHANNEL_COUNT_DEFAULT = 2;
 constexpr uint32_t SAMPLE_FORMAT_DEFAULT = 1;
@@ -78,12 +81,6 @@ const std::string NAME = "name";
 const std::string KEY_CODECTYPE = "codecType";
 const std::string KEY_DEVICE_TYPE = "deviceType";
 
-constexpr int32_t NONE_ITEM = 0;
-constexpr int32_t SINGLE_ITEM = 1;
-
-const std::string HDF_EVENT_OPEN_MIC = "OPEN_MIC";
-const std::string HDF_EVENT_OPEN_SPEAKER = "OPEN_SPEAKER";
-const std::string HDF_EVENT_UNKNOWN = "UNKNOWN";
 const std::string HDF_EVENT_RESULT_SUCCESS = "DH_SUCCESS";
 const std::string HDF_EVENT_RESULT_FAILED = "DH_FAILED";
 } // namespace DistributedHardware

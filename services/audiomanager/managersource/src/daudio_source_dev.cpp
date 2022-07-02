@@ -411,7 +411,7 @@ int32_t DAudioSourceDev::TaskOpenDSpeaker(const std::string &args)
         jParam.dump());
 
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    event->type = AudioEventType::OPEN_SPEAKER;
+    event->type = AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT;
     event->content = HDF_EVENT_RESULT_FAILED;
     int32_t ret = WaitForRPC(AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT);
     if (ret != DH_SUCCESS) {
@@ -470,7 +470,7 @@ int32_t DAudioSourceDev::TaskOpenDMic(const std::string &args)
         return ERR_DH_AUDIO_SA_MIC_DEVICE_NOT_INIT;
     }
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    event->type = OPEN_MIC;
+    event->type = AudioEventType::NOTIFY_OPEN_MIC_RESULT;
     event->content = HDF_EVENT_RESULT_FAILED;
     int32_t ret = mic_->SetUp();
     if (ret != DH_SUCCESS) {

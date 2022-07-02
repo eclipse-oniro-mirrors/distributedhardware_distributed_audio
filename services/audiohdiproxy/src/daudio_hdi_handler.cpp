@@ -138,27 +138,28 @@ int32_t DAudioHdiHandler::UnRegisterAudioDevice(const std::string &devId, int32_
 
 int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, int32_t dhId, std::shared_ptr<AudioEvent> &audioEvent)
 {
-    DHLOGI("%s: NotifyEvent. adpname: %s, dhId: %d", LOG_TAG, GetAnonyString(devId).c_str(), dhId);
+    DHLOGI("%s: NotifyEvent adpname: %s, dhId: %d, event type: %d, event content: %s.", LOG_TAG,
+        GetAnonyString(devId).c_str(), dhId, audioEvent->type, audioEvent->content.c_str());
     if (audioSrvHdf_ == nullptr) {
         DHLOGE("audio hdi proxy not init");
         return ERR_DH_AUDIO_HDI_PROXY_NOT_INIT;
     }
-    OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent newEvent;
+    OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent newEvent = {AUDIO_EVENT_UNKNOWN, audioEvent->content};
     switch (audioEvent->type) {
-        case OPEN_MIC:
-            newEvent.type = HDF_EVENT_OPEN_MIC;
+        case AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT:
+            newEvent.type = AUDIO_EVENT_OPEN_SPK_RESULT;
             break;
-        case OPEN_SPEAKER:
-            newEvent.type = HDF_EVENT_OPEN_SPEAKER;
+        case AudioEventType::NOTIFY_OPEN_MIC_RESULT:
+            newEvent.type = AUDIO_EVENT_OPEN_MIC_RESULT;
             break;
         default:
-            newEvent.type = HDF_EVENT_UNKNOWN;
+            DHLOGE("%s: Unsupport audio event.", LOG_TAG);
             break;
     }
-    newEvent.content = audioEvent->content;
+
     int32_t res = audioSrvHdf_->NotifyEvent(devId, dhId, newEvent);
     if (res != HDF_SUCCESS) {
-        DHLOGE("%s: call hdf proxy NotifyEvent failed, res: %d", LOG_TAG, res);
+        DHLOGE("%s: Call hdf proxy NotifyEvent failed, res: %d", LOG_TAG, res);
         return ERR_DH_AUDIO_HDI_CALL_FAILED;
     }
     return DH_SUCCESS;

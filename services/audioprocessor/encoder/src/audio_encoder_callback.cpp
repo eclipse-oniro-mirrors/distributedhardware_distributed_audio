@@ -28,7 +28,7 @@ void AudioEncoderCallback::OnError(Media::AVCodecErrorType errorType, int32_t er
         DHLOGE("%s: audioEncoder is nullptr.", LOG_TAG);
         return;
     }
-    AudioEvent encoderErr = {AUDIO_DECODER_ERR, ""};
+    AudioEvent encoderErr = {AUDIO_ENCODER_ERR, ""};
     targetEncoderNode->OnError(encoderErr);
 }
 

@@ -91,9 +91,18 @@ int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t d
         return HDF_FAILURE;
     }
     AudioEvent newEvent = {
-        .type = AudioEventType(std::stoi(event.type)),
+        .type = AudioEventType::EVENT_UNKNOWN,
         .content = event.content
     };
+    switch (event.type) {
+        case AudioEventHDF::AUDIO_EVENT_VOLUME_SET:
+            newEvent.type = AudioEventType::VOLUME_SET;
+            break;
+        default:
+            DHLOGE("%s: Unsupport event tpye.", LOG_TAG);
+            break;
+    }
+
     int32_t ret = callback_->NotifyEvent(adpName, devId, newEvent);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: call hdi callback failed", LOG_TAG);
