@@ -32,7 +32,7 @@ static const char * const AUDIO_LOG = "DAudioAudioClient";
 static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
     std::vector<AudioAdapterDescriptorHAL> &descriptors)
 {
-    DHLOGI("%s: GetAllAdaptersInternal descriptors.size() is %zd.", AUDIO_LOG, descriptors.size());
+    DHLOGI("%s: Init audio adapters descriptor, size is: %zd.", AUDIO_LOG, descriptors.size());
     for (auto desc : descriptors) {
         AudioPort *audioPorts = (AudioPort *)malloc(desc.ports.size() * sizeof(AudioPort));
         if (audioPorts == nullptr) {
@@ -49,8 +49,6 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
             .portNum = desc.ports.size(),
             .ports = audioPorts,
         };
-        DHLOGI("%s: GetAllAdaptersInternal audioAdapterDescriptor adapterName:%s, portNum:%d.", AUDIO_LOG,
-            descInternal.adapterName, descInternal.portNum);
         for (auto port : desc.ports) {
             char* portName = (char*)calloc(port.portName.length() + 1, sizeof(char));
             if (strcpy_s(portName, port.portName.length() + 1, port.portName.c_str()) != EOK) {
@@ -60,8 +58,6 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
             audioPorts->dir = static_cast<AudioPortDirection>(port.dir);
             audioPorts->portId = port.portId;
             audioPorts->portName = portName;
-            DHLOGI("%s: GetAllAdaptersInternal audioAdapterDescriptor dir:%d, portId:%d, portName:%s.", AUDIO_LOG,
-                audioPorts->dir, audioPorts->portId, audioPorts->portName);
             audioPorts++;
         }
         context->descriptors_.push_back(descInternal);
@@ -95,7 +91,6 @@ static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct Audio
     }
     *descs = context->descriptors_.data();
     *size = context->descriptors_.size();
-    DHLOGI("%s: GetAllAdaptersInternal(end) finish. context->descriptors_.size() is %d.", AUDIO_LOG, *size);
     return DH_SUCCESS;
 }
 
@@ -112,7 +107,6 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct Au
     AudioAdapterDescriptorHAL descriptor = {
         .adapterName = desc->adapterName,
     };
-    DHLOGI("%s: LoadAdapterInternal desc->adapterName is %s.", AUDIO_LOG, desc->adapterName);
     sptr<IAudioAdapter> adapterProxy = nullptr;
     int32_t ret = context->proxy_->LoadAdapter(descriptor, adapterProxy);
     if (ret != DH_SUCCESS) {
@@ -129,12 +123,12 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct Au
         std::lock_guard<std::mutex> lock(context->mtx_);
         context->adapters_.push_back(std::move(adapterContext));
     }
-    DHLOGI("%s: LoadAdapterInternal succeed.", AUDIO_LOG);
     return DH_SUCCESS;
 }
 
 static void UnloadAdapterInternal(struct AudioManager *manager, struct AudioAdapter *adapter)
 {
+    DHLOGI("%s: UnloadAdapterInternal enter.", AUDIO_LOG);
     if (manager == nullptr || adapter == nullptr) {
         DHLOGE("%s: UnloadAdapterInternal param is nullptr.", AUDIO_LOG);
         return;
@@ -152,7 +146,6 @@ static void UnloadAdapterInternal(struct AudioManager *manager, struct AudioAdap
                 return;
             }
             context->adapters_.erase(it);
-            DHLOGI("%s: UnloadAdapterInternal unloadAdapter success.", AUDIO_LOG);
             break;
         }
     }
@@ -202,7 +195,6 @@ static bool AudioManagerInit()
 }
 } // DistributedHardware
 } // OHOS
-
 
 #ifdef __cplusplus
 extern "C" {

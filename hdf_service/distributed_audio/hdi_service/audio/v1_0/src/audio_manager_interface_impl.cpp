@@ -63,7 +63,7 @@ int32_t AudioManagerInterfaceImpl::GetAllAdapters(std::vector<AudioAdapterDescri
 int32_t AudioManagerInterfaceImpl::LoadAdapter(const AudioAdapterDescriptorHAL &descriptor,
     sptr<IAudioAdapter> &adapter)
 {
-    DHLOGI("%s: Load distributed audio adapter: %s.", GetAnonyString(descriptor.adapterName).c_str(), AUDIO_LOG);
+    DHLOGI("%s: Load distributed audio adapter: %s.", AUDIO_LOG, GetAnonyString(descriptor.adapterName).c_str());
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
     auto adp = mapAudioAdapter_.find(descriptor.adapterName);
     if (adp == mapAudioAdapter_.end()) {
@@ -190,7 +190,7 @@ int32_t AudioManagerInterfaceImpl::RemoveAudioDevice(const std::string &adpName,
 
 int32_t AudioManagerInterfaceImpl::Notify(const std::string &adpName, const uint32_t devId, const AudioEvent &event)
 {
-    DHLOGI("%s: Notify distributed audio, adapter name: %s.", AUDIO_LOG, GetAnonyString(adpName).c_str());
+    DHLOGI("%s: Notify event, adapter name: %s.", AUDIO_LOG, GetAnonyString(adpName).c_str());
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
     auto adp = mapAudioAdapter_.find(adpName);
     if (adp == mapAudioAdapter_.end()) {

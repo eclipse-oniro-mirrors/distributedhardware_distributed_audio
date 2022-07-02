@@ -63,7 +63,6 @@ int32_t AudioRenderInterfaceImpl::RenderFrame(const std::vector<uint8_t> &frame,
 
     AudioParameter param = { devAttrs_.format, devAttrs_.channelCount, devAttrs_.sampleRate };
     AudioData data = { param, frame };
-    DHLOGI("%s: Render audio frame call sa to write data.", AUDIO_LOG);
     int32_t ret = audioExtCallback_->WriteStreamData(adapterName_, devDesc_.pins, data);
     if (ret != HDF_SUCCESS) {
         DHLOGE("%s: Write stream data failed.", AUDIO_LOG);

@@ -101,7 +101,7 @@ static int32_t CreateRenderInternal(struct AudioAdapter *adapter, const struct A
 
 static int32_t DestroyRenderInternal(struct AudioAdapter *adapter, struct AudioRender *render)
 {
-    DHLOGI("%s: Enter to destroyRenderInternal.", AUDIO_LOG);
+    DHLOGI("%s: DestroyRenderInternal enter.", AUDIO_LOG);
     if (adapter == nullptr || render == nullptr) {
         DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
@@ -127,7 +127,7 @@ static int32_t DestroyRenderInternal(struct AudioAdapter *adapter, struct AudioR
 static int32_t CreateCaptureInternal(struct AudioAdapter *adapter, const struct AudioDeviceDescriptor *desc,
     const struct AudioSampleAttributes *attrs, struct AudioCapture **capture)
 {
-    DHLOGI("%s: Dnter to createCaptureInternal.", AUDIO_LOG);
+    DHLOGI("%s: CreateCaptureInternal enter.", AUDIO_LOG);
     if (adapter == nullptr || desc == nullptr || attrs == nullptr || capture == nullptr) {
         DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
@@ -165,7 +165,7 @@ static int32_t CreateCaptureInternal(struct AudioAdapter *adapter, const struct 
 
 static int32_t DestroyCaptureInternal(struct AudioAdapter *adapter, struct AudioCapture *capture)
 {
-    DHLOGI("%s: Enter to destroyCaptureInternal.", AUDIO_LOG);
+    DHLOGI("%s: DestroyCaptureInternal enter.", AUDIO_LOG);
     if (adapter == nullptr || capture == nullptr) {
         DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;

@@ -41,7 +41,7 @@ static int32_t GetLatencyInternal(struct AudioRender *render, uint32_t *ms)
 static int32_t RenderFrameInternal(struct AudioRender *render, const void *frame, uint64_t requestBytes,
     uint64_t *replyBytes)
 {
-    DHLOGI("%s: RenderFrameInternal enter", AUDIO_LOG);
+    DHLOGI("%s: RenderFrameInternal enter.", AUDIO_LOG);
     if (render == nullptr || frame == nullptr || requestBytes == 0 || replyBytes == nullptr) {
         DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;

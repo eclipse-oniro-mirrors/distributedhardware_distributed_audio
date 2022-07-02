@@ -290,17 +290,18 @@ int32_t AudioAdapterInterfaceImpl::AdapterUnload()
 
 int32_t AudioAdapterInterfaceImpl::Notify(const uint32_t devId, const AudioEvent &event)
 {
-    DHLOGI("%s: Notify hdf audio event, event type: %d, event content: %s.", AUDIO_LOG, event.type,
-        event.content.c_str());
     switch ((AudioExtParamEvent)event.type) {
         case HDF_AUDIO_EVENT_VOLUME_CHANGE:
+            DHLOGI("%s: Notify event: VOLUME_CHANGE, event content: %s.", AUDIO_LOG, event.content.c_str());
             return HandleVolumeChangeEvent(event);
         case HDF_AUDIO_EVENT_OPEN_SPK_RESULT:
+            DHLOGI("%s: Notify event: SPEAKER_OPEN, event content: %s.", AUDIO_LOG, event.content.c_str());
             return HandleOpenSpeakerEvent(event);
         case HDF_AUDIO_EVENT_OPEN_MIC_RESULT:
+            DHLOGI("%s: Notify event: MIC_OPEN, event content: %s.", AUDIO_LOG, event.content.c_str());
             return HandleOpenMicEvent(event);
         default:
-            DHLOGE("%s: Audio event is undefined.", AUDIO_LOG);
+            DHLOGE("%s: Audio event: %d is undefined.", AUDIO_LOG, event.type);
             return ERR_DH_AUDIO_HDF_INVALID_OPERATION;
     }
 }

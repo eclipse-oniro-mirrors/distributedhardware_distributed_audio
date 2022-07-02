@@ -85,19 +85,16 @@ int32_t DAudioManagerInterfaceImpl::UnRegisterAudioDevice(const std::string &adp
 
 int32_t DAudioManagerInterfaceImpl::NotifyEvent(const std::string &adpName, int32_t devId, const AudioEvent &event)
 {
-    DHLOGI("%s: NotifyEvent type: %d, content: %s.", AUDIO_LOG, event.type, event.content.c_str());
     if (audiomgr_ == nullptr) {
         DHLOGE("%s: Audio manager is null.", AUDIO_LOG);
         return HDF_FAILURE;
     }
-
     int32_t ret = audiomgr_->Notify(adpName, devId, event);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Notify audio event failed. ret = %d", AUDIO_LOG, ret);
         return HDF_FAILURE;
     }
 
-    DHLOGI("%s: NotifyEvent success.", AUDIO_LOG);
     return HDF_SUCCESS;
 }
 } // V1_0
