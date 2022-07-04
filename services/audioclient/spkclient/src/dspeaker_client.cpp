@@ -35,11 +35,12 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
         param.renderOpts.contentType, param.renderOpts.streamUsage);
 
     audioParam_ = param;
+    audioParam_.comParam.bitFormat = SAMPLE_S16LE;
     AudioStandard::AudioRendererOptions rendererOptions = {
         {
             static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
             AudioStandard::AudioEncodingType::ENCODING_PCM,
-            static_cast<AudioStandard::AudioSampleFormat>(SAMPLE_FORMAT_DEFAULT),
+            static_cast<AudioStandard::AudioSampleFormat>(SAMPLE_S16LE),
             static_cast<AudioStandard::AudioChannel>(audioParam_.comParam.channelMask),
         },
         {

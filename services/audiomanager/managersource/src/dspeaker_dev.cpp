@@ -124,6 +124,7 @@ int32_t DSpeakerDev::SetParameters(const std::string &devId, const int32_t dhId,
     }
     curPort_ = dhId;
     audioParamHDF_ = param;
+    audioParamHDF_.bitFormat = SAMPLE_S16LE;
     return DH_SUCCESS;
 }
 

@@ -62,11 +62,12 @@ int32_t DMicClient::SetUp(const AudioParam &param)
     DHLOGI("%s: Set mic client parameters {sampleRate: %d, bitFormat: %d, channelMask: %d, sourceType: %d}.", LOG_TAG,
         param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.CaptureOpts.sourceType);
     audioParam_ = param;
+    audioParam_.comParam.bitFormat = SAMPLE_S16LE;
     AudioStandard::AudioCapturerOptions capturerOptions = {
         {
             static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
             AudioStandard::AudioEncodingType::ENCODING_PCM,
-            static_cast<AudioStandard::AudioSampleFormat>(SAMPLE_FORMAT_DEFAULT),
+            static_cast<AudioStandard::AudioSampleFormat>(SAMPLE_S16LE),
             static_cast<AudioStandard::AudioChannel>(audioParam_.comParam.channelMask),
         },
         {

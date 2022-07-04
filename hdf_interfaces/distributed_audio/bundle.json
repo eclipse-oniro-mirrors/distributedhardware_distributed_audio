@@ -23,8 +23,8 @@
         },
         "build": {
             "sub_component": [
-                "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audio/v1_0:libdaudio_proxy_1.0",
-                "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audioext/v1_0:libdaudioext_proxy_1.0"
+                "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audio/v1_0:daudio_idl_target",
+                "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audioext/v1_0:daudioext_idl_target"
             ],
             "test": [
 
