@@ -98,6 +98,8 @@
                 }
             ],
             "test":[
+                "//foundation/distributedhardware/distributed_audio/audiohandler/unittest:AudioHandlerTest",
+                "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/test/unittests/audiosinktest:AudioSinkTest"
             ]
         }
     }
