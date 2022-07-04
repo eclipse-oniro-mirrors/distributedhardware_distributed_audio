@@ -48,7 +48,11 @@ int32_t AudioEncoder::ConfigureAudioCodec(const AudioCommonParam &codecParam,
         DHLOGE("%s: Codec callback is null.", LOG_TAG);
         return ERR_DH_AUDIO_BAD_VALUE;
     }
-
+    if (!IsInEncodeRange(codecParam)) {
+        DHLOGE("%s: Param error, codec type %d, channel count %d, sample rate %d, sample format %d.", LOG_TAG,
+            codecParam.codecType, codecParam.channelMask, codecParam.sampleRate, codecParam.bitFormat);
+        return ERR_DH_AUDIO_BAD_VALUE;
+    }
     codecParam_ = codecParam;
     codecCallback_ = codecCallback;
 
@@ -65,6 +69,13 @@ int32_t AudioEncoder::ConfigureAudioCodec(const AudioCommonParam &codecParam,
     }
 
     return DH_SUCCESS;
+}
+
+bool AudioEncoder::IsInEncodeRange(const AudioCommonParam &codecParam)
+{
+    return codecParam.channelMask >= CHANNEL_MASK_MIN && codecParam.channelMask <= CHANNEL_MASK_MAX &&
+        codecParam.sampleRate >= SAMPLE_RATE_MIN && codecParam.sampleRate <= SAMPLE_RATE_MAX &&
+        codecParam.bitFormat == SAMPLE_S16LE;
 }
 
 int32_t AudioEncoder::InitAudioEncoder(const AudioCommonParam &codecParam)
@@ -91,12 +102,13 @@ int32_t AudioEncoder::InitAudioEncoder(const AudioCommonParam &codecParam)
 
 int32_t AudioEncoder::SetEncoderFormat(const AudioCommonParam &codecParam)
 {
-    DHLOGI("%s: Set encoder format.", LOG_TAG);
     if (audioEncoder_ == nullptr) {
         DHLOGE("%s: Encoder is null.", LOG_TAG);
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
+    DHLOGI("%s: Set encoder format, codec type %d, channel count %d, sample rate %d, sample format %d.", LOG_TAG,
+        codecParam.codecType, codecParam.channelMask, codecParam.sampleRate, codecParam.bitFormat);
     cfgFormat_.PutIntValue("channel_count", codecParam.channelMask);
     cfgFormat_.PutIntValue("sample_rate", codecParam.sampleRate);
     cfgFormat_.PutIntValue("audio_sample_format", AudioStandard::SAMPLE_S16LE);
@@ -107,6 +119,11 @@ int32_t AudioEncoder::SetEncoderFormat(const AudioCommonParam &codecParam)
         return ERR_DH_AUDIO_CODEC_CONFIG;
     }
 
+    ret = audioEncoder_->Prepare();
+    if (ret != Media::MediaServiceErrCode::MSERR_OK) {
+        DHLOGE("%s: Encoder prepare fail. Error code %d.", LOG_TAG, ret);
+        return ERR_DH_AUDIO_CODEC_CONFIG;
+    }
     return DH_SUCCESS;
 }
 
@@ -138,13 +155,7 @@ int32_t AudioEncoder::StartAudioCodec()
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
-    int32_t ret = audioEncoder_->Prepare();
-    if (ret != Media::MediaServiceErrCode::MSERR_OK) {
-        DHLOGE("%s: Encoder prepare fail. Error code %d.", LOG_TAG, ret);
-        return ERR_DH_AUDIO_CODEC_START;
-    }
-
-    ret = audioEncoder_->Start();
+    int32_t ret = audioEncoder_->Start();
     if (ret != Media::MediaServiceErrCode::MSERR_OK) {
         DHLOGE("%s: Encoder start fail. Error code %d.", LOG_TAG, ret);
         return ERR_DH_AUDIO_CODEC_START;

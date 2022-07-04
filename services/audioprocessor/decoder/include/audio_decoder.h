@@ -53,6 +53,7 @@ public:
 private:
     int32_t InitAudioDecoder(const AudioCommonParam &codecParam);
     int32_t SetDecoderFormat(const AudioCommonParam &codecParam);
+    bool IsInDecodeRange(const AudioCommonParam &codecParam);
     void StartInputThread();
     void StopInputThread();
     void IncreaseWaitDecodeCnt();
@@ -67,6 +68,10 @@ private:
     constexpr static int32_t AUDIO_DECODER_QUEUE_MAX = 100;
     constexpr static uint32_t DECODE_WAIT_MILLISECONDS = 50;
     constexpr static int32_t INVALID_MEMORY_SIZE = -1;
+    constexpr static int32_t CHANNEL_MASK_MIN = 1;
+    constexpr static int32_t CHANNEL_MASK_MAX = 2;
+    constexpr static int32_t SAMPLE_RATE_MIN = 8000;
+    constexpr static int32_t SAMPLE_RATE_MAX = 96000;
     const static std::string DECODE_MIME_AAC;
 
     std::mutex mtxData_;

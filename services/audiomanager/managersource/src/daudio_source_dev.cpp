@@ -187,15 +187,15 @@ int32_t DAudioSourceDev::HandleNotifyRPC(const std::shared_ptr<AudioEvent> &even
 
     switch (event->type) {
         case AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT:
-            DHLOGI("%s: Notify RPC event: Open Speaker, result: %d.", LOG_TAG, result);
+            DHLOGI("%s: Notify RPC event: Open Speaker, result: %d.", LOG_TAG, static_cast<int>(result));
             rpcNotify_ = EVENT_NOTIFY_SPK;
             break;
         case AudioEventType::NOTIFY_OPEN_MIC_RESULT:
-            DHLOGI("%s: Notify RPC event: Open Mic, result: %d.", LOG_TAG, result);
+            DHLOGI("%s: Notify RPC event: Open Mic, result: %d.", LOG_TAG, static_cast<int>(result));
             rpcNotify_ = EVENT_NOTIFY_MIC;
             break;
         case AudioEventType::NOTIFY_OPEN_CTRL_RESULT:
-            DHLOGI("%s: Notify RPC event: Open Ctrl, result: %d.", LOG_TAG, result);
+            DHLOGI("%s: Notify RPC event: Open Ctrl, result: %d.", LOG_TAG, static_cast<int>(result));
             rpcNotify_ = EVENT_NOTIFY_CTRL;
             break;
         default:
@@ -219,6 +219,7 @@ int32_t DAudioSourceDev::HandleVolumeChange(const std::shared_ptr<AudioEvent> &e
     DHLOGI("%s: Start handle volume change.", LOG_TAG);
     auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeVolume, event->content, "volume change",
         &DAudioSourceDev::OnTaskResult);
+    return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSourceDev::WaitForRPC(const AudioEventType type)

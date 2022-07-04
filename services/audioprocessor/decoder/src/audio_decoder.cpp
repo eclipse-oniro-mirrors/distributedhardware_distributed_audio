@@ -46,7 +46,11 @@ int32_t AudioDecoder::ConfigureAudioCodec(const AudioCommonParam &codecParam,
         DHLOGE("%s: Codec callback is null.", LOG_TAG);
         return ERR_DH_AUDIO_BAD_VALUE;
     }
-
+    if (!IsInDecodeRange(codecParam)) {
+        DHLOGE("%s: Param error, codec type %d, channel count %d, sample rate %d, sample format %d.", LOG_TAG,
+            codecParam.codecType, codecParam.channelMask, codecParam.sampleRate, codecParam.bitFormat);
+        return ERR_DH_AUDIO_BAD_VALUE;
+    }
     codecParam_ = codecParam;
     codecCallback_ = codecCallback;
 
@@ -63,6 +67,13 @@ int32_t AudioDecoder::ConfigureAudioCodec(const AudioCommonParam &codecParam,
     }
 
     return DH_SUCCESS;
+}
+
+bool AudioDecoder::IsInDecodeRange(const AudioCommonParam &codecParam)
+{
+    return codecParam.channelMask >= CHANNEL_MASK_MIN && codecParam.channelMask <= CHANNEL_MASK_MAX &&
+        codecParam.sampleRate >= SAMPLE_RATE_MIN && codecParam.sampleRate <= SAMPLE_RATE_MAX &&
+        codecParam.bitFormat == SAMPLE_S16LE;
 }
 
 int32_t AudioDecoder::InitAudioDecoder(const AudioCommonParam &codecParam)
@@ -89,14 +100,13 @@ int32_t AudioDecoder::InitAudioDecoder(const AudioCommonParam &codecParam)
 
 int32_t AudioDecoder::SetDecoderFormat(const AudioCommonParam &codecParam)
 {
-    DHLOGI("%s: Set decoder format.", LOG_TAG);
     if (audioDecoder_ == nullptr) {
         DHLOGE("%s: Decoder is null.", LOG_TAG);
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
-    DHLOGI("%s: codec type %d, channel count %d, sample rate %d, sample format %d.", LOG_TAG, codecParam.codecType,
-        codecParam.channelMask, codecParam.sampleRate, codecParam.bitFormat);
+    DHLOGI("%s: Set encoder format, codec type %d, channel count %d, sample rate %d, sample format %d.", LOG_TAG,
+        codecParam.codecType, codecParam.channelMask, codecParam.sampleRate, codecParam.bitFormat);
     cfgFormat_.PutIntValue("channel_count", codecParam.channelMask);
     cfgFormat_.PutIntValue("sample_rate", codecParam.sampleRate);
     cfgFormat_.PutIntValue("audio_sample_format", AudioStandard::SAMPLE_S16LE);
@@ -107,6 +117,11 @@ int32_t AudioDecoder::SetDecoderFormat(const AudioCommonParam &codecParam)
         return ERR_DH_AUDIO_CODEC_CONFIG;
     }
 
+    ret = audioDecoder_->Prepare();
+    if (ret != Media::MediaServiceErrCode::MSERR_OK) {
+        DHLOGE("%s: Decoder prepare fail. Error code %d.", LOG_TAG, ret);
+        return ERR_DH_AUDIO_CODEC_CONFIG;
+    }
     return DH_SUCCESS;
 }
 
@@ -138,13 +153,7 @@ int32_t AudioDecoder::StartAudioCodec()
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
-    int32_t ret = audioDecoder_->Prepare();
-    if (ret != Media::MediaServiceErrCode::MSERR_OK) {
-        DHLOGE("%s: Decoder prepare fail. Error code %d.", LOG_TAG, ret);
-        return ERR_DH_AUDIO_CODEC_START;
-    }
-
-    ret = audioDecoder_->Start();
+    int32_t ret = audioDecoder_->Start();
     if (ret != Media::MediaServiceErrCode::MSERR_OK) {
         DHLOGE("%s: Decoder start fail. Error code %d.", LOG_TAG, ret);
         return ERR_DH_AUDIO_CODEC_START;
