@@ -18,6 +18,7 @@ mediastandard_path = "//foundation/multimedia/media_standard"
 common_path = "${distributedaudio_path}/common"
 services_path = "${distributedaudio_path}/services"
 audio_processor_path = "${services_path}/audioprocessor"
+audio_transport_path = "${services_path}/audiotransport"
 softbusadapter_path = "${distributedaudio_path}/services/softbusadapter"
 interfaces_path = "${distributedaudio_path}/interfaces"
 
