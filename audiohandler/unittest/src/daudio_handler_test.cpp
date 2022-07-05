@@ -34,7 +34,7 @@ void DAudioHandlerTest::TearDown(void) {}
  * @tc.name: Initialize_001
  * @tc.desc: Verify the Initialize function.
  * @tc.type: FUNC
- * @tc.require: Issue Number
+ * @tc.require: AR000H0E5F
  */
 HWTEST_F(DAudioHandlerTest, Initialize_001, TestSize.Level1)
 {
@@ -43,36 +43,36 @@ HWTEST_F(DAudioHandlerTest, Initialize_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: QueryCodecInfo
+ * @tc.name: QueryCodecInfo_001
  * @tc.desc: Verify the QueryCodecInfo function.
  * @tc.type: FUNC
- * @tc.require: Issue Number
+ * @tc.require: AR000H0E5F
  */
-HWTEST_F(DAudioHandlerTest, QueryCodecInfo, TestSize.Level1)
+HWTEST_F(DAudioHandlerTest, QueryCodecInfo_001, TestSize.Level1)
 {
     int32_t actual = DAudioHandler::GetInstance().QueryCodecInfo();
     EXPECT_EQ(DH_SUCCESS, actual);
 }
 
 /**
- * @tc.name: QueryAudioInfo
+ * @tc.name: QueryAudioInfo_001
  * @tc.desc: Verify the QueryAudioInfo function.
  * @tc.type: FUNC
- * @tc.require: Issue Number
+ * @tc.require: AR000H0E5F
  */
-HWTEST_F(DAudioHandlerTest, QueryAudioInfo, TestSize.Level1)
+HWTEST_F(DAudioHandlerTest, QueryAudioInfo_001, TestSize.Level1)
 {
     int32_t actual = DAudioHandler::GetInstance().QueryAudioInfo();
     EXPECT_EQ(DH_SUCCESS, actual);
 }
 
 /**
- * @tc.name: Query
+ * @tc.name: Query_001
  * @tc.desc: Verify the Query function.
  * @tc.type: FUNC
- * @tc.require: Issue Number
+ * @tc.require: AR000H0E5F
  */
-HWTEST_F(DAudioHandlerTest, Query, TestSize.Level1)
+HWTEST_F(DAudioHandlerTest, Query_001, TestSize.Level1)
 {
     int32_t actual = DAudioHandler::GetInstance().Query().size();
     EXPECT_LT(DH_SUCCESS, actual);

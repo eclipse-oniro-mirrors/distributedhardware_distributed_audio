@@ -39,7 +39,7 @@ void DAudioSinkHandlerTest::TearDown(void)
  * @tc.name: LocalHardware_001
  * @tc.desc: Verify the SubscribeLocalHardware function.
  * @tc.type: FUNC
- * @tc.require: Issue Number
+ * @tc.require: AR000H0E5F
  */
 HWTEST_F(DAudioSinkHandlerTest, LocalHardware_001, TestSize.Level1)
 {
