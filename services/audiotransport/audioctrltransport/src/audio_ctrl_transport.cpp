@@ -183,7 +183,7 @@ int32_t AudioCtrlTransport::RegisterChannelListener()
 
     int32_t ret = audioChannel_->CreateSession(listener, CTRL_SESSION_NAME);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Create session failed ret: %d.", LOG_TAG);
+        DHLOGE("%s: Create session failed ret: %d.", LOG_TAG, ret);
         return ret;
     }
     return DH_SUCCESS;

@@ -108,11 +108,6 @@ int32_t SoftbusAdapter::RemoveSoftbusSessionServer(const std::string &pkgName, c
     }
 
     if (mapSessionSet_[sessionName].size() == SINGLE_ITEM) {
-        int ret = RemoveSessionServer(pkgName.c_str(), sessionName.c_str());
-        if (ret != DH_SUCCESS) {
-            DHLOGE("%s: RemoveSessionServer failed.", LOG_TAG);
-            return ret;
-        }
         mapSessionSet_[sessionName].erase(peerDevId);
         mapSessionSet_.erase(sessionName);
     }
@@ -389,7 +384,6 @@ void SoftbusAdapter::SendAudioData()
             sendDataCond_.wait_for(lock, std::chrono::seconds(DATA_WAIT_SECONDS),
                 [this]() { return !audioDataQueue_.empty(); });
             if (audioDataQueue_.empty()) {
-                DHLOGE("%s: Data queue is empty.", LOG_TAG);
                 continue;
             }
             streamData = audioDataQueue_.front();

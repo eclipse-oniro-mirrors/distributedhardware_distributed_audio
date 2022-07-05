@@ -50,7 +50,6 @@ DAudioSinkDev::~DAudioSinkDev()
 
 void DAudioSinkDev::NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent)
 {
-    DHLOGI("%s: NotifyEvent.", LOG_TAG);
     if (audioEvent == nullptr) {
         DHLOGE("%s: AudioEvent is null.", LOG_TAG);
         return;

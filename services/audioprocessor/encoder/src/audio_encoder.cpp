@@ -256,7 +256,6 @@ void AudioEncoder::InputEncodeAudioData()
                 [this]() { return (!inputBufQueue_.empty() && !bufIndexQueue_.empty()); });
 
             if (inputBufQueue_.empty() || bufIndexQueue_.empty()) {
-                DHLOGE("%s: Index queue or data queue is empty.", LOG_TAG);
                 continue;
             }
             bufferIndex = bufIndexQueue_.front();

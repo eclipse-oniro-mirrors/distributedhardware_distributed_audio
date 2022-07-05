@@ -146,11 +146,6 @@ int32_t DAudioManagerCallback::ReadStreamData(const std::string &adpName, int32_
         DHLOGE("%s: Register hdi callback is nullptr", LOG_TAG);
         return HDF_FAILURE;
     }
-    data.data.resize(DEFAULT_AUDIO_DATA_SIZE);
-    if (data.data.size() != DEFAULT_AUDIO_DATA_SIZE) {
-        DHLOGE("%s: Audio data size is not support.", LOG_TAG);
-        return HDF_FAILURE;
-    }
 
     std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(DEFAULT_AUDIO_DATA_SIZE);
     int32_t ret = callback_->ReadStreamData(adpName, devId, audioData);
@@ -158,11 +153,8 @@ int32_t DAudioManagerCallback::ReadStreamData(const std::string &adpName, int32_
         DHLOGE("%s: ReadStreamData failed.", LOG_TAG);
         return HDF_FAILURE;
     }
-    ret = memcpy_s(data.data.data(), data.data.size(), audioData->Data(), audioData->Capacity());
-    if (ret != EOK) {
-        DHLOGE("%s: Copy audio data failed.", LOG_TAG);
-        return HDF_FAILURE;
-    }
+    data.data.assign(audioData->Data(), audioData->Data()+audioData->Capacity());
+    DHLOGI("%s: Read Stream Data success.", LOG_TAG);
     return HDF_SUCCESS;
 }
 } // DistributedHardware

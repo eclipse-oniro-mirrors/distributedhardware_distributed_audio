@@ -90,6 +90,7 @@ int32_t AudioDecoderProcessor::StartAudioProcessor()
         return ret;
     }
 
+    DHLOGI("%s: Start audio processor success.", LOG_TAG);
     return DH_SUCCESS;
 }
 

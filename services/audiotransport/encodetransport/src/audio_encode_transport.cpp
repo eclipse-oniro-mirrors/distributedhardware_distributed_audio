@@ -50,7 +50,7 @@ int32_t AudioEncodeTransport::Start()
     auto ret = audioChannel_->OpenSession();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Open channel session failed ret: %d.", LOG_TAG, ret);
-        audioChannel_ =   nullptr;
+        audioChannel_ = nullptr;
         return ret;
     }
     ret = processor_->StartAudioProcessor();

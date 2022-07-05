@@ -77,7 +77,7 @@ public:
     void ReadStreamWait(const struct timeval &startTime);
 
 private:
-    const char *AUDIO_LOG = "AudioRenderInterfaceImpl";
+    const char *AUDIO_LOG = "AudioCaptureInterfaceImpl";
     std::string adapterName_;
     AudioDeviceDescriptorHAL devDesc_;
     AudioSampleAttributesHAL devAttrs_;

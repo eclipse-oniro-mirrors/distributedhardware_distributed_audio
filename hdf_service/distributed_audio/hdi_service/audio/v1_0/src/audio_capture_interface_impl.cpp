@@ -63,18 +63,19 @@ int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<uint8_t> &frame, uin
         return HDF_FAILURE;
     }
 
-    AudioParameter param = {};
-    std::vector<uint8_t> data(AUDIO_DATA_SIZE_DEFAULT);
-    AudioData audioData = {
-        .param = param,
-        .data = data,
-    };
+    AudioData audioData;
     int32_t ret = audioExtCallback_->ReadStreamData(adapterName_, devDesc_.pins, audioData);
     if (ret != HDF_SUCCESS) {
         DHLOGE("%s: Write stream data failed.", AUDIO_LOG);
         return HDF_FAILURE;
     }
-    memcpy_s(frame.data(), frame.size(), audioData.data.data(), audioData.data.size());
+
+    frame.resize(AUDIO_DATA_SIZE_DEFAULT);
+    ret = memcpy_s(frame.data(), frame.size(), audioData.data.data(), audioData.data.size());
+    if (ret != EOK) {
+        DHLOGE("%s: AudioCaptureInterfaceImpl CaptureFrame memcpy_s failed ret: %d.", AUDIO_LOG, ret);
+        return HDF_FAILURE;
+    }
 
     ReadStreamWait(startTime);
     DHLOGI("%s: Capture audio frame success.", AUDIO_LOG);

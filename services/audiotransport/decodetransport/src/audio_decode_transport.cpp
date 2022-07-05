@@ -122,7 +122,6 @@ int32_t AudioDecodeTransport::RequestAudioData(std::shared_ptr<AudioData> &audio
     DHLOGI("%s: Request audio data.", LOG_TAG);
     std::unique_lock<std::mutex> lock(dataQueueMtx_);
     if (dataQueue_.empty()) {
-        DHLOGE("%s: Data queue is empty.", LOG_TAG);
         usleep(SLEEP_TIME);
         audioData = std::make_shared<AudioData>(FRAME_SIZE);
     } else {
