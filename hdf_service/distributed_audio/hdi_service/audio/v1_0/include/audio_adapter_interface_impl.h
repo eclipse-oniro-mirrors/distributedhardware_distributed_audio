@@ -67,7 +67,7 @@ public:
     int32_t RegAudioParamObserver(const sptr<IAudioParamCallback> &cbObj) override;
 
 public:
-    AudioAdapterDescriptorHAL GetAdapterDesc() const;
+    AudioAdapterDescriptorHAL GetAdapterDesc();
     std::string GetDeviceCapabilitys(const uint32_t devId);
     int32_t AdapterLoad();
     int32_t AdapterUnload();

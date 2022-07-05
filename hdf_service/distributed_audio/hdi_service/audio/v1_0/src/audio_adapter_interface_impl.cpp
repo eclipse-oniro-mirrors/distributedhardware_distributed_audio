@@ -259,8 +259,13 @@ int32_t AudioAdapterInterfaceImpl::RegAudioParamObserver(const sptr<IAudioParamC
     return HDF_SUCCESS;
 }
 
-AudioAdapterDescriptorHAL AudioAdapterInterfaceImpl::GetAdapterDesc() const
+AudioAdapterDescriptorHAL AudioAdapterInterfaceImpl::GetAdapterDesc()
 {
+    adpDescriptor_.ports.clear();
+    for (auto pin = mapAudioDevice_.begin(); pin != mapAudioDevice_.end(); pin++) {
+        AudioPortHAL port = {0, pin->first, ""};
+        adpDescriptor_.ports.emplace_back(port);
+    }
     return adpDescriptor_;
 }
 
