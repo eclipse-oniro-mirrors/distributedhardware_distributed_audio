@@ -31,6 +31,7 @@ using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioManager;
 struct AudioManagerContext {
     AudioManagerContext();
     ~AudioManagerContext();
+    void ClearDescriptors();
 
     struct AudioManager instance_;
     sptr<IAudioManager> proxy_ = nullptr;

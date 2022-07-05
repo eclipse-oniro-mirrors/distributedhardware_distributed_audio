@@ -85,6 +85,7 @@ static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct Audio
         DHLOGE("%s: GetAllAdaptersInternal getAllAdapters failed.", AUDIO_LOG);
         return ret;
     }
+    context->ClearDescriptors();
     ret = InitAudioAdapterDescriptor(context, descriptors);
     if (ret != DH_SUCCESS) {
         return ret;
@@ -151,16 +152,8 @@ static void UnloadAdapterInternal(struct AudioManager *manager, struct AudioAdap
     }
 }
 
-AudioManagerContext::AudioManagerContext()
+void AudioManagerContext::ClearDescriptors()
 {
-    instance_.GetAllAdapters = GetAllAdaptersInternal;
-    instance_.LoadAdapter = LoadAdapterInternal;
-    instance_.UnloadAdapter = UnloadAdapterInternal;
-}
-
-AudioManagerContext::~AudioManagerContext()
-{
-    adapters_.clear();
     for (auto &desc : descriptors_) {
         if (desc.adapterName != nullptr) {
             free(const_cast<char *>(desc.adapterName));
@@ -173,6 +166,19 @@ AudioManagerContext::~AudioManagerContext()
         free(desc.ports);
     }
     descriptors_.clear();
+}
+
+AudioManagerContext::AudioManagerContext()
+{
+    instance_.GetAllAdapters = GetAllAdaptersInternal;
+    instance_.LoadAdapter = LoadAdapterInternal;
+    instance_.UnloadAdapter = UnloadAdapterInternal;
+}
+
+AudioManagerContext::~AudioManagerContext()
+{
+    adapters_.clear();
+    ClearDescriptors();
 }
 
 AudioManagerContext g_AudioManagerContext;
