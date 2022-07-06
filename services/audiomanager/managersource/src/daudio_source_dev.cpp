@@ -545,16 +545,23 @@ int32_t DAudioSourceDev::TaskCloseCtrlChannel(const std::string &args)
 {
     DHLOGI("%s: TaskCloseCtrlChannel. args: %s.", LOG_TAG, args.c_str());
     if (audioSourceCtrlMgr_ == nullptr) {
-        DHLOGE("%s: Audio source ctrl magr not init.", LOG_TAG);
+        DHLOGE("%s: TaskCloseCtrlChannel: Audio source ctrl magr not init.", LOG_TAG);
         return ERR_DH_AUDIO_SA_SOURCECTRLMGR_NOT_INIT;
     }
 
     int32_t ret = audioSourceCtrlMgr_->Stop();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Audio source ctrl manager stop failed.", LOG_TAG);
+        DHLOGE("%s: TaskCloseCtrlChannel: Audio source ctrl manager stop failed.", LOG_TAG);
         return ret;
     }
-    DHLOGI("%s: TaskCloseCtrlChannel success.", LOG_TAG);
+    DHLOGI("%s: TaskCloseCtrlChannel: audio source ctrl manager stop success.", LOG_TAG);
+
+    ret = audioSourceCtrlMgr_->Release();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s:TaskCloseCtrlChannel: audio source ctrl manager release failed.", LOG_TAG);
+        return ret;
+    }
+    DHLOGI("%s:TaskCloseCtrlChannel: audio source ctrl manager release success.", LOG_TAG);
     return DH_SUCCESS;
 }
 

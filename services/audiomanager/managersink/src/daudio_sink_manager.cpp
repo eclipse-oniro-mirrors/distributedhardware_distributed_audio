@@ -63,6 +63,13 @@ int32_t DAudioSinkManager::UnInit()
     return DH_SUCCESS;
 }
 
+void DAudioSinkManager::OnSinkDevReleased(const std::string &devId)
+{
+    DHLOGI("%s: DAudioSinkManager OnSinkDevReleased. devId: %s.", LOG_TAG, GetAnonyString(devId).c_str());
+    std::lock_guard<std::mutex> lock(devMapMutex_);
+    dAudioSinkDevMap_.erase(devId);
+}
+
 int32_t DAudioSinkManager::HandleDAudioNotify(const std::string &devId, const std::string &dhId,
     const int32_t eventType, const std::string &eventContent)
 {

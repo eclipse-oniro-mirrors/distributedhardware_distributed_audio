@@ -369,6 +369,8 @@ int32_t DAudioSinkDev::TaskCloseCtrlChannel(const std::string &args)
         DHLOGE("%s:TaskCloseCtrlChannel: audio sink ctrl manager release failed.", LOG_TAG);
         return ret;
     }
+    dAudioSinkDevCtrlMgr_ = nullptr;
+    DAudioSinkManager::GetInstance().OnSinkDevReleased(devId_);
     DHLOGI("%s:TaskCloseCtrlChannel: audio sink ctrl manager release success.", LOG_TAG);
     return DH_SUCCESS;
 }

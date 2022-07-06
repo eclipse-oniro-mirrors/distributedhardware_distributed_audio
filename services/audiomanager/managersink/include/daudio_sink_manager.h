@@ -36,6 +36,7 @@ public:
         const std::string &eventContent);
     int32_t DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
         const std::string &eventContent);
+    void OnSinkDevReleased(const std::string &devId);
 
 private:
     class RemoteSourceSvrRecipient : public IRemoteObject::DeathRecipient {
