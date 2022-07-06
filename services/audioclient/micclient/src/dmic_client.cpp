@@ -38,8 +38,8 @@ int32_t DMicClient::OnStateChange(int32_t type)
             std::unique_lock<std::mutex> lck(channelWaitMutex_);
             channelWaitCond_.notify_all();
             DHLOGI("%s: Data opened.", LOG_TAG);
-            isBlocking = true;
-            isCaptureReady = true;
+            isBlocking_ = true;
+            isCaptureReady_.store(true);
             captureDataThread_ = std::thread(&DMicClient::CaptureThreadRunning, this);
             return DH_SUCCESS;
         }
@@ -134,12 +134,12 @@ void DMicClient::CaptureThreadRunning()
         return;
     }
     DHLOGI("%s: Obtains the minimum buffer length, bufferlen: %d.", LOG_TAG, bufferLen);
-    while (isCaptureReady) {
+    while (isCaptureReady_.load()) {
         std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(bufferLen);
         size_t bytesRead = NUMBER_ZERO;
         while (bytesRead < bufferLen) {
             auto start = std::chrono::high_resolution_clock::now();
-            int32_t len = audioCapturer_->Read(*(audioData->Data() + bytesRead), bufferLen - bytesRead, isBlocking);
+            int32_t len = audioCapturer_->Read(*(audioData->Data() + bytesRead), bufferLen - bytesRead, isBlocking_);
             auto stop = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             DHLOGI("%s: Audio Capturer Read in microseconds TimeTaken =(%ds).", LOG_TAG, (long long)duration.count());
@@ -171,8 +171,8 @@ int32_t DMicClient::StopCapture()
         DHLOGE("%s: The capturer or mictrans is not instantiated.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_CAPTURER_OR_MICTRANS_INSTANCE;
     }
-    isBlocking = false;
-    isCaptureReady = false;
+    isBlocking_ = false;
+    isCaptureReady_.store(false);
     if (captureDataThread_.joinable()) {
         captureDataThread_.join();
     }

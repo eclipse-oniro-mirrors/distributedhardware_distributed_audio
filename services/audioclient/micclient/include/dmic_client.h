@@ -16,6 +16,7 @@
 #ifndef OHOS_DMIC_CLIENT_H
 #define OHOS_DMIC_CLIENT_H
 
+#include <atomic>
 #include <condition_variable>
 #include <cstdint>
 #include <memory>
@@ -32,6 +33,7 @@
 #include "audio_param.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
+#include "iaudio_data_transport.h"
 #include "iaudio_datatrans_callback.h"
 #include "iaudio_event_callback.h"
 
@@ -60,13 +62,13 @@ private:
     std::thread captureDataThread_;
     std::condition_variable channelWaitCond_;
     AudioParam audioParam_;
-    bool isBlocking = false;
-    bool isCaptureReady = false;
+    bool isBlocking_ = false;
     bool isChannelReady_ = false;
+    std::atomic<bool> isCaptureReady_ = false;
 
     std::shared_ptr<IAudioEventCallback> eventCallback_;
     std::unique_ptr<AudioStandard::AudioCapturer> audioCapturer_;
-    std::shared_ptr<AudioEncodeTransport> micTrans_ = nullptr;
+    std::shared_ptr<IAudioDataTransport> micTrans_ = nullptr;
 };
 } // DistributedHardware
 } // OHOS
