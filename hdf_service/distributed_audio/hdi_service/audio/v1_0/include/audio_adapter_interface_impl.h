@@ -80,6 +80,7 @@ public:
     int32_t CloseCaptureDevice(const AudioDeviceDescriptorHAL &desc);
     uint32_t GetVolumeGroup(const uint32_t devId);
     uint32_t GetInterruptGroup(const uint32_t devId);
+    bool isPortsNoReg() const;
 
 private:
     int32_t SetAudioVolume(const std::string& condition, const std::string &param);

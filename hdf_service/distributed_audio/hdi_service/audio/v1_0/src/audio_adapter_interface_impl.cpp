@@ -543,6 +543,11 @@ int32_t AudioAdapterInterfaceImpl::HandleOpenMicEvent(const AudioEvent &event)
     micWaitCond_.notify_all();
     return DH_SUCCESS;
 }
+
+bool AudioAdapterInterfaceImpl::isPortsNoReg() const
+{
+    return mapAudioDevice_.empty();
+}
 } // V1_0
 } // Audio
 } // Distributedaudio
