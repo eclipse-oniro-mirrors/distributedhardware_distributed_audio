@@ -95,7 +95,7 @@ int32_t DSpeakerClient::StartRender()
         return ERR_DH_AUDIO_CLIENT_RENDER_STARTUP_FAILURE;
     }
 
-    isRenderReady_ = true;
+    isRenderReady_.store(true);
     renderDataThread_ = std::thread(&DSpeakerClient::PlayThreadRunning, this);
     return DH_SUCCESS;
 }
@@ -104,7 +104,7 @@ int32_t DSpeakerClient::StopRender()
 {
     DHLOGI("%s: Stop renderer.", LOG_TAG);
 
-    isRenderReady_ = false;
+    isRenderReady_.store(false);
     if (renderDataThread_.joinable()) {
         renderDataThread_.join();
     }
@@ -147,7 +147,7 @@ void DSpeakerClient::PlayThreadRunning()
     }
     DHLOGI("%s: Obtains the minimum buffer length, bufferlen: %d.", LOG_TAG, bufferLen);
 
-    while (isRenderReady_) {
+    while (isRenderReady_.load()) {
         std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(bufferLen);
         int32_t ret = speakerTrans_->RequestAudioData(audioData);
         if (ret == DH_SUCCESS && audioData != nullptr) {
@@ -250,18 +250,16 @@ int32_t DSpeakerClient::SetAudioParameters(const std::shared_ptr<AudioEvent> &ev
     }
     auto volumeType = static_cast<AudioStandard::AudioSystemManager::AudioVolumeType>(std::stoi(typeList[NUMBER_ONE]));
     DHLOGE("%s: AudioVolumeType volumeType = %d.", LOG_TAG, volumeType);
-    if (audioEvent->type == VOLUME_SET || audioEvent->type == VOLUME_MUTE_SET) {
-        DHLOGE("%s: volume level = %d.", LOG_TAG, std::stoi(levelList[NUMBER_ONE]));
-        int32_t ret =
-            AudioStandard::AudioSystemManager::GetInstance()->SetVolume(volumeType, std::stoi(levelList[NUMBER_ONE]));
-        if (ret != DH_SUCCESS) {
-            DHLOGE("%s: Voloume set failed.", LOG_TAG);
-            return ERR_DH_AUDIO_CLIENT_SET_VOLUME_FAILED;
-        }
-        return DH_SUCCESS;
-    } else {
+    if (audioEvent->type != VOLUME_SET && audioEvent->type != VOLUME_MUTE_SET) {
         DHLOGE("%s: Invalid parameter.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_INVALID_VOLUME_PARAMETER;
+    }
+    DHLOGE("%s: volume level = %d.", LOG_TAG, std::stoi(levelList[NUMBER_ONE]));
+    int32_t ret =
+        AudioStandard::AudioSystemManager::GetInstance()->SetVolume(volumeType, std::stoi(levelList[NUMBER_ONE]));
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Voloume set failed.", LOG_TAG);
+        return ERR_DH_AUDIO_CLIENT_SET_VOLUME_FAILED;
     }
     return DH_SUCCESS;
 }

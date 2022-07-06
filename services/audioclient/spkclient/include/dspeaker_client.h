@@ -16,6 +16,7 @@
 #ifndef OHOS_DSPEAKER_CLIENT_H
 #define OHOS_DSPEAKER_CLIENT_H
 
+#include <atomic>
 #include <condition_variable>
 #include <cstdint>
 #include <memory>
@@ -34,6 +35,7 @@
 #include "audio_event.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
+#include "iaudio_data_transport.h"
 #include "iaudio_datatrans_callback.h"
 #include "iaudio_event_callback.h"
 
@@ -68,12 +70,12 @@ private:
     std::string devId_;
     std::thread renderDataThread_;
     AudioParam audioParam_;
-    bool isRenderReady_ = false;
+    std::atomic<bool> isRenderReady_ = false;
 
     std::unique_ptr<AudioStandard::AudioRenderer> audioRenderer_;
-    std::shared_ptr<AudioDecodeTransport> speakerTrans_ = nullptr;
+    std::shared_ptr<IAudioDataTransport> speakerTrans_ = nullptr;
     std::shared_ptr<IAudioEventCallback> eventCallback_;
 };
 } // DistributedHardware
 } // OHOS
-#endif // OHOS_DMIC_CLIENT_H
+#endif // OHOS_DSPEAKER_CLIENT_H
