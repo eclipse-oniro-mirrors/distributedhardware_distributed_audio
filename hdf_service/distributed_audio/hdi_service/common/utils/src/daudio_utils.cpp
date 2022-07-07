@@ -49,25 +49,27 @@ int32_t GetAudioParamStr(const std::string &params, const std::string &key, std:
 {
     int32_t step = key.size();
     if (step >= params.size()) {
-        return -1;
+        return ERR_DH_AUDIO_HDF_FAIL;
     }
     size_t pos = params.find(key);
-    if (pos == params.npos || params.at(pos+step) != '=') {
+    if (pos == params.npos || params.at(pos + step) != '=') {
         return ERR_DH_AUDIO_COMMON_NOT_FOUND_KEY;
     }
     size_t splitPosEnd = params.find(';', pos);
     if (splitPosEnd != params.npos) {
-        value = params.substr(pos+step+1, splitPosEnd-pos-step-1);
+        value = params.substr(pos + step + 1, splitPosEnd - pos - step - 1);
     } else {
-        value = params.substr(pos+step+1);
+        value = params.substr(pos + step + 1);
     }
     return DH_SUCCESS;
 }
 
 int32_t GetAudioParamInt(const std::string &params, const std::string &key, int32_t &value)
 {
-    value = 0;
-    return DH_SUCCESS;
+    std::string val = "0";
+    int32_t ret = GetAudioParamStr(params, key, val);
+    value = std::stoi(val);
+    return ret;
 }
 
 int32_t GetAudioParamUInt(const std::string &params, const std::string &key, uint32_t &value)

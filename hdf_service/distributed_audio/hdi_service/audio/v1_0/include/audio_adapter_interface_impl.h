@@ -62,8 +62,9 @@ public:
     int32_t GetPassthroughMode(const AudioPortHAL &port, AudioPortPassthroughModeHAL &mode) override;
     int32_t UpdateAudioRoute(const AudioRouteHAL &route, int32_t &handle) override;
     int32_t ReleaseAudioRoute(int32_t handle) override;
-    int32_t SetAudioParameters(AudioExtParamKey key, const std::string& condition, const std::string& value) override;
-    int32_t GetAudioParameters(AudioExtParamKey key, const std::string& condition, std::string& value) override;
+    int32_t SetAudioParameters(AudioExtParamKeyHAL key, const std::string &condition,
+        const std::string &value) override;
+    int32_t GetAudioParameters(AudioExtParamKeyHAL key, const std::string &condition, std::string &value) override;
     int32_t RegAudioParamObserver(const sptr<IAudioParamCallback> &cbObj) override;
 
 public:

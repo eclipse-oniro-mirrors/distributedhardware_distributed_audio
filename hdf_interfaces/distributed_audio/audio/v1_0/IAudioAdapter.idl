@@ -16,7 +16,7 @@ interface IAudioAdapter {
     GetPassthroughMode([in] struct AudioPortHAL port,[out] enum AudioPortPassthroughModeHAL mode);
     UpdateAudioRoute([in] struct AudioRouteHAL route,[out] int handle);
     ReleaseAudioRoute([in] int handle);
-    SetAudioParameters([in] enum AudioExtParamKey key,[in] String condition, [in] String value);
-    GetAudioParameters([in] enum AudioExtParamKey key,[in] String condition, [out] String value);
+    SetAudioParameters([in] enum AudioExtParamKeyHAL key,[in] String condition, [in] String value);
+    GetAudioParameters([in] enum AudioExtParamKeyHAL key,[in] String condition, [out] String value);
     RegAudioParamObserver([in] IAudioParamCallback cbObj);
 }

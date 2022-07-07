@@ -199,21 +199,21 @@ int32_t AudioAdapterInterfaceImpl::ReleaseAudioRoute(int32_t handle)
     return HDF_SUCCESS;
 }
 
-int32_t AudioAdapterInterfaceImpl::SetAudioParameters(AudioExtParamKey key, const std::string &condition,
+int32_t AudioAdapterInterfaceImpl::SetAudioParameters(AudioExtParamKeyHAL key, const std::string &condition,
     const std::string &value)
 {
-    DHLOGI("%s: Set audio parameters, key: %d, condition: %s, value: %s.", AUDIO_LOG, key, condition.c_str(),
+    DHLOGI("%s: Set audio parameters, key = %d, condition: %s value: %s.", AUDIO_LOG, key, condition.c_str(),
         value.c_str());
     int32_t ret = ERR_DH_AUDIO_HDF_FAIL;
     switch (key) {
-        case AudioExtParamKey::AUDIO_EXT_PARAM_KEY_VOLUME:
+        case AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_VOLUME:
             ret = SetAudioVolume(condition, value);
             if (ret != DH_SUCCESS) {
                 DHLOGE("%s: Set audio parameters failed.", AUDIO_LOG);
                 return HDF_FAILURE;
             }
             break;
-        case AudioExtParamKey::AUDIO_EXT_PARAM_KEY_NONE:
+        case AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_NONE:
             DHLOGE("%s: Parameter is unknown.", AUDIO_LOG);
             break;
         default:
@@ -224,20 +224,20 @@ int32_t AudioAdapterInterfaceImpl::SetAudioParameters(AudioExtParamKey key, cons
     return HDF_SUCCESS;
 }
 
-int32_t AudioAdapterInterfaceImpl::GetAudioParameters(AudioExtParamKey key, const std::string &condition,
+int32_t AudioAdapterInterfaceImpl::GetAudioParameters(AudioExtParamKeyHAL key, const std::string &condition,
     std::string &value)
 {
     DHLOGI("%s: Get audio parameters, key: %d, condition: %s.", AUDIO_LOG, key, condition.c_str());
     int32_t ret = ERR_DH_AUDIO_HDF_FAIL;
     switch (key) {
-        case AudioExtParamKey::AUDIO_EXT_PARAM_KEY_VOLUME:
+        case AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_VOLUME:
             ret = GetAudioVolume(condition, value);
             if (ret != DH_SUCCESS) {
                 DHLOGE("%s: Get audio parameters failed.", AUDIO_LOG);
                 return HDF_FAILURE;
             }
             break;
-        case AudioExtParamKey::AUDIO_EXT_PARAM_KEY_NONE:
+        case AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_NONE:
             DHLOGE("%s: Parameter is unknown.", AUDIO_LOG);
             break;
         default:
@@ -251,10 +251,6 @@ int32_t AudioAdapterInterfaceImpl::GetAudioParameters(AudioExtParamKey key, cons
 int32_t AudioAdapterInterfaceImpl::RegAudioParamObserver(const sptr<IAudioParamCallback> &cbObj)
 {
     DHLOGI("%s: Register audio param observer.", AUDIO_LOG);
-    if (paramCallback_ == nullptr) {
-        DHLOGE("%s: Audio param observer is null.", AUDIO_LOG);
-        return HDF_FAILURE;
-    }
     paramCallback_ = cbObj;
     return HDF_SUCCESS;
 }
@@ -479,6 +475,10 @@ int32_t AudioAdapterInterfaceImpl::SetAudioVolume(const std::string& condition, 
         DHLOGE("%s: Callback is nullptr.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
+    if (audioRender_ == nullptr) {
+        DHLOGD("%s: Render has not been created.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     std::string content = condition;
     int32_t ret = SetAudioParamStr(content, VOLUME_LEVEL, param);
     if (ret != DH_SUCCESS) {
@@ -496,6 +496,10 @@ int32_t AudioAdapterInterfaceImpl::SetAudioVolume(const std::string& condition, 
 int32_t AudioAdapterInterfaceImpl::GetAudioVolume(const std::string& condition, std::string &param)
 {
     (void) condition;
+    if (audioRender_ == nullptr) {
+        DHLOGD("%s: Render has not been created.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     uint32_t vol = audioRender_->GetVolumeInner();
     param = std::to_string(vol);
     return DH_SUCCESS;
@@ -504,18 +508,22 @@ int32_t AudioAdapterInterfaceImpl::GetAudioVolume(const std::string& condition, 
 int32_t AudioAdapterInterfaceImpl::HandleVolumeChangeEvent(const AudioEvent &event)
 {
     DHLOGI("%s: Vol change (%s).", AUDIO_LOG, event.content.c_str());
-    if (paramCallback_ == nullptr) {
-        DHLOGE("%s: Audio param observer is null.", AUDIO_LOG);
+    if (audioRender_ == nullptr) {
+        DHLOGD("%s: Render has not been created.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    uint32_t vol = 0;
-    int32_t ret = GetAudioParamUInt(event.content, VOLUME_LEVEL, vol);
+    int32_t vol = 0;
+    int32_t ret = GetAudioParamInt(event.content, VOLUME_LEVEL, vol);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Get volume value failed.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_FAIL;
     }
     audioRender_->SetVolumeInner(vol);
 
+    if (paramCallback_ == nullptr) {
+        DHLOGE("%s: Audio param observer is null.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     ret = paramCallback_->OnAudioParamNotify(AUDIO_EXT_PARAM_KEY_VOLUME, event.content, std::to_string(vol));
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Notify vol failed.", AUDIO_LOG);

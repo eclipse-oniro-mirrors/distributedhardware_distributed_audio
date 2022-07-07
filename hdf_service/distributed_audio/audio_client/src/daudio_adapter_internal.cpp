@@ -366,6 +366,73 @@ static int32_t UpdateAudioRouteInternal(struct AudioAdapter *adapter, const stru
     return ret;
 }
 
+static int32_t SetExtraParamsInternal(struct AudioAdapter *adapter, enum AudioExtParamKey key, const char *condition,
+    const char *value)
+{
+    if (adapter == nullptr || condition == nullptr || value == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioAdapterContext *context = reinterpret_cast<AudioAdapterContext *>(adapter);
+    return context->proxy_->SetAudioParameters(static_cast<AudioExtParamKeyHAL>(key), std::string(condition),
+        std::string(value));
+}
+
+static int32_t GetExtraParamsInternal(struct AudioAdapter *adapter, enum AudioExtParamKey key, const char *condition,
+    char *value, int32_t length)
+{
+    if (adapter == nullptr || condition == nullptr || value == nullptr) {
+        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioAdapterContext *context = reinterpret_cast<AudioAdapterContext *>(adapter);
+    std::string valueHal;
+    int32_t ret =
+        context->proxy_->GetAudioParameters(static_cast<AudioExtParamKeyHAL>(key), std::string(condition), valueHal);
+    if (ret != DH_SUCCESS) {
+        return ret;
+    }
+    ret = strcpy_s(value, length, valueHal.c_str());
+    if (ret != EOK) {
+        DHLOGE("%s: strcpy_s failed!, ret: %d", AUDIO_LOG, ret);
+        return ERR_DH_AUDIO_HDF_FAIL;
+    }
+    return DH_SUCCESS;
+}
+
+static int32_t RegExtraParamObserverInternal(struct AudioAdapter *adapter, ParamCallback callback, void* cookie)
+{
+    if (adapter == nullptr || callback == nullptr) {
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+
+    AudioAdapterContext *context = reinterpret_cast<AudioAdapterContext *>(adapter);
+    std::lock_guard<std::mutex> lock(context->mtx_);
+    if (context->callbackInternal_ == nullptr) {
+        context->callbackInternal_ = std::make_unique<AudioParamCallbackContext>(callback, cookie);
+    } else if (callback != context->callback_) {
+        context->callbackInternal_ = nullptr;
+        context->callbackInternal_ = std::make_unique<AudioParamCallbackContext>(callback, cookie);
+    } else {
+        return DH_SUCCESS;
+    }
+
+    if (context->callbackInternal_->callbackStub_ == nullptr) {
+        context->callbackInternal_ = nullptr;
+        return ERR_DH_AUDIO_HDF_FAILURE;
+    }
+
+    int32_t ret = context->proxy_->RegAudioParamObserver(context->callbackInternal_->callbackStub_);
+    if (ret == DH_SUCCESS) {
+        context->callback_ = callback;
+    } else {
+        context->callbackInternal_ = nullptr;
+    }
+
+    return ret;
+}
 AudioAdapterContext::AudioAdapterContext()
 {
     instance_.InitAllPorts = InitAllPortsInternal;
@@ -378,6 +445,9 @@ AudioAdapterContext::AudioAdapterContext()
     instance_.ReleaseAudioRoute = ReleaseAudioRouteInternal;
     instance_.SetPassthroughMode = SetPassthroughModeInternal;
     instance_.UpdateAudioRoute = UpdateAudioRouteInternal;
+    instance_.SetExtraParams = SetExtraParamsInternal;
+    instance_.GetExtraParams = GetExtraParamsInternal;
+    instance_.RegExtraParamObserver = RegExtraParamObserverInternal;
 }
 
 AudioAdapterContext::~AudioAdapterContext()

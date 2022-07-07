@@ -235,16 +235,16 @@ int32_t DSpeakerClient::GetAudioParameters(const std::shared_ptr<AudioEvent> &ev
 
 int32_t DSpeakerClient::SetAudioParameters(const std::shared_ptr<AudioEvent> &event)
 {
-    DHLOGI("%s: Set the volume.", LOG_TAG);
+    DHLOGI("%s: Set the volume, arg: %s.", LOG_TAG, event->content.c_str());
     std::shared_ptr<AudioEvent> audioEvent = event;
-    std::vector<std::string> volumeList;
+    std::vector<std::string> conditionList;
     std::vector<std::string> typeList;
     std::vector<std::string> levelList;
-    StringSplit(audioEvent->content, ';', volumeList);
-    StringSplit(volumeList[NUMBER_ZERO], '=', typeList);
-    StringSplit(volumeList[NUMBER_ONE], '=', levelList);
+    StringSplit(audioEvent->content, ';', conditionList);
+    StringSplit(conditionList[NUMBER_TWO], '=', typeList);
+    StringSplit(conditionList[NUMBER_THREE], '=', levelList);
 
-    if (typeList[NUMBER_ZERO] != "VOLUMETYPE") {
+    if (typeList[NUMBER_ZERO] != "AUDIO_VOLUME_TYPE") {
         DHLOGE("%s: Invalid event content parameter.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_INVALID_EVENT_PARAM;
     }

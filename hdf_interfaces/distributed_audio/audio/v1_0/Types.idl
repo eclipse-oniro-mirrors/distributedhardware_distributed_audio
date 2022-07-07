@@ -40,9 +40,14 @@ enum AudioPortPin {
     PIN_IN_USB_EXT = 134217736,
     PIN_IN_DAUDIO_DEFAULT = 134217744,
 };
-enum AudioExtParamKey {
+enum AudioExtParamKeyHAL {
     AUDIO_EXT_PARAM_KEY_NONE = 0,
     AUDIO_EXT_PARAM_KEY_VOLUME = 1,
+    AUDIO_EXT_PARAM_KEY_FOCUS = 2,
+    AUDIO_EXT_PARAM_KEY_BUTTON = 3,
+    AUDIO_EXT_PARAM_KEY_EFFECT = 4,
+    AUDIO_EXT_PARAM_KEY_LOWPOWER = 1000,
+
 };
 struct AudioDeviceDescriptorHAL {
     unsigned int portId;

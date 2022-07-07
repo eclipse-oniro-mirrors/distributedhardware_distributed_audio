@@ -66,6 +66,8 @@ private:
     constexpr static const char *LOG_TAG = "DSpeakerClient";
     constexpr static  size_t NUMBER_ZERO = 0;
     constexpr static  size_t NUMBER_ONE = 1;
+    constexpr static  size_t NUMBER_TWO = 2;
+    constexpr static  size_t NUMBER_THREE = 3;
 
     std::string devId_;
     std::thread renderDataThread_;

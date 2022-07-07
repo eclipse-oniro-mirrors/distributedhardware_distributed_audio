@@ -25,6 +25,7 @@
 #include "audio_types.h"
 #include "daudio_capture_internal.h"
 #include "daudio_render_internal.h"
+#include "daudio_param_callback_internal.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -37,6 +38,9 @@ struct AudioAdapterContext {
     sptr<IAudioAdapter> proxy_ = nullptr;
     std::string adapterName_;
     std::mutex mtx_;
+
+    std::unique_ptr<AudioParamCallbackContext> callbackInternal_ = nullptr;
+    ParamCallback callback_ = nullptr;
 
     std::vector<std::unique_ptr<AudioCaptureContext>> captures_;
     std::vector<std::unique_ptr<AudioRenderContext>> renders_;
