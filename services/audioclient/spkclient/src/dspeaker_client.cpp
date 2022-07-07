@@ -165,7 +165,7 @@ int32_t DSpeakerClient::OnStateChange(int32_t type)
         case AudioEventType::DATA_OPENED: {
             std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
             event->type = AudioEventType::SPEAKER_OPENED;
-            event->content = "";
+            event->content = GetVolumeLevel();
             eventCallback_->NotifyEvent(event);
             return DH_SUCCESS;
         }
@@ -180,6 +180,23 @@ int32_t DSpeakerClient::OnStateChange(int32_t type)
             DHLOGE("%s: Invalid parameter type: %d.", LOG_TAG, type);
             return ERR_DH_AUDIO_CLIENT_STATE_IS_INVALID;
     }
+}
+
+string DSpeakerClient::GetVolumeLevel()
+{
+    DHLOGI("%s: GetVolumeLevel begin.", LOG_TAG);
+    std::stringstream ss;
+    AudioStandard::AudioStreamType streamType = AudioStandard::AudioStreamType::STREAM_DEFAULT;
+    auto volumeType = static_cast<AudioStandard::AudioSystemManager::AudioVolumeType>(1);
+    int32_t volumeLevel = AudioStandard::AudioSystemManager::GetInstance()->GetVolume(volumeType);
+    bool isUpdateUi = false;
+    ss << "VOLUME_CHANAGE;"
+       << "AUDIO_STREAM_TYPE=" << streamType << ";"
+       << "VOLUME_LEVEL=" << volumeLevel << ";"
+       << "IS_UPDATEUI=" << isUpdateUi << ";";
+    std::string str = ss.str();
+    DHLOGI("%s: GetVolumeLevel result, event: %s.", LOG_TAG, str.c_str());
+    return str;
 }
 
 void DSpeakerClient::OnVolumeKeyEvent(AudioStandard::AudioStreamType streamType, int32_t volumeLevel, bool isUpdateUi)

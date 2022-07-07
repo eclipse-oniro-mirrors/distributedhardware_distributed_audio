@@ -57,6 +57,7 @@ public:
     int32_t StopRender();
     int32_t GetAudioParameters(const std::shared_ptr<AudioEvent> &event);
     int32_t SetAudioParameters(const std::shared_ptr<AudioEvent> &event);
+    string GetVolumeLevel();
 
 private:
     void PlayThreadRunning();

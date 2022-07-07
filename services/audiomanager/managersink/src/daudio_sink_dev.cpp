@@ -205,7 +205,9 @@ int32_t DAudioSinkDev::NotifySpeakerOpened(const std::shared_ptr<AudioEvent> &au
         return ret;
     }
     DHLOGI("%s: NotifySpeakerOpened start Render success.", LOG_TAG);
-    return DH_SUCCESS;
+    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskVolumeChange, audioEvent->content,
+        "Sink NotifyVolumeChange", &DAudioSinkDev::OnTaskResult);
+    return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSinkDev::NotifySpeakerClosed(const std::shared_ptr<AudioEvent> &audioEvent)
