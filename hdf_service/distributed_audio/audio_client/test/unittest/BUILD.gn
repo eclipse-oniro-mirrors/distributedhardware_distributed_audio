@@ -1,0 +1,66 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+
+config("audio_hdi_test_public") {
+  include_dirs = [
+    "//drivers/peripheral/audio/interfaces/include",
+    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/log/include",
+    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/include/",
+    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/include",
+  ]
+}
+
+ohos_unittest("audio_adapter_hdi_test") {
+  module_out_path = "hidl_adapter/audio_hdi"
+  public_configs = [ ":audio_hdi_test_public" ]
+  sources = [
+    "audio_manager_test.cpp",
+  ]
+
+  deps = [
+    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client:daudio_client",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//third_party/libxml2:xml2",
+    "//utils/native/base:utils",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"unittest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fsigned-char",
+    "-fno-common",
+    "-fno-strict-aliasing",
+  ]
+
+  if (is_standard_system) {
+    external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  } else {
+    external_deps = [ "hilog:libhilog" ]
+  }
+}
+
+group("unittest") {
+  testonly = true
+  deps = []
+  deps += [ ":audio_adapter_hdi_test" ]
+}

@@ -27,7 +27,9 @@
           "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client:daudio_client",
           "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common:libdaudio_hdf_utils"
         ],
-        "test": [],
+        "test": [
+          "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/test/unittest:audio_adapter_hdi_test"
+        ],
         "inner_kits": [
           {
             "name": "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audio/v1_0:libdaudio_proxy_1.0",
