@@ -50,6 +50,7 @@ static int32_t DAudioManagerDriverDispatch(struct HdfDeviceIoClient *client, int
 int HdfDAudioManagerDriverInit(struct HdfDeviceObject *deviceObject)
 {
     HDF_LOGI("HdfDAudioManagerDriverInit enter");
+    HdfDeviceSetClass(deviceObject, DEVICE_CLASS_AUDIO);
     return HDF_SUCCESS;
 }
 
