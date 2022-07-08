@@ -20,6 +20,7 @@
 
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hdf_operate.h"
 #include "daudio_hdi_handler.h"
 #include "daudio_log.h"
 #include "daudio_util.h"
@@ -44,6 +45,14 @@ int32_t DAudioHdiHandler::InitHdiHandler()
     if (audioSrvHdf_ != nullptr) {
         return DH_SUCCESS;
     }
+
+    DHLOGI("%s: Load hdf driver start.", LOG_TAG);
+    int32_t ret = DaudioHdfOperate::GetInstance().LoadDaudioHDFImpl();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Load hdf driver failed, ret: %d", LOG_TAG, ret);
+        return ret;
+    }
+    DHLOGI("%s: Load hdf driver end.", LOG_TAG);
 
     audioSrvHdf_ = IDAudioManager::Get(HDF_AUDIO_SERVICE_NAME.c_str(), false);
     if (audioSrvHdf_ == nullptr) {

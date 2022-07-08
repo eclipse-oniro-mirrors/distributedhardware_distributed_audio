@@ -27,6 +27,7 @@ ohos_shared_library("distributed_audio_hdi_proxy") {
   ]
 
   sources = [
+      "src/daudio_hdf_operate.cpp",
       "src/daudio_hdi_handler.cpp",
       "src/daudio_manager_callback.cpp",
     ]
@@ -38,6 +39,8 @@ ohos_shared_library("distributed_audio_hdi_proxy") {
   ]
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
+    "hdf_core:libhdf_utils",
+    "hdf_core:libhdi",
     "ipc:ipc_single",
     "utils_base:utils",
   ]
