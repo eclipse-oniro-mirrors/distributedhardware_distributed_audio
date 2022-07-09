@@ -1,0 +1,78 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import("//build/ohos.gni")
+import("//build/ohos_var.gni")
+import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+
+module_output_path = "distributed_audio/decode_transport_test"
+
+config("module_private_config") {
+  visibility = [ ":*" ]
+
+  include_dirs = [
+      "//foundation/communication/dsoftbus/interfaces/kits/transport",
+      "${fwk_common_path}/utils/include",
+  ]
+
+  include_dirs += [
+      "${common_path}/include",
+      "${services_path}/common/audioparam",
+      "${services_path}/common/audiodata/include",
+      "${audio_transport_path}/audio_channel/include",
+      "${audio_transport_path}/audiodatachannel/include",
+      "${audio_transport_path}/decodetransport/include",
+      "${audio_transport_path}/interface",
+      "${audio_processor_path}/decodeprocessor/include",
+      "${audio_processor_path}/interface",
+      "${softbusadapter_path}/include",
+      "${audio_transport_path}/test/unittest/audiotranstestutils/include",
+      "${audio_transport_path}/test/unittest/decodetransport/include",
+  ]
+}
+
+ohos_unittest("DecodeTransportTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "src/decode_transport_test.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+      "//third_party/googletest:gtest_main",
+      "//utils/native/base:utils",
+      "${common_path}:distributed_audio_utils",
+      "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
+      "${audio_processor_path}/decodeprocessor:distributed_audio_decoder_processor",
+      "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
+  ]
+
+  external_deps = [
+      "multimedia_media_standard:media_client",
+      "hiviewdfx_hilog_native:libhilog",
+  ]
+
+  defines = [
+      "HI_LOG_ENABLE",
+      "DH_LOG_TAG=\"daudio_trans_test\"",
+      "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+group("decode_transport_test") {
+  testonly = true
+  deps = [":DecodeTransportTest"]
+}
