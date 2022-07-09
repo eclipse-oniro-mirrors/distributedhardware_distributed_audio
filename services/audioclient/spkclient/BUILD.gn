@@ -37,6 +37,7 @@ ohos_shared_library("dspeaker_client") {
         "${services_path}/audioprocessor/interface",
         "${softbusadapter_path}/include",
         "${fwk_common_path}/utils/include",
+        "${fwk_utils_path}/include",
     ]
 
     sources = [
@@ -49,6 +50,7 @@ ohos_shared_library("dspeaker_client") {
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer:audio_renderer",
         "${distributedaudio_path}/common:distributed_audio_utils",
         "${services_path}/common:distributed_audio_service_common",
+        "${fwk_utils_path}:distributedhardwareutils",
     ]
 
     defines = [

@@ -117,13 +117,20 @@ int32_t AudioDecodeTransport::FeedAudioData(std::shared_ptr<AudioData> &audioDat
     return DH_SUCCESS;
 }
 
+int32_t AudioDecodeTransport::GetAudioBuffLen()
+{
+    std::unique_lock<std::mutex> lock(dataQueueMtx_);
+    DHLOGD("Current Audio Buff size: %d", dataQueue_.size());
+    return dataQueue_.size();
+}
+
 int32_t AudioDecodeTransport::RequestAudioData(std::shared_ptr<AudioData> &audioData)
 {
-    DHLOGI("%s: Request audio data.", LOG_TAG);
     std::unique_lock<std::mutex> lock(dataQueueMtx_);
+    DHLOGD("%s: Request audio data, buf len: %d", LOG_TAG, dataQueue_.size());
     if (dataQueue_.empty()) {
-        usleep(SLEEP_TIME);
-        audioData = std::make_shared<AudioData>(FRAME_SIZE);
+        DHLOGD("data queue is empty");
+        return ERR_DH_AUDIO_CLIENT_RENDER_REQ_DATA_FAILED;
     } else {
         audioData = dataQueue_.front();
         dataQueue_.pop();
@@ -179,6 +186,7 @@ void AudioDecodeTransport::OnAudioDataDone(const std::shared_ptr<AudioData> &out
         dataQueue_.pop();
     }
     dataQueue_.push(outputData);
+    DHLOGI("push new spk data, buf len: %d", dataQueue_.size());
 }
 
 void AudioDecodeTransport::OnStateNotify(const AudioEvent &event)

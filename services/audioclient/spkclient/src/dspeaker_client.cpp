@@ -16,9 +16,14 @@
 #include "dspeaker_client.h"
 
 #include "daudio_constants.h"
+#include "dh_utils_tool.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+constexpr int32_t SPK_INTERVAL_US = 20000;
+constexpr int32_t SPK_BUFF_LEN = 5;
+}
 DSpeakerClient::~DSpeakerClient()
 {
     if (speakerTrans_ != nullptr) {
@@ -147,14 +152,44 @@ void DSpeakerClient::PlayThreadRunning()
     }
     DHLOGI("%s: Obtains the minimum buffer length, bufferlen: %d.", LOG_TAG, bufferLen);
 
+    bool needStartWait = true;
     while (isRenderReady_.load()) {
-        std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(bufferLen);
-        int32_t ret = speakerTrans_->RequestAudioData(audioData);
-        if (ret == DH_SUCCESS && audioData != nullptr) {
-            audioRenderer_->Write(audioData->Data(), audioData->Capacity());
-        } else {
-            DHLOGI("%s: Failed to send data.", LOG_TAG);
+        int64_t loopInTime = GetCurrentTime();
+        if (needStartWait &&
+                std::static_pointer_cast<AudioDecodeTransport>(speakerTrans_)->GetAudioBuffLen() <= SPK_BUFF_LEN) {
+            DHLOGD("Spk buff not enough, wait");
+            usleep(SPK_INTERVAL_US);
+            continue;
         }
+        needStartWait = false;
+
+        std::shared_ptr<AudioData> audioData = nullptr;
+        int32_t reqDataRet = speakerTrans_->RequestAudioData(audioData);
+        int32_t writeLen = 0;
+        int32_t writeOffSet = 0;
+        if (reqDataRet != DH_SUCCESS && audioData == nullptr) {
+            DHLOGE("%s: Failed to send data, ret: %d", LOG_TAG, reqDataRet);
+            continue;
+        }
+
+        while (writeOffSet < audioData->Capacity()) {
+            writeLen = audioRenderer_->Write(audioData->Data() + writeOffSet, audioData->Capacity() - writeOffSet);
+            DHLOGD("write audio render, write len: %d, raw len: %d, offset: %d",
+                writeLen, audioData->Capacity(), writeOffSet);
+            if (writeLen < 0) {
+                break;
+            }
+            writeOffSet += writeLen;
+        }
+
+        int64_t startSleepTime = GetCurrentTime();
+        int32_t sleepTime = SPK_INTERVAL_US - ((startSleepTime - loopInTime)) * 1000;
+        if (sleepTime > 0) {
+            usleep(sleepTime);
+        }
+        int64_t stopSleepTime = GetCurrentTime();
+        DHLOGD("%s: beam cost: %d, spk sleep time: %d ms, sleep arg: %d us",
+            LOG_TAG, (startSleepTime - loopInTime), (stopSleepTime - startSleepTime), sleepTime);
     }
 }
 

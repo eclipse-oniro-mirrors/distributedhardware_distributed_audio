@@ -53,6 +53,7 @@ public:
     void OnAudioDataDone(const std::shared_ptr<AudioData> &outputData) override;
     void OnStateNotify(const AudioEvent &event) override;
 
+    int32_t GetAudioBuffLen();
 private:
     int32_t InitAudioDecodeTransport(const AudioParam &localParam, const AudioParam &remoteParam,
         const std::string &role);

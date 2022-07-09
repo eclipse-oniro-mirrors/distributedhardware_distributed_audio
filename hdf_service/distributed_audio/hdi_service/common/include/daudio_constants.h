@@ -56,7 +56,7 @@ constexpr uint32_t AUDIO_FORMAT_DEFAULT = 16;
 constexpr uint32_t AUDIO_DATA_SIZE_DEFAULT = 4096;
 
 constexpr int32_t MILLISECOND_PER_SECOND = 1000;
-constexpr int32_t AUDIO_FRAME_TIME_INTERFAL_DEFAULT = 21333;
+constexpr int32_t AUDIO_FRAME_TIME_INTERFAL_DEFAULT = 20000;
 } // DistributeHardware
 } // OHOS
 #endif // OHOS_DAUDIO_CONSTANTS_H
