@@ -16,7 +16,7 @@ import("//build/ohos.gni")
 import("//build/ohos_var.gni")
 import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_output_path = "distributed_audio/decode_transport_test"
+module_output_path = "distributed_audio/services/audiotransport/decode_transport_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -43,36 +43,36 @@ config("module_private_config") {
 }
 
 ohos_unittest("DecodeTransportTest") {
-  module_out_path = module_output_path
+    module_out_path = module_output_path
 
-  sources = [
-    "src/decode_transport_test.cpp",
-  ]
+    sources = [
+        "src/decode_transport_test.cpp",
+    ]
 
-  configs = [ ":module_private_config" ]
+    configs = [ ":module_private_config" ]
 
-  deps = [
-      "//third_party/googletest:gtest_main",
-      "//utils/native/base:utils",
-      "${common_path}:distributed_audio_utils",
-      "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
-      "${audio_processor_path}/decodeprocessor:distributed_audio_decoder_processor",
-      "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
-  ]
+    deps = [
+        "//third_party/googletest:gtest_main",
+        "//utils/native/base:utils",
+        "${common_path}:distributed_audio_utils",
+        "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
+        "${audio_processor_path}/decodeprocessor:distributed_audio_decoder_processor",
+        "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
+    ]
 
-  external_deps = [
-      "multimedia_media_standard:media_client",
-      "hiviewdfx_hilog_native:libhilog",
-  ]
+    external_deps = [
+        "multimedia_media_standard:media_client",
+        "hiviewdfx_hilog_native:libhilog",
+    ]
 
-  defines = [
-      "HI_LOG_ENABLE",
-      "DH_LOG_TAG=\"daudio_trans_test\"",
-      "LOG_DOMAIN=0xD004100",
-  ]
+    defines = [
+        "HI_LOG_ENABLE",
+        "DH_LOG_TAG=\"daudio_trans_test\"",
+        "LOG_DOMAIN=0xD004100",
+    ]
 }
 
 group("decode_transport_test") {
-  testonly = true
-  deps = [":DecodeTransportTest"]
+    testonly = true
+    deps = [":DecodeTransportTest"]
 }

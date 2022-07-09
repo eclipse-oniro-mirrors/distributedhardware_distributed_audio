@@ -13,54 +13,59 @@
 
 import("//build/test.gni")
 
-config("audio_hdi_test_public") {
-  include_dirs = [
-    "//drivers/peripheral/audio/interfaces/include",
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/log/include",
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/include/",
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/include",
-  ]
+module_output_path = "distributed_audio/hdf_service/audio_hdi"
+
+config("module_private_config") {
+    visibility = [ ":*" ]
+
+    include_dirs = [
+        "//drivers/peripheral/audio/interfaces/include",
+        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/log/include",
+        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/include/",
+        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/include",
+    ]
 }
 
 ohos_unittest("audio_adapter_hdi_test") {
-  module_out_path = "hidl_adapter/audio_hdi"
-  public_configs = [ ":audio_hdi_test_public" ]
-  sources = [
-    "audio_manager_test.cpp",
-  ]
+    module_out_path = module_output_path
 
-  deps = [
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client:daudio_client",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
-    "//third_party/libxml2:xml2",
-    "//utils/native/base:utils",
-  ]
+    configs = [ ":module_private_config" ]
 
-  defines = [
-    "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"unittest\"",
-    "LOG_DOMAIN=0xD004100",
-  ]
+    sources = [
+        "audio_manager_test.cpp",
+    ]
 
-  cflags = [
-    "-Wall",
-    "-Wextra",
-    "-Werror",
-    "-fsigned-char",
-    "-fno-common",
-    "-fno-strict-aliasing",
-  ]
+    deps = [
+        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client:daudio_client",
+        "//third_party/googletest:gmock_main",
+        "//third_party/googletest:gtest_main",
+        "//third_party/libxml2:xml2",
+        "//utils/native/base:utils",
+    ]
 
-  if (is_standard_system) {
-    external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
-  } else {
-    external_deps = [ "hilog:libhilog" ]
-  }
+    defines = [
+        "HI_LOG_ENABLE",
+        "DH_LOG_TAG=\"unittest\"",
+        "LOG_DOMAIN=0xD004100",
+    ]
+
+    cflags = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fsigned-char",
+        "-fno-common",
+        "-fno-strict-aliasing",
+    ]
+
+    if (is_standard_system) {
+        external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+    } else {
+        external_deps = [ "hilog:libhilog" ]
+    }
 }
 
 group("unittest") {
-  testonly = true
-  deps = []
-  deps += [ ":audio_adapter_hdi_test" ]
+    testonly = true
+    deps = [ ":audio_adapter_hdi_test" ]
 }

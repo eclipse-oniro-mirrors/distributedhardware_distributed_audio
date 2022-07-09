@@ -98,8 +98,13 @@
                 }
             ],
             "test":[
-                "//foundation/distributedhardware/distributed_audio/audiohandler/unittest:AudioHandlerTest",
-                "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/test/unittests/audiosinktest:AudioSinkTest"
+                "//foundation/distributedhardware/distributed_audio/audiohandler/test/unittest:audio_handler_test",
+                "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/test/unittest:daudio_ipc2manager_test",
+                "//foundation/distributedhardware/distributed_audio/services/audioclient/test/unittest:daudio_client_test",
+                "//foundation/distributedhardware/distributed_audio/services/audiocontrol/test/unittest:daudio_control_test",
+                "//foundation/distributedhardware/distributed_audio/services/audioprocessor/test/unittest:daudio_processor_test",
+                "//foundation/distributedhardware/distributed_audio/services/audiotransport/test/unittest:daudio_transport_test",
+                "//foundation/distributedhardware/distributed_audio/services/softbusadapter/test/unittest:audio_soft_bus_adapter_test"
             ]
         }
     }

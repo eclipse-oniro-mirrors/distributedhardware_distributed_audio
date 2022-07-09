@@ -14,53 +14,51 @@
 import("//build/test.gni")
 import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_out_path = "distributed_audio/services/audiotransport/audio_data_channel_test"
+module_out_path = "distributed_audio/interfaces/audio_sink_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "//third_party/json/include",
-    "//foundation/graphic/standard/interfaces/innerkits/surface",
     "${fwk_common_path}/utils/include",
-    "${fwk_utils_path}/include/",
+    "${fwk_utils_path}/include",
+    "${common_path}/include",
+    "./include",
+    "${services_path}/common/utils/include",
+    "${interfaces_path}/inner_kits/native_cpp/audio_sink/include",
   ]
 
-  include_dirs += [
-    "include",
-    "${common_path}/include",
-    "${services_path}/audiotransport/test/unittest/audiotranstestutils/include",
-    "${services_path}/common/audioparam",
-    "${services_path}/common/audiodata/include",
-    "${softbusadapter_path}/include",
-    "${services_path}/audiotransport/audio_channel/include",
-    "${services_path}/audiotransport/audiodatachannel/include",
-    "${services_path}/audiotransport/audioctrltransport/interface",
-  ]
 }
 
-## UnitTest audio_data_channel_test
-ohos_unittest("AudioDataChannelTest") {
+## UnitTest AudioSinkTest
+ohos_unittest("AudioSinkTest") {
   module_out_path = module_out_path
 
-  sources = [ "${services_path}/audiotransport/test/unittest/audiodatachannel/src/audio_data_channel_test.cpp" ]
+  sources = [ "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosinktest/src/daudio_sink_handler_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
+    "${common_path}:distributed_audio_utils",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
+    "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/audio_sink:distributed_audio_sink_sdk",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
-    "//foundation/distributedhardware/distributed_audio/services/softbusadapter:distributed_audio_softbus_adapter",
-    "//foundation/distributedhardware/distributed_audio/services/audiotransport/audiodatachannel:distributed_audio_data_channel",
+    "//utils/native/base:utils",
   ]
 
   external_deps = [
     "dsoftbus:softbus_client",
     "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
     "multimedia_media_standard:media_client",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
   ]
 }
 
-group("audio_data_channel_test") {
+group("audio_sink_test") {
   testonly = true
-  deps = [ ":AudioDataChannelTest" ]
+  deps = [ ":AudioSinkTest" ]
 }

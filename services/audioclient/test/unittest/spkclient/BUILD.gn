@@ -16,20 +16,21 @@ import("//build/ohos_var.gni")
 import("//build/test.gni")
 import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_out_path = "distributed_audio/dspeaker_client_test"
+module_out_path = "distributed_audio/audioclient/spk_client_test"
 
 config("module_private_config") {
-  visibility = [ ":*" ]
+    visibility = [ ":*" ]
 
-  include_dirs = [
+    include_dirs = [
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
         "//foundation/multimedia/audio_framework/frameworks/native/common/include",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager/include",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer/include",
-  ]
+    ]
 
-  include_dirs += [
-        "${services_path}/audioclient/spkclient/test/unittest/include",
+    include_dirs += [
+        "${services_path}/audioclient/test/unittest/spkclient/include",
+        "${services_path}/audioclient/test/unittest/audioclienttestutils/include",
         "${common_path}/include",
         "${services_path}/audioclient/spkclient/include",
         "${services_path}/common/audiodata/include",
@@ -43,33 +44,32 @@ config("module_private_config") {
         "${services_path}/audioprocessor/interface",
         "${softbusadapter_path}/include",
         "${fwk_common_path}/utils/include",
-  ]
+    ]
 }
 
 ## UnitTest dspeaker_client_test
-ohos_unittest("DSpeakerClientTest") {
-  module_out_path = module_out_path
+ohos_unittest("SpeakerClientTest") {
+    module_out_path = module_out_path
 
-  sources = [
-    "//foundation/distributedhardware/distributed_audio/services/audioclient/spkclient/test/unittest/src/dspeaker_client_test.cpp",
-  ]
+    sources = [
+        "//foundation/distributedhardware/distributed_audio/services/audioclient/test/unittest/spkclient/src/dspeaker_client_test.cpp",
+    ]
 
-  configs = [ ":module_private_config" ]
+    configs = [ ":module_private_config" ]
 
-  deps = [
-    "//third_party/googletest:gmock",
-    "//third_party/googletest:gtest_main",
-    "//foundation/distributedhardware/distributed_audio/services/audioclient/spkclient:dspeaker_client",
-    "${services_path}/audiotransport/decodetransport:distributed_audio_decode_transport",
-    "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager:audio_client",
-    "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer:audio_renderer",
-    "${distributedaudio_path}/common:distributed_audio_utils",
-  ]
-
+    deps = [
+        "//third_party/googletest:gmock",
+        "//third_party/googletest:gtest_main",
+        "//foundation/distributedhardware/distributed_audio/services/audioclient/spkclient:dspeaker_client",
+        "${services_path}/audiotransport/decodetransport:distributed_audio_decode_transport",
+        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager:audio_client",
+        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer:audio_renderer",
+        "${distributedaudio_path}/common:distributed_audio_utils",
+    ]
 }
 
-group("dspeaker_client_test") {
-  testonly = true
-  deps = [ ":DSpeakerClientTest" ]
+group("spk_client_test") {
+    testonly = true
+    deps = [ ":SpeakerClientTest" ]
 }
 

@@ -35,4 +35,4 @@ public:
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif OHOS_DAUDIO_IPC_CALLBACK_TEST_H
+#endif // OHOS_DAUDIO_IPC_CALLBACK_TEST_H

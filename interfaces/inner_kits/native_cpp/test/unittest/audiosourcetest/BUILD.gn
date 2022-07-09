@@ -15,7 +15,7 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_out_path = "distributed_audio/source_trans_test"
+module_out_path = "distributed_audio/interfaces/audio_source_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -32,7 +32,7 @@ config("module_private_config") {
     "${services_path}/common/audioparam",
     "${services_path}/common/utils/include",
     "${interfaces_path}/inner_kits/native_cpp/audio_source/include",
-    "${interfaces_path}/inner_kits/native_cpp/test/unittests/audiosourcetest/include",
+    "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/include",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 }
@@ -42,8 +42,8 @@ ohos_unittest("AudioSourceTest") {
   module_out_path = module_out_path
 
   sources = [
-    "${interfaces_path}/inner_kits/native_cpp/test/unittests/audiosourcetest/src/daudio_ipc_callback_test.cpp",
-    "${interfaces_path}/inner_kits/native_cpp/test/unittests/audiosourcetest/src/daudio_source_handler_test.cpp",
+    "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/src/daudio_ipc_callback_test.cpp",
+    "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/src/daudio_source_handler_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
