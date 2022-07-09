@@ -42,10 +42,6 @@ DAudioSinkDev::DAudioSinkDev(const std::string &devId)
 DAudioSinkDev::~DAudioSinkDev()
 {
     DHLOGI("%s: Distributed audio sink device destructed.", LOG_TAG);
-    dAudioSinkDevCtrlMgr_ = nullptr;
-    speakerClient_ = nullptr;
-    micClient_ = nullptr;
-    taskQueue_ = nullptr;
 }
 
 void DAudioSinkDev::NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent)

@@ -35,8 +35,6 @@ DAudioSourceDevCtrlMgr::DAudioSourceDevCtrlMgr(const std::string &devId,
 DAudioSourceDevCtrlMgr::~DAudioSourceDevCtrlMgr()
 {
     DHLOGI("%s: Distributed audio source ctrl destructed.", LOG_TAG);
-    audioCtrlTrans_ = nullptr;
-    audioEventCallback_ = nullptr;
 }
 
 int32_t DAudioSourceDevCtrlMgr::Init()

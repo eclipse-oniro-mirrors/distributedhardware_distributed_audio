@@ -39,9 +39,6 @@ DAudioSinkDevCtrlMgr::DAudioSinkDevCtrlMgr(const std::string &devId,
 DAudioSinkDevCtrlMgr::~DAudioSinkDevCtrlMgr()
 {
     DHLOGI("%s: Distributed audio sink ctrl destructed.", LOG_TAG);
-    audioCtrlTrans_ = nullptr;
-    audioEventCallback_ = nullptr;
-    isOpened_ = false;
 }
 
 void DAudioSinkDevCtrlMgr::OnStateChange(int32_t type)
@@ -77,11 +74,7 @@ int32_t DAudioSinkDevCtrlMgr::UnInit()
         audioCtrlTrans_->Release();
         audioCtrlTrans_ = nullptr;
     }
-
-    if (audioEventCallback_ != nullptr) {
-        audioEventCallback_ = nullptr;
-    }
-
+    audioEventCallback_ = nullptr;
     isOpened_ = false;
     return DH_SUCCESS;
 }
@@ -145,11 +138,7 @@ int32_t DAudioSinkDevCtrlMgr::Release()
     if (audioCtrlTrans_ == nullptr) {
         return ERR_DH_AUDIO_SA_SINK_CTRL_TRANS_NULL;
     }
-    int32_t ret = audioCtrlTrans_->Release();
-    if (ret != DH_SUCCESS) {
-        return ret;
-    }
-    return UnInit();
+    return audioCtrlTrans_->Release();
 }
 
 bool DAudioSinkDevCtrlMgr::IsOpened()

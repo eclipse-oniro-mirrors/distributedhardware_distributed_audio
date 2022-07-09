@@ -69,9 +69,9 @@ private:
 
     static constexpr uint8_t RPC_WAIT_SECONDS = 5;
     static const constexpr char *LOG_TAG = "DAudioSinkDev";
-    std::shared_ptr<DSpeakerClient> speakerClient_ = nullptr;
-    std::shared_ptr<DMicClient> micClient_ = nullptr;
-    std::shared_ptr<DAudioSinkDevCtrlMgr> dAudioSinkDevCtrlMgr_ = nullptr;
+    std::shared_ptr<DSpeakerClient> speakerClient_;
+    std::shared_ptr<DMicClient> micClient_;
+    std::shared_ptr<DAudioSinkDevCtrlMgr> dAudioSinkDevCtrlMgr_;
     std::string devId_;
 
     std::mutex rpcWaitMutex_;

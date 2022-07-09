@@ -47,8 +47,8 @@ public:
 private:
     static const constexpr char *LOG_TAG = "DAudioSourceDevCtrlMgr";
     std::string devId_;
-    std::shared_ptr<IAudioCtrlTransport> audioCtrlTrans_ = nullptr;
-    std::shared_ptr<IAudioEventCallback> audioEventCallback_ = nullptr;
+    std::shared_ptr<IAudioCtrlTransport> audioCtrlTrans_;
+    std::shared_ptr<IAudioEventCallback> audioEventCallback_;
     bool isOpened_ = false;
     std::mutex channelWaitMutex_;
     std::condition_variable channelWaitCond_;
