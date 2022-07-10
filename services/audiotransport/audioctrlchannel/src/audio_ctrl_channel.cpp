@@ -88,8 +88,8 @@ int32_t AudioCtrlChannel::CloseSession()
 {
     DHLOGI("%s: CloseSession, sessionId: %d.", LOG_TAG, sessionId_);
     if (sessionId_ == 0) {
-        DHLOGE("%s: Session is not opened.", LOG_TAG);
-        return ERR_DH_AUDIO_TRANS_SESSION_NOT_OPEN;
+        DHLOGE("%s: Session is already closed.", LOG_TAG);
+        return DH_SUCCESS;
     }
 
     int32_t ret = SoftbusAdapter::GetInstance().CloseSoftbusSession(sessionId_);
