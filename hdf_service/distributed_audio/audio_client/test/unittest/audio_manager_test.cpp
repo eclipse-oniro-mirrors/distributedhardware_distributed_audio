@@ -17,6 +17,7 @@
 #include <gtest/gtest.h>
 #include <sys/mman.h>
 
+#include "distributed_audio_client.h"
 #include "audio_manager.h"
 #include "daudio_errcode.h"
 #include "daudio_log.h"
@@ -49,15 +50,15 @@ void AudioManagerTest::TearDownTestCase()
 */
 HWTEST_F(AudioManagerTest, GetAllAdaptersAbnormal, TestSize.Level1)
 {
-    AudioManager *manager = GetAudioManagerFuncs();
+    struct AudioManagerContext managerContext;
     int32_t size = 0;
     AudioAdapterDescriptor *descs = nullptr;
 
-    int32_t ret = manager->GetAllAdapters(nullptr, &descs, &size);
+    int32_t ret = managerContext.instance_.GetAllAdapters(nullptr, &descs, &size);
     EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
-    ret = manager->GetAllAdapters(manager, nullptr, &size);
+    ret = managerContext.instance_.GetAllAdapters(&managerContext.instance_, nullptr, &size);
     EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
-    ret = manager->GetAllAdapters(manager, &descs, nullptr);
+    ret = managerContext.instance_.GetAllAdapters(&managerContext.instance_, &descs, nullptr);
     EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
 }
 
@@ -69,15 +70,15 @@ HWTEST_F(AudioManagerTest, GetAllAdaptersAbnormal, TestSize.Level1)
 */
 HWTEST_F(AudioManagerTest, LoadAdapterAbnormal, TestSize.Level1)
 {
-    AudioManager *manager = GetAudioManagerFuncs();
+    struct AudioManagerContext managerContext;
     AudioAdapterDescriptor desc = {};
     AudioAdapter *adapter = nullptr;
 
-    int32_t ret = manager->LoadAdapter(nullptr, &desc, &adapter);
+    int32_t ret = managerContext.instance_.LoadAdapter(nullptr, &desc, &adapter);
     EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
-    ret = manager->LoadAdapter(manager, nullptr, &adapter);
+    ret = managerContext.instance_.LoadAdapter(&managerContext.instance_, nullptr, &adapter);
     EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
-    ret = manager->LoadAdapter(manager, &desc, nullptr);
+    ret = managerContext.instance_.LoadAdapter(&managerContext.instance_, &desc, nullptr);
     EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
 }
 } // DistributedHardware
