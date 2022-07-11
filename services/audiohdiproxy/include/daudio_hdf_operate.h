@@ -12,18 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OHOS_DAUDIO_HDF_OPERATE_H
 #define OHOS_DAUDIO_HDF_OPERATE_H
- 
+
 #include <condition_variable>
 #include <mutex>
- 
+
 #include "iservstat_listener_hdi.h"
 #include "idevmgr_hdi.h"
 #include "iservmgr_hdi.h"
 #include "single_instance.h"
- 
+
 using OHOS::HDI::DeviceManager::V1_0::IDeviceManager;
 using OHOS::HDI::ServiceManager::V1_0::IServiceManager;
 using OHOS::HDI::ServiceManager::V1_0::IServStatListener;
@@ -32,20 +32,20 @@ using OHOS::HDI::ServiceManager::V1_0::ServStatListenerStub;
 const std::string AUDIO_SERVICE_NAME = "daudio_primary_service";
 const std::string AUDIOEXT_SERVICE_NAME = "daudio_ext_service";
 constexpr uint16_t INVALID_VALUE = 0xffff;
-constexpr int32_t WAIT_TIME = 500;
- 
+constexpr int32_t WAIT_TIME = 5000;
+
 namespace OHOS {
 namespace DistributedHardware {
 class DaudioHdfOperate {
 DECLARE_SINGLE_INSTANCE(DaudioHdfOperate);
- 
+
 public:
     int32_t LoadDaudioHDFImpl();
     int32_t UnLoadDaudioHDFImpl();
- 
+
 private:
     int32_t WaitLoadService(const uint16_t& servStatus, const std::string& servName);
- 
+
 private:
     OHOS::sptr<IDeviceManager> devmgr_;
     OHOS::sptr<IServiceManager> servMgr_;
@@ -54,7 +54,7 @@ private:
     std::condition_variable hdfOperateCon_;
     std::mutex hdfOperateMutex_;
 };
- 
+
 class DAudioHdfServStatListener : public OHOS::HDI::ServiceManager::V1_0::ServStatListenerStub {
 public:
     using StatusCallback = std::function<void(const ServiceStatus &)>;
@@ -63,7 +63,7 @@ public:
     }
     ~DAudioHdfServStatListener() = default;
     void OnReceive(const ServiceStatus& status) override;
- 
+
 private:
     StatusCallback callback_;
 };

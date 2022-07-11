@@ -163,6 +163,7 @@ int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, int32_t dhId, st
             break;
         case AudioEventType::VOLUME_CHANGE:
             newEvent.type = AUDIO_EVENT_VOLUME_CHANGE;
+            break;
         default:
             DHLOGE("%s: Unsupport audio event.", LOG_TAG);
             break;

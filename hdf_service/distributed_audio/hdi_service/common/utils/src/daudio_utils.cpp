@@ -47,7 +47,7 @@ std::string GetAnonyString(const std::string &value)
 
 int32_t GetAudioParamStr(const std::string &params, const std::string &key, std::string &value)
 {
-    int32_t step = key.size();
+    size_t step = key.size();
     if (step >= params.size()) {
         return ERR_DH_AUDIO_HDF_FAIL;
     }
