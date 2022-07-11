@@ -15,7 +15,7 @@ import("//build/ohos.gni")
 import("//build/test.gni")
 import("//drivers/hdf_core/adapter/uhdf2/uhdf.gni")
 
-module_out_path = "distributed_audio/hdi_service/audio"
+module_out_path = "distributed_audio/hdf_service/hdi_service/audio"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -59,7 +59,7 @@ ohos_unittest("HDIServiceAudioAdapterTest") {
   ]
 }
 
-group("hdi_service_audio_test") {
+group("hdi_service_audio_adapter_test") {
   testonly = true
   deps = [ ":HDIServiceAudioAdapterTest" ]
 }

@@ -28,7 +28,9 @@
           "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common:libdaudio_hdf_utils"
         ],
         "test": [
-          "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/test/unittest:audio_adapter_hdi_test"
+          "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/test/unittest:audio_adapter_hdi_test",
+          "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/audio/v1_0/test/unittest:hdi_service_audio_test",
+          "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/audio_ext/v1_0/test/unittest:hdi_service_audio_ext_test"
         ],
         "inner_kits": [
           {

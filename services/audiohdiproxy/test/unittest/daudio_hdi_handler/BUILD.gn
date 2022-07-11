@@ -16,7 +16,7 @@ import("//build/ohos_var.gni")
 import("//build/test.gni")
 import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_out_path = "distributed_audio/audiohdiproxy_test"
+module_out_path = "distributed_audio/services/audiohdiproxy/daudio_hdi_handler"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -59,7 +59,7 @@ ohos_unittest("DAudioHdiHandlerTest") {
   ]
 }
 
-group("audiohdiproxy_test") {
+group("daudio_hdi_handler_test") {
   testonly = true
   deps = [":DAudioHdiHandlerTest"]
 }

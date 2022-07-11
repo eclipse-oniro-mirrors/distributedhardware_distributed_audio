@@ -13,34 +13,40 @@
 
 import("//build/test.gni")
 
-config("audio_hdi_test_public") {
-  include_dirs = [
-    "//drivers/peripheral/audio/interfaces/include",
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/log/include",
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/include/",
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/include",
-  ]
+module_output_path = "distributed_audio/hdf_service/audio_client"
+
+config("module_private_config") {
+    visibility = [ ":*" ]
+
+    include_dirs = [
+        "//drivers/peripheral/audio/interfaces/include",
+        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/log/include",
+        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/include/",
+        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/include",
+    ]
 }
 
-ohos_unittest("audio_adapter_hdi_test") {
-  module_out_path = "hidl_adapter/audio_hdi"
-  public_configs = [ ":audio_hdi_test_public" ]
-  sources = [
-    "audio_manager_test.cpp",
+ohos_unittest("AudioAdapterHdiTest") {
+    module_out_path = module_output_path
+
+    configs = [ ":module_private_config" ]
+
+    sources = [
+        "audio_manager_test.cpp",
+    ]
+
+    deps = [
+        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client:daudio_client",
+        "//third_party/googletest:gmock_main",
+        "//third_party/googletest:gtest_main",
+        "//third_party/libxml2:xml2",
+        "//utils/native/base:utils",
   ]
 
-  deps = [
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client:daudio_client",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
-    "//third_party/libxml2:xml2",
-    "//utils/native/base:utils",
-  ]
-
-  public_deps = [
-    "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audio/v1_0:libdaudio_proxy_1.0",
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common:libdaudio_hdf_utils"
-  ]
+    public_deps = [
+        "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audio/v1_0:libdaudio_proxy_1.0",
+        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common:libdaudio_hdf_utils"
+    ]
 
   external_deps = [
     "hdf_core:libhdf_utils",
@@ -49,23 +55,24 @@ ohos_unittest("audio_adapter_hdi_test") {
     "utils_base:utils",
   ]
 
-  defines = [
-    "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"unittest\"",
-    "LOG_DOMAIN=0xD004100",
-  ]
+    defines = [
+        "HI_LOG_ENABLE",
+        "DH_LOG_TAG=\"unittest\"",
+        "LOG_DOMAIN=0xD004100",
+    ]
 
-  cflags = [
-    "-Wall",
-    "-Wextra",
-    "-Werror",
-    "-fsigned-char",
-    "-fno-common",
-    "-fno-strict-aliasing",
-  ]
+    cflags = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fsigned-char",
+        "-fno-common",
+        "-fno-strict-aliasing",
+    ]
+
 }
 
-group("unittest") {
-  testonly = true
-  deps = [ ":audio_adapter_hdi_test" ]
+group("audio_adapter_hdi_test") {
+    testonly = true
+    deps = [ ":AudioAdapterHdiTest" ]
 }

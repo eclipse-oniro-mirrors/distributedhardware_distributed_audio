@@ -16,7 +16,7 @@ import("//build/ohos.gni")
 import("//build/ohos_var.gni")
 import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_output_path = "distributed_audio/decode_processor_test"
+module_output_path = "distributed_audio/services/audioprocessor/decode_processor_test"
 
 config("module_private_config") {
     visibility = [ ":*" ]

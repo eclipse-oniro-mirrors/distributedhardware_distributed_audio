@@ -15,14 +15,14 @@ import("//build/ohos.gni")
 import("//build/test.gni")
 import("//drivers/hdf_core/adapter/uhdf2/uhdf.gni")
 
-module_out_path = "distributed_audio/hdi_service/audio"
+module_out_path = "distributed_audio/hdf_service/hdi_service/audio"
 
 config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
     "include",
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/audio/v1_0/test/unittest/audio_test_utils/include",
+    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/audio/v1_0/test/unittest/audio_test_utils",
     "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/audio/v1_0/include",
     "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/include",
     "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/log/include",
@@ -57,7 +57,7 @@ ohos_unittest("HDIServiceManagerTest") {
   ]
 }
 
-group("hdi_service_audio_v1_0_test") {
+group("hdi_service_audio_manager_test") {
   testonly = true
   deps = [ ":HDIServiceManagerTest" ]
 }
