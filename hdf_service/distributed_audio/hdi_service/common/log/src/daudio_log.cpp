@@ -26,7 +26,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-constexpr int32_t LOG_MAX_LEN = 4096;
 const std::string DAUDIO_LOG_TITLE_TAG = "DAUDIO";
 
 static void DHLogOut(DHLogLevel logLevel, const char *logBuf)
@@ -72,7 +71,8 @@ static void DHLogOut(DHLogLevel logLevel, const char *logBuf)
 
 void DHLog(DHLogLevel logLevel, const char *fmt, ...)
 {
-    char logBuf[LOG_MAX_LEN] = {0};
+    constexpr int32_t logMaxLen = 4096;
+    char logBuf[logMaxLen] = {0};
     va_list arg;
 
     (void)memset_s(&arg, sizeof(va_list), 0, sizeof(va_list));
