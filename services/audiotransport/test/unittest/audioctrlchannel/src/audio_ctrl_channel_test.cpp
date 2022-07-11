@@ -73,7 +73,7 @@ HWTEST_F(AudioCtrlChannelTest, OpenSession_001, TestSize.Level1)
     EXPECT_EQ(DH_SUCCESS, ctrlChannel_->CreateSession(listener, CTRL_SESSION_NAME));
     ctrlChannel_->sessionName_ = CTRL_SESSION_NAME;
     EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, ctrlChannel_->OpenSession());
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_SESSION_NOT_OPEN, ctrlChannel_->CloseSession());
+    EXPECT_EQ(DH_SUCCESS, ctrlChannel_->CloseSession());
     EXPECT_EQ(DH_SUCCESS, ctrlChannel_->ReleaseSession());
 }
 
@@ -86,7 +86,7 @@ HWTEST_F(AudioCtrlChannelTest, OpenSession_001, TestSize.Level1)
 HWTEST_F(AudioCtrlChannelTest, OpenSession_002, TestSize.Level1)
 {
     EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, ctrlChannel_->OpenSession());
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_SESSION_NOT_OPEN, ctrlChannel_->CloseSession());
+    EXPECT_EQ(DH_SUCCESS, ctrlChannel_->CloseSession());
 }
 
 /**
