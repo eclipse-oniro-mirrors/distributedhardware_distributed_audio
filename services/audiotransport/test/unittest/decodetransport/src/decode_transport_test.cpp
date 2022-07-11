@@ -274,7 +274,7 @@ HWTEST_F(DecodeTransportTest, decode_transport_test_009, TestSize.Level1)
 
 /**
  * @tc.name: decode_transport_test_010
- * @tc.desc: Verify request audio transport function.
+ * @tc.desc: Verify request audio transport function, when decoded audio data queue is empty.
  * @tc.type: FUNC
  * @tc.require: AR000H0E5U
  */
@@ -286,9 +286,35 @@ HWTEST_F(DecodeTransportTest, decode_transport_test_010, TestSize.Level1)
     decodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
     EXPECT_EQ(DH_SUCCESS, decodeTrans_->Start());
 
-    std::shared_ptr<AudioData> inputData = nullptr;
-    EXPECT_EQ(DH_SUCCESS, decodeTrans_->RequestAudioData(inputData));
-    EXPECT_NE(inputData, nullptr);
+    std::shared_ptr<AudioData> outputData = nullptr;
+    EXPECT_NE(DH_SUCCESS, decodeTrans_->RequestAudioData(outputData));
+    EXPECT_EQ(outputData, nullptr);
+
+    EXPECT_EQ(DH_SUCCESS, decodeTrans_->Stop());
+    EXPECT_EQ(DH_SUCCESS, decodeTrans_->Release());
+}
+
+/**
+ * @tc.name: decode_transport_test_011
+ * @tc.desc: Verify request audio transport function, when decoded audio data queue is not empty.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(DecodeTransportTest, decode_transport_test_011, TestSize.Level1)
+{
+    EXPECT_EQ(DH_SUCCESS, decodeTrans_->SetUp(LOC_PARA_ENC_TEST, RMT_PARA_ENC_TEST, transCallback_, ROLE_TEST));
+    EXPECT_NE(decodeTrans_->audioChannel_, nullptr);
+    EXPECT_EQ(DH_SUCCESS, decodeTrans_->audioChannel_->ReleaseSession());
+    decodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
+    EXPECT_EQ(DH_SUCCESS, decodeTrans_->Start());
+
+    size_t bufLen = 305;
+    std::shared_ptr<AudioData> decodedData = std::make_shared<AudioData>(bufLen);
+    decodeTrans_->dataQueue_.push(decodedData);
+    std::shared_ptr<AudioData> outputData = nullptr;
+    EXPECT_EQ(DH_SUCCESS, decodeTrans_->RequestAudioData(outputData));
+    EXPECT_NE(outputData, nullptr);
+    EXPECT_EQ(outputData->Size(), decodedData->Size());
 
     EXPECT_EQ(DH_SUCCESS, decodeTrans_->Stop());
     EXPECT_EQ(DH_SUCCESS, decodeTrans_->Release());
