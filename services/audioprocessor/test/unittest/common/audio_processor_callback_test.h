@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#ifndef OHOS_DAUDIO_PROCESSOR_CALLBACK_TEST_H
+#define OHOS_DAUDIO_PROCESSOR_CALLBACK_TEST_H
+
 #include "audio_data.h"
 #include "audio_event.h"
 #include "daudio_log.h"
@@ -45,3 +48,4 @@ void AudioProcessorCallbackTest::OnStateNotify(const AudioEvent &event)
 }
 } // namespace DistributedHardware
 } // namespace OHOS
+#endif // OHOS_DAUDIO_PROCESSOR_CALLBACK_TEST_H
