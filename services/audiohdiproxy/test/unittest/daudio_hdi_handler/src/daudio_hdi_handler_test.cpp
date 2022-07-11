@@ -96,8 +96,9 @@ HWTEST_F(DAudioHdiHandlerTest, NotifyEvent_001, TestSize.Level1)
 HWTEST_F(DAudioHdiHandlerTest, NotifyEvent_002, TestSize.Level1)
 {
     EXPECT_EQ(HDF_SUCCESS, hdiHandler_->InitHdiHandler());
+    hdiHandler_->audioSrvHdf_ = new MockIDAudioManager();
     std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
-    audioEvent->type = AudioEventType::SPEAKER_OPENED;
+    audioEvent->type = AudioEventType::VOLUME_CHANGE;
     audioEvent->content = "";
     EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent));
 }

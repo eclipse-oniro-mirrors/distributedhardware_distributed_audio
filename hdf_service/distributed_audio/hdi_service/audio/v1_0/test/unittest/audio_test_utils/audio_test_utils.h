@@ -31,6 +31,7 @@ using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioParamCallback;
 class MockIDAudioCallback : public IDAudioCallback {
 public:
     MockIDAudioCallback() {}
@@ -389,7 +390,7 @@ public:
     MockIAudioParamCallback() {}
     ~MockIAudioParamCallback() {}
 
-    int32_t OnAudioParamNotify(AudioExtParamKey key, const std::string& condition,
+    int32_t OnAudioParamNotify(AudioExtParamKeyHAL key, const std::string& condition,
          const std::string& value) override
     {
         return DistributedHardware::DH_SUCCESS;

@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,7 +38,10 @@ void DSpeakerClientTest::SetUp()
     audioParam_.renderOpts.streamUsage = StreamUsage::STREAM_USAGE_MEDIA;
 }
 
-void DSpeakerClientTest::TearDown() {}
+void DSpeakerClientTest::TearDown()
+{
+    speakerClient_ = nullptr;
+}
 
 /**
  * @tc.name: OnStateChange_001
@@ -88,7 +91,7 @@ HWTEST_F(DSpeakerClientTest, SetUp_002, TestSize.Level1)
 
 /**
  * @tc.name: StartRender_001
- * @tc.desc: Verify the StartRender function.
+ * @tc.desc: Verify the StartRender and StopRender function.
  * @tc.type: FUNC
  * @tc.require: AR000H0E6G
  */
@@ -131,10 +134,9 @@ HWTEST_F(DSpeakerClientTest, StopRender001, TestSize.Level1)
 HWTEST_F(DSpeakerClientTest, SetAudioParameters001, TestSize.Level1)
 {
     EXPECT_EQ(DH_SUCCESS, speakerClient_->SetUp(audioParam_));
-    EXPECT_EQ(DH_SUCCESS, speakerClient_->StartRender());
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    event->type = VOLUME_GET;
-    event->content = "VOLUMETYPE=1;VOLUME_LEVEL=6";
+    event->type = AudioEventType::VOLUME_GET;
+    event->content = "EVENT_TYPE=1;VOLUME_GROUP_ID=1;AUDIO_VOLUME_TYPE=1;VOLUME_LEVEL=6;";
     EXPECT_NE(DH_SUCCESS, speakerClient_->SetAudioParameters(event));
 }
 
@@ -147,12 +149,10 @@ HWTEST_F(DSpeakerClientTest, SetAudioParameters001, TestSize.Level1)
 HWTEST_F(DSpeakerClientTest, SetAudioParameters002, TestSize.Level1)
 {
     EXPECT_EQ(DH_SUCCESS, speakerClient_->SetUp(audioParam_));
-    EXPECT_EQ(DH_SUCCESS, speakerClient_->StartRender());
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    event->type = VOLUME_MUTE_SET;
-    event->content = "VOLUMETYPE=1;VOLUME_LEVEL=2";
+    event->type = AudioEventType::VOLUME_MUTE_SET;
+    event->content = "EVENT_TYPE=1;VOLUME_GROUP_ID=1;AUDIO_VOLUME_TYPE=1;VOLUME_LEVEL=2;";
     EXPECT_EQ(DH_SUCCESS, speakerClient_->SetAudioParameters(event));
-    EXPECT_EQ(DH_SUCCESS, speakerClient_->StopRender());
 }
 } // DistributedHardware
 } // OHOS

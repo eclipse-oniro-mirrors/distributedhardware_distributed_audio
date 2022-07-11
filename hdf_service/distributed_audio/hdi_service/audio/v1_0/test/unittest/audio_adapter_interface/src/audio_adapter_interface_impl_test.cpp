@@ -152,7 +152,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, ReleaseAudioRoute_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, SetAudioParameters_001, TestSize.Level1)
 {
-    AudioExtParamKey key = AudioExtParamKey::AUDIO_EXT_PARAM_KEY_NONE;
+    AudioExtParamKeyHAL key = AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_NONE;
     std::string condition = "hello";
     std::string value = "world";
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->SetAudioParameters(key, condition, value));
@@ -166,7 +166,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, SetAudioParameters_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, GetAudioParameters_001, TestSize.Level1)
 {
-    AudioExtParamKey key = AudioExtParamKey::AUDIO_EXT_PARAM_KEY_NONE;
+    AudioExtParamKeyHAL key = AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_NONE;
     std::string condition = "hello";
     std::string value = "world";
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->GetAudioParameters(key, condition, value));
@@ -181,7 +181,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, GetAudioParameters_001, TestSize.Level1)
 HWTEST_F(AudioAdapterInterfaceImpTest, RegAudioParamObserver_001, TestSize.Level1)
 {
     sptr<IAudioParamCallback> cbObj = nullptr;
-    EXPECT_EQ(HDF_FAILURE, AdapterTest_->RegAudioParamObserver(cbObj));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->RegAudioParamObserver(cbObj));
 }
 
 /**
