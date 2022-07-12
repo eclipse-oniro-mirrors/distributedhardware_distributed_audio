@@ -16,9 +16,11 @@
 #ifndef HDI_DISTRIBUTED_AUDIO_CLIENT_H
 #define HDI_DISTRIBUTED_AUDIO_CLIENT_H
 
+#include <map>
 #include <memory>
 #include <mutex>
 #include <vector>
+#include <string>
 #include <v1_0/iaudio_manager.h>
 
 #include "audio_manager.h"
@@ -39,7 +41,7 @@ struct AudioManagerContext {
     bool initFlag_ = false;
     std::mutex mtx_;
 
-    std::vector<std::unique_ptr<AudioAdapterContext>> adapters_;
+    std::map<std::string, std::unique_ptr<AudioAdapterContext>> adapters_;
     std::vector<AudioAdapterDescriptor> descriptors_;
 };
 } // DistributedHardware

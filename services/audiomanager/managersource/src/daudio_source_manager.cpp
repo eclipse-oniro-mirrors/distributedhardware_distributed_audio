@@ -199,6 +199,7 @@ int32_t DAudioSourceManager::OnEnableDAudio(const std::string &devId, const std:
     }
     if (daudioIpcCallback_ == nullptr) {
         DHLOGE("%s: Audio Ipc callback is null.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
     }
     daudioIpcCallback_->OnNotifyRegResult(devId, dhId, port->second, result, "");
     if (result != DH_SUCCESS) {
@@ -230,6 +231,7 @@ int32_t DAudioSourceManager::OnDisableDAudio(const std::string &devId, const std
     }
     if (daudioIpcCallback_ == nullptr) {
         DHLOGE("%s: Audio Ipc callback is null.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
     }
     daudioIpcCallback_->OnNotifyUnregResult(devId, dhId, port->second, result, "");
 

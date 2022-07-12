@@ -103,8 +103,17 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct Au
         DHLOGE("%s: LoadAdapterInternal param is nullptr.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
-
     AudioManagerContext *context = reinterpret_cast<AudioManagerContext *>(manager);
+    std::string adpName = desc->adapterName;
+    {
+        std::lock_guard<std::mutex> lock(context->mtx_);
+        if (context->adapters_.find(adpName) != context->adapters_.end()) {
+            DHLOGI("%s: Adapter already has been load.", AUDIO_LOG);
+            *adapter = &(context->adapters_[adpName]->instance_);
+            return DH_SUCCESS;
+        }
+    }
+
     AudioAdapterDescriptorHAL descriptor = {
         .adapterName = desc->adapterName,
     };
@@ -122,7 +131,7 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct Au
     adapterContext->adapterName_ = descriptor.adapterName;
     {
         std::lock_guard<std::mutex> lock(context->mtx_);
-        context->adapters_.push_back(std::move(adapterContext));
+        context->adapters_.insert(std::make_pair(adpName, std::move(adapterContext)));
     }
     return DH_SUCCESS;
 }
@@ -139,8 +148,8 @@ static void UnloadAdapterInternal(struct AudioManager *manager, struct AudioAdap
     AudioAdapterContext *adapterContext = reinterpret_cast<AudioAdapterContext *>(adapter);
 
     std::lock_guard<std::mutex> lock(context->mtx_);
-    for (auto it = context->adapters_.begin(); it != context->adapters_.end(); ++it) {
-        if ((*it).get() == adapterContext) {
+    for (auto it = context->adapters_.begin(); it != context->adapters_.end(); it++) {
+        if ((it->second).get() == adapterContext) {
             int32_t ret = context->proxy_->UnloadAdapter(adapterContext->adapterName_);
             if (ret != DH_SUCCESS) {
                 DHLOGE("%s: UnloadAdapterInternal unloadAdapter failed.", AUDIO_LOG);
