@@ -27,21 +27,31 @@
 using json = nlohmann::json;
 namespace OHOS {
 namespace DistributedHardware {
-DAudioSinkDev::DAudioSinkDev(const std::string &devId)
+DAudioSinkDev::DAudioSinkDev(const std::string &devId) : devId_(devId)
 {
-    DHLOGI("%s: Distributed audio sink device constructed.", LOG_TAG);
-    devId_ = devId;
-    taskQueue_ = std::make_shared<TaskQueue>(DAUDIO_MAX_TASKQUEUE_LEN);
-    if (taskQueue_ == nullptr) {
-        DHLOGE("%s: DAudioSinkDev:Create task queue failed.", LOG_TAG);
-    } else {
-        taskQueue_->Start();
-    }
+    DHLOGI("%s: Distributed audio sink device constructed, devId: %s.", LOG_TAG, GetAnonyString(devId).c_str());
 }
 
 DAudioSinkDev::~DAudioSinkDev()
 {
-    DHLOGI("%s: Distributed audio sink device destructed.", LOG_TAG);
+    DHLOGI("%s: Distributed audio sink device destructed, devId: %s.", LOG_TAG, GetAnonyString(devId_).c_str());
+}
+
+int32_t DAudioSinkDev::AwakeAudioDev()
+{
+    taskQueue_ = std::make_shared<TaskQueue>(TASK_QUEUE_CAPACITY);
+    if (taskQueue_ == nullptr) {
+        DHLOGE("%s: Create task queue failed.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    taskQueue_->Start();
+    return DH_SUCCESS;
+}
+
+void DAudioSinkDev::SleepAudioDev()
+{
+    taskQueue_->Stop();
+    taskQueue_ = nullptr;
 }
 
 void DAudioSinkDev::NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent)
@@ -548,8 +558,7 @@ void DAudioSinkDev::OnTaskResult(int32_t resultCode, const std::string &result, 
     (void)resultCode;
     (void)result;
     (void)funcName;
-    DHLOGI("%s: OnTaskResult. resultCode: %d, result: %s, funcName: %s", LOG_TAG, resultCode, result.c_str(),
-        funcName.c_str());
+    DHLOGI("%s: OnTaskResult. resultCode: %d, funcName: %s", LOG_TAG, resultCode, funcName.c_str());
 }
 
 bool DAudioSinkDev::JudgeJsonValid(const json &resultJson)

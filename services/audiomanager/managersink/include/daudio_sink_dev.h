@@ -35,6 +35,9 @@ public:
     DAudioSinkDev(const std::string &networkId);
     ~DAudioSinkDev();
 
+    int32_t AwakeAudioDev();
+    void SleepAudioDev();
+
     void NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent) override;
     void NotifyEventSub(const std::shared_ptr<AudioEvent> &audioEvent);
 
@@ -68,6 +71,7 @@ private:
     bool JudgeJsonValid(const json &resultJson);
 
     static constexpr uint8_t RPC_WAIT_SECONDS = 5;
+    static constexpr uint8_t TASK_QUEUE_CAPACITY = 20;
     static const constexpr char *LOG_TAG = "DAudioSinkDev";
     std::shared_ptr<DSpeakerClient> speakerClient_;
     std::shared_ptr<DMicClient> micClient_;

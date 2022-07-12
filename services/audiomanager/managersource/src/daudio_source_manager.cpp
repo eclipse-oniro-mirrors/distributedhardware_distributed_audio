@@ -116,8 +116,8 @@ int32_t DAudioSourceManager::DisableDAudio(const std::string &devId, const std::
 int32_t DAudioSourceManager::HandleDAudioNotify(const std::string &devId, const std::string &dhId,
     const int32_t eventType, const std::string &eventContent)
 {
-    DHLOGI("%s: HandleDAudioNotify, devId: %s, dhId: %s, eventType: %d, content: %s.", LOG_TAG,
-        GetAnonyString(devId).c_str(), dhId.c_str(), eventType, eventContent.c_str());
+    DHLOGI("%s: HandleDAudioNotify, devId: %s, dhId: %s, eventType: %d.", LOG_TAG, GetAnonyString(devId).c_str(),
+        dhId.c_str(), eventType);
     std::lock_guard<std::mutex> lock(devMapMtx_);
     auto dev = audioDevMap_.find(devId);
     if (dev == audioDevMap_.end()) {
@@ -127,8 +127,7 @@ int32_t DAudioSourceManager::HandleDAudioNotify(const std::string &devId, const 
     std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
     audioEvent->type = (AudioEventType)eventType;
     audioEvent->content = eventContent;
-    DHLOGI("%s: HandleDAudioNotify call sourceDev eventType: %d, eventContent: %s", LOG_TAG, eventType,
-        eventContent.c_str());
+    DHLOGI("%s: HandleDAudioNotify call sourceDev eventType: %d.", LOG_TAG, eventType);
     audioDevMap_[devId].dev->NotifyEvent(audioEvent);
     return DH_SUCCESS;
 }
@@ -136,8 +135,8 @@ int32_t DAudioSourceManager::HandleDAudioNotify(const std::string &devId, const 
 int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
     const std::string &eventContent)
 {
-    DHLOGI("%s: DAudioNotify, devId: %s, dhId: %s, eventType: %d, content: %s.", LOG_TAG, GetAnonyString(devId).c_str(),
-        dhId.c_str(), eventType, eventContent.c_str());
+    DHLOGI("%s: DAudioNotify, devId: %s, dhId: %s, eventType: %d.", LOG_TAG, GetAnonyString(devId).c_str(),
+        dhId.c_str(), eventType);
     std::string localNetworkId;
     int32_t ret = GetLocalDeviceNetworkId(localNetworkId);
     if (ret != DH_SUCCESS) {

@@ -96,8 +96,8 @@ int32_t DAudioSinkService::UnsubscribeLocalHardware(const std::string &dhId)
 void DAudioSinkService::DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
     const std::string &eventContent)
 {
-    DHLOGI("%s: DAudioNotify devId:%s, dhId:%s, eventType:%d, eventContent:%s", LOG_TAG, GetAnonyString(devId).c_str(),
-        dhId.c_str(), eventType, eventContent.c_str());
+    DHLOGI("%s: DAudioNotify devId:%s, dhId:%s, eventType:%d.", LOG_TAG, GetAnonyString(devId).c_str(),
+        dhId.c_str(), eventType);
     DAudioSinkManager::GetInstance().HandleDAudioNotify(devId, dhId, eventType, eventContent);
 }
 } // namespace DistributedHardware

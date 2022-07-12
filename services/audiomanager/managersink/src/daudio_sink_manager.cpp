@@ -67,6 +67,7 @@ void DAudioSinkManager::OnSinkDevReleased(const std::string &devId)
 {
     DHLOGI("%s: DAudioSinkManager OnSinkDevReleased. devId: %s.", LOG_TAG, GetAnonyString(devId).c_str());
     std::lock_guard<std::mutex> lock(devMapMutex_);
+    dAudioSinkDevMap_[devId]->SleepAudioDev();
     dAudioSinkDevMap_.erase(devId);
 }
 
@@ -78,18 +79,22 @@ int32_t DAudioSinkManager::HandleDAudioNotify(const std::string &devId, const st
     auto iter = dAudioSinkDevMap_.find(devId);
     if (iter == dAudioSinkDevMap_.end()) {
         if (eventType == AudioEventType::OPEN_CTRL) {
-            DHLOGI("%s: create DAudioSinkDev, devId: %s", LOG_TAG, GetAnonyString(devId).c_str());
+            DHLOGI("%s: Create DAudioSinkDev, devId: %s", LOG_TAG, GetAnonyString(devId).c_str());
             std::shared_ptr<DAudioSinkDev> sinkDev = std::make_shared<DAudioSinkDev>(devId);
+            if (sinkDev->AwakeAudioDev() != DH_SUCCESS) {
+                DHLOGE("%s: Awake audio dev failed.", LOG_TAG);
+                return ERR_DH_AUDIO_FAILED;
+            }
             dAudioSinkDevMap_.emplace(devId, sinkDev);
         } else {
-            DHLOGE("%s: device not exist, devId: %s", LOG_TAG, GetAnonyString(devId).c_str());
+            DHLOGE("%s: Device not exist, devId: %s", LOG_TAG, GetAnonyString(devId).c_str());
             return ERR_DH_AUDIO_SA_DEVICE_NOT_EXIST;
         }
     }
     std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
     audioEvent->type = (AudioEventType)eventType;
     audioEvent->content = eventContent;
-    DHLOGI("%s: call sinkDev Notify Event, eventType: %d, content: %s", LOG_TAG, eventType, eventContent.c_str());
+    DHLOGI("%s: Call sinkDev Notify Event, eventType: %d.", LOG_TAG, eventType);
     dAudioSinkDevMap_[devId]->NotifyEvent(audioEvent);
     return DH_SUCCESS;
 }
