@@ -145,7 +145,7 @@ int32_t DAudioHandler::QueryCodecInfo()
 
 int32_t DAudioHandler::QueryAudioInfo()
 {
-    DHLOGE("%s: begin QueryCodecInfo.", LOG_TAG);
+    DHLOGE("%s: Begin QueryCodecInfo.", LOG_TAG);
     audioInfos_.sampleRates = OHOS::AudioStandard::AudioCapturer::GetSupportedSamplingRates();
     audioInfos_.formats = OHOS::AudioStandard::AudioCapturer::GetSupportedFormats();
     audioInfos_.channels = OHOS::AudioStandard::AudioCapturer::GetSupportedChannels();

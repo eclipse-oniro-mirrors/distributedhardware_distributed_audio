@@ -12,14 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #include "daudio_hdf_operate.h"
- 
+
 #include <hdf_io_service_if.h>
- 
+
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
- 
+
 namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DaudioHdfOperate);
@@ -31,7 +31,7 @@ void DAudioHdfServStatListener::OnReceive(const ServiceStatus& status)
         callback_(status);
     }
 }
- 
+
 int32_t DaudioHdfOperate::LoadDaudioHDFImpl()
 {
     if (audioServStatus_ == OHOS::HDI::ServiceManager::V1_0::SERVIE_STATUS_START &&
@@ -63,7 +63,7 @@ int32_t DaudioHdfOperate::LoadDaudioHDFImpl()
         DHLOGE("%s: RegisterServiceStatusListener failed!", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
- 
+
     if (devmgr_->LoadDevice(AUDIO_SERVICE_NAME) != 0) {
         DHLOGE("%s: Load audio service failed!", LOG_TAG);
         return ERR_DH_AUDIO_FAILED;
@@ -72,7 +72,7 @@ int32_t DaudioHdfOperate::LoadDaudioHDFImpl()
         DHLOGE("%s: Wait load audio service failed!", LOG_TAG);
         return ERR_DH_AUDIO_FAILED;
     }
- 
+
     if (devmgr_->LoadDevice(AUDIOEXT_SERVICE_NAME) != 0) {
         DHLOGE("%s: Load provider service failed!", LOG_TAG);
         return ERR_DH_AUDIO_FAILED;
@@ -81,28 +81,28 @@ int32_t DaudioHdfOperate::LoadDaudioHDFImpl()
         DHLOGE("%s: Wait load provider service failed!", LOG_TAG);
         return ERR_DH_AUDIO_FAILED;
     }
- 
+
     if (servMgr_->UnregisterServiceStatusListener(listener) != 0) {
         DHLOGE("%s: UnregisterServiceStatusListener failed!", LOG_TAG);
     }
     return DH_SUCCESS;
 }
- 
+
 int32_t DaudioHdfOperate::WaitLoadService(const uint16_t& servStatus, const std::string& servName)
 {
     std::unique_lock<std::mutex> lock(hdfOperateMutex_);
     hdfOperateCon_.wait_for(lock, std::chrono::milliseconds(WAIT_TIME), [servStatus] {
         return (servStatus == OHOS::HDI::ServiceManager::V1_0::SERVIE_STATUS_START);
     });
- 
+
     if (servStatus != OHOS::HDI::ServiceManager::V1_0::SERVIE_STATUS_START) {
-        DHLOGE("%s: wait load service %s failed, status %d", LOG_TAG, servName.c_str(), servStatus);
+        DHLOGE("%s: Wait load service %s failed, status %d", LOG_TAG, servName.c_str(), servStatus);
         return ERR_DH_AUDIO_FAILED;
     }
- 
+
     return DH_SUCCESS;
 }
- 
+
 int32_t DaudioHdfOperate::UnLoadDaudioHDFImpl()
 {
     DHLOGI("%s: UnLoadDaudioHDFImpl begin!", LOG_TAG);
@@ -111,7 +111,7 @@ int32_t DaudioHdfOperate::UnLoadDaudioHDFImpl()
         DHLOGE("%s: Get hdi device manager failed!", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
- 
+
     int32_t ret = devmgr_->UnloadDevice(AUDIO_SERVICE_NAME);
     if (ret != 0) {
         DHLOGE("%s: Unload audio service failed, ret: %d", LOG_TAG, ret);

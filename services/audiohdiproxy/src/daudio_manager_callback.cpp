@@ -31,12 +31,12 @@ int32_t DAudioManagerCallback::OpenDevice(const std::string& adpName, int32_t de
 {
     DHLOGI("%s: OpenDevice enter", LOG_TAG);
     if (callback_ == nullptr) {
-        DHLOGE("%s: register hdi callback is nullptr", LOG_TAG);
+        DHLOGE("%s: Register hdi callback is nullptr", LOG_TAG);
         return HDF_FAILURE;
     }
     int32_t ret = callback_->OpenDevice(adpName, devId);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: call hdi callback failed", LOG_TAG);
+        DHLOGE("%s: Call hdi callback failed", LOG_TAG);
         return HDF_FAILURE;
     }
     return HDF_SUCCESS;
@@ -46,12 +46,12 @@ int32_t DAudioManagerCallback::CloseDevice(const std::string& adpName, int32_t d
 {
     DHLOGI("%s: CloseDevice enter", LOG_TAG);
     if (callback_ == nullptr) {
-        DHLOGE("%s: register hdi callback is nullptr", LOG_TAG);
+        DHLOGE("%s: Register hdi callback is nullptr", LOG_TAG);
         return HDF_FAILURE;
     }
     int32_t ret = callback_->CloseDevice(adpName, devId);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: call hdi callback failed", LOG_TAG);
+        DHLOGE("%s: Rall hdi callback failed", LOG_TAG);
         return HDF_FAILURE;
     }
     return HDF_SUCCESS;
@@ -61,7 +61,7 @@ int32_t DAudioManagerCallback::SetParameters(const std::string& adpName, int32_t
 {
     DHLOGI("%s: SetParameters enter", LOG_TAG);
     if (callback_ == nullptr) {
-        DHLOGE("%s: register hdi callback is nullptr", LOG_TAG);
+        DHLOGE("%s: Register hdi callback is nullptr", LOG_TAG);
         return HDF_FAILURE;
     }
 
@@ -76,7 +76,7 @@ int32_t DAudioManagerCallback::SetParameters(const std::string& adpName, int32_t
     };
     int32_t ret = callback_->SetParameters(adpName, devId, newParam);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: call hdi callback failed", LOG_TAG);
+        DHLOGE("%s: Call hdi callback failed", LOG_TAG);
         return HDF_FAILURE;
     }
     return HDF_SUCCESS;
@@ -87,7 +87,7 @@ int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t d
 {
     DHLOGI("%s: NotifyEvent", LOG_TAG);
     if (callback_ == nullptr) {
-        DHLOGE("%s: register hdi callback is nullptr", LOG_TAG);
+        DHLOGE("%s: Register hdi callback is nullptr", LOG_TAG);
         return HDF_FAILURE;
     }
     AudioEvent newEvent = {
@@ -105,7 +105,7 @@ int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t d
 
     int32_t ret = callback_->NotifyEvent(adpName, devId, newEvent);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: call hdi callback failed", LOG_TAG);
+        DHLOGE("%s: Call hdi callback failed", LOG_TAG);
         return HDF_FAILURE;
     }
     return HDF_SUCCESS;
