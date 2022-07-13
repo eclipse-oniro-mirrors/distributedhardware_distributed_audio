@@ -37,6 +37,8 @@ class DAudioHdiHandler {
 public:
     int32_t InitHdiHandler();
 
+    int32_t UninitHdiHandler();
+
     int32_t RegisterAudioDevice(const std::string &devId, int32_t dhId, const std::string &capability,
         const std::shared_ptr<IDAudioHdiCallback> &callbackObjParam);
 

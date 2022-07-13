@@ -64,6 +64,18 @@ int32_t DAudioHdiHandler::InitHdiHandler()
     return DH_SUCCESS;
 }
 
+int32_t DAudioHdiHandler::UninitHdiHandler()
+{
+    DHLOGI("%s: Unload hdf driver start.", LOG_TAG);
+    int32_t ret = DaudioHdfOperate::GetInstance().UnLoadDaudioHDFImpl();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Unload hdf driver failed, ret: %d", LOG_TAG, ret);
+        return ret;
+    }
+    DHLOGI("%s: Uninit hdi handler success.", LOG_TAG);
+    return DH_SUCCESS;
+}
+
 int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, int32_t dhId, const std::string &capability,
     const std::shared_ptr<IDAudioHdiCallback> &callbackObjParam)
 {

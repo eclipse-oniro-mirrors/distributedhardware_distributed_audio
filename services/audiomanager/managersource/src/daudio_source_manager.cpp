@@ -67,6 +67,7 @@ int32_t DAudioSourceManager::UnInit()
             iter->second->AsObject()->RemoveDeathRecipient(remoteSvrRecipient_);
         }
     }
+
     remoteSvrProxyMap_.clear();
     remoteSvrRecipient_ = nullptr;
     daudioIpcCallback_ = nullptr;
@@ -75,6 +76,12 @@ int32_t DAudioSourceManager::UnInit()
         iter->second.dev->SleepAudioDev();
     }
     audioDevMap_.clear();
+
+    int32_t ret = DAudioHdiHandler::GetInstance().UninitHdiHandler();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Uninit Hdi handler failed.", LOG_TAG);
+        return ret;
+    }
     return DH_SUCCESS;
 }
 
