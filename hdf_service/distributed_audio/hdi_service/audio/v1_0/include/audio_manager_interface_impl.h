@@ -90,7 +90,7 @@ private:
 
     static AudioManagerInterfaceImpl *mgr;
     static std::mutex mutex_mgr;
-    struct HdfDeviceObject *deviceObject_;
+    struct HdfDeviceObject *deviceObject_ = nullptr;
     std::mutex adapterMapMtx_;
     std::map<std::string, sptr<AudioAdapterInterfaceImpl>> mapAudioAdapter_;
 };

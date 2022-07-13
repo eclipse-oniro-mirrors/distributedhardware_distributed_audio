@@ -144,9 +144,9 @@ void DMicClient::CaptureThreadRunning()
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             DHLOGI("%s: Audio Capturer Read in microseconds TimeTaken =(%ds).", LOG_TAG, (long long)duration.count());
             if (len >= NUMBER_ZERO) {
-                bytesRead += len;
+                bytesRead += (size_t)len;
             } else {
-                bytesRead = len;
+                bytesRead = (size_t)len;
                 break;
             }
         }

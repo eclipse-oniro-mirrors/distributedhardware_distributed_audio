@@ -96,12 +96,12 @@ private:
     AudioAdapterDescriptorHAL adpDescriptor_;
     AudioAdapterStatus status_ = STATUS_OFFLINE;
 
-    sptr<IDAudioCallback> extSpeakerCallback_;
-    sptr<IDAudioCallback> extMicCallback_;
-    sptr<IAudioParamCallback> paramCallback_;
-    sptr<AudioRenderInterfaceImpl> audioRender_;
+    sptr<IDAudioCallback> extSpeakerCallback_ = nullptr;
+    sptr<IDAudioCallback> extMicCallback_ = nullptr;
+    sptr<IAudioParamCallback> paramCallback_ = nullptr;
+    sptr<AudioRenderInterfaceImpl> audioRender_ = nullptr;
     AudioParameter renderParam_;
-    sptr<AudioCaptureInterfaceImpl> audioCapture_;
+    sptr<AudioCaptureInterfaceImpl> audioCapture_ = nullptr;
     AudioParameter captureParam_;
 
     std::mutex devMapMtx_;

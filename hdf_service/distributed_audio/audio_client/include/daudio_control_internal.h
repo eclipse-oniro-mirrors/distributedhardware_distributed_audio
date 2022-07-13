@@ -49,7 +49,10 @@ int32_t AudioControlInternal<T>::Start(AudioHandle handle)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->Start();
+    if (context == nullptr) {
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+    return context->proxy_->Start();
 }
 
 template<typename T>
@@ -61,7 +64,10 @@ int32_t AudioControlInternal<T>::Stop(AudioHandle handle)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->Stop();
+    if (context == nullptr) {
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+    return context->proxy_->Stop();
 }
 
 template<typename T>
@@ -73,7 +79,10 @@ int32_t AudioControlInternal<T>::Pause(AudioHandle handle)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->Pause();
+    if (context == nullptr) {
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+    return context->proxy_->Pause();
 }
 
 template<typename T>
@@ -85,7 +94,10 @@ int32_t AudioControlInternal<T>::Resume(AudioHandle handle)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->Resume();
+    if (context == nullptr) {
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+    return context->proxy_->Resume();
 }
 
 template<typename T>
@@ -97,7 +109,10 @@ int32_t AudioControlInternal<T>::Flush(AudioHandle handle)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->Flush();
+    if (context == nullptr) {
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+    return context->proxy_->Flush();
 }
 
 template<typename T>
@@ -109,7 +124,10 @@ int32_t AudioControlInternal<T>::TurnStandbyMode(AudioHandle handle)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->TurnStandbyMode();
+    if (context == nullptr) {
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+    return context->proxy_->TurnStandbyMode();
 }
 
 template<typename T>
@@ -121,7 +139,10 @@ int32_t AudioControlInternal<T>::AudioDevDump(AudioHandle handle, int32_t range,
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->AudioDevDump(range, fd);
+    if (context == nullptr) {
+        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+    }
+    return context->proxy_->AudioDevDump(range, fd);
 }
 } // DistributedHardware
 } // OHOS

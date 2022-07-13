@@ -57,7 +57,7 @@ static void SetAudioSampleAttributesHAL(const struct AudioSampleAttributes *attr
     attrsHal.startThreshold = attrs->startThreshold;
     attrsHal.stopThreshold = attrs->stopThreshold;
     attrsHal.silenceThreshold = attrs->silenceThreshold;
-    attrsHal.streamId = static_cast<int32_t>(attrs->streamId);
+    attrsHal.streamId = static_cast<uint32_t>(attrs->streamId);
 }
 
 static int32_t CreateRenderInternal(struct AudioAdapter *adapter, const struct AudioDeviceDescriptor *desc,
@@ -433,6 +433,7 @@ static int32_t RegExtraParamObserverInternal(struct AudioAdapter *adapter, Param
 
     return ret;
 }
+
 AudioAdapterContext::AudioAdapterContext()
 {
     instance_.InitAllPorts = InitAllPortsInternal;

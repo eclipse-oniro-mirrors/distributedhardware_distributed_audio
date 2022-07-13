@@ -84,7 +84,7 @@ private:
 
     std::mutex captureMtx_;
     AudioCaptureStatus captureStatus_ = CAPTURE_STATUS_CLOSE;
-    sptr<IDAudioCallback> audioExtCallback_;
+    sptr<IDAudioCallback> audioExtCallback_ = nullptr;
 };
 } // V1_0
 } // Audio

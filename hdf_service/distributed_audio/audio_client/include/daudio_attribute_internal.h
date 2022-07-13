@@ -117,7 +117,7 @@ int32_t AudioAttributeInternal<T>::GetSampleAttributes(AudioHandle handle, struc
     attrs->format = static_cast<AudioFormat>(attrsHal.format);
     attrs->sampleRate = attrsHal.sampleRate;
     attrs->channelCount = attrsHal.channelCount;
-    attrs->streamId = attrsHal.streamId;
+    attrs->streamId = (int32_t)attrsHal.streamId;
     return DH_SUCCESS;
 }
 
@@ -238,8 +238,8 @@ int32_t AudioAttributeInternal<T>::GetMmapPosition(AudioHandle handle, uint64_t 
     }
     DHLOGD("%s: Call to getMmapPosition sucess.", AUDIO_LOG);
 
-    time->tvSec = timeHal.tvSec;
-    time->tvNSec = timeHal.tvNSec;
+    time->tvSec = (int64_t)timeHal.tvSec;
+    time->tvNSec = (int64_t)timeHal.tvNSec;
     return DH_SUCCESS;
 }
 } // DistributedHardware

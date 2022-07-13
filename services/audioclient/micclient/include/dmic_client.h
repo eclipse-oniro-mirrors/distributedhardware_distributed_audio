@@ -66,8 +66,8 @@ private:
     bool isChannelReady_ = false;
     std::atomic<bool> isCaptureReady_ = false;
 
-    std::shared_ptr<IAudioEventCallback> eventCallback_;
-    std::unique_ptr<AudioStandard::AudioCapturer> audioCapturer_;
+    std::shared_ptr<IAudioEventCallback> eventCallback_ = nullptr;
+    std::unique_ptr<AudioStandard::AudioCapturer> audioCapturer_ = nullptr;
     std::shared_ptr<IAudioDataTransport> micTrans_ = nullptr;
 };
 } // DistributedHardware

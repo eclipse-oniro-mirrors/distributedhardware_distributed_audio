@@ -61,17 +61,17 @@ private:
     static const constexpr char *LOG_TAG = "DMicDev";
     std::string devId_;
     std::set<int32_t> enabledPorts_;
-    int32_t curPort_;
+    int32_t curPort_ = 0;
 
     std::weak_ptr<IAudioEventCallback> audioEventCallback_;
-    std::shared_ptr<IAudioDataTransport> micTrans_;
+    std::shared_ptr<IAudioDataTransport> micTrans_ = nullptr;
 
     // Mic capture parameters
     AudioSampleRate sampleRate_;
     AudioChannel channelMask_;
     AudioSampleFormat bitFormat_;
-    uint32_t frameSize_;
-    uint32_t period_;
+    uint32_t frameSize_ = 0;
+    uint32_t period_ = 0;
     std::string extParam_;
 
     std::atomic<bool> isTransReady_ = false;

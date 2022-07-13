@@ -258,7 +258,7 @@ void AudioEncoder::InputEncodeAudioData()
             if (inputBufQueue_.empty() || bufIndexQueue_.empty()) {
                 continue;
             }
-            bufferIndex = bufIndexQueue_.front();
+            bufferIndex = (int32_t)bufIndexQueue_.front();
             bufIndexQueue_.pop();
             audioData = inputBufQueue_.front();
             inputBufQueue_.pop();

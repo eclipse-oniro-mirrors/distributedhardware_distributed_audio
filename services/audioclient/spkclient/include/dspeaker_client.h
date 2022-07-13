@@ -75,9 +75,9 @@ private:
     AudioParam audioParam_;
     std::atomic<bool> isRenderReady_ = false;
 
-    std::unique_ptr<AudioStandard::AudioRenderer> audioRenderer_;
+    std::unique_ptr<AudioStandard::AudioRenderer> audioRenderer_ = nullptr;
     std::shared_ptr<IAudioDataTransport> speakerTrans_ = nullptr;
-    std::shared_ptr<IAudioEventCallback> eventCallback_;
+    std::shared_ptr<IAudioEventCallback> eventCallback_ = nullptr;
 };
 } // DistributedHardware
 } // OHOS

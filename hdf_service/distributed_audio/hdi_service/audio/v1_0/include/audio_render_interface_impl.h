@@ -98,8 +98,8 @@ private:
     std::mutex renderMtx_;
     AudioChannelModeHAL channelMode_ = AUDIO_CHANNEL_NORMAL;
     AudioRenderStatus renderStatus_ = RENDER_STATUS_CLOSE;
-    sptr<IDAudioCallback> audioExtCallback_;
-    sptr<IAudioRenderCallback> renderCallback_;
+    sptr<IDAudioCallback> audioExtCallback_ = nullptr;
+    sptr<IAudioRenderCallback> renderCallback_ = nullptr;
 };
 } // V1_0
 } // Audio

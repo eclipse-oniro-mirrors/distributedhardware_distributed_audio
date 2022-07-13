@@ -175,7 +175,7 @@ void DSpeakerClient::PlayThreadRunning()
             continue;
         }
 
-        while (writeOffSet < audioData->Capacity()) {
+        while (writeOffSet < (int32_t)(audioData->Capacity())) {
             writeLen = audioRenderer_->Write(audioData->Data() + writeOffSet, audioData->Capacity() - writeOffSet);
             DHLOGD("write audio render, write len: %d, raw len: %d, offset: %d",
                 writeLen, audioData->Capacity(), writeOffSet);

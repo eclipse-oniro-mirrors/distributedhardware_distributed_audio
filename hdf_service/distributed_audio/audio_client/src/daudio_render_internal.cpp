@@ -71,8 +71,8 @@ static int32_t GetRenderPositionInternal(struct AudioRender *render, uint64_t *f
     if (ret != DH_SUCCESS) {
         return ret;
     }
-    time->tvSec = timeHal.tvSec;
-    time->tvNSec = timeHal.tvNSec;
+    time->tvSec = (int64_t)timeHal.tvSec;
+    time->tvNSec = (int64_t)timeHal.tvNSec;
     return DH_SUCCESS;
 }
 
@@ -203,6 +203,7 @@ AudioRenderContext::AudioRenderContext()
     instance_.volume.SetGain = AudioVolumeInternal<AudioRenderContext>::SetGain;
     instance_.volume.GetGain = AudioVolumeInternal<AudioRenderContext>::GetGain;
 }
+
 AudioRenderContext::~AudioRenderContext() {}
 } // namespace DistributedHardware
 } // namespace OHOS

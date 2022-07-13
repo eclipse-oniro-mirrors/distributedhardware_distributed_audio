@@ -62,10 +62,10 @@ private:
     static const constexpr char *LOG_TAG = "DSpeakerDev";
     std::string devId_;
     std::set<int32_t> enabledPorts_;
-    int32_t curPort_;
+    int32_t curPort_ = 0;
 
     std::weak_ptr<IAudioEventCallback> audioEventCallback_;
-    std::shared_ptr<IAudioDataTransport> speakerTrans_;
+    std::shared_ptr<IAudioDataTransport> speakerTrans_ = nullptr;
 
     // Speaker render parameters
     AudioParamHDF audioParamHDF_;

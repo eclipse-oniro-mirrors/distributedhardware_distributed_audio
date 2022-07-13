@@ -43,8 +43,8 @@ static int32_t GetCapturePositionInternal(struct AudioCapture *capture, uint64_t
         DHLOGE("%s:The GetCapturePosition is failed.", AUDIO_LOG);
         return ret;
     }
-    time->tvSec = timeHal.tvSec;
-    time->tvNSec = timeHal.tvNSec;
+    time->tvSec = (int64_t)timeHal.tvSec;
+    time->tvNSec = (int64_t)timeHal.tvNSec;
     return DH_SUCCESS;
 }
 
