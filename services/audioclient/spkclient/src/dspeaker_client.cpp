@@ -108,6 +108,7 @@ int32_t DSpeakerClient::StartRender()
 int32_t DSpeakerClient::StopRender()
 {
     DHLOGI("%s: Stop renderer.", LOG_TAG);
+    eventCallback_ = nullptr;
     if (audioRenderer_ == nullptr || speakerTrans_ == nullptr) {
         DHLOGE("%s: Audio renderer or speaker trans is nullptr.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL;
@@ -133,6 +134,13 @@ int32_t DSpeakerClient::StopRender()
         return ret;
     }
     speakerTrans_ = nullptr;
+
+    ret =
+        AudioStandard::AudioSystemManager::GetInstance()->UnregisterVolumeKeyEventCallback(getpid());
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Failed to unregister volume key event callback.", LOG_TAG);
+        return ret;
+    }
 
     if (!audioRenderer_->Stop()) {
         OHOS::DistributedHardware::DHLOGE("%s: Audio renderer stop failed", LOG_TAG);
@@ -240,6 +248,10 @@ string DSpeakerClient::GetVolumeLevel()
 void DSpeakerClient::OnVolumeKeyEvent(AudioStandard::AudioStreamType streamType, int32_t volumeLevel, bool isUpdateUi)
 {
     DHLOGI("%s: OnVolumeKeyEvent.", LOG_TAG);
+    if (eventCallback_ == nullptr) {
+        DHLOGE("%s: EventCallback is nullptr.", LOG_TAG);
+        return;
+    }
     std::stringstream ss;
     ss << "VOLUME_CHANAGE;"
        << "AUDIO_STREAM_TYPE=" << streamType << ";"
