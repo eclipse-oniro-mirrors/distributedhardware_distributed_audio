@@ -49,8 +49,8 @@ void TaskQueue::Run()
     while (taskQueueReady_) {
         std::shared_ptr<TaskImplInterface> task = nullptr;
         {
-            std::unique_lock<std::mutex> lock(taskQueueMutex_);
-            taskQueueCond_.wait_for(lock, std::chrono::seconds(TASK_WAIT_SECONDS),
+            std::unique_lock<std::mutex> lck(taskQueueMutex_);
+            taskQueueCond_.wait_for(lck, std::chrono::seconds(TASK_WAIT_SECONDS),
                 [this]() { return !taskQueue_.empty(); });
             if (taskQueue_.empty()) {
                 continue;
@@ -72,7 +72,7 @@ void TaskQueue::Consume(std::shared_ptr<TaskImplInterface> &task)
 
 int32_t TaskQueue::Produce(std::shared_ptr<TaskImplInterface> &task)
 {
-    std::lock_guard<std::mutex> devLck(taskQueueMutex_);
+    std::lock_guard<std::mutex> lck(taskQueueMutex_);
     if (taskQueue_.size() >= maxSize_) {
         DHLOGI("%s: task queue is full, size: %zu", LOG_TAG, taskQueue_.size());
         return ERR_DH_AUDIO_SA_TASKQUEUE_FULL;

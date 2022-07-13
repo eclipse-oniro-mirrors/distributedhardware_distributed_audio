@@ -68,10 +68,13 @@ int32_t DAudioSourceManager::UnInit()
         }
     }
     remoteSvrProxyMap_.clear();
-    audioDevMap_.clear();
     remoteSvrRecipient_ = nullptr;
     daudioIpcCallback_ = nullptr;
     daudioMgrCallback_ = nullptr;
+    for (auto iter = audioDevMap_.begin(); iter != audioDevMap_.end(); iter++) {
+        iter->second.dev->SleepAudioDev();
+    }
+    audioDevMap_.clear();
     return DH_SUCCESS;
 }
 
