@@ -108,15 +108,18 @@ int32_t DSpeakerClient::StartRender()
 int32_t DSpeakerClient::StopRender()
 {
     DHLOGI("%s: Stop renderer.", LOG_TAG);
-
-    isRenderReady_.store(false);
-    if (renderDataThread_.joinable()) {
-        renderDataThread_.join();
-    }
-
     if (audioRenderer_ == nullptr || speakerTrans_ == nullptr) {
         DHLOGE("%s: Audio renderer or speaker trans is nullptr.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL;
+    }
+
+    if (!isRenderReady_.load()) {
+        DHLOGE("%s: Renderer is stopping or has stopped.", LOG_TAG);
+        return DH_SUCCESS;
+    }
+    isRenderReady_.store(false);
+    if (renderDataThread_.joinable()) {
+        renderDataThread_.join();
     }
 
     int32_t ret = speakerTrans_->Stop();

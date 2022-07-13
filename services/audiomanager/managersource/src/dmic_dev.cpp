@@ -176,7 +176,7 @@ int32_t DMicDev::Start()
         DHLOGE("%s: Mic trans start failed, ret: %d.", LOG_TAG, ret);
         return ret;
     }
-    isOpened_ = true;
+    isOpened_.store(true);
     return DH_SUCCESS;
 }
 
@@ -188,11 +188,15 @@ int32_t DMicDev::Stop()
         return ERR_DH_AUDIO_SA_MIC_TRANS_NULL;
     }
 
+    if (!isOpened_.load()) {
+        DHLOGE("%s: Mic trans is stopping or has stopped.", LOG_TAG);
+        return DH_SUCCESS;
+    }
+    isOpened_.store(false);
     int32_t ret = micTrans_->Stop();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Stop mic trans failed, ret: %d.", LOG_TAG, ret);
     }
-    isOpened_ = false;
     return DH_SUCCESS;
 }
 
@@ -214,7 +218,7 @@ int32_t DMicDev::Release()
 
 bool DMicDev::IsOpened()
 {
-    return isOpened_;
+    return isOpened_.load();
 }
 
 int32_t DMicDev::WriteStreamData(const std::string& devId, const int32_t dhId, std::shared_ptr<AudioData> &data)
@@ -266,10 +270,10 @@ int32_t DMicDev::OnStateChange(int32_t type)
     DHLOGI("%s: On State Change type: %d", LOG_TAG, type);
     switch (type) {
         case AudioEventType::DATA_OPENED:
-            isTransReady_ = true;
+            isTransReady_.store(true);
             break;
         case AudioEventType::DATA_CLOSED:
-            isTransReady_ = false;
+            isTransReady_.store(false);
             break;
         default:
             break;

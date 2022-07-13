@@ -179,12 +179,13 @@ int32_t DSpeakerDev::Start()
 
     std::unique_lock<std::mutex> lck(channelWaitMutex_);
     auto status =
-        channelWaitCond_.wait_for(lck, std::chrono::seconds(CHANNEL_WAIT_SECONDS), [this]() { return isTransReady_; });
+        channelWaitCond_.wait_for(lck, std::chrono::seconds(CHANNEL_WAIT_SECONDS),
+            [this]() { return isTransReady_.load(); });
     if (!status) {
         DHLOGE("%s: Wait channel open timeout(%ds).", LOG_TAG, CHANNEL_WAIT_SECONDS);
         return ERR_DH_AUDIO_SA_SPEAKER_CHANNEL_WAIT_TIMEOUT;
     }
-    isOpened_ = true;
+    isOpened_.store(true);
     return DH_SUCCESS;
 }
 
@@ -196,13 +197,17 @@ int32_t DSpeakerDev::Stop()
         return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
     }
 
+    if (!isOpened_.load()) {
+        DHLOGE("%s: Mic trans is stopping or has stopped.", LOG_TAG);
+        return DH_SUCCESS;
+    }
+    isOpened_.store(false);
+    isTransReady_.store(false);
     int32_t ret = speakerTrans_->Stop();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Stop speaker trans failed, ret: %d.", LOG_TAG, ret);
         return ret;
     }
-    isOpened_ = false;
-    isTransReady_ = false;
     return DH_SUCCESS;
 }
 
@@ -223,7 +228,7 @@ int32_t DSpeakerDev::Release()
 
 bool DSpeakerDev::IsOpened()
 {
-    return isOpened_;
+    return isOpened_.load();
 }
 
 int32_t DSpeakerDev::ReadStreamData(const std::string &devId, const int32_t dhId, std::shared_ptr<AudioData> &data)
@@ -276,12 +281,12 @@ int32_t DSpeakerDev::OnStateChange(int32_t type)
     DHLOGI("%s: On speaker device state change, type: %d.", LOG_TAG, type);
     switch (type) {
         case AudioEventType::DATA_OPENED:
-            isTransReady_ = true;
+            isTransReady_.store(true);
             channelWaitCond_.notify_all();
             break;
         case AudioEventType::DATA_CLOSED:
-            isOpened_ = false;
-            isTransReady_ = false;
+            isOpened_.store(false);
+            isTransReady_.store(false);
             break;
         default:
             break;

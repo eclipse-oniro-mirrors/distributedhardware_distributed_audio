@@ -171,7 +171,12 @@ int32_t DMicClient::StopCapture()
         DHLOGE("%s: The capturer or mictrans is not instantiated.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_CAPTURER_OR_MICTRANS_INSTANCE;
     }
+
     isBlocking_ = false;
+    if (!isCaptureReady_.load()) {
+        DHLOGE("%s: Capturer is stopping or has stopped.", LOG_TAG);
+        return DH_SUCCESS;
+    }
     isCaptureReady_.store(false);
     if (captureDataThread_.joinable()) {
         captureDataThread_.join();

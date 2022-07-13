@@ -70,8 +70,8 @@ private:
     // Speaker render parameters
     AudioParamHDF audioParamHDF_;
 
-    bool isTransReady_ = false;
-    bool isOpened_ = false;
+    std::atomic<bool> isTransReady_ = false;
+    std::atomic<bool> isOpened_ = false;
     std::mutex channelWaitMutex_;
     std::condition_variable channelWaitCond_;
 };

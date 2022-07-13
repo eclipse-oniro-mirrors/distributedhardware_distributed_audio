@@ -74,8 +74,8 @@ private:
     uint32_t period_;
     std::string extParam_;
 
-    bool isTransReady_ = false;
-    bool isOpened_ = false;
+    std::atomic<bool> isTransReady_ = false;
+    std::atomic<bool> isOpened_ = false;
 };
 } // DistributedHardware
 } // OHOS
