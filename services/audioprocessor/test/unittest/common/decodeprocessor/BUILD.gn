@@ -22,7 +22,7 @@ config("module_private_config") {
     visibility = [ ":*" ]
 
     include_dirs = [
-        "//foundation/multimedia/media_standard/interfaces/innerkits/native/media/include",
+        "//foundation/multimedia/player_framework/interfaces/innerkits/native/media/include",
         "//foundation/multimedia/audio_standard/interfaces/inner_api/native/audiocommon/include",
         "${fwk_common_path}/utils/include",
     ]
@@ -56,7 +56,7 @@ ohos_unittest("DecodeProcessTest") {
     ]
 
     external_deps = [
-        "multimedia_media_standard:media_client",
+        "multimedia_player_framework:media_client",
         "hiviewdfx_hilog_native:libhilog",
     ]
 

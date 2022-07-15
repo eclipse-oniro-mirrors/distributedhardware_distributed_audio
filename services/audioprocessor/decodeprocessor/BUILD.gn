@@ -17,7 +17,7 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 
 ohos_shared_library("distributed_audio_decoder_processor") {
     include_dirs = [
-        "//foundation/multimedia/media_standard/interfaces/innerkits/native/media/include",
+        "//foundation/multimedia/player_framework/interfaces/innerkits/native/media/include",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
         "${fwk_common_path}/utils/include",
     ]
@@ -45,7 +45,7 @@ ohos_shared_library("distributed_audio_decoder_processor") {
     ]
 
     external_deps = [
-        "multimedia_media_standard:media_client",
+        "multimedia_player_framework:media_client",
         "hiviewdfx_hilog_native:libhilog",
     ]
 

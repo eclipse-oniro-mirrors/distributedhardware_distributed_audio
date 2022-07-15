@@ -27,8 +27,8 @@ config("module_private_config") {
         "${fwk_common_path}/utils/include",
         "${common_path}/include",
         "//third_party/json/include",
-        "//foundation/multimedia/media_standard/interfaces/inner_api/native",
-        "//foundation/multimedia/media_standard/services/utils/include",
+        "//foundation/multimedia/player_framework/interfaces/inner_api/native",
+        "//foundation/multimedia/player_framework/services/utils/include",
         "//foundation/multimedia/image_standard/interfaces/innerkits/include",
         "${services_path}/common/audioparam",
         "${distributedaudio_path}/audiohandler/include"
@@ -49,8 +49,8 @@ ohos_unittest("AudioHandlerTest") {
         "//utils/native/base:utils",
         "${common_path}:distributed_audio_utils",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager:audio_client",
-        "//foundation/multimedia/media_standard/interfaces/inner_api/native:media_client",
-        "//foundation/multimedia/media_standard/services/utils:media_service_utils",
+        "//foundation/multimedia/player_framework/interfaces/inner_api/native:media_client",
+        "//foundation/multimedia/player_framework/services/utils:media_service_utils",
         "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocapturer:audio_capturer",
         "${distributedaudio_path}/audiohandler:distributed_audio_handler"

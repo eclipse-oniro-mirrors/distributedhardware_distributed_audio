@@ -34,7 +34,7 @@
                 "dsoftbus",
                 "utils_base",
                 "distributed_hardware_fwk",
-                "multimedia_media_standard"
+                "multimedia_player_framework"
             ],
             "third_party":[
                 "json"
@@ -57,10 +57,10 @@
                 "//foundation/distributedhardware/distributed_audio/services/common:distributed_audio_service_common",
                 "//foundation/distributedhardware/distributed_audio/services/audiocontrol/controlsource:distributed_audio_source_ctrl",
                 "//foundation/distributedhardware/distributed_audio/services/audiocontrol/controlsink:distributed_audio_sink_ctrl",
-                
+
                 "//foundation/distributedhardware/distributed_audio/services/audiomanager/managersink:distributed_audio_manager_sink",
                 "//foundation/distributedhardware/distributed_audio/services/audiomanager/managersource:distributed_audio_manager_source",
-               
+
                 "//foundation/distributedhardware/distributed_audio/services/audiomanager/servicesource:distributed_audio_source",
                 "//foundation/distributedhardware/distributed_audio/services/audiomanager/servicesink:distributed_audio_sink",
 
