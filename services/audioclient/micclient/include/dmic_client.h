@@ -43,7 +43,13 @@ namespace DistributedHardware {
 class DMicClient : public IAudioDataTransCallback, public std::enable_shared_from_this<DMicClient> {
 public:
     DMicClient(const std::string &devId, const std::shared_ptr<IAudioEventCallback> &callback)
-        : devId_(devId), eventCallback_(callback) {};
+        : devId_(devId), eventCallback_(callback)
+        {
+            audioParam_.comParam.sampleRate = AudioSampleRate::SAMPLE_RATE_8000;
+            audioParam_.comParam.channelMask = AudioChannel::MONO;
+            audioParam_.comParam.bitFormat = AudioSampleFormat::SAMPLE_U8;
+            audioParam_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
+        };
     ~DMicClient();
     int32_t OnStateChange(int32_t type) override;
     int32_t SetUp(const AudioParam &param);

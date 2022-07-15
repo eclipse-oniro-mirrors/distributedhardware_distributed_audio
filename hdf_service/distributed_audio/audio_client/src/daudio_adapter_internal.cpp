@@ -449,6 +449,10 @@ AudioAdapterContext::AudioAdapterContext()
     instance_.SetExtraParams = SetExtraParamsInternal;
     instance_.GetExtraParams = GetExtraParamsInternal;
     instance_.RegExtraParamObserver = RegExtraParamObserverInternal;
+
+    instance_.SetVoiceVolume = nullptr;
+    instance_.GetMicMute = nullptr;
+    instance_.SetMicMute = nullptr;
 }
 
 AudioAdapterContext::~AudioAdapterContext()

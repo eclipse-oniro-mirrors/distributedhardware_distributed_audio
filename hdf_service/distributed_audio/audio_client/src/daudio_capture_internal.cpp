@@ -106,6 +106,9 @@ AudioCaptureContext::AudioCaptureContext()
     instance_.volume.GetGainThreshold = AudioVolumeInternal<AudioCaptureContext>::GetGainThreshold;
     instance_.volume.SetGain = AudioVolumeInternal<AudioCaptureContext>::SetGain;
     instance_.volume.GetGain = AudioVolumeInternal<AudioCaptureContext>::GetGain;
+
+    descHal_.portId = 0;
+    descHal_.pins = 0;
 }
 
 AudioCaptureContext::~AudioCaptureContext() {}

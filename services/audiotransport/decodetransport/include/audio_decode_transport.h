@@ -35,7 +35,13 @@ class AudioDecodeTransport : public IAudioDataTransport,
     public IAudioProcessorCallback,
     public std::enable_shared_from_this<AudioDecodeTransport> {
 public:
-    explicit AudioDecodeTransport(const std::string &peerDevId) : peerDevId_(peerDevId) {}
+    explicit AudioDecodeTransport(const std::string &peerDevId) : peerDevId_(peerDevId)
+    {
+        audioParam_.comParam.sampleRate = AudioSampleRate::SAMPLE_RATE_8000;
+        audioParam_.comParam.channelMask = AudioChannel::MONO;
+        audioParam_.comParam.bitFormat = AudioSampleFormat::SAMPLE_U8;
+        audioParam_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
+    }
     ~AudioDecodeTransport() = default;
     int32_t SetUp(const AudioParam &localParam, const AudioParam &remoteParam,
         const std::shared_ptr<IAudioDataTransCallback> &callback, const std::string &role) override;

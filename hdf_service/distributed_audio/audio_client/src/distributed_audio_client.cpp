@@ -182,6 +182,8 @@ AudioManagerContext::AudioManagerContext()
     instance_.GetAllAdapters = GetAllAdaptersInternal;
     instance_.LoadAdapter = LoadAdapterInternal;
     instance_.UnloadAdapter = UnloadAdapterInternal;
+
+    instance_.ReleaseAudioManagerObject = nullptr;
 }
 
 AudioManagerContext::~AudioManagerContext()

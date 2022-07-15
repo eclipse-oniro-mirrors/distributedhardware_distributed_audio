@@ -36,6 +36,14 @@ IMPLEMENT_SINGLE_INSTANCE(DAudioHandler);
 
 DAudioHandler::DAudioHandler()
 {
+    encoderInfos_.channelMaxVal = 0;
+    encoderInfos_.channelMinVal = 0;
+    decoderInfos_.channelMaxVal = 0;
+    decoderInfos_.channelMinVal = 0;
+    spkInfos_.channelMaxVal = 0;
+    spkInfos_.channelMinVal = 0;
+    micInfos_.channelMaxVal = 0;
+    micInfos_.channelMinVal = 0;
     DHLOGI("%s: DAudioHandler constructed.", LOG_TAG);
 }
 

@@ -202,6 +202,10 @@ AudioRenderContext::AudioRenderContext()
     instance_.volume.GetGainThreshold = AudioVolumeInternal<AudioRenderContext>::GetGainThreshold;
     instance_.volume.SetGain = AudioVolumeInternal<AudioRenderContext>::SetGain;
     instance_.volume.GetGain = AudioVolumeInternal<AudioRenderContext>::GetGain;
+
+    descHal_.portId = 0;
+    instance_.IsSupportsDrain = nullptr;
+    descHal_.pins = 0;
 }
 
 AudioRenderContext::~AudioRenderContext() {}

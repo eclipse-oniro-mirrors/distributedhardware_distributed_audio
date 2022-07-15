@@ -33,7 +33,12 @@ class DMicDev : public IDAudioHdiCallback,
     public std::enable_shared_from_this<DMicDev> {
 public:
     DMicDev(const std::string &devId, std::shared_ptr<IAudioEventCallback> callback)
-        : devId_(devId), audioEventCallback_(callback) {};
+        : devId_(devId), audioEventCallback_(callback)
+        {
+            sampleRate_ = AudioSampleRate::SAMPLE_RATE_8000;
+            channelMask_ = AudioChannel::MONO;
+            bitFormat_ = AudioSampleFormat::SAMPLE_U8;
+        };
     ~DMicDev() = default;
 
     int32_t EnableDMic(const int32_t dhId, const std::string &capability);

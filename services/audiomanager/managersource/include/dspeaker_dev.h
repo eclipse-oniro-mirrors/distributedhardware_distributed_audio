@@ -34,7 +34,15 @@ class DSpeakerDev : public IDAudioHdiCallback,
     public std::enable_shared_from_this<DSpeakerDev> {
 public:
     DSpeakerDev(const std::string &devId, std::shared_ptr<IAudioEventCallback> callback)
-        : devId_(devId), audioEventCallback_(callback) {};
+        : devId_(devId), audioEventCallback_(callback)
+        {
+            audioParamHDF_.sampleRate = AudioSampleRate::SAMPLE_RATE_8000;
+            audioParamHDF_.channelMask = AudioChannel::MONO;
+            audioParamHDF_.bitFormat = AudioSampleFormat::SAMPLE_U8;
+            audioParamHDF_.streamUsage = StreamUsage::STREAM_USAGE_UNKNOWN;
+            audioParamHDF_.frameSize = 0;
+            audioParamHDF_.period = 0;
+        };
     ~DSpeakerDev() = default;
 
     int32_t EnableDSpeaker(const int32_t dhId, const std::string& capability);

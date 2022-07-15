@@ -33,6 +33,19 @@ namespace V1_0 {
 AudioAdapterInterfaceImpl::AudioAdapterInterfaceImpl(const AudioAdapterDescriptorHAL &desc)
     : adpDescriptor_(desc)
 {
+    renderParam_.format = 0;
+    renderParam_.channelCount = 0;
+    renderParam_.sampleRate = 0;
+    renderParam_.period = 0;
+    renderParam_.frameSize = 0;
+    renderParam_.streamUsage = 0;
+
+    captureParam_.format = 0;
+    captureParam_.channelCount = 0;
+    captureParam_.sampleRate = 0;
+    captureParam_.period = 0;
+    captureParam_.frameSize = 0;
+    captureParam_.streamUsage = 0;
     DHLOGD("%s: Distributed Audio Adapter constructed, name(%s).", AUDIO_LOG, GetAnonyString(desc.adapterName).c_str());
 }
 
