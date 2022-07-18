@@ -88,7 +88,7 @@ int32_t AudioCtrlChannel::CloseSession()
 {
     DHLOGI("%s: CloseSession, sessionId: %d.", LOG_TAG, sessionId_);
     if (sessionId_ == 0) {
-        DHLOGE("%s: Session is already closed.", LOG_TAG);
+        DHLOGI("%s: Session is already closed.", LOG_TAG);
         return DH_SUCCESS;
     }
 
@@ -169,6 +169,10 @@ void AudioCtrlChannel::OnSessionOpened(int32_t sessionId, int32_t result)
 void AudioCtrlChannel::OnSessionClosed(int32_t sessionId)
 {
     DHLOGI("%s: OnCtrlSessionClosed, sessionId: %d.", LOG_TAG, sessionId);
+    if (sessionId_ == 0) {
+        DHLOGI("%s: Session already closed.", LOG_TAG);
+        return;
+    }
     std::shared_ptr<IAudioChannelListener> listener = channelListener_.lock();
     if (!listener) {
         DHLOGE("%s: Channel listener is null.", LOG_TAG);

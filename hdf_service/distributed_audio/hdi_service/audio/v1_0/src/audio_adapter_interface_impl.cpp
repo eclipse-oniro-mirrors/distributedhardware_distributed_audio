@@ -16,6 +16,7 @@
 #include "audio_adapter_interface_impl.h"
 
 #include <hdf_base.h>
+#include <sstream>
 
 #include "daudio_constants.h"
 #include "daudio_errcode.h"
@@ -65,7 +66,7 @@ int32_t AudioAdapterInterfaceImpl::CreateRender(const AudioDeviceDescriptorHAL &
         desc.pins, attrs.sampleRate, attrs.channelCount, attrs.format);
     render = nullptr;
     {
-        std::lock_guard<std::mutex> devLck(devMapMtx_);
+        std::lock_guard<std::mutex> devLck(devOpMtx_);
         if (mapAudioDevice_.find(desc.pins) == mapAudioDevice_.end()) {
             DHLOGE("%s: Can not find device, create render failed.", AUDIO_LOG);
             return HDF_FAILURE;
@@ -116,7 +117,7 @@ int32_t AudioAdapterInterfaceImpl::CreateCapture(const AudioDeviceDescriptorHAL 
         desc.pins, attrs.sampleRate, attrs.channelCount, attrs.format);
     capture = nullptr;
     {
-        std::lock_guard<std::mutex> devLck(devMapMtx_);
+        std::lock_guard<std::mutex> devLck(devOpMtx_);
         if (mapAudioDevice_.find(desc.pins) == mapAudioDevice_.end()) {
             DHLOGE("%s: Can not find device, create capture failed.", AUDIO_LOG);
             return HDF_FAILURE;
@@ -267,7 +268,7 @@ AudioAdapterDescriptorHAL AudioAdapterInterfaceImpl::GetAdapterDesc()
 
 std::string AudioAdapterInterfaceImpl::GetDeviceCapabilitys(const uint32_t devId)
 {
-    std::lock_guard<std::mutex> devLck(devMapMtx_);
+    std::lock_guard<std::mutex> devLck(devOpMtx_);
     std::string caps;
     auto dev = mapAudioDevice_.find(devId);
     if (dev == mapAudioDevice_.end()) {
@@ -296,11 +297,13 @@ int32_t AudioAdapterInterfaceImpl::Notify(const uint32_t devId, const AudioEvent
             DHLOGI("%s: Notify event: VOLUME_CHANGE, event content: %s.", AUDIO_LOG, event.content.c_str());
             return HandleVolumeChangeEvent(event);
         case HDF_AUDIO_EVENT_OPEN_SPK_RESULT:
-            DHLOGI("%s: Notify event: SPEAKER_OPEN, event content: %s.", AUDIO_LOG, event.content.c_str());
-            return HandleOpenSpeakerEvent(event);
+        case HDF_AUDIO_EVENT_CLOSE_SPK_RESULT:
         case HDF_AUDIO_EVENT_OPEN_MIC_RESULT:
-            DHLOGI("%s: Notify event: MIC_OPEN, event content: %s.", AUDIO_LOG, event.content.c_str());
-            return HandleOpenMicEvent(event);
+        case HDF_AUDIO_EVENT_CLOSE_MIC_RESULT:
+            return HandleSANotifyEvent(event);
+        case HDF_AUDIO_EVENT_SPK_CLOSED:
+        case HDF_AUDIO_EVENT_MIC_CLOSED:
+            return HandleDeviceClosed(event);
         default:
             DHLOGE("%s: Audio event: %d is undefined.", AUDIO_LOG, event.type);
             return ERR_DH_AUDIO_HDF_INVALID_OPERATION;
@@ -310,7 +313,7 @@ int32_t AudioAdapterInterfaceImpl::Notify(const uint32_t devId, const AudioEvent
 int32_t AudioAdapterInterfaceImpl::AddAudioDevice(const uint32_t devId, const std::string &caps)
 {
     DHLOGI("%s: Add distributed audio device %d.", AUDIO_LOG, devId);
-    std::lock_guard<std::mutex> devLck(devMapMtx_);
+    std::lock_guard<std::mutex> devLck(devOpMtx_);
     auto dev = mapAudioDevice_.find(devId);
     if (dev != mapAudioDevice_.end()) {
         DHLOGE("%s: Device has been add, do not repeat add.", AUDIO_LOG);
@@ -325,14 +328,25 @@ int32_t AudioAdapterInterfaceImpl::AddAudioDevice(const uint32_t devId, const st
 int32_t AudioAdapterInterfaceImpl::RemoveAudioDevice(const uint32_t devId)
 {
     DHLOGI("%s: Remove distributed audio device %d.", AUDIO_LOG, devId);
-    std::lock_guard<std::mutex> devLck(devMapMtx_);
+    std::lock_guard<std::mutex> devLck(devOpMtx_);
     auto dev = mapAudioDevice_.find(devId);
     if (dev == mapAudioDevice_.end()) {
         DHLOGE("%s: Device has not been add, remove device failed.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_INVALID_OPERATION;
     }
-    mapAudioDevice_.erase(devId);
 
+    if (devId == spkPinInUse_) {
+        AudioDeviceDescriptorHAL dec;
+        dec.pins = spkPinInUse_;
+        CloseRenderDevice(dec);
+    }
+    if (devId == micPinInUse_) {
+        AudioDeviceDescriptorHAL dec;
+        dec.pins = spkPinInUse_;
+        CloseCaptureDevice(dec);
+    }
+
+    mapAudioDevice_.erase(devId);
     DHLOGI("%s: Remove audio device success.", AUDIO_LOG);
     return DH_SUCCESS;
 }
@@ -341,6 +355,12 @@ int32_t AudioAdapterInterfaceImpl::OpenRenderDevice(const AudioDeviceDescriptorH
     const AudioSampleAttributesHAL &attrs)
 {
     DHLOGI("%s: Open render device, pin: %d.", AUDIO_LOG, desc.pins);
+    if (isSpkOpened_) {
+        DHLOGI("%s: Render already opened.", AUDIO_LOG);
+        return DH_SUCCESS;
+    }
+    std::lock_guard<std::mutex> devLck(devOpMtx_);
+    spkPinInUse_ = desc.pins;
     renderParam_.format = attrs.format;
     renderParam_.channelCount = attrs.channelCount;
     renderParam_.sampleRate = attrs.sampleRate;
@@ -356,17 +376,10 @@ int32_t AudioAdapterInterfaceImpl::OpenRenderDevice(const AudioDeviceDescriptorH
         return ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL;
     }
 
-    spkNotifyFlag_ = false;
-    std::unique_lock<std::mutex> lck(spkWaitMutex_);
-    auto status =
-        spkWaitCond_.wait_for(lck, std::chrono::seconds(OPEN_WAIT_SECONDS), [this]() { return spkNotifyFlag_; });
-    if (!status) {
-        DHLOGE("%s: Open render device wait timeout(%d)s.", AUDIO_LOG, OPEN_WAIT_SECONDS);
-        return ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL;
-    }
-    if (isSpkOpened_ != true) {
-        DHLOGE("%s: Wait open render device failed.", AUDIO_LOG);
-        return ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL;
+    ret = WaitForSANotify(EVENT_OPEN_SPK);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Wait SA notify failed.", AUDIO_LOG);
+        return ret;
     }
     DHLOGI("%s: Open render device success.", AUDIO_LOG);
     return DH_SUCCESS;
@@ -375,6 +388,11 @@ int32_t AudioAdapterInterfaceImpl::OpenRenderDevice(const AudioDeviceDescriptorH
 int32_t AudioAdapterInterfaceImpl::CloseRenderDevice(const AudioDeviceDescriptorHAL &desc)
 {
     DHLOGI("%s: Close render device, pin: %d.", AUDIO_LOG, desc.pins);
+    std::lock_guard<std::mutex> devLck(devOpMtx_);
+    if (spkPinInUse_ == 0) {
+        DHLOGI("%s: No need close render device.", AUDIO_LOG);
+        return DH_SUCCESS;
+    }
     renderParam_ = {};
     int32_t ret = extSpeakerCallback_->CloseDevice(adpDescriptor_.adapterName, desc.pins);
     if (ret != HDF_SUCCESS) {
@@ -382,7 +400,12 @@ int32_t AudioAdapterInterfaceImpl::CloseRenderDevice(const AudioDeviceDescriptor
         return ERR_DH_AUDIO_HDF_CLOSE_DEVICE_FAIL;
     }
 
-    isSpkOpened_ = false;
+    ret = WaitForSANotify(EVENT_CLOSE_SPK);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Wait SA notify failed.", AUDIO_LOG);
+        return ret;
+    }
+    spkPinInUse_ = 0;
     DHLOGI("%s: Close render device success.", AUDIO_LOG);
     return DH_SUCCESS;
 }
@@ -391,6 +414,12 @@ int32_t AudioAdapterInterfaceImpl::OpenCaptureDevice(const AudioDeviceDescriptor
     const AudioSampleAttributesHAL &attrs)
 {
     DHLOGI("%s: Open capture device, pin: %d.", AUDIO_LOG, desc.pins);
+    if (isMicOpened_) {
+        DHLOGI("%s: Capture already opened.", AUDIO_LOG);
+        return DH_SUCCESS;
+    }
+    std::lock_guard<std::mutex> devLck(devOpMtx_);
+    micPinInUse_ = desc.pins;
     captureParam_.format = attrs.format;
     captureParam_.channelCount = attrs.channelCount;
     captureParam_.sampleRate = attrs.sampleRate;
@@ -406,17 +435,10 @@ int32_t AudioAdapterInterfaceImpl::OpenCaptureDevice(const AudioDeviceDescriptor
         return ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL;
     }
 
-    micNotifyFlag_ = false;
-    std::unique_lock<std::mutex> lck(micWaitMutex_);
-    auto status =
-        micWaitCond_.wait_for(lck, std::chrono::seconds(OPEN_WAIT_SECONDS), [this]() { return micNotifyFlag_; });
-    if (!status) {
-        DHLOGE("%s: Open capture device wait timeout(%ds).", AUDIO_LOG, OPEN_WAIT_SECONDS);
-        return ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL;
-    }
-    if (isMicOpened_ != true) {
-        DHLOGE("%s: Wait open capture device failed.", AUDIO_LOG);
-        return ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL;
+    ret = WaitForSANotify(EVENT_OPEN_MIC);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Wait SA notify failed.", AUDIO_LOG);
+        return ret;
     }
     DHLOGI("%s: Open capture device success.", AUDIO_LOG);
     return DH_SUCCESS;
@@ -425,6 +447,11 @@ int32_t AudioAdapterInterfaceImpl::OpenCaptureDevice(const AudioDeviceDescriptor
 int32_t AudioAdapterInterfaceImpl::CloseCaptureDevice(const AudioDeviceDescriptorHAL &desc)
 {
     DHLOGI("%s: Close capture device, pin: %d.", AUDIO_LOG, desc.pins);
+    std::lock_guard<std::mutex> devLck(devOpMtx_);
+    if (micPinInUse_ == 0) {
+        DHLOGI("%s: No need close capture device.", AUDIO_LOG);
+        return DH_SUCCESS;
+    }
     captureParam_ = {};
     int32_t ret = extMicCallback_->CloseDevice(adpDescriptor_.adapterName, desc.pins);
     if (ret != HDF_SUCCESS) {
@@ -432,7 +459,12 @@ int32_t AudioAdapterInterfaceImpl::CloseCaptureDevice(const AudioDeviceDescripto
         return ERR_DH_AUDIO_HDF_CLOSE_DEVICE_FAIL;
     }
 
-    isMicOpened_ = false;
+    ret = WaitForSANotify(EVENT_CLOSE_MIC);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Wait SA notify failed.", AUDIO_LOG);
+        return ret;
+    }
+    micPinInUse_ = 0;
     DHLOGI("%s: Close capture device success.", AUDIO_LOG);
     return DH_SUCCESS;
 }
@@ -440,7 +472,7 @@ int32_t AudioAdapterInterfaceImpl::CloseCaptureDevice(const AudioDeviceDescripto
 uint32_t AudioAdapterInterfaceImpl::GetVolumeGroup(const uint32_t devId)
 {
     uint32_t volGroup = VOLUME_GROUP_ID_DEFAULT;
-    std::lock_guard<std::mutex> devLck(devMapMtx_);
+    std::lock_guard<std::mutex> devLck(devOpMtx_);
     auto caps = mapAudioDevice_.find(devId);
     if (caps == mapAudioDevice_.end()) {
         DHLOGE("%s: Can not find caps of dev:%u.", AUDIO_LOG, devId);
@@ -456,7 +488,7 @@ uint32_t AudioAdapterInterfaceImpl::GetVolumeGroup(const uint32_t devId)
 uint32_t AudioAdapterInterfaceImpl::GetInterruptGroup(const uint32_t devId)
 {
     uint32_t iptGroup = INTERRUPT_GROUP_ID_DEFAULT;
-    std::lock_guard<std::mutex> devLck(devMapMtx_);
+    std::lock_guard<std::mutex> devLck(devOpMtx_);
     auto caps = mapAudioDevice_.find(devId);
     if (caps == mapAudioDevice_.end()) {
         DHLOGE("%s: Can not find caps of dev:%u.", AUDIO_LOG, devId);
@@ -532,23 +564,114 @@ int32_t AudioAdapterInterfaceImpl::HandleVolumeChangeEvent(const AudioEvent &eve
     return DH_SUCCESS;
 }
 
-int32_t AudioAdapterInterfaceImpl::HandleOpenSpeakerEvent(const AudioEvent &event)
+int32_t AudioAdapterInterfaceImpl::HandleSANotifyEvent(const AudioEvent &event)
 {
-    if (event.content == HDF_EVENT_RESULT_SUCCESS) {
-        isSpkOpened_ = true;
+    if (event.type == HDF_AUDIO_EVENT_OPEN_SPK_RESULT) {
+        DHLOGI("%s: Notify event: OPEN_SPK_RESULT, event content: %s.", AUDIO_LOG, event.content.c_str());
+        if (event.content == HDF_EVENT_RESULT_SUCCESS) {
+            isSpkOpened_ = true;
+        }
+        spkNotifyFlag_ = true;
+        spkWaitCond_.notify_all();
+        return DH_SUCCESS;
+    } else if (event.type == HDF_AUDIO_EVENT_CLOSE_SPK_RESULT) {
+        DHLOGI("%s: Notify event: CLOSE_SPK_RESULT, event content: %s.", AUDIO_LOG, event.content.c_str());
+        if (event.content == HDF_EVENT_RESULT_SUCCESS) {
+            isSpkOpened_ = false;
+        }
+        spkNotifyFlag_ = true;
+        spkWaitCond_.notify_all();
+        return DH_SUCCESS;
+    } else if (event.type == HDF_AUDIO_EVENT_OPEN_MIC_RESULT) {
+        DHLOGI("%s: Notify event: OPEN_MIC_RESULT, event content: %s.", AUDIO_LOG, event.content.c_str());
+        if (event.content == HDF_EVENT_RESULT_SUCCESS) {
+            isMicOpened_ = true;
+        }
+        micNotifyFlag_ = true;
+        micWaitCond_.notify_all();
+        return DH_SUCCESS;
+    } else if (event.type == HDF_AUDIO_EVENT_CLOSE_MIC_RESULT) {
+        DHLOGI("%s: Notify event: CLOSE_MIC_RESULT, event content: %s.", AUDIO_LOG, event.content.c_str());
+        if (event.content == HDF_EVENT_RESULT_SUCCESS) {
+            isMicOpened_ = false;
+        }
+        micNotifyFlag_ = true;
+        micWaitCond_.notify_all();
+        return DH_SUCCESS;
     }
-    spkNotifyFlag_ = true;
-    spkWaitCond_.notify_all();
+    return ERR_DH_AUDIO_HDF_FAIL;
+}
+
+int32_t AudioAdapterInterfaceImpl::WaitForSANotify(const AudioDeviceEvent &event)
+{
+    if (event == EVENT_OPEN_SPK || event == EVENT_CLOSE_SPK) {
+        spkNotifyFlag_ = false;
+        std::unique_lock<std::mutex> lck(spkWaitMutex_);
+        auto status =
+            spkWaitCond_.wait_for(lck, std::chrono::seconds(WAIT_SECONDS), [this]() { return spkNotifyFlag_; });
+        if (!status) {
+            DHLOGE("%s: Wait spk event: %d timeout(%d)s.", AUDIO_LOG, event, WAIT_SECONDS);
+            return ERR_DH_AUDIO_HDF_FAIL;
+        }
+        if (event == EVENT_OPEN_SPK && isSpkOpened_ != true) {
+            DHLOGE("%s: Wait open render device failed.", AUDIO_LOG);
+            return ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL;
+        } else if (event == EVENT_CLOSE_SPK && isSpkOpened_ != false) {
+            DHLOGE("%s: Wait close render device failed.", AUDIO_LOG);
+            return ERR_DH_AUDIO_HDF_CLOSE_DEVICE_FAIL;
+        }
+        return DH_SUCCESS;
+    }
+
+    if (event == EVENT_OPEN_MIC || event == EVENT_CLOSE_MIC) {
+        micNotifyFlag_ = false;
+        std::unique_lock<std::mutex> lck(micWaitMutex_);
+        auto status =
+            micWaitCond_.wait_for(lck, std::chrono::seconds(WAIT_SECONDS), [this]() { return micNotifyFlag_; });
+        if (!status) {
+            DHLOGE("%s: Wait mic event: %d timeout(%d)s.", AUDIO_LOG, WAIT_SECONDS);
+            return ERR_DH_AUDIO_HDF_FAIL;
+        }
+        if (event == EVENT_OPEN_MIC && isMicOpened_ != true) {
+            DHLOGE("%s: Wait open capture device failed.", AUDIO_LOG);
+            return ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL;
+        } else if (event == EVENT_CLOSE_MIC && isMicOpened_ != false) {
+            DHLOGE("%s: Wait close capture device failed.", AUDIO_LOG);
+            return ERR_DH_AUDIO_HDF_CLOSE_DEVICE_FAIL;
+        }
+        return DH_SUCCESS;
+    }
     return DH_SUCCESS;
 }
 
-int32_t AudioAdapterInterfaceImpl::HandleOpenMicEvent(const AudioEvent &event)
+int32_t AudioAdapterInterfaceImpl::HandleDeviceClosed(const AudioEvent &event)
 {
-    if (event.content == HDF_EVENT_RESULT_SUCCESS) {
-        isMicOpened_ = true;
+    DHLOGI("%s: Handle device closed, event type: %d.", AUDIO_LOG, event.type);
+    if (paramCallback_ == nullptr) {
+        DHLOGE("%s: Audio param observer is null, not notify audio fwk.", AUDIO_LOG);
+        return DH_SUCCESS;
     }
-    micNotifyFlag_ = true;
-    micWaitCond_.notify_all();
+
+    std::stringstream ss;
+    ss << "DEVICE_TYPE=" <<
+        (event.type == HDF_AUDIO_EVENT_SPK_CLOSED ? AUDIO_DEVICE_TYPE_SPEAKER : AUDIO_DEVICE_TYPE_MIC) << ";";
+    int32_t ret = paramCallback_->OnAudioParamNotify(AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_STATUS, ss.str(),
+        std::to_string(EVENT_DEV_CLOSED));
+    if (ret != DH_SUCCESS) {
+        DHLOGD("%s: Notify fwk failed.", AUDIO_LOG);
+    }
+
+    AudioDeviceDescriptorHAL dec;
+    if (isSpkOpened_ == true && event.type == HDF_AUDIO_EVENT_SPK_CLOSED) {
+        DHLOGI("%s: Render device status error, close render.", AUDIO_LOG);
+        dec.pins = spkPinInUse_;
+        return CloseRenderDevice(dec);
+    } else if (isMicOpened_ == true && event.type == HDF_AUDIO_EVENT_MIC_CLOSED) {
+        DHLOGI("%s: Capture device status error, close capture.", AUDIO_LOG);
+        dec.pins = micPinInUse_;
+        return CloseCaptureDevice(dec);
+    }
+    DHLOGI("%s: Handle device closed success.", AUDIO_LOG);
     return DH_SUCCESS;
 }
 

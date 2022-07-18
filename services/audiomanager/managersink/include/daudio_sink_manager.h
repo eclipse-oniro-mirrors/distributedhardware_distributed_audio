@@ -28,7 +28,6 @@ namespace OHOS {
 namespace DistributedHardware {
 class DAudioSinkManager {
 DECLARE_SINGLE_INSTANCE_BASE(DAudioSinkManager);
-
 public:
     int32_t Init();
     int32_t UnInit();
@@ -37,6 +36,8 @@ public:
     int32_t DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
         const std::string &eventContent);
     void OnSinkDevReleased(const std::string &devId);
+
+    void NotifyEvent(const std::string &devId, const int32_t eventType, const std::string &eventContent);
 
 private:
     class RemoteSourceSvrRecipient : public IRemoteObject::DeathRecipient {

@@ -69,6 +69,7 @@ private:
     int32_t NotifyVolumeChange(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifySetParam(const std::shared_ptr<AudioEvent> &audioEvent);
     bool JudgeJsonValid(const json &resultJson);
+    void NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result);
 
     static constexpr uint8_t RPC_WAIT_SECONDS = 5;
     static constexpr uint8_t TASK_QUEUE_CAPACITY = 20;
@@ -77,6 +78,9 @@ private:
     std::shared_ptr<DMicClient> micClient_;
     std::shared_ptr<DAudioSinkDevCtrlMgr> dAudioSinkDevCtrlMgr_;
     std::string devId_;
+    std::string localDevId_;
+    std::string spkDhId_;
+    std::string micDhId_;
 
     std::mutex rpcWaitMutex_;
     std::condition_variable rpcWaitCond_;

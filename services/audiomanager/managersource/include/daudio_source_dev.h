@@ -70,19 +70,38 @@ private:
 
     int32_t HandleOpenDSpeaker(const std::shared_ptr<AudioEvent> &event);
     int32_t HandleCloseDSpeaker(const std::shared_ptr<AudioEvent> &event);
+    int32_t HandleDSpeakerOpened(const std::shared_ptr<AudioEvent> &event);
+    int32_t HandleDSpeakerClosed(const std::shared_ptr<AudioEvent> &event);
     int32_t HandleOpenDMic(const std::shared_ptr<AudioEvent> &event);
     int32_t HandleCloseDMic(const std::shared_ptr<AudioEvent> &event);
+    int32_t HandleDMicOpened(const std::shared_ptr<AudioEvent> &event);
+    int32_t HandleDMicClosed(const std::shared_ptr<AudioEvent> &event);
     int32_t HandleOpenCtrlTrans(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleCloseCtrlTrans();
+    int32_t HandleCloseCtrlTrans(const std::shared_ptr<AudioEvent> &event);
+    int32_t HandleCtrlTransClosed(const std::shared_ptr<AudioEvent> &event);
     int32_t HandleNotifyRPC(const std::shared_ptr<AudioEvent> &event);
     int32_t WaitForRPC(const AudioEventType type);
     int32_t HandleVolumeSet(const std::shared_ptr<AudioEvent> &event);
     int32_t HandleVolumeChange(const std::shared_ptr<AudioEvent> &event);
 
+    int32_t NotifySinkDev(const AudioEventType type, const json Param, const std::string dhId);
+    void NotifyHDF(const AudioEventType type, const std::string result);
+    void NotifySpeakerEvent(const std::shared_ptr<AudioEvent> &event);
+    void NotifyMicEvent(const std::shared_ptr<AudioEvent> &event);
+    bool IsSpeakerEvent(const std::shared_ptr<AudioEvent> &event);
+    bool IsMicEvent(const std::shared_ptr<AudioEvent> &event);
+
 private:
     static const constexpr char *LOG_TAG = "DAudioSourceDev";
     static constexpr uint8_t RPC_WAIT_SECONDS = 2;
     static constexpr uint8_t TASK_QUEUE_CAPACITY = 20;
+
+    static constexpr uint8_t EVENT_NOTIFY_OPEN_SPK = 0x01;
+    static constexpr uint8_t EVENT_NOTIFY_CLOSE_SPK = 0x02;
+    static constexpr uint8_t EVENT_NOTIFY_OPEN_MIC = 0x04;
+    static constexpr uint8_t EVENT_NOTIFY_CLOSE_MIC = 0x08;
+    static constexpr uint8_t EVENT_NOTIFY_OPEN_CTRL = 0x10;
+    static constexpr uint8_t EVENT_NOTIFY_CLOSE_CTRL = 0x20;
 
     std::string devId_;
     std::string localDevId_;

@@ -41,8 +41,8 @@ int32_t AudioCtrlTransport::Release()
 {
     DHLOGI("%s: Release.", LOG_TAG);
     if (!audioChannel_) {
-        DHLOGE("%s: Channel is null.", LOG_TAG);
-        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
+        DHLOGE("%s: Channel is already release.", LOG_TAG);
+        return DH_SUCCESS;
     }
 
     int32_t ret = audioChannel_->ReleaseSession();
@@ -78,8 +78,8 @@ int32_t AudioCtrlTransport::Stop()
 {
     DHLOGI("%s: Stop.", LOG_TAG);
     if (!audioChannel_) {
-        DHLOGE("%s: Channel is null.", LOG_TAG);
-        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
+        DHLOGE("%s: Channel is already release.", LOG_TAG);
+        return DH_SUCCESS;
     }
 
     int32_t ret = audioChannel_->CloseSession();
@@ -110,7 +110,7 @@ int32_t AudioCtrlTransport::SendAudioEvent(const std::shared_ptr<AudioEvent> &ev
         DHLOGE("%s:Send data failed.", LOG_TAG);
     }
 
-    DHLOGE("%s: Send Audio Event success.", LOG_TAG);
+    DHLOGI("%s: Send Audio Event success.", LOG_TAG);
     return DH_SUCCESS;
 }
 
@@ -151,10 +151,8 @@ void AudioCtrlTransport::OnEventReceived(const std::shared_ptr<AudioEvent> &even
 
 int32_t AudioCtrlTransport::InitAudioCtrlTrans(const std::string &netWordId)
 {
-    audioChannel_ = std::make_shared<AudioCtrlChannel>(netWordId);
-    if (!audioChannel_) {
-        DHLOGE("%s: Create audio ctrl channel failed.", LOG_TAG);
-        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
+    if (audioChannel_ == nullptr) {
+        audioChannel_ = std::make_shared<AudioCtrlChannel>(netWordId);
     }
 
     int32_t ret = RegisterChannelListener();

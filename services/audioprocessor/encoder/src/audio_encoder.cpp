@@ -132,7 +132,7 @@ int32_t AudioEncoder::ReleaseAudioCodec()
     DHLOGI("%s: Release audio codec.", LOG_TAG);
     if (audioEncoder_ == nullptr) {
         DHLOGE("%s: Encoder is null.", LOG_TAG);
-        return ERR_DH_AUDIO_BAD_VALUE;
+        return DH_SUCCESS;
     }
 
     int32_t ret = audioEncoder_->Release();
@@ -181,7 +181,7 @@ int32_t AudioEncoder::StopAudioCodec()
 
     if (audioEncoder_ == nullptr) {
         DHLOGE("%s: Encoder is null.", LOG_TAG);
-        return ERR_DH_AUDIO_BAD_VALUE;
+        return DH_SUCCESS;
     }
 
     bool isSuccess = true;

@@ -37,29 +37,6 @@ void DAudioSourceDevCtrlMgrTest::TearDown(void)
 }
 
 /**
- * @tc.name: Init_001
- * @tc.desc: Verify the Init function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSourceDevCtrlMgrTest, Init_001, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, sourceDevCtrl_->Init());
-}
-
-/**
- * @tc.name: UnInit_001
- * @tc.desc: Verify the UnInit function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSourceDevCtrlMgrTest, UnInit_001, TestSize.Level1)
-{
-    sourceDevCtrl_->audioCtrlTrans_ = nullptr;
-    EXPECT_EQ(DH_SUCCESS, sourceDevCtrl_->UnInit());
-}
-
-/**
  * @tc.name: SetUp_001
  * @tc.desc: Verify the SetUp function.
  * @tc.type: FUNC

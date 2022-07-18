@@ -31,6 +31,7 @@
 #include "audio_encode_transport.h"
 #include "audio_event.h"
 #include "audio_param.h"
+#include "audio_status.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 #include "iaudio_data_transport.h"
@@ -46,6 +47,7 @@ public:
     ~DMicClient();
     int32_t OnStateChange(int32_t type) override;
     int32_t SetUp(const AudioParam &param);
+    int32_t Release();
     int32_t StartCapture();
     int32_t StopCapture();
 
@@ -65,6 +67,8 @@ private:
     bool isBlocking_ = false;
     bool isChannelReady_ = false;
     std::atomic<bool> isCaptureReady_ = false;
+    std::mutex devMtx_;
+    AudioClientStatus clientStatus_ = CLIENT_STATUS_IDLE;
 
     std::shared_ptr<IAudioEventCallback> eventCallback_ = nullptr;
     std::unique_ptr<AudioStandard::AudioCapturer> audioCapturer_ = nullptr;

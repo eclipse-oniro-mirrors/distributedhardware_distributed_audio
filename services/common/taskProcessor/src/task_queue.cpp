@@ -81,5 +81,10 @@ int32_t TaskQueue::Produce(std::shared_ptr<TaskImplInterface> &task)
     taskQueueCond_.notify_one();
     return DH_SUCCESS;
 }
+
+int32_t TaskQueue::GetTaskNum()
+{
+    return taskQueue_.size();
+}
 } // DistributedHardware
 } // OHOS

@@ -61,10 +61,6 @@ constexpr uint32_t DAUDIO_MAX_DEVICE_ID_LEN = 100;
 constexpr uint32_t DAUDIO_MAX_TASKQUEUE_LEN = 100;
 constexpr uint32_t DAUDIO_MAX_RECV_DATA_LEN = 104857600;
 
-constexpr uint8_t EVENT_NOTIFY_SPK = 0x01;
-constexpr uint8_t EVENT_NOTIFY_MIC = 0x02;
-constexpr uint8_t EVENT_NOTIFY_CTRL = 0x04;
-
 const std::string DAUDIO_LOG_TITLE_TAG = "DAUDIO";
 const std::string DAUDIO_PREFIX = "DISTRIBUTED_AUDIO";
 const std::string AUDIO_PREFIX = "AUDIO";

@@ -76,8 +76,8 @@ int32_t DAudioHdiHandler::UninitHdiHandler()
     return DH_SUCCESS;
 }
 
-int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, int32_t dhId, const std::string &capability,
-    const std::shared_ptr<IDAudioHdiCallback> &callbackObjParam)
+int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, const int32_t dhId,
+    const std::string &capability, const std::shared_ptr<IDAudioHdiCallback> &callbackObjParam)
 {
     DHLOGI("%s: RegisterAudioDevice, adpname: %s, dhId: %d", LOG_TAG, GetAnonyString(devId).c_str(), dhId);
     if (audioSrvHdf_ == nullptr) {
@@ -127,7 +127,7 @@ int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, int32_t 
     return DH_SUCCESS;
 }
 
-int32_t DAudioHdiHandler::UnRegisterAudioDevice(const std::string &devId, int32_t dhId)
+int32_t DAudioHdiHandler::UnRegisterAudioDevice(const std::string &devId, const int32_t dhId)
 {
     DHLOGI("UnRegisterAudioDevice, adpname: %s, dhId: %d", GetAnonyString(devId).c_str(), dhId);
     if (audioSrvHdf_ == nullptr) {
@@ -157,7 +157,8 @@ int32_t DAudioHdiHandler::UnRegisterAudioDevice(const std::string &devId, int32_
     return DH_SUCCESS;
 }
 
-int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, int32_t dhId, std::shared_ptr<AudioEvent> &audioEvent)
+int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, const int32_t dhId,
+    const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("%s: NotifyEvent adpname: %s, dhId: %d, event type: %d, event content: %s.", LOG_TAG,
         GetAnonyString(devId).c_str(), dhId, audioEvent->type, audioEvent->content.c_str());
@@ -170,11 +171,23 @@ int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, int32_t dhId, st
         case AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT:
             newEvent.type = AUDIO_EVENT_OPEN_SPK_RESULT;
             break;
+        case AudioEventType::NOTIFY_CLOSE_SPEAKER_RESULT:
+            newEvent.type = AUDIO_EVENT_CLOSE_SPK_RESULT;
+            break;
         case AudioEventType::NOTIFY_OPEN_MIC_RESULT:
             newEvent.type = AUDIO_EVENT_OPEN_MIC_RESULT;
             break;
+        case AudioEventType::NOTIFY_CLOSE_MIC_RESULT:
+            newEvent.type = AUDIO_EVENT_CLOSE_MIC_RESULT;
+            break;
         case AudioEventType::VOLUME_CHANGE:
             newEvent.type = AUDIO_EVENT_VOLUME_CHANGE;
+            break;
+        case AudioEventType::SPEAKER_CLOSED:
+            newEvent.type = AUDIO_EVENT_SPK_CLOSED;
+            break;
+        case AudioEventType::MIC_CLOSED:
+            newEvent.type = AUDIO_EVENT_MIC_CLOSED;
             break;
         default:
             DHLOGE("%s: Unsupport audio event.", LOG_TAG);

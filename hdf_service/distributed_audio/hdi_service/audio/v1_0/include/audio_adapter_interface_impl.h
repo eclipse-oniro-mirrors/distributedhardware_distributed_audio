@@ -43,6 +43,14 @@ typedef enum {
     STATUS_CREATE_RENDER,
 } AudioAdapterStatus;
 
+typedef enum {
+    EVENT_DEV_CLOSED = 0,
+    EVENT_OPEN_SPK,
+    EVENT_CLOSE_SPK,
+    EVENT_OPEN_MIC,
+    EVENT_CLOSE_MIC,
+} AudioDeviceEvent;
+
 class AudioAdapterInterfaceImpl : public IAudioAdapter {
 public:
     AudioAdapterInterfaceImpl(const AudioAdapterDescriptorHAL &desc);
@@ -87,12 +95,13 @@ private:
     int32_t SetAudioVolume(const std::string& condition, const std::string &param);
     int32_t GetAudioVolume(const std::string& condition, std::string &param);
     int32_t HandleVolumeChangeEvent(const AudioEvent &event);
-    int32_t HandleOpenMicEvent(const AudioEvent &event);
-    int32_t HandleOpenSpeakerEvent(const AudioEvent &event);
+    int32_t HandleSANotifyEvent(const AudioEvent &event);
+    int32_t WaitForSANotify(const AudioDeviceEvent &event);
+    int32_t HandleDeviceClosed(const AudioEvent &event);
 
 private:
     const char *AUDIO_LOG = "AudioAdapterInterfaceImpl";
-    static constexpr uint8_t OPEN_WAIT_SECONDS = 3;
+    static constexpr uint8_t WAIT_SECONDS = 10;
     AudioAdapterDescriptorHAL adpDescriptor_;
     AudioAdapterStatus status_ = STATUS_OFFLINE;
 
@@ -104,7 +113,7 @@ private:
     sptr<AudioCaptureInterfaceImpl> audioCapture_ = nullptr;
     AudioParameter captureParam_;
 
-    std::mutex devMapMtx_;
+    std::mutex devOpMtx_;
     std::map<uint32_t, std::string> mapAudioDevice_;
     std::mutex spkWaitMutex_;
     std::condition_variable spkWaitCond_;
@@ -115,6 +124,9 @@ private:
     bool isMicOpened_ = false;
     bool spkNotifyFlag_ = false;
     bool micNotifyFlag_ = false;
+
+    uint32_t spkPinInUse_ = 0;
+    uint32_t micPinInUse_ = 0;
 };
 } // V1_0
 } // Audio

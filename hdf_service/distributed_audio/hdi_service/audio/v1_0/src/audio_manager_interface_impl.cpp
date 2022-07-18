@@ -190,9 +190,8 @@ int32_t AudioManagerInterfaceImpl::RemoveAudioDevice(const std::string &adpName,
 
 int32_t AudioManagerInterfaceImpl::Notify(const std::string &adpName, const uint32_t devId, const AudioEvent &event)
 {
-    DHLOGI("%s: Notify event, adapter name: %s. event type: %d", AUDIO_LOG,
-        GetAnonyString(adpName).c_str(), event.type);
-    std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
+    DHLOGI("%s: Notify event, adapter name: %s. event type: %d", AUDIO_LOG, GetAnonyString(adpName).c_str(),
+        event.type);
     auto adp = mapAudioAdapter_.find(adpName);
     if (adp == mapAudioAdapter_.end()) {
         DHLOGE("%s: Notify failed, can not find adapter.", AUDIO_LOG);

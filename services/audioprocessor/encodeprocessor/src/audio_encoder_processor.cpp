@@ -62,7 +62,7 @@ int32_t AudioEncoderProcessor::ReleaseAudioProcessor()
     DHLOGI("%s: Release audio processor.", LOG_TAG);
     if (audioEncoder_ == nullptr) {
         DHLOGE("%s: Encoder is null.", LOG_TAG);
-        return ERR_DH_AUDIO_BAD_VALUE;
+        return DH_SUCCESS;
     }
 
     int32_t ret = audioEncoder_->ReleaseAudioCodec();
@@ -97,7 +97,7 @@ int32_t AudioEncoderProcessor::StopAudioProcessor()
     DHLOGI("%s: Stop audio processor.", LOG_TAG);
     if (audioEncoder_ == nullptr) {
         DHLOGE("%s: Encoder is null.", LOG_TAG);
-        return ERR_DH_AUDIO_BAD_VALUE;
+        return DH_SUCCESS;
     }
 
     int32_t ret = audioEncoder_->StopAudioCodec();

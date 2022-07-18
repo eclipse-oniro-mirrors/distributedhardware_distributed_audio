@@ -30,15 +30,14 @@ namespace OHOS {
 namespace DistributedHardware {
 DAudioSinkDevCtrlMgr::DAudioSinkDevCtrlMgr(const std::string &devId,
     std::shared_ptr<IAudioEventCallback> audioEventCallback)
+    : devId_(devId), audioEventCallback_(audioEventCallback)
 {
-    DHLOGI("%s: Distributed audio sink ctrl constructed.", LOG_TAG);
-    devId_ = devId;
-    audioEventCallback_ = audioEventCallback;
+    DHLOGI("%s: Sink ctrl constructed.", LOG_TAG);
 }
 
 DAudioSinkDevCtrlMgr::~DAudioSinkDevCtrlMgr()
 {
-    DHLOGI("%s: Distributed audio sink ctrl destructed.", LOG_TAG);
+    DHLOGI("%s: Sink ctrl deconstructed.", LOG_TAG);
 }
 
 void DAudioSinkDevCtrlMgr::OnStateChange(int32_t type)
@@ -53,7 +52,6 @@ void DAudioSinkDevCtrlMgr::OnStateChange(int32_t type)
             isOpened_ = true;
             return;
         case AudioEventType::CTRL_CLOSED:
-            isOpened_ = false;
             return;
         default:
             DHLOGE("%s:SinkDevCtrlMgr OnStateChange not a valid state, type: %d.", LOG_TAG, type);
@@ -61,28 +59,10 @@ void DAudioSinkDevCtrlMgr::OnStateChange(int32_t type)
     }
 }
 
-int32_t DAudioSinkDevCtrlMgr::Init()
-{
-    DHLOGI("%s: Init.", LOG_TAG);
-    return DH_SUCCESS;
-}
-
-int32_t DAudioSinkDevCtrlMgr::UnInit()
-{
-    DHLOGI("%s: UnInit.", LOG_TAG);
-    if (audioCtrlTrans_ != nullptr) {
-        audioCtrlTrans_->Release();
-        audioCtrlTrans_ = nullptr;
-    }
-    audioEventCallback_ = nullptr;
-    isOpened_ = false;
-    return DH_SUCCESS;
-}
-
 int32_t DAudioSinkDevCtrlMgr::SetUp()
 {
     DHLOGI("%s: SetUp.", LOG_TAG);
-    if (!audioCtrlTrans_) {
+    if (audioCtrlTrans_ == nullptr) {
         audioCtrlTrans_ = std::make_shared<AudioCtrlTransport>(devId_);
     }
 
@@ -97,38 +77,23 @@ int32_t DAudioSinkDevCtrlMgr::SetUp()
 int32_t DAudioSinkDevCtrlMgr::Start()
 {
     DHLOGI("%s: Start.", LOG_TAG);
-    if (audioCtrlTrans_ == nullptr) {
-        return ERR_DH_AUDIO_SA_SINK_CTRL_TRANS_NULL;
-    }
-    int32_t ret = audioCtrlTrans_->Start();
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Ctrl trans start failed.", LOG_TAG);
-        return ret;
-    }
-
-    std::unique_lock<std::mutex> lck(channelWaitMutex_);
-    auto status =
-        channelWaitCond_.wait_for(lck, std::chrono::seconds(CHANNEL_WAIT_SECONDS), [this]() { return false; });
-    if (!status) {
-        DHLOGE("%s: Wait channel open timeout(%ds).", LOG_TAG, CHANNEL_WAIT_SECONDS);
-        return ERR_DH_AUDIO_SA_MIC_CHANNEL_WAIT_TIMEOUT;
-    }
-    isOpened_ = true;
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDevCtrlMgr::Stop()
 {
     DHLOGI("%s: Stop.", LOG_TAG);
+    isOpened_ = false;
     if (audioCtrlTrans_ == nullptr) {
-        return ERR_DH_AUDIO_SA_SINK_CTRL_TRANS_NULL;
+        DHLOGI("%s: Ctrl trans already stop.", LOG_TAG);
+        return DH_SUCCESS;
     }
 
     int32_t ret = audioCtrlTrans_->Stop();
     if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Ctrl trans stop failed.", LOG_TAG);
         return ret;
     }
-    isOpened_ = false;
     return DH_SUCCESS;
 }
 
@@ -136,9 +101,16 @@ int32_t DAudioSinkDevCtrlMgr::Release()
 {
     DHLOGI("%s: Release.", LOG_TAG);
     if (audioCtrlTrans_ == nullptr) {
-        return ERR_DH_AUDIO_SA_SINK_CTRL_TRANS_NULL;
+        DHLOGI("%s: Ctrl trans already release.", LOG_TAG);
+        return DH_SUCCESS;
     }
-    return audioCtrlTrans_->Release();
+    int32_t ret = audioCtrlTrans_->Release();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Ctrl trans release failed.", LOG_TAG);
+        return ret;
+    }
+    audioCtrlTrans_ = nullptr;
+    return DH_SUCCESS;
 }
 
 bool DAudioSinkDevCtrlMgr::IsOpened()

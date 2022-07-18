@@ -32,8 +32,6 @@ public:
 
     void OnStateChange(int32_t type) override;
     void OnEventReceived(const std::shared_ptr<AudioEvent> &event) override;
-    int32_t Init();
-    int32_t UnInit();
     int32_t SetUp();
     int32_t Start();
     int32_t Stop();
@@ -47,8 +45,6 @@ private:
     bool isOpened_ = false;
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
     std::shared_ptr<AudioEvent> audioEvent_;
-    std::mutex channelWaitMutex_;
-    std::condition_variable channelWaitCond_;
     std::shared_ptr<IAudioCtrlTransport> audioCtrlTrans_ = nullptr;
     std::shared_ptr<IAudioEventCallback> audioEventCallback_ = nullptr;
 };

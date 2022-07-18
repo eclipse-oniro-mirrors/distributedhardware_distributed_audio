@@ -45,11 +45,19 @@ int32_t DAudioSinkDev::AwakeAudioDev()
         return ERR_DH_AUDIO_NULLPTR;
     }
     taskQueue_->Start();
+
+    int32_t ret = GetLocalDeviceNetworkId(localDevId_);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Get local network id failed.", LOG_TAG);
+        return ret;
+    }
     return DH_SUCCESS;
 }
 
 void DAudioSinkDev::SleepAudioDev()
 {
+    while (taskQueue_->GetTaskNum() != 0) {
+    }
     taskQueue_->Stop();
     taskQueue_ = nullptr;
 }
@@ -126,59 +134,58 @@ void DAudioSinkDev::NotifyEventSub(const std::shared_ptr<AudioEvent> &audioEvent
 int32_t DAudioSinkDev::NotifyOpenCtrlChannel(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("%s: NotifyOpenCtrlChannel.", LOG_TAG);
-    if (dAudioSinkDevCtrlMgr_ == nullptr) {
-        dAudioSinkDevCtrlMgr_ = std::make_shared<DAudioSinkDevCtrlMgr>(devId_, shared_from_this());
-    }
     if (audioEvent == nullptr) {
-        DHLOGE("%s: audioEvent is null.", LOG_TAG);
+        DHLOGE("%s: Audio event is null.", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
-    int32_t produceTaskRet = DH_SUCCESS;
-    if (!dAudioSinkDevCtrlMgr_->IsOpened()) {
-        std::string openCtrlTaskParam = audioEvent->content;
-        auto task = GenerateTask(this, &DAudioSinkDev::TaskOpenCtrlChannel, openCtrlTaskParam, "Sink Open Ctrl",
-            &DAudioSinkDev::OnTaskResult);
-        produceTaskRet = taskQueue_->Produce(task);
-    }
-    return produceTaskRet;
+    auto task = GenerateTask(this, &DAudioSinkDev::TaskOpenCtrlChannel, audioEvent->content, "Sink Open Ctrl",
+        &DAudioSinkDev::OnTaskResult);
+    return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSinkDev::NotifyCloseCtrlChannel(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("%s: NotifyCloseCtrlChannel.", LOG_TAG);
-    (void) audioEvent;
-    auto task =
-        GenerateTask(this, &DAudioSinkDev::TaskCloseCtrlChannel, "", "Sink Close Ctrl", &DAudioSinkDev::OnTaskResult);
+    if (audioEvent == nullptr) {
+        DHLOGE("%s: Audio event is null.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    auto task = GenerateTask(this, &DAudioSinkDev::TaskCloseCtrlChannel, audioEvent->content, "Sink Close Ctrl",
+        &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSinkDev::NotifyCtrlOpened(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("%s: NotifyCtrlOpened.", LOG_TAG);
-    (void) audioEvent;
+    (void)audioEvent;
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::NotifyCtrlClosed(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("%s: NotifyCtrlClosed.", LOG_TAG);
-    (void) audioEvent;
-    std::string arg = "";
-    int32_t ret = TaskCloseCtrlChannel(arg);
-    if (ret != DH_SUCCESS) {
-        DHLOGI("%s: NotifyCtrlOpened failed.", LOG_TAG);
+    if (audioEvent == nullptr) {
+        DHLOGE("%s: Audio event is null.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
     }
-    return ret;
+    auto task =
+        GenerateTask(this, &DAudioSinkDev::TaskCloseCtrlChannel, "", "Sink Close Ctrl", &DAudioSinkDev::OnTaskResult);
+    taskQueue_->Produce(task);
+    task =
+        GenerateTask(this, &DAudioSinkDev::TaskCloseDSpeaker, "", "Sink Close Speaker", &DAudioSinkDev::OnTaskResult);
+    taskQueue_->Produce(task);
+    task = GenerateTask(this, &DAudioSinkDev::TaskCloseDMic, "", "Sink Close Mic", &DAudioSinkDev::OnTaskResult);
+    taskQueue_->Produce(task);
+    DAudioSinkManager::GetInstance().OnSinkDevReleased(devId_);
+    return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::NotifyOpenSpeaker(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("%s: NotifyOpenDSpeaker.", LOG_TAG);
-    if (dAudioSinkDevCtrlMgr_ == nullptr) {
-        dAudioSinkDevCtrlMgr_ = std::make_shared<DAudioSinkDevCtrlMgr>(devId_, shared_from_this());
-    }
     if (audioEvent == nullptr) {
-        DHLOGE("%s: audioEvent is null.", LOG_TAG);
+        DHLOGE("%s: Audio event is null.", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
     auto task = GenerateTask(this, &DAudioSinkDev::TaskOpenDSpeaker, audioEvent->content, "Sink Open Speaker",
@@ -190,7 +197,7 @@ int32_t DAudioSinkDev::NotifyCloseSpeaker(const std::shared_ptr<AudioEvent> &aud
 {
     DHLOGI("%s: NotifyCloseDSpeaker.", LOG_TAG);
     if (audioEvent == nullptr) {
-        DHLOGE("%s: audioEvent is null.", LOG_TAG);
+        DHLOGE("%s: Audio event is null.", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
     auto task = GenerateTask(this, &DAudioSinkDev::TaskCloseDSpeaker, audioEvent->content, "Sink Close Speaker",
@@ -200,69 +207,54 @@ int32_t DAudioSinkDev::NotifyCloseSpeaker(const std::shared_ptr<AudioEvent> &aud
 
 int32_t DAudioSinkDev::NotifySpeakerOpened(const std::shared_ptr<AudioEvent> &audioEvent)
 {
-    (void)audioEvent;
     DHLOGI("%s: NotifySpeakerOpened.", LOG_TAG);
-    if (speakerClient_ == nullptr) {
-        return ERR_DH_AUDIO_SA_SPEAKER_CLIENT_NOT_INIT;
+    if (audioEvent == nullptr || speakerClient_ == nullptr) {
+        DHLOGE("%s: Audio event or speaker client is null.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
     }
     int32_t ret = speakerClient_->StartRender();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: NotifySpeakerOpened start Render failed. ret: %d.", LOG_TAG, ret);
+        DHLOGE("%s: Start Render failed. ret: %d.", LOG_TAG, ret);
         return ret;
     }
-    DHLOGI("%s: NotifySpeakerOpened start Render success.", LOG_TAG);
-    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskVolumeChange, audioEvent->content,
-        "Sink NotifyVolumeChange", &DAudioSinkDev::OnTaskResult);
+    DHLOGI("%s: Notify primary volume.", LOG_TAG);
+    auto task = GenerateTask(this, &DAudioSinkDev::TaskVolumeChange, audioEvent->content, "Sink Notify Vol Change",
+        &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSinkDev::NotifySpeakerClosed(const std::shared_ptr<AudioEvent> &audioEvent)
 {
-    (void)audioEvent;
+    (void) audioEvent;
     DHLOGI("%s: NotifySpeakerClosed.", LOG_TAG);
-    if (speakerClient_ == nullptr) {
-        return ERR_DH_AUDIO_SA_SPEAKER_CLIENT_NOT_INIT;
-    }
-    int32_t ret = speakerClient_->StopRender();
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s: SpeakerClient stop failed. ret: %d", LOG_TAG, ret);
-        return ret;
-    }
-    DHLOGI("%s: SpeakerClient stop success.", LOG_TAG);
-    return DH_SUCCESS;
+    auto task =
+        GenerateTask(this, &DAudioSinkDev::TaskCloseDSpeaker, "", "Sink Close Speaker", &DAudioSinkDev::OnTaskResult);
+    return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSinkDev::NotifyMicOpened(const std::shared_ptr<AudioEvent> &audioEvent)
 {
-    (void)audioEvent;
+    (void) audioEvent;
     DHLOGI("%s: NotifyMicOpened.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::NotifyMicClosed(const std::shared_ptr<AudioEvent> &audioEvent)
 {
-    (void)audioEvent;
     DHLOGI("%s: NotifyMicClosed.", LOG_TAG);
-    if (micClient_ == nullptr) {
-        return ERR_DH_AUDIO_SA_SPEAKER_CLIENT_NOT_INIT;
+    if (audioEvent == nullptr) {
+        DHLOGE("%s: Audio event is null.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
     }
-    int32_t ret = micClient_->StopCapture();
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s: MicClient stop failed. ret: %d", LOG_TAG, ret);
-        return ret;
-    }
-    DHLOGI("%s: MicClient stop success.", LOG_TAG);
-    return DH_SUCCESS;
+    auto task = GenerateTask(this, &DAudioSinkDev::TaskCloseDMic, "", "Sink CloseMic", &DAudioSinkDev::OnTaskResult);
+    return taskQueue_->Produce(task);
 }
 
 int32_t DAudioSinkDev::NotifyOpenMic(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("%s: NotifyOpenDMic.", LOG_TAG);
-    if (dAudioSinkDevCtrlMgr_ == nullptr) {
-        dAudioSinkDevCtrlMgr_ = std::make_shared<DAudioSinkDevCtrlMgr>(devId_, shared_from_this());
-    }
     if (audioEvent == nullptr) {
-        DHLOGE("%s: audioEvent is null.", LOG_TAG);
+        DHLOGE("%s: Audio event is null.", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
     auto task = GenerateTask(this, &DAudioSinkDev::TaskOpenDMic, audioEvent->content, "Sink Open Mic",
@@ -273,13 +265,8 @@ int32_t DAudioSinkDev::NotifyOpenMic(const std::shared_ptr<AudioEvent> &audioEve
 int32_t DAudioSinkDev::NotifyCloseMic(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("%s: NotifyCloseDMic.", LOG_TAG);
-    if (audioEvent == nullptr) {
-        DHLOGE("%s: audioEvent is null.", LOG_TAG);
-        return ERR_DH_AUDIO_NULLPTR;
-    }
     auto task = GenerateTask(this, &DAudioSinkDev::TaskCloseDMic, audioEvent->content, "Sink CloseMic",
         &DAudioSinkDev::OnTaskResult);
-
     return taskQueue_->Produce(task);
 }
 
@@ -313,208 +300,182 @@ int32_t DAudioSinkDev::NotifyVolumeChange(const std::shared_ptr<AudioEvent> &aud
 
 int32_t DAudioSinkDev::TaskOpenCtrlChannel(const std::string &args)
 {
-    DHLOGI("%s: TaskOpenCtrlChannel.", LOG_TAG);
-    json resultJson = json::parse(args, nullptr, false);
-    if (!JudgeJsonValid(resultJson)) {
+    DHLOGI("%s: Open ctrl channel.", LOG_TAG);
+    json jParam = json::parse(args, nullptr, false);
+    if (!JudgeJsonValid(jParam)) {
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
 
-    if (dAudioSinkDevCtrlMgr_ == nullptr) {
-        DHLOGE("%s:TaskOpenCtrlChannel: audioSinkCtrlMgr not init.", LOG_TAG);
-        return ERR_DH_AUDIO_SA_SINKCTRLMGR_NOT_INIT;
+    if (dAudioSinkDevCtrlMgr_ != nullptr && dAudioSinkDevCtrlMgr_->IsOpened()) {
+        DHLOGI("%s: Ctrl channel already opened.", LOG_TAG);
+        NotifySourceDev(NOTIFY_OPEN_CTRL_RESULT, jParam["dhId"], DH_SUCCESS);
+        return DH_SUCCESS;
     }
 
-    int32_t ret = dAudioSinkDevCtrlMgr_->Init();
+    dAudioSinkDevCtrlMgr_ = std::make_shared<DAudioSinkDevCtrlMgr>(devId_, shared_from_this());
+    int32_t ret = dAudioSinkDevCtrlMgr_->SetUp();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s:TaskOpenCtrlChannel: audio sink ctrl manager init failed.", LOG_TAG);
+        DHLOGE("%s:SetUp ctrl mgr failed.", LOG_TAG);
+        NotifySourceDev(NOTIFY_OPEN_CTRL_RESULT, jParam["dhId"], ERR_DH_AUDIO_FAILED);
         return ret;
     }
-    DHLOGI("%s: TaskOpenCtrlChannel: audio sink ctrl manager init success.", LOG_TAG);
 
-    ret = dAudioSinkDevCtrlMgr_->SetUp();
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s:TaskOpenCtrlChannel: audio sink ctrl manager set up failed.", LOG_TAG);
-        return ret;
-    }
-    DHLOGI("%s:TaskOpenCtrlChannel: audio sink ctrl manager set up success.", LOG_TAG);
-
-    json eventContentJson;
-    eventContentJson["eventType"] = AudioEventType::NOTIFY_OPEN_CTRL_RESULT;
-    std::string devId;
-    ret = GetLocalDeviceNetworkId(devId);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s:TaskOpenCtrlChannel: Get local network id failed.", LOG_TAG);
-        return ret;
-    }
-    eventContentJson["devId"] = devId;
-    eventContentJson["result"] = DH_SUCCESS;
-    eventContentJson["dhId"] = resultJson["dhId"];
-    std::string eventContent = eventContentJson.dump();
-    DHLOGI("%s:TaskOpenCtrlChannel: start to DAudioNotify.", LOG_TAG);
-    DAudioSinkManager::GetInstance().DAudioNotify(devId_, eventContentJson["dhId"], eventContentJson["eventType"],
-        eventContent);
+    NotifySourceDev(NOTIFY_OPEN_CTRL_RESULT, jParam["dhId"], DH_SUCCESS);
+    DHLOGI("%s: Open ctrl channel success, notify open ctrl result.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::TaskCloseCtrlChannel(const std::string &args)
 {
-    (void)args;
-    DHLOGI("%s: TaskCloseCtrlChannel", LOG_TAG);
-    if (dAudioSinkDevCtrlMgr_ == nullptr) {
-        DHLOGE("%s:TaskCloseCtrlChannel: dAudioSinkDevCtrlMgr_ not init.", LOG_TAG);
-        return ERR_DH_AUDIO_SA_SINKCTRLMGR_NOT_INIT;
+    (void) args;
+    DHLOGI("%s: Close ctrl channel.", LOG_TAG);
+    if (dAudioSinkDevCtrlMgr_ == nullptr || !dAudioSinkDevCtrlMgr_->IsOpened()) {
+        dAudioSinkDevCtrlMgr_ = nullptr;
+        DHLOGI("%s: Ctrl channel already closed.", LOG_TAG);
+        return DH_SUCCESS;
     }
 
     int32_t ret = dAudioSinkDevCtrlMgr_->Stop();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s:TaskCloseCtrlChannel: audio sink ctrl manager stop failed.", LOG_TAG);
-        return ret;
+        DHLOGE("%s:Stop ctrl mgr failed.", LOG_TAG);
     }
-    DHLOGI("%s:TaskCloseCtrlChannel: audio sink ctrl manager stop success.", LOG_TAG);
-
     ret = dAudioSinkDevCtrlMgr_->Release();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s:TaskCloseCtrlChannel: audio sink ctrl manager release failed.", LOG_TAG);
-        return ret;
+        DHLOGE("%s:Release ctrl mgr failed.", LOG_TAG);
     }
     dAudioSinkDevCtrlMgr_ = nullptr;
-    DAudioSinkManager::GetInstance().OnSinkDevReleased(devId_);
-    DHLOGI("%s:TaskCloseCtrlChannel: audio sink ctrl manager release success.", LOG_TAG);
+    DHLOGI("%s: Close ctrl channel success.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::TaskOpenDSpeaker(const std::string &args)
 {
-    DHLOGI("%s: TaskOpenDSpeaker.", LOG_TAG);
-    json resultJson = json::parse(args, nullptr, false);
-    if (!JudgeJsonValid(resultJson)) {
+    DHLOGI("%s: Open speaker device.", LOG_TAG);
+    json jParam = json::parse(args, nullptr, false);
+    if (!JudgeJsonValid(jParam)) {
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
-
-    if (speakerClient_ == nullptr) {
-        speakerClient_ = std::make_shared<DSpeakerClient>(devId_, shared_from_this());
-    }
-
     AudioParam audioParam;
-    from_json(resultJson["audioParam"], audioParam);
+    from_json(jParam["audioParam"], audioParam);
+    spkDhId_ = jParam["dhId"];
+
+    speakerClient_ = std::make_shared<DSpeakerClient>(devId_, shared_from_this());
     int32_t ret = speakerClient_->SetUp(audioParam);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: TaskOpenDSpeaker: speakerClient setup fail.", LOG_TAG);
-        return ret;
+        DHLOGE("%s: Setup speaker failed.", LOG_TAG);
+        NotifySourceDev(NOTIFY_OPEN_SPEAKER_RESULT, spkDhId_, ERR_DH_AUDIO_FAILED);
+        return ERR_DH_AUDIO_FAILED;
     }
 
-    json eventContentJson;
-    eventContentJson["audioParam"] = resultJson["audioParam"];
-    eventContentJson["eventType"] = AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT;
-    std::string devId;
-    ret = GetLocalDeviceNetworkId(devId);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Get local network id failed.", LOG_TAG);
-        return ret;
-    }
-    eventContentJson["devId"] = devId;
-    eventContentJson["result"] = DH_SUCCESS;
-    eventContentJson["dhId"] = resultJson["dhId"];
-    std::string eventContent = eventContentJson.dump();
-    DAudioSinkManager::GetInstance().DAudioNotify(devId_, eventContentJson["dhId"], eventContentJson["eventType"],
-        eventContent);
-
-    DHLOGI("%s: speakerClient start success.", LOG_TAG);
+    NotifySourceDev(NOTIFY_OPEN_SPEAKER_RESULT, spkDhId_, DH_SUCCESS);
+    DHLOGI("%s: Open speaker device task excute success.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::TaskCloseDSpeaker(const std::string &args)
 {
-    (void)args;
-    DHLOGI("%s: TaskCloseDSpeaker.", LOG_TAG);
+    (void) args;
+    DHLOGI("%s: Close speaker device.", LOG_TAG);
     if (speakerClient_ == nullptr) {
-        DHLOGE("%s: TaskCloseDSpeaker: speaker client not init", LOG_TAG);
-        return ERR_DH_AUDIO_SA_SPEAKER_CLIENT_NOT_INIT;
+        DHLOGI("%s: Speaker client is null or already closed.", LOG_TAG);
+        NotifySourceDev(NOTIFY_CLOSE_SPEAKER_RESULT, spkDhId_, DH_SUCCESS);
+        return DH_SUCCESS;
     }
 
+    bool closeStatus = true;
     int32_t ret = speakerClient_->StopRender();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: TaskCloseDSpeaker: failed", LOG_TAG);
-        return ret;
+        DHLOGE("%s: Stop speaker client failed.", LOG_TAG);
+        closeStatus = false;
     }
-
+    ret = speakerClient_->Release();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Release speaker client failed.", LOG_TAG);
+        closeStatus = false;
+    }
     speakerClient_ = nullptr;
+
+    if (closeStatus) {
+        NotifySourceDev(NOTIFY_CLOSE_SPEAKER_RESULT, spkDhId_, DH_SUCCESS);
+    } else {
+        NotifySourceDev(NOTIFY_CLOSE_SPEAKER_RESULT, spkDhId_, ERR_DH_AUDIO_FAILED);
+    }
+    DHLOGI("%s: Close speaker device task excute success.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::TaskOpenDMic(const std::string &args)
 {
-    DHLOGI("%s: TaskOpenDMic.", LOG_TAG);
-    json resultJson = json::parse(args, nullptr, false);
-    if (!JudgeJsonValid(resultJson)) {
+    DHLOGI("%s: Open mic device.", LOG_TAG);
+    json jParam = json::parse(args, nullptr, false);
+    if (!JudgeJsonValid(jParam)) {
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
-    if (micClient_ == nullptr) {
-        micClient_ = std::make_shared<DMicClient>(devId_, shared_from_this());
-    }
-
     AudioParam audioParam;
-    from_json(resultJson["audioParam"], audioParam);
+    from_json(jParam["audioParam"], audioParam);
+    micDhId_ = jParam["dhId"];
 
+    micClient_ = std::make_shared<DMicClient>(devId_, shared_from_this());
     int32_t ret = micClient_->SetUp(audioParam);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: TaskOpenDMic: mic client setup failed.", LOG_TAG);
-        return ret;
+        DHLOGE("%s: SetUp mic failed.", LOG_TAG);
+        NotifySourceDev(NOTIFY_OPEN_MIC_RESULT, micDhId_, ERR_DH_AUDIO_FAILED);
+        return ERR_DH_AUDIO_FAILED;
     }
-
     ret = micClient_->StartCapture();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: TaskOpenDMic: mic client start failed.", LOG_TAG);
+        DHLOGE("%s: Start capture failed.", LOG_TAG);
+        NotifySourceDev(NOTIFY_OPEN_MIC_RESULT, micDhId_, ERR_DH_AUDIO_FAILED);
         return ret;
     }
-
-    json eventContentJson;
-    eventContentJson["audioParam"] = resultJson["audioParam"];
-    eventContentJson["eventType"] = AudioEventType::NOTIFY_OPEN_MIC_RESULT;
-    std::string devId;
-    ret = GetLocalDeviceNetworkId(devId);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Get local network id failed.", LOG_TAG);
-        return ret;
-    }
-    eventContentJson["devId"] = devId;
-    eventContentJson["result"] = DH_SUCCESS;
-    eventContentJson["dhId"] = resultJson["dhId"];
-    std::string eventContent = eventContentJson.dump();
-    DAudioSinkManager::GetInstance().DAudioNotify(devId_, eventContentJson["dhId"], eventContentJson["eventType"],
-        eventContent);
+    
+    NotifySourceDev(NOTIFY_OPEN_MIC_RESULT, micDhId_, DH_SUCCESS);
+    DHLOGI("%s: Open mic device task excute success.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::TaskCloseDMic(const std::string &args)
 {
-    (void)args;
-    DHLOGI("%s: TaskCloseDMic", LOG_TAG);
+    (void) args;
+    DHLOGI("%s: Close mic device.", LOG_TAG);
     if (micClient_ == nullptr) {
-        return ERR_DH_AUDIO_SA_MIC_CLIENT_NOT_INIT;
-    }
-    int32_t ret = micClient_->StopCapture();
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s: TaskCloseDMic: mic StopCapture failed.", LOG_TAG);
-        return ret;
+        DHLOGI("%s: mic client is null or already closed.", LOG_TAG);
+        NotifySourceDev(NOTIFY_CLOSE_MIC_RESULT, micDhId_, DH_SUCCESS);
+        return DH_SUCCESS;
     }
 
+    bool closeStatus = true;
+    int32_t ret = micClient_->StopCapture();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Stop mic client failed.", LOG_TAG);
+        closeStatus = false;
+    }
+    ret = micClient_->Release();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Release mic client failed.", LOG_TAG);
+        closeStatus = false;
+    }
     micClient_ = nullptr;
+
+    if (closeStatus) {
+        NotifySourceDev(NOTIFY_CLOSE_MIC_RESULT, micDhId_, DH_SUCCESS);
+    } else {
+        NotifySourceDev(NOTIFY_CLOSE_MIC_RESULT, micDhId_, ERR_DH_AUDIO_FAILED);
+    }
+    DHLOGI("%s: Close mic device task excute success.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::TaskSetParameter(const std::string &args)
 {
-    DHLOGI("%s: TaskSetParameter", LOG_TAG);
+    DHLOGI("%s: Set audio param.", LOG_TAG);
     json resultJson = json::parse(args, nullptr, false);
     if (!JudgeJsonValid(resultJson)) {
         return ERR_DH_AUDIO_SA_ENABLE_PARAM_INVALID;
     }
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    // todo modify
-    event->type = AudioEventType::CTRL_OPENED;
+    event->type = AudioEventType::EVENT_UNKNOWN;
     event->content = args;
-
     if (speakerClient_ == nullptr) {
         return ERR_DH_AUDIO_SA_SPEAKER_CLIENT_NOT_INIT;
     }
@@ -523,9 +484,10 @@ int32_t DAudioSinkDev::TaskSetParameter(const std::string &args)
 
 int32_t DAudioSinkDev::TaskSetVolume(const std::string &args)
 {
-    DHLOGI("%s:Begin TaskSetVolume.", LOG_TAG);
+    DHLOGI("%s:Set audio volume.", LOG_TAG);
     if (speakerClient_ == nullptr) {
-        speakerClient_ = std::make_shared<DSpeakerClient>(devId_, shared_from_this());
+        DHLOGE("%s: Speaker client already closed.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
     }
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
     event->type = AudioEventType::VOLUME_SET;
@@ -535,21 +497,19 @@ int32_t DAudioSinkDev::TaskSetVolume(const std::string &args)
         DHLOGE("%s: Volume set failed.", LOG_TAG);
         return ret;
     }
-
-    DHLOGI("%s: Volume set success.", LOG_TAG);
+    DHLOGI("%s: Set audio volume success.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::TaskVolumeChange(const std::string &args)
 {
-    DHLOGI("%s: TaskVolumeChange begin.", LOG_TAG);
+    DHLOGI("%s: Audio volume changed.", LOG_TAG);
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
     event->type = AudioEventType::VOLUME_CHANGE;
     event->content = args;
     if (dAudioSinkDevCtrlMgr_ == nullptr) {
         return ERR_DH_AUDIO_SA_SINKCTRLMGR_NOT_INIT;
     }
-
     return dAudioSinkDevCtrlMgr_->SendAudioEvent(event);
 }
 
@@ -559,6 +519,16 @@ void DAudioSinkDev::OnTaskResult(int32_t resultCode, const std::string &result, 
     (void)result;
     (void)funcName;
     DHLOGI("%s: OnTaskResult. resultCode: %d, funcName: %s", LOG_TAG, resultCode, funcName.c_str());
+}
+
+void DAudioSinkDev::NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result)
+{
+    json jEvent;
+    jEvent["dhId"] = dhId;
+    jEvent["result"] = result;
+    jEvent["eventType"] = type;
+    jEvent["devId"] = localDevId_;
+    DAudioSinkManager::GetInstance().DAudioNotify(devId_, dhId, type, jEvent.dump());
 }
 
 bool DAudioSinkDev::JudgeJsonValid(const json &resultJson)

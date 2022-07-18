@@ -56,7 +56,7 @@ public:
     bool IsOpened();
 
     std::shared_ptr<AudioParam> GetAudioParam();
-    int32_t NotifyHdfAudioEvent(std::shared_ptr<AudioEvent> &event);
+    int32_t NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event);
 
 private:
     static const constexpr char *LOG_TAG = "DSpeakerDev";

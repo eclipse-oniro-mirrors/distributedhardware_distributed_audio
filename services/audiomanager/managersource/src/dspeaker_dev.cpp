@@ -107,7 +107,10 @@ int32_t DSpeakerDev::CloseDevice(const std::string &devId, const int32_t dhId)
         return ERR_DH_AUDIO_FAILED;
     }
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    json jParam;
+    jParam["dhId"] = std::to_string(dhId);
     event->type = AudioEventType::CLOSE_SPEAKER;
+    event->content = jParam.dump();
     cbObj->NotifyEvent(event);
     return DH_SUCCESS;
 }
@@ -197,10 +200,6 @@ int32_t DSpeakerDev::Stop()
         return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
     }
 
-    if (!isOpened_.load()) {
-        DHLOGE("%s: Mic trans is stopping or has stopped.", LOG_TAG);
-        return DH_SUCCESS;
-    }
     isOpened_.store(false);
     isTransReady_.store(false);
     int32_t ret = speakerTrans_->Stop();
@@ -267,7 +266,7 @@ std::shared_ptr<AudioParam> DSpeakerDev::GetAudioParam()
     return param;
 }
 
-int32_t DSpeakerDev::NotifyHdfAudioEvent(std::shared_ptr<AudioEvent> &event)
+int32_t DSpeakerDev::NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event)
 {
     int32_t ret = DAudioHdiHandler::GetInstance().NotifyEvent(devId_, curPort_, event);
     if (ret != DH_SUCCESS) {
@@ -279,18 +278,27 @@ int32_t DSpeakerDev::NotifyHdfAudioEvent(std::shared_ptr<AudioEvent> &event)
 int32_t DSpeakerDev::OnStateChange(int32_t type)
 {
     DHLOGI("%s: On speaker device state change, type: %d.", LOG_TAG, type);
+    auto event = std::make_shared<AudioEvent>();
     switch (type) {
         case AudioEventType::DATA_OPENED:
             isTransReady_.store(true);
             channelWaitCond_.notify_all();
+            event->type = AudioEventType::SPEAKER_OPENED;
             break;
         case AudioEventType::DATA_CLOSED:
             isOpened_.store(false);
             isTransReady_.store(false);
+            event->type = AudioEventType::SPEAKER_CLOSED;
             break;
         default:
             break;
     }
+    std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
+    if (cbObj == nullptr) {
+        DHLOGE("%s: Callback is null.", LOG_TAG);
+        return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
+    }
+    cbObj->NotifyEvent(event);
     return DH_SUCCESS;
 }
 } // DistributedHardware

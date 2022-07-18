@@ -32,6 +32,7 @@ public:
     int32_t Produce(std::shared_ptr<TaskImplInterface> &task);
     void Start();
     void Stop();
+    int32_t GetTaskNum();
 
 private:
     void Consume(std::shared_ptr<TaskImplInterface> &task);

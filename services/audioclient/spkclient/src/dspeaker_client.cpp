@@ -26,26 +26,22 @@ constexpr int32_t SPK_BUFF_LEN = 5;
 }
 DSpeakerClient::~DSpeakerClient()
 {
-    if (speakerTrans_ != nullptr) {
-        DHLOGI("%s: ~DSpeakerClient. Release speaker client.", LOG_TAG);
-        StopRender();
-    }
+    DHLOGI("%s: ~DSpeakerClient. Release speaker client.", LOG_TAG);
 }
 
 int32_t DSpeakerClient::SetUp(const AudioParam &param)
 {
-    DHLOGI("%s: Set speaker client parameters, {sampleRate: %d, bitFormat: %d, channelMask: %d, contentType: %d, "
-        "streamUsage: %d}.",
-        LOG_TAG, param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask,
-        param.renderOpts.contentType, param.renderOpts.streamUsage);
-
+    DHLOGI("%s: SetUp spk client.", LOG_TAG);
+    DHLOGI("%s: Param: {sampleRate: %d, bitFormat: %d, channelMask: %d, contentType: %d, streamUsage: %d}.", LOG_TAG,
+        param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.renderOpts.contentType,
+        param.renderOpts.streamUsage);
     audioParam_ = param;
     audioParam_.comParam.bitFormat = SAMPLE_S16LE;
     AudioStandard::AudioRendererOptions rendererOptions = {
         {
             static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
             AudioStandard::AudioEncodingType::ENCODING_PCM,
-            static_cast<AudioStandard::AudioSampleFormat>(SAMPLE_S16LE),
+            static_cast<AudioStandard::AudioSampleFormat>(audioParam_.comParam.bitFormat),
             static_cast<AudioStandard::AudioChannel>(audioParam_.comParam.channelMask),
         },
         {
@@ -54,23 +50,14 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
             NUMBER_ZERO,
         }
     };
+    std::lock_guard<std::mutex> lck(devMtx_);
     audioRenderer_ = AudioStandard::AudioRenderer::Create(rendererOptions);
     if (audioRenderer_ == nullptr) {
         DHLOGE("%s: Audio renderer create failed.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_CREATE_RENDER_FAILED;
     }
-
-    int32_t ret =
-        AudioStandard::AudioSystemManager::GetInstance()->RegisterVolumeKeyEventCallback(getpid(), shared_from_this());
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Failed to register volume key event callback.", LOG_TAG);
-        return ret;
-    }
-
-    if (speakerTrans_ == nullptr) {
-        speakerTrans_ = std::make_shared<AudioDecodeTransport>(devId_);
-    }
-    ret = speakerTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), "speaker");
+    speakerTrans_ = std::make_shared<AudioDecodeTransport>(devId_);
+    int32_t ret = speakerTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), "speaker");
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Speaker trans setup failed.", LOG_TAG);
         return ret;
@@ -80,49 +67,24 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
         DHLOGE("%s: Speaker trans start failed.", LOG_TAG);
         return ret;
     }
+    auto pid = getpid();
+    ret = AudioStandard::AudioSystemManager::GetInstance()->RegisterVolumeKeyEventCallback(pid, shared_from_this());
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Failed to register volume key event callback.", LOG_TAG);
+        return ret;
+    }
+    clientStatus_ = CLIENT_STATUS_READY;
     return DH_SUCCESS;
 }
 
-int32_t DSpeakerClient::StartRender()
+int32_t DSpeakerClient::Release()
 {
-    DHLOGI("%s: Start renderer.", LOG_TAG);
-    if (audioRenderer_ == nullptr) {
-        DHLOGE("%s: Audio renderer instantiation failed.", LOG_TAG);
-        return ERR_DH_AUDIO_CLIENT_RENDER_WITHOUT_INSTANCE;
+    DHLOGI("%s: Release spk client.", LOG_TAG);
+    std::lock_guard<std::mutex> lck(devMtx_);
+    if ((clientStatus_ != CLIENT_STATUS_READY && clientStatus_ != CLIENT_STATUS_STOP) || speakerTrans_ == nullptr) {
+        DHLOGE("%s: Speaker status is wrong or spk is null, %d.", LOG_TAG, (int32_t)clientStatus_);
+        return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
-
-    if (!audioRenderer_->Start()) {
-        DHLOGE("%s: Audio renderer start failed.", LOG_TAG);
-        if (!audioRenderer_->Release()) {
-            DHLOGE("%s: Audio renderer release failed.", LOG_TAG);
-            return ERR_DH_AUDIO_CLIENT_RENDER_RELEASE_FAILED;
-        }
-        return ERR_DH_AUDIO_CLIENT_RENDER_STARTUP_FAILURE;
-    }
-
-    isRenderReady_.store(true);
-    renderDataThread_ = std::thread(&DSpeakerClient::PlayThreadRunning, this);
-    return DH_SUCCESS;
-}
-
-int32_t DSpeakerClient::StopRender()
-{
-    DHLOGI("%s: Stop renderer.", LOG_TAG);
-    eventCallback_ = nullptr;
-    if (audioRenderer_ == nullptr || speakerTrans_ == nullptr) {
-        DHLOGE("%s: Audio renderer or speaker trans is nullptr.", LOG_TAG);
-        return ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL;
-    }
-
-    if (!isRenderReady_.load()) {
-        DHLOGE("%s: Renderer is stopping or has stopped.", LOG_TAG);
-        return DH_SUCCESS;
-    }
-    isRenderReady_.store(false);
-    if (renderDataThread_.joinable()) {
-        renderDataThread_.join();
-    }
-
     int32_t ret = speakerTrans_->Stop();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Speaker trans stop failed.", LOG_TAG);
@@ -135,21 +97,60 @@ int32_t DSpeakerClient::StopRender()
     }
     speakerTrans_ = nullptr;
 
-    ret =
-        AudioStandard::AudioSystemManager::GetInstance()->UnregisterVolumeKeyEventCallback(getpid());
+    ret = AudioStandard::AudioSystemManager::GetInstance()->UnregisterVolumeKeyEventCallback(getpid());
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Failed to unregister volume key event callback.", LOG_TAG);
         return ret;
-    }
-
-    if (!audioRenderer_->Stop()) {
-        OHOS::DistributedHardware::DHLOGE("%s: Audio renderer stop failed", LOG_TAG);
-        return ERR_DH_AUDIO_CLIENT_RENDER_STOP_FAILED;
     }
     if (!audioRenderer_->Release()) {
         DHLOGE("%s: Audio renderer release failed.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_RENDER_RELEASE_FAILED;
     }
+    audioRenderer_ = nullptr;
+    clientStatus_ = CLIENT_STATUS_IDLE;
+    return DH_SUCCESS;
+}
+
+int32_t DSpeakerClient::StartRender()
+{
+    DHLOGI("%s: Start spk client.", LOG_TAG);
+    std::lock_guard<std::mutex> lck(devMtx_);
+    if (audioRenderer_ == nullptr || clientStatus_ != CLIENT_STATUS_READY) {
+        DHLOGE("%s: Audio renderer init failed or spk status wrong, status: %d.", LOG_TAG, (int32_t)clientStatus_);
+        return ERR_DH_AUDIO_SA_STATUS_ERR;
+    }
+    if (!audioRenderer_->Start()) {
+        DHLOGE("%s: Audio renderer start failed.", LOG_TAG);
+        return ERR_DH_AUDIO_CLIENT_RENDER_STARTUP_FAILURE;
+    }
+    isRenderReady_.store(true);
+    renderDataThread_ = std::thread(&DSpeakerClient::PlayThreadRunning, this);
+    clientStatus_ = CLIENT_STATUS_START;
+    return DH_SUCCESS;
+}
+
+int32_t DSpeakerClient::StopRender()
+{
+    DHLOGI("%s: Stop spk client.", LOG_TAG);
+    std::lock_guard<std::mutex> lck(devMtx_);
+    if (clientStatus_ != CLIENT_STATUS_START || !isRenderReady_.load()) {
+        DHLOGE("%s: Renderer is not start or spk status wrong, status: %d.", LOG_TAG, (int32_t)clientStatus_);
+        return ERR_DH_AUDIO_SA_STATUS_ERR;
+    }
+    if (audioRenderer_ == nullptr || speakerTrans_ == nullptr) {
+        DHLOGE("%s: Audio renderer or speaker trans is nullptr.", LOG_TAG);
+        return ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL;
+    }
+    isRenderReady_.store(false);
+    if (renderDataThread_.joinable()) {
+        renderDataThread_.join();
+    }
+
+    if (!audioRenderer_->Stop()) {
+        DHLOGE("%s: Audio renderer stop failed", LOG_TAG);
+        return ERR_DH_AUDIO_CLIENT_RENDER_STOP_FAILED;
+    }
+    clientStatus_ = CLIENT_STATUS_STOP;
     return DH_SUCCESS;
 }
 
@@ -162,31 +163,29 @@ void DSpeakerClient::PlayThreadRunning()
         return;
     }
     DHLOGI("%s: Obtains the minimum buffer length, bufferlen: %d.", LOG_TAG, bufferLen);
-
     bool needStartWait = true;
     while (isRenderReady_.load()) {
         int64_t loopInTime = GetCurrentTime();
         if (needStartWait &&
-                std::static_pointer_cast<AudioDecodeTransport>(speakerTrans_)->GetAudioBuffLen() <= SPK_BUFF_LEN) {
+            std::static_pointer_cast<AudioDecodeTransport>(speakerTrans_)->GetAudioBuffLen() <= SPK_BUFF_LEN) {
             DHLOGD("Spk buff not enough, wait");
             usleep(SPK_INTERVAL_US);
             continue;
         }
         needStartWait = false;
-
         std::shared_ptr<AudioData> audioData = nullptr;
         int32_t reqDataRet = speakerTrans_->RequestAudioData(audioData);
         int32_t writeLen = 0;
         int32_t writeOffSet = 0;
         if (reqDataRet != DH_SUCCESS && audioData == nullptr) {
-            DHLOGE("%s: Failed to send data, ret: %d", LOG_TAG, reqDataRet);
+            DHLOGD("%s: Failed to send data, ret: %d", LOG_TAG, reqDataRet);
             continue;
         }
 
         while (writeOffSet < (int32_t)(audioData->Capacity())) {
             writeLen = audioRenderer_->Write(audioData->Data() + writeOffSet, audioData->Capacity() - writeOffSet);
-            DHLOGD("write audio render, write len: %d, raw len: %d, offset: %d",
-                writeLen, audioData->Capacity(), writeOffSet);
+            DHLOGD("write audio render, write len: %d, raw len: %d, offset: %d", writeLen, audioData->Capacity(),
+                writeOffSet);
             if (writeLen < 0) {
                 break;
             }
@@ -199,33 +198,35 @@ void DSpeakerClient::PlayThreadRunning()
             usleep(sleepTime);
         }
         int64_t stopSleepTime = GetCurrentTime();
-        DHLOGD("%s: beam cost: %d, spk sleep time: %d ms, sleep arg: %d us",
-            LOG_TAG, (startSleepTime - loopInTime), (stopSleepTime - startSleepTime), sleepTime);
+        DHLOGD("%s: beam cost: %d, spk sleep time: %d ms, sleep arg: %d us", LOG_TAG, (startSleepTime - loopInTime),
+            (stopSleepTime - startSleepTime), sleepTime);
     }
 }
 
 int32_t DSpeakerClient::OnStateChange(int32_t type)
 {
     DHLOGI("%s: On state change. type: %d", LOG_TAG, type);
+    auto event = std::make_shared<AudioEvent>();
     switch (type) {
         case AudioEventType::DATA_OPENED: {
-            std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
             event->type = AudioEventType::SPEAKER_OPENED;
             event->content = GetVolumeLevel();
-            eventCallback_->NotifyEvent(event);
-            return DH_SUCCESS;
+            break;
         }
         case AudioEventType::DATA_CLOSED: {
-            std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
             event->type = AudioEventType::SPEAKER_CLOSED;
-            event->content = "";
-            eventCallback_->NotifyEvent(event);
-            return DH_SUCCESS;
+            break;
         }
         default:
             DHLOGE("%s: Invalid parameter type: %d.", LOG_TAG, type);
-            return ERR_DH_AUDIO_CLIENT_STATE_IS_INVALID;
+            break;
     }
+    if (eventCallback_ == nullptr) {
+        DHLOGE("%s: Event callback is null.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    eventCallback_->NotifyEvent(event);
+    return DH_SUCCESS;
 }
 
 string DSpeakerClient::GetVolumeLevel()

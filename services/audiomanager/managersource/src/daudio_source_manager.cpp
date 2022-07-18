@@ -76,6 +76,9 @@ int32_t DAudioSourceManager::UnInit()
         iter->second.dev->SleepAudioDev();
     }
     audioDevMap_.clear();
+    if (devClearThread_.joinable()) {
+        devClearThread_.join();
+    }
 
     int32_t ret = DAudioHdiHandler::GetInstance().UninitHdiHandler();
     if (ret != DH_SUCCESS) {

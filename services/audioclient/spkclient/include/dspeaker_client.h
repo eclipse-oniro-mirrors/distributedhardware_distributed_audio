@@ -31,6 +31,7 @@
 #include "audio_system_manager.h"
 
 #include "audio_data.h"
+#include "audio_status.h"
 #include "audio_decode_transport.h"
 #include "audio_event.h"
 #include "daudio_errorcode.h"
@@ -53,11 +54,12 @@ public:
     void OnVolumeKeyEvent(AudioStandard::AudioStreamType streamType, int32_t volumeLevel, bool isUpdateUi) override;
 
     int32_t SetUp(const AudioParam &param);
+    int32_t Release();
     int32_t StartRender();
     int32_t StopRender();
     int32_t GetAudioParameters(const std::shared_ptr<AudioEvent> &event);
     int32_t SetAudioParameters(const std::shared_ptr<AudioEvent> &event);
-    string GetVolumeLevel();
+    std::string GetVolumeLevel();
 
 private:
     void PlayThreadRunning();
@@ -74,6 +76,8 @@ private:
     std::thread renderDataThread_;
     AudioParam audioParam_;
     std::atomic<bool> isRenderReady_ = false;
+    std::mutex devMtx_;
+    AudioClientStatus clientStatus_ = CLIENT_STATUS_IDLE;
 
     std::unique_ptr<AudioStandard::AudioRenderer> audioRenderer_ = nullptr;
     std::shared_ptr<IAudioDataTransport> speakerTrans_ = nullptr;

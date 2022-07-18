@@ -37,31 +37,6 @@ DAudioSourceDevCtrlMgr::~DAudioSourceDevCtrlMgr()
     DHLOGI("%s: Distributed audio source ctrl destructed.", LOG_TAG);
 }
 
-int32_t DAudioSourceDevCtrlMgr::Init()
-{
-    DHLOGI("%s: Init.", LOG_TAG);
-    return DH_SUCCESS;
-}
-
-int32_t DAudioSourceDevCtrlMgr::UnInit()
-{
-    DHLOGI("%s: UnInit.", LOG_TAG);
-    if (audioCtrlTrans_ == nullptr) {
-        return DH_SUCCESS;
-    }
-    int32_t ret = audioCtrlTrans_->Stop();
-    if (ret != DH_SUCCESS) {
-        return ret;
-    }
-
-    ret = audioCtrlTrans_->Release();
-    if (ret != DH_SUCCESS) {
-        return ret;
-    }
-
-    return DH_SUCCESS;
-}
-
 int32_t DAudioSourceDevCtrlMgr::SetUp()
 {
     DHLOGI("%s: SetUp.", LOG_TAG);
@@ -76,13 +51,13 @@ int32_t DAudioSourceDevCtrlMgr::Start()
 {
     DHLOGI("%s: Start.", LOG_TAG);
     if (audioCtrlTrans_ == nullptr) {
-        DHLOGE("%s: audio ctrl trans is null, start failed", LOG_TAG);
+        DHLOGE("%s: Audio ctrl trans is null, start failed", LOG_TAG);
         return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
     }
 
     int32_t ret = audioCtrlTrans_->Start();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: audio ctrl trans start failed, ret:%d.", LOG_TAG, ret);
+        DHLOGE("%s: Audio ctrl trans start failed, ret:%d.", LOG_TAG, ret);
         return ret;
     }
 
@@ -90,7 +65,7 @@ int32_t DAudioSourceDevCtrlMgr::Start()
     auto status = channelWaitCond_.wait_for(lck, std::chrono::seconds(CHANNEL_WAIT_SECONDS),
         [this]() { return isOpened_ == true; });
     if (!status) {
-        DHLOGE("%s: wait channel open timeout(%ds).", LOG_TAG, CHANNEL_WAIT_SECONDS);
+        DHLOGE("%s: Wait channel open timeout(%ds).", LOG_TAG, CHANNEL_WAIT_SECONDS);
         return ERR_DH_AUDIO_SA_CTRL_CHANNEL_WAIT_TIMEOUT;
     }
 
@@ -99,11 +74,11 @@ int32_t DAudioSourceDevCtrlMgr::Start()
 
 int32_t DAudioSourceDevCtrlMgr::Stop()
 {
-    if (audioCtrlTrans_ == nullptr) {
-        DHLOGE("%s: audio ctrl trans is null, no need stop", LOG_TAG);
-        return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
-    }
     isOpened_ = false;
+    if (audioCtrlTrans_ == nullptr) {
+        DHLOGE("%s: Audio ctrl trans is null, no need stop", LOG_TAG);
+        return DH_SUCCESS;
+    }
 
     return audioCtrlTrans_->Stop();
 }
@@ -111,11 +86,17 @@ int32_t DAudioSourceDevCtrlMgr::Stop()
 int32_t DAudioSourceDevCtrlMgr::Release()
 {
     if (audioCtrlTrans_ == nullptr) {
-        DHLOGE("%s: audio ctrl trans is null, no need release.", LOG_TAG);
-        return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
+        DHLOGE("%s: Audio ctrl trans is null, no need release.", LOG_TAG);
+        return DH_SUCCESS;
     }
 
-    return audioCtrlTrans_->Release();
+    int32_t ret = audioCtrlTrans_->Release();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Release audio ctrl failed.", LOG_TAG);
+        return ret;
+    }
+    audioCtrlTrans_ = nullptr;
+    return DH_SUCCESS;
 }
 
 bool DAudioSourceDevCtrlMgr::IsOpened()
@@ -127,7 +108,7 @@ int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent>
 {
     DHLOGI("%s: SendAudioEvent.", LOG_TAG);
     if (audioCtrlTrans_ == nullptr) {
-        DHLOGE("%s: Send audio event, audio ctrl trans is null", LOG_TAG);
+        DHLOGE("%s: Send audio event, Audio ctrl trans is null", LOG_TAG);
         return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
     }
 
@@ -136,14 +117,18 @@ int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent>
 
 void DAudioSourceDevCtrlMgr::OnStateChange(int32_t type)
 {
-    DHLOGI("%s: OnStateChange, type:%d", LOG_TAG, type);
-    if (type == AudioEventType::CTRL_OPENED) {
-        DHLOGI("%s: audio ctrl trans on Channel Open", LOG_TAG);
+    DHLOGI("%s: On ctrl device state change, type: %d.", LOG_TAG, type);
+    auto event = std::make_shared<AudioEvent>();
+    event->type = (AudioEventType)type;
+    if (event->type == AudioEventType::CTRL_OPENED) {
+        DHLOGI("%s: Audio ctrl trans on opened.", LOG_TAG);
         isOpened_ = true;
         channelWaitCond_.notify_all();
-    } else if (type == AudioEventType::CTRL_CLOSED) {
+    } else if (event->type == AudioEventType::CTRL_CLOSED) {
+        DHLOGI("%s: Audio ctrl trans on closed.", LOG_TAG);
         isOpened_ = false;
     }
+    audioEventCallback_->NotifyEvent(event);
 }
 
 void DAudioSourceDevCtrlMgr::OnEventReceived(const std::shared_ptr<AudioEvent> &event)

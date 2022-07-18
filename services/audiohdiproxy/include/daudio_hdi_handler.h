@@ -39,12 +39,12 @@ public:
 
     int32_t UninitHdiHandler();
 
-    int32_t RegisterAudioDevice(const std::string &devId, int32_t dhId, const std::string &capability,
+    int32_t RegisterAudioDevice(const std::string &devId, const int32_t dhId, const std::string &capability,
         const std::shared_ptr<IDAudioHdiCallback> &callbackObjParam);
 
-    int32_t UnRegisterAudioDevice(const std::string &devId, int32_t dhId);
+    int32_t UnRegisterAudioDevice(const std::string &devId, const int32_t dhId);
 
-    int32_t NotifyEvent(const std::string &devId, int32_t dhId, std::shared_ptr<AudioEvent> &audioEvent);
+    int32_t NotifyEvent(const std::string &devId, const int32_t dhId, const std::shared_ptr<AudioEvent> &audioEvent);
 
 private:
     DAudioHdiHandler();

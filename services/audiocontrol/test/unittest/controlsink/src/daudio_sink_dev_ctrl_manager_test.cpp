@@ -37,28 +37,6 @@ void DAudioSinkDevCtrlMgrTest::TearDown(void)
 }
 
 /**
- * @tc.name: Init_001
- * @tc.desc: Verify the Init function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSinkDevCtrlMgrTest, Init_001, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, sinkDevCtrl_->Init());
-}
-
-/**
- * @tc.name: UnInit_001
- * @tc.desc: Verify the UnInit function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSinkDevCtrlMgrTest, UnInit_001, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, sinkDevCtrl_->UnInit());
-}
-
-/**
  * @tc.name: SetUp_001
  * @tc.desc: Verify the SetUp function.
  * @tc.type: FUNC
