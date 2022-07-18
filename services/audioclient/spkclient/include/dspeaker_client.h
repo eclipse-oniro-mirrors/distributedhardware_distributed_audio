@@ -57,8 +57,7 @@ public:
     ~DSpeakerClient();
 
     int32_t OnStateChange(int32_t type) override;
-    void OnVolumeKeyEvent(AudioStandard::AudioStreamType streamType, int32_t volumeLevel, bool isUpdateUi) override;
-
+    void OnVolumeKeyEvent(AudioStandard::VolumeEvent event) override;
     int32_t SetUp(const AudioParam &param);
     int32_t Release();
     int32_t StartRender();

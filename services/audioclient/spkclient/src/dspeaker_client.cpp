@@ -246,7 +246,7 @@ string DSpeakerClient::GetVolumeLevel()
     return str;
 }
 
-void DSpeakerClient::OnVolumeKeyEvent(AudioStandard::AudioStreamType streamType, int32_t volumeLevel, bool isUpdateUi)
+void DSpeakerClient::OnVolumeKeyEvent(AudioStandard::VolumeEvent volumeEvent)
 {
     DHLOGI("%s: OnVolumeKeyEvent.", LOG_TAG);
     if (eventCallback_ == nullptr) {
@@ -255,9 +255,9 @@ void DSpeakerClient::OnVolumeKeyEvent(AudioStandard::AudioStreamType streamType,
     }
     std::stringstream ss;
     ss << "VOLUME_CHANAGE;"
-       << "AUDIO_STREAM_TYPE=" << streamType << ";"
-       << "VOLUME_LEVEL=" << volumeLevel << ";"
-       << "IS_UPDATEUI=" << isUpdateUi << ";";
+       << "AUDIO_STREAM_TYPE=" << volumeEvent.volumeType << ";"
+       << "VOLUME_LEVEL=" << volumeEvent.volume << ";"
+       << "IS_UPDATEUI=" << volumeEvent.updateUi << ";";
     std::string str = ss.str();
     DHLOGI("%s: Volume change notification result, event: %s.", LOG_TAG, str.c_str());
 
