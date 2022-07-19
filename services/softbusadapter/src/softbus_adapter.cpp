@@ -217,7 +217,6 @@ int32_t SoftbusAdapter::RegisterSoftbusListener(const std::shared_ptr<ISoftbusLi
     std::lock_guard<std::mutex> lisLock(listenerMtx_);
     if (mapListeners_.find(strListenerKey) != mapListeners_.end()) {
         DHLOGE("%s: Session listener already register.", LOG_TAG);
-        return ERR_DH_AUDIO_ADAPTER_REGISTER_SOFTBUS_LISTENER_FAIL;
     }
     mapListeners_.insert(std::make_pair(strListenerKey, listener));
 

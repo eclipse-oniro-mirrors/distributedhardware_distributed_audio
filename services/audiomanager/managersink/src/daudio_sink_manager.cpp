@@ -53,6 +53,11 @@ int32_t DAudioSinkManager::UnInit()
         remoteSourceSvrRecipient_ = nullptr;
     }
     remoteSvrProxyMap_.clear();
+    for (auto iter = dAudioSinkDevMap_.begin(); iter != dAudioSinkDevMap_.end(); iter++) {
+        if (iter->second != nullptr) {
+            iter->second->SleepAudioDev();
+        }
+    }
     dAudioSinkDevMap_.clear();
     return DH_SUCCESS;
 }
