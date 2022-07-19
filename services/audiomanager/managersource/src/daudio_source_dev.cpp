@@ -571,6 +571,7 @@ int32_t DAudioSourceDev::TaskOpenDSpeaker(const std::string &args)
     ret = speaker_->Start();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Speaker start failed.", LOG_TAG);
+        speaker_->Stop();
         speaker_->Release();
         return ret;
     }
@@ -635,6 +636,7 @@ int32_t DAudioSourceDev::TaskOpenDMic(const std::string &args)
     ret = mic_->Start();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: speaker start failed.", LOG_TAG);
+        mic_->Stop();
         mic_->Release();
         return ret;
     }

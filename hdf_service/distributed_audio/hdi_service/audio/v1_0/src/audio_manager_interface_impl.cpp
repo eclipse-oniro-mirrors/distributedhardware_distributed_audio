@@ -171,12 +171,7 @@ int32_t AudioManagerInterfaceImpl::RemoveAudioDevice(const std::string &adpName,
         return ERR_DH_AUDIO_HDF_FAIL;
     }
 
-    DAudioDevEvent event = { adpName,
-                             devId,
-                             HDF_AUDIO_DEVICE_REMOVE,
-                             0,
-                             adp->second->GetVolumeGroup(devId),
-                             adp->second->GetInterruptGroup(devId) };
+    DAudioDevEvent event = { adpName, devId, HDF_AUDIO_DEVICE_REMOVE, 0, 0, 0 };
     ret = NotifyFwk(event);
     if (ret != DH_SUCCESS) {
         DHLOGD("%s: Notify audio fwk failed, ret = %d.", AUDIO_LOG, ret);
@@ -184,7 +179,7 @@ int32_t AudioManagerInterfaceImpl::RemoveAudioDevice(const std::string &adpName,
     if (adp->second->isPortsNoReg()) {
         mapAudioAdapter_.erase(adpName);
     }
-    DHLOGI("%s: Remove audio device success, mapAudioAdapter_ size() is : %d .", AUDIO_LOG, mapAudioAdapter_.size());
+    DHLOGI("%s: Remove audio device success, mapAudioAdapter size() is : %d .", AUDIO_LOG, mapAudioAdapter_.size());
     return DH_SUCCESS;
 }
 

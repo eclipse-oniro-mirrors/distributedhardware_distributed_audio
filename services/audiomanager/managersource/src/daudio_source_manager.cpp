@@ -34,6 +34,9 @@ DAudioSourceManager::DAudioSourceManager()
 DAudioSourceManager::~DAudioSourceManager()
 {
     DHLOGI("%s: Distributed audio source manager destructed.", LOG_TAG);
+    if (devClearThread_.joinable()) {
+        devClearThread_.join();
+    }
 }
 
 int32_t DAudioSourceManager::Init(const sptr<IDAudioIpcCallback> &callback)
@@ -62,12 +65,6 @@ int32_t DAudioSourceManager::UnInit()
 {
     DHLOGI("%s: UnInit.", LOG_TAG);
     std::lock_guard<std::mutex> lock(remoteSvrMutex_);
-    for (auto iter = remoteSvrProxyMap_.begin(); iter != remoteSvrProxyMap_.end(); iter++) {
-        if (iter->second != nullptr) {
-            iter->second->AsObject()->RemoveDeathRecipient(remoteSvrRecipient_);
-        }
-    }
-
     remoteSvrProxyMap_.clear();
     remoteSvrRecipient_ = nullptr;
     daudioIpcCallback_ = nullptr;
@@ -123,6 +120,7 @@ int32_t DAudioSourceManager::DisableDAudio(const std::string &devId, const std::
         DHLOGE("%s, Audio device is null.", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
+    audioDevMap_[devId].ports[dhId] = reqId;
     return audioDevMap_[devId].dev->DisableDAudio(dhId);
 }
 
@@ -185,7 +183,7 @@ int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::s
     {
         std::lock_guard<std::mutex> autoLock(remoteSvrMutex_);
         remoteSvrProxyMap_[devId] = remoteSvrProxy;
-        remoteSvrProxyMap_[devId]->DAudioNotify(localNetworkId, dhId, eventType, eventContent);
+        remoteSvrProxy->DAudioNotify(localNetworkId, dhId, eventType, eventContent);
     }
     return DH_SUCCESS;
 }

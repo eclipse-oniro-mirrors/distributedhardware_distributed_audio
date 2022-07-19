@@ -48,17 +48,11 @@ int32_t DAudioSinkManager::Init()
 int32_t DAudioSinkManager::UnInit()
 {
     DHLOGI("%s: DAudioSinkManager UnInit.", LOG_TAG);
-    std::lock_guard<std::mutex> lock(remoteSourceSvrMutex_);
+    std::lock_guard<std::mutex> lock(remoteSvrMutex_);
     if (remoteSourceSvrRecipient_ != nullptr) {
         remoteSourceSvrRecipient_ = nullptr;
     }
-
-    for (auto iter = remoteSourceSvrProxyMap_.begin(); iter != remoteSourceSvrProxyMap_.end(); iter++) {
-        if (iter->second != nullptr) {
-            iter->second->AsObject()->RemoveDeathRecipient(remoteSourceSvrRecipient_);
-        }
-    }
-    remoteSourceSvrProxyMap_.clear();
+    remoteSvrProxyMap_.clear();
     dAudioSinkDevMap_.clear();
     return DH_SUCCESS;
 }
@@ -75,7 +69,6 @@ int32_t DAudioSinkManager::HandleDAudioNotify(const std::string &devId, const st
     const int32_t eventType, const std::string &eventContent)
 {
     DHLOGI("%s: Recive audio event from devId: %s, event type: %d.", LOG_TAG, GetAnonyString(devId).c_str(), eventType);
-    DHLOGI("%s: Event content: %s", LOG_TAG, eventContent.c_str());
     std::lock_guard<std::mutex> lock(devMapMutex_);
     auto iter = dAudioSinkDevMap_.find(devId);
     if (iter == dAudioSinkDevMap_.end()) {
@@ -94,50 +87,45 @@ int32_t DAudioSinkManager::HandleDAudioNotify(const std::string &devId, const st
 int32_t DAudioSinkManager::DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
     const std::string &eventContent)
 {
-    DHLOGI("%s: DAudioNotify, devId: %s", LOG_TAG, GetAnonyString(devId).c_str());
-    if (devId.empty()) {
-        DHLOGE("%s: DAudioNotify remote devId is empty", LOG_TAG);
-        return ERR_DH_AUDIO_SA_INVALID_NETWORKID;
+    DHLOGI("%s: DAudioNotify, devId: %s, dhId: %s, eventType: %d.", LOG_TAG, GetAnonyString(devId).c_str(),
+        dhId.c_str(), eventType);
+    std::string localNetworkId;
+    int32_t ret = GetLocalDeviceNetworkId(localNetworkId);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Get local network id failed.", LOG_TAG);
+        return ret;
     }
-    sptr<IDAudioSource> remoteSourceSvrProxy = nullptr;
     {
-        std::lock_guard<std::mutex> autoLock(remoteSourceSvrMutex_);
-        auto iter = remoteSourceSvrProxyMap_.find(devId);
-        if (iter != remoteSourceSvrProxyMap_.end()) {
-            if (iter->second != nullptr) {
-                remoteSourceSvrProxy = iter->second;
+        std::lock_guard<std::mutex> autoLock(remoteSvrMutex_);
+        auto sinkProxy = remoteSvrProxyMap_.find(devId);
+        if (sinkProxy != remoteSvrProxyMap_.end()) {
+            if (sinkProxy->second != nullptr) {
+                sinkProxy->second->DAudioNotify(localNetworkId, dhId, eventType, eventContent);
+                return DH_SUCCESS;
             }
         }
     }
-    if (remoteSourceSvrProxy == nullptr) {
-        sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (samgr == nullptr) {
-            DHLOGE("%s: Failed to get system ability mgr.", LOG_TAG);
-            return ERR_DH_AUDIO_SA_GET_SAMGR_FAILED;
-        }
-        auto remoteObject = samgr->GetSystemAbility(DISTRIBUTED_HARDWARE_AUDIO_SOURCE_SA_ID, devId);
-        if (remoteObject == nullptr) {
-            DHLOGE("%s: remoteObject is null", LOG_TAG);
-            return ERR_DH_AUDIO_SA_GET_REMOTE_SOURCE_FAILED;
-        }
 
-        remoteSourceSvrProxy = iface_cast<IDAudioSource>(remoteObject);
-        if (remoteSourceSvrProxy == nullptr) {
-            DHLOGE("%s: Failed to get remote daudio source sa.", LOG_TAG);
-            return ERR_DH_AUDIO_SA_GET_REMOTE_SOURCE_FAILED;
-        }
-        {
-            std::lock_guard<std::mutex> autoLock(remoteSourceSvrMutex_);
-            remoteSourceSvrProxyMap_[devId] = remoteSourceSvrProxy;
-        }
+    auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgr == nullptr) {
+        DHLOGE("%s: Failed to get system ability mgr.", LOG_TAG);
+        return ERR_DH_AUDIO_SA_GET_SAMGR_FAILED;
     }
-    std::string localNetworkId;
-    int ret = GetLocalDeviceNetworkId(localNetworkId);
-    if (ret != DH_SUCCESS) {
-        return ret;
+    auto remoteObject = samgr->GetSystemAbility(DISTRIBUTED_HARDWARE_AUDIO_SOURCE_SA_ID, devId);
+    if (remoteObject == nullptr) {
+        DHLOGE("%s: remoteObject is null.", LOG_TAG);
+        return ERR_DH_AUDIO_SA_GET_REMOTE_SINK_FAILED;
     }
-    DHLOGI("%s: DAudioNotify finish, eventType: %d, eventContent: %s.", LOG_TAG, eventType, eventContent.c_str());
-    remoteSourceSvrProxyMap_[devId]->DAudioNotify(localNetworkId, dhId, eventType, eventContent);
+    sptr<IDAudioSource> remoteSvrProxy = iface_cast<IDAudioSource>(remoteObject);
+    if (remoteSvrProxy == nullptr) {
+        DHLOGE("%s: Failed to get remote daudio sink SA.", LOG_TAG);
+        return ERR_DH_AUDIO_SA_GET_REMOTE_SINK_FAILED;
+    }
+    {
+        std::lock_guard<std::mutex> autoLock(remoteSvrMutex_);
+        remoteSvrProxyMap_[devId] = remoteSvrProxy;
+        remoteSvrProxy->DAudioNotify(localNetworkId, dhId, eventType, eventContent);
+    }
     return DH_SUCCESS;
 }
 

@@ -24,8 +24,9 @@ namespace DistributedHardware {
 int32_t DAudioIpcCallback::OnNotifyRegResult(const std::string &devId, const std::string &dhId,
     const std::string &reqId, int32_t status, const std::string &resultData)
 {
-    DHLOGI("%s: OnNotifyRegResult, devId: %s, dhId: %s, status: %d, resultData: %s", LOG_TAG,
-        GetAnonyString(devId).c_str(), dhId.c_str(), status, resultData.c_str());
+    DHLOGI("%s: OnNotifyRegResult, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s", LOG_TAG,
+        GetAnonyString(devId).c_str(), dhId.c_str(), status, resultData.c_str(), reqId.c_str());
+
     auto iter = registerCallbackMap_.find(reqId);
     if (iter != registerCallbackMap_.end()) {
         iter->second->OnRegisterResult(devId, dhId, status, resultData);
@@ -39,15 +40,15 @@ int32_t DAudioIpcCallback::OnNotifyRegResult(const std::string &devId, const std
 int32_t DAudioIpcCallback::OnNotifyUnregResult(const std::string &devId, const std::string &dhId,
     const std::string &reqId, int32_t status, const std::string &resultData)
 {
-    DHLOGI("%s: OnNotifyUnregResult, devId: %s, dhId: %s, status: %d, resultData: %s", LOG_TAG,
-        GetAnonyString(devId).c_str(), dhId.c_str(), status, resultData.c_str());
+    DHLOGI("%s: OnNotifyUnregResult, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s", LOG_TAG,
+        GetAnonyString(devId).c_str(), dhId.c_str(), status, resultData.c_str(), reqId.c_str());
+
     auto iter = unregisterCallbackMap_.find(reqId);
     if (iter != unregisterCallbackMap_.end()) {
         iter->second->OnUnregisterResult(devId, dhId, status, resultData);
         unregisterCallbackMap_.erase(reqId);
         return DH_SUCCESS;
     }
-
     return ERR_DH_AUDIO_SA_UNREGISTERCALLBACK_NOT_FOUND;
 }
 

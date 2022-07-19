@@ -50,8 +50,8 @@ private:
     static const constexpr char *LOG_TAG = "DAudioSinkManager";
     std::mutex devMapMutex_;
     std::unordered_map<std::string, std::shared_ptr<DAudioSinkDev>> dAudioSinkDevMap_;
-    std::mutex remoteSourceSvrMutex_;
-    std::map<std::string, sptr<IDAudioSource>> remoteSourceSvrProxyMap_;
+    std::mutex remoteSvrMutex_;
+    std::map<std::string, sptr<IDAudioSource>> remoteSvrProxyMap_;
     sptr<RemoteSourceSvrRecipient> remoteSourceSvrRecipient_ = nullptr;
 };
 } // DistributedHardware
