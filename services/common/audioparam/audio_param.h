@@ -84,12 +84,12 @@ typedef struct {
 } AudioCommonParam;
 
 
-typedef struct {
+typedef struct AudioCaptureOptions {
     SourceType sourceType = SOURCE_TYPE_INVALID;
     int32_t capturerFlags = 0;
 } AudioCaptureOptions;
 
-typedef struct {
+typedef struct AudioRenderOptions {
     ContentType contentType = CONTENT_TYPE_UNKNOWN;
     StreamUsage streamUsage = STREAM_USAGE_UNKNOWN;
     int32_t renderFlags = 0;
