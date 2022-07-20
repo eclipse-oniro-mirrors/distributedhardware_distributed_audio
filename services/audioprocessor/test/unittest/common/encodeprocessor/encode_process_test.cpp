@@ -92,7 +92,7 @@ HWTEST_F(EncodeProcessTest, encode_process_test_002, TestSize.Level1)
     const AudioCommonParam testRemoteComPara = {SAMPLE_RATE_48000, STEREO, SAMPLE_S32LE, AUDIO_CODEC_FLAC};
     EXPECT_NE(DH_SUCCESS, encodeProc_->ConfigureAudioProcessor(testLocalComPara, testRemoteComPara, proCallback_));
 
-    EXPECT_NE(DH_SUCCESS, encodeProc_->ReleaseAudioProcessor());
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->ReleaseAudioProcessor());
 }
 
 /**
@@ -121,7 +121,7 @@ HWTEST_F(EncodeProcessTest, encode_process_test_004, TestSize.Level1)
 {
     EXPECT_NE(DH_SUCCESS, encodeProc_->StartAudioProcessor());
 
-    EXPECT_NE(DH_SUCCESS, encodeProc_->StopAudioProcessor());
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->StopAudioProcessor());
     EXPECT_NE(DH_SUCCESS, encodeProc_->ReleaseAudioProcessor());
 }
 

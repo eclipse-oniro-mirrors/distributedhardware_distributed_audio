@@ -64,7 +64,7 @@ HWTEST_F(AudioCtrlTransportTest, SetUp_002, TestSize.Level1)
  */
 HWTEST_F(AudioCtrlTransportTest, Release_001, TestSize.Level1)
 {
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_NULL_VALUE, trans->Release());
+    EXPECT_EQ(DH_SUCCESS, trans->Release());
 }
 
 /**
@@ -112,7 +112,7 @@ HWTEST_F(AudioCtrlTransportTest, Start_002, TestSize.Level1)
  */
 HWTEST_F(AudioCtrlTransportTest, Stop_001, TestSize.Level1)
 {
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_NULL_VALUE, trans->Stop());
+    EXPECT_EQ(DH_SUCCESS, trans->Stop());
 }
 
 /**

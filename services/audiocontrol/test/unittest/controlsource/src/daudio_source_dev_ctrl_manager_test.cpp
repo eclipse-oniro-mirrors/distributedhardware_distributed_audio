@@ -82,7 +82,7 @@ HWTEST_F(DAudioSourceDevCtrlMgrTest, Start_002, TestSize.Level1)
 HWTEST_F(DAudioSourceDevCtrlMgrTest, Stop_001, TestSize.Level1)
 {
     sourceDevCtrl_->audioCtrlTrans_ = nullptr;
-    EXPECT_EQ(ERR_DH_AUDIO_SA_CTRL_TRANS_NULL, sourceDevCtrl_->Stop());
+    EXPECT_EQ(DH_SUCCESS, sourceDevCtrl_->Stop());
 }
 
 /**
@@ -107,7 +107,7 @@ HWTEST_F(DAudioSourceDevCtrlMgrTest, Stop_002, TestSize.Level1)
 HWTEST_F(DAudioSourceDevCtrlMgrTest, Release_001, TestSize.Level1)
 {
     sourceDevCtrl_->audioCtrlTrans_ = nullptr;
-    EXPECT_EQ(ERR_DH_AUDIO_SA_CTRL_TRANS_NULL, sourceDevCtrl_->Release());
+    EXPECT_EQ(DH_SUCCESS, sourceDevCtrl_->Release());
 }
 
 /**
@@ -172,6 +172,7 @@ HWTEST_F(DAudioSourceDevCtrlMgrTest, SendAudioEvent_002, TestSize.Level1)
 HWTEST_F(DAudioSourceDevCtrlMgrTest, OnStateChange_001, TestSize.Level1)
 {
     int32_t type = static_cast<int32_t>(AudioEventType::CTRL_OPENED);
+    sourceDevCtrl_->audioEventCallback_ = std::make_shared<MockIAudioEventCallback>();
     sourceDevCtrl_->OnStateChange(type);
 }
 

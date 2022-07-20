@@ -51,18 +51,6 @@ void DSpeakerClientTest::TearDown()
  */
 HWTEST_F(DSpeakerClientTest, OnStateChange_001, TestSize.Level1)
 {
-    int32_t type = 15;
-    EXPECT_NE(DH_SUCCESS, speakerClient_->OnStateChange(type));
-}
-
-/**
- * @tc.name: OnStateChange_002
- * @tc.desc: Verify the OnStateChange function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E6G
- */
-HWTEST_F(DSpeakerClientTest, OnStateChange_002, TestSize.Level1)
-{
     EXPECT_EQ(DH_SUCCESS, speakerClient_->OnStateChange(AudioEventType::DATA_CLOSED));
 }
 
@@ -102,19 +90,6 @@ HWTEST_F(DSpeakerClientTest, StartRender001, TestSize.Level1)
 }
 
 /**
- * @tc.name: StartRender002
- * @tc.desc: Verify the StartRender function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E6G
- */
-HWTEST_F(DSpeakerClientTest, StartRender002, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, speakerClient_->SetUp(audioParam_));
-    EXPECT_EQ(DH_SUCCESS, speakerClient_->StartRender());
-    EXPECT_EQ(DH_SUCCESS, speakerClient_->StopRender());
-}
-
-/**
  * @tc.name: StopRender_001
  * @tc.desc: Verify the StopRender function.
  * @tc.type: FUNC
@@ -123,36 +98,6 @@ HWTEST_F(DSpeakerClientTest, StartRender002, TestSize.Level1)
 HWTEST_F(DSpeakerClientTest, StopRender001, TestSize.Level1)
 {
     EXPECT_NE(DH_SUCCESS, speakerClient_->StopRender());
-}
-
-/**
- * @tc.name: SetAudioParameters_001
- * @tc.desc: Verify the SetAudioParameters function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E6G
- */
-HWTEST_F(DSpeakerClientTest, SetAudioParameters001, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, speakerClient_->SetUp(audioParam_));
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    event->type = AudioEventType::VOLUME_GET;
-    event->content = "EVENT_TYPE=1;VOLUME_GROUP_ID=1;AUDIO_VOLUME_TYPE=1;VOLUME_LEVEL=6;";
-    EXPECT_NE(DH_SUCCESS, speakerClient_->SetAudioParameters(event));
-}
-
-/**
- * @tc.name: SetAudioParameters_002
- * @tc.desc: Verify the SetAudioParameters function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E6G
- */
-HWTEST_F(DSpeakerClientTest, SetAudioParameters002, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, speakerClient_->SetUp(audioParam_));
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    event->type = AudioEventType::VOLUME_MUTE_SET;
-    event->content = "EVENT_TYPE=1;VOLUME_GROUP_ID=1;AUDIO_VOLUME_TYPE=1;VOLUME_LEVEL=2;";
-    EXPECT_EQ(DH_SUCCESS, speakerClient_->SetAudioParameters(event));
 }
 } // DistributedHardware
 } // OHOS

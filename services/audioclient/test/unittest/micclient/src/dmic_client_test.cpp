@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -95,20 +95,6 @@ HWTEST_F(DMicClientTest, StartCapture001, TestSize.Level1)
 {
     EXPECT_NE(DH_SUCCESS, micClient_->StartCapture());
     EXPECT_NE(DH_SUCCESS, micClient_->StopCapture());
-}
-
-/**
- * @tc.name: StartCapture002
- * @tc.desc: Verify the StartCapture function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E6G
- */
-HWTEST_F(DMicClientTest, StartCapture002, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, micClient_->SetUp(audioParam_));
-    EXPECT_EQ(DH_SUCCESS, micClient_->OnStateChange(AudioEventType::DATA_OPENED));
-    EXPECT_EQ(DH_SUCCESS, micClient_->StartCapture());
-    EXPECT_EQ(DH_SUCCESS, micClient_->StopCapture());
 }
 
 /**

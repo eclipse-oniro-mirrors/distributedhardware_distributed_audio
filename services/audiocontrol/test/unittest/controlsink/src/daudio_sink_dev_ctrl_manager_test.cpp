@@ -60,7 +60,7 @@ HWTEST_F(DAudioSinkDevCtrlMgrTest, Start_001, TestSize.Level1)
 {
     std::string devId = "devId";
     sinkDevCtrl_->audioCtrlTrans_ = std::make_shared<MockIAudioCtrlTransport>(devId);
-    EXPECT_EQ(ERR_DH_AUDIO_SA_MIC_CHANNEL_WAIT_TIMEOUT, sinkDevCtrl_->Start());
+    EXPECT_EQ(DH_SUCCESS, sinkDevCtrl_->Start());
 }
 
 /**
@@ -72,7 +72,7 @@ HWTEST_F(DAudioSinkDevCtrlMgrTest, Start_001, TestSize.Level1)
 HWTEST_F(DAudioSinkDevCtrlMgrTest, Stop_001, TestSize.Level1)
 {
     sinkDevCtrl_->audioCtrlTrans_ = nullptr;
-    EXPECT_EQ(ERR_DH_AUDIO_SA_SINK_CTRL_TRANS_NULL, sinkDevCtrl_->Stop());
+    EXPECT_EQ(DH_SUCCESS, sinkDevCtrl_->Stop());
 }
 
 /**

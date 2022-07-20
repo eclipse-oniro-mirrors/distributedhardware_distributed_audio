@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -175,18 +175,18 @@ void DSpeakerClient::PlayThreadRunning()
         needStartWait = false;
         std::shared_ptr<AudioData> audioData = nullptr;
         int32_t reqDataRet = speakerTrans_->RequestAudioData(audioData);
-        int32_t writeLen = 0;
-        int32_t writeOffSet = 0;
+        size_t writeLen = NUMBER_ZERO;
+        size_t writeOffSet = NUMBER_ZERO;
         if (reqDataRet != DH_SUCCESS && audioData == nullptr) {
             DHLOGD("%s: Failed to send data, ret: %d", LOG_TAG, reqDataRet);
             continue;
         }
 
-        while (writeOffSet < (uint32_t)(audioData->Capacity())) {
+        while (writeOffSet < (audioData->Capacity())) {
             writeLen = audioRenderer_->Write(audioData->Data() + writeOffSet, audioData->Capacity() - writeOffSet);
             DHLOGD("write audio render, write len: %d, raw len: %d, offset: %d", writeLen, audioData->Capacity(),
                 writeOffSet);
-            if (writeLen < 0) {
+            if (writeLen < NUMBER_ZERO) {
                 break;
             }
             writeOffSet += writeLen;
@@ -194,7 +194,7 @@ void DSpeakerClient::PlayThreadRunning()
 
         int64_t startSleepTime = GetCurrentTime();
         int32_t sleepTime = SPK_INTERVAL_US - ((startSleepTime - loopInTime)) * 1000;
-        if (sleepTime > 0) {
+        if (sleepTime > NUMBER_ZERO) {
             usleep(sleepTime);
         }
         int64_t stopSleepTime = GetCurrentTime();
