@@ -175,18 +175,19 @@ void DSpeakerClient::PlayThreadRunning()
         needStartWait = false;
         std::shared_ptr<AudioData> audioData = nullptr;
         int32_t reqDataRet = speakerTrans_->RequestAudioData(audioData);
-        size_t writeLen = NUMBER_ZERO;
-        size_t writeOffSet = NUMBER_ZERO;
+        int32_t writeLen = 0;
+        int32_t writeOffSet = 0;
         if (reqDataRet != DH_SUCCESS && audioData == nullptr) {
             DHLOGD("%s: Failed to send data, ret: %d", LOG_TAG, reqDataRet);
             continue;
         }
 
-        while (writeOffSet < (audioData->Capacity())) {
-            writeLen = audioRenderer_->Write(audioData->Data() + writeOffSet, audioData->Capacity() - writeOffSet);
+        while (writeOffSet < static_cast<int32_t>(audioData->Capacity())) {
+            writeLen = audioRenderer_->Write(audioData->Data() + writeOffSet,
+                static_cast<int32_t>(audioData->Capacity()) - writeOffSet);
             DHLOGD("write audio render, write len: %d, raw len: %d, offset: %d", writeLen, audioData->Capacity(),
                 writeOffSet);
-            if (writeLen < NUMBER_ZERO) {
+            if (writeLen < 0) {
                 break;
             }
             writeOffSet += writeLen;
@@ -194,7 +195,7 @@ void DSpeakerClient::PlayThreadRunning()
 
         int64_t startSleepTime = GetCurrentTime();
         int32_t sleepTime = SPK_INTERVAL_US - ((startSleepTime - loopInTime)) * 1000;
-        if (sleepTime > NUMBER_ZERO) {
+        if (sleepTime > 0) {
             usleep(sleepTime);
         }
         int64_t stopSleepTime = GetCurrentTime();
