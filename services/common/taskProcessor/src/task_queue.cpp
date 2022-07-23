@@ -23,6 +23,7 @@ namespace DistributedHardware {
 void TaskQueue::Start()
 {
     taskQueueReady_ = true;
+    isQuitTaskQueue_ = false;
     mainThreadLoop_ = std::thread(&TaskQueue::Run, this);
     while (!mainThreadLoop_.joinable()) {
     }
@@ -30,23 +31,22 @@ void TaskQueue::Start()
 
 void TaskQueue::Stop()
 {
-    while (!taskQueue_.empty()) {
-        taskQueue_.pop();
-    }
-    taskQueueReady_ = false;
-    std::shared_ptr<TaskImplInterface> task = nullptr;
-    taskQueue_.push(task);
-    taskQueueCond_.notify_one();
+    DHLOGI("%s: Stop task queue.", LOG_TAG);
+    isQuitTaskQueue_ = true;
     if (mainThreadLoop_.joinable()) {
         mainThreadLoop_.join();
     }
-    DHLOGI("%s: Stop task queue.", LOG_TAG);
+    DHLOGI("%s: Stop task queue success.", LOG_TAG);
 }
 
 void TaskQueue::Run()
 {
-    DHLOGI("%s: mainThread running...", LOG_TAG);
+    DHLOGI("%s: Task queue running.", LOG_TAG);
     while (taskQueueReady_) {
+        if (isQuitTaskQueue_ && taskQueue_.empty()) {
+            DHLOGI("%s: Task queue quit.", LOG_TAG);
+            break;
+        }
         std::shared_ptr<TaskImplInterface> task = nullptr;
         {
             std::unique_lock<std::mutex> lck(taskQueueMutex_);
@@ -80,11 +80,6 @@ int32_t TaskQueue::Produce(std::shared_ptr<TaskImplInterface> &task)
     taskQueue_.push(task);
     taskQueueCond_.notify_one();
     return DH_SUCCESS;
-}
-
-int32_t TaskQueue::GetTaskNum()
-{
-    return taskQueue_.size();
 }
 } // DistributedHardware
 } // OHOS

@@ -43,8 +43,6 @@ int32_t DAudioSourceDev::AwakeAudioDev()
 
 void DAudioSourceDev::SleepAudioDev()
 {
-    while (taskQueue_->GetTaskNum() != 0) {
-    }
     taskQueue_->Stop();
     taskQueue_ = nullptr;
 }

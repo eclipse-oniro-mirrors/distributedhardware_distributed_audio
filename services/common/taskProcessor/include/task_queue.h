@@ -32,7 +32,6 @@ public:
     int32_t Produce(std::shared_ptr<TaskImplInterface> &task);
     void Start();
     void Stop();
-    int32_t GetTaskNum();
 
 private:
     void Consume(std::shared_ptr<TaskImplInterface> &task);
@@ -46,6 +45,7 @@ private:
     std::condition_variable taskQueueCond_;
     std::queue<std::shared_ptr<TaskImplInterface>> taskQueue_;
     bool taskQueueReady_ = false;
+    bool isQuitTaskQueue_ = false;
     std::thread mainThreadLoop_;
     uint32_t maxSize_;
 };

@@ -64,10 +64,11 @@ int32_t DAudioSinkManager::UnInit()
 
 void DAudioSinkManager::OnSinkDevReleased(const std::string &devId)
 {
-    DHLOGI("%s: DAudioSinkManager OnSinkDevReleased. devId: %s.", LOG_TAG, GetAnonyString(devId).c_str());
-    std::lock_guard<std::mutex> lock(devMapMutex_);
-    dAudioSinkDevMap_[devId]->SleepAudioDev();
-    dAudioSinkDevMap_.erase(devId);
+    DHLOGI("%s: Release audio device devId: %s.", LOG_TAG, GetAnonyString(devId).c_str());
+    if (devClearThread_.joinable()) {
+        devClearThread_.join();
+    }
+    devClearThread_ = std::thread(&DAudioSinkManager::ClearAudioDev, this, devId);
 }
 
 int32_t DAudioSinkManager::HandleDAudioNotify(const std::string &devId, const std::string &dhId,
@@ -145,6 +146,22 @@ void DAudioSinkManager::NotifyEvent(const std::string &devId, const int32_t even
 void DAudioSinkManager::RemoteSourceSvrRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
     DHLOGI("%s: DAudioSinkManager::OnRemoteDied.", LOG_TAG);
+}
+
+void DAudioSinkManager::ClearAudioDev(const std::string &devId)
+{
+    std::lock_guard<std::mutex> lock(devMapMutex_);
+    auto dev = dAudioSinkDevMap_.find(devId);
+    if (dev == dAudioSinkDevMap_.end()) {
+        DHLOGD("%s: Device not register.", LOG_TAG);
+        return;
+    }
+    if (dev->second == nullptr) {
+        DHLOGD("%s: Device already released.", LOG_TAG);
+        return;
+    }
+    dev->second->SleepAudioDev();
+    dAudioSinkDevMap_.erase(devId);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

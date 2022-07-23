@@ -46,6 +46,7 @@ private:
     };
     DAudioSinkManager();
     ~DAudioSinkManager();
+    void ClearAudioDev(const std::string &devId);
 
     static const constexpr char *LOG_TAG = "DAudioSinkManager";
     std::mutex devMapMutex_;
@@ -53,6 +54,7 @@ private:
     std::mutex remoteSvrMutex_;
     std::map<std::string, sptr<IDAudioSource>> remoteSvrProxyMap_;
     sptr<RemoteSourceSvrRecipient> remoteSourceSvrRecipient_ = nullptr;
+    std::thread devClearThread_;
 };
 } // DistributedHardware
 } // OHOS

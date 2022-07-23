@@ -56,8 +56,6 @@ int32_t DAudioSinkDev::AwakeAudioDev()
 
 void DAudioSinkDev::SleepAudioDev()
 {
-    while (taskQueue_->GetTaskNum() != 0) {
-    }
     taskQueue_->Stop();
     taskQueue_ = nullptr;
 }
