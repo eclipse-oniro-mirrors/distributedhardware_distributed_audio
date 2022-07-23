@@ -114,5 +114,28 @@ void DAudioSourceService::DAudioNotify(const std::string &devId, const std::stri
         dhId.c_str());
     DAudioSourceManager::GetInstance().HandleDAudioNotify(devId, dhId, eventType, eventContent);
 }
+
+int DAudioSourceService::Dump(int32_t fd, const std::vector<std::u16string>& args)
+{
+    DHLOGI("%s: DAudioSourceService Dump.", LOG_TAG);
+    std::string result;
+    std::vector<std::string> argsStr;
+    for (auto item : args) {
+        argsStr.emplace_back(Str16ToStr8(item));
+    }
+
+    if (!DaudioHidumper::GetInstance().Dump(argsStr, result)) {
+        DHLOGE("%s: Hidump error", LOG_TAG);
+        return ERR_DH_AUDIO_BAD_VALUE;
+    }
+
+    int ret = dprintf(fd, "%s\n", result.c_str());
+    if (ret < 0) {
+        DHLOGE("%s: dprintf error", LOG_TAG);
+        return ERR_DH_AUDIO_BAD_VALUE;
+    }
+
+    return DH_SUCCESS;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

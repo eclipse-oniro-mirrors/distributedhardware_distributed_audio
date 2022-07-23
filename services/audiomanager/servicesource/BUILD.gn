@@ -47,6 +47,14 @@ ohos_shared_library("distributed_audio_source") {
         "${services_path}/audioprocessor/interface",
         "${services_path}/audioprocessor/encodeprocessor/include",
         "${services_path}/audioprocessor/decodeprocessor/include",
+        "//drivers/peripheral/audio/interfaces/include",
+        "${distributedaudio_path}/hdf_service/distributed_audio/audio_client/include",
+        "${distributedaudio_path}/hdf_service/distributed_audio/hdi_service/common/include",
+        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
+        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager/include",
+        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
+        "${distributedaudio_path}/audiohandler/include",
+        "${common_path}/dfx_utils/include",
     ]
 
     sources = [
@@ -55,6 +63,7 @@ ohos_shared_library("distributed_audio_source") {
         "src/daudio_source_stub.cpp",
         "${interfaces_path}/inner_kits/native_cpp/audio_sink/src/daudio_sink_proxy.cpp",
         "${interfaces_path}/inner_kits/native_cpp/audio_source/src/daudio_source_proxy.cpp",
+        "${common_path}/dfx_utils/src/daudio_hidumper.cpp",
     ]
 
     deps = [
@@ -63,6 +72,8 @@ ohos_shared_library("distributed_audio_source") {
         "//foundation/distributedhardware/distributed_audio/services/common:distributed_audio_service_common",
         "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audioext/v1_0:libdaudioext_proxy_1.0",
         "//foundation/distributedhardware/distributed_audio/services/audiomanager/managersource:distributed_audio_manager_source",
+        "${distributedaudio_path}/hdf_service/distributed_audio/audio_client:daudio_client",
+        "${distributedaudio_path}/audiohandler:distributed_audio_handler",
     ]
 
     external_deps = [

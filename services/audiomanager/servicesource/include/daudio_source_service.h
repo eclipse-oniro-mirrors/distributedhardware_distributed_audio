@@ -16,10 +16,14 @@
 #ifndef OHOS_DAUDIO_SOURCE_SERVICE_H
 #define OHOS_DAUDIO_SOURCE_SERVICE_H
 
-#include "daudio_source_stub.h"
-#include "idaudio_ipc_callback.h"
+#include <vector>
+
 #include "ipc_object_stub.h"
 #include "system_ability.h"
+
+#include "daudio_hidumper.h"
+#include "daudio_source_stub.h"
+#include "idaudio_ipc_callback.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -40,6 +44,7 @@ public:
         const std::string &value) override;
     void DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
         const std::string &eventContent) override;
+    int Dump(int32_t fd, const std::vector<std::u16string>& args) override;
 
 protected:
     void OnStart() override;

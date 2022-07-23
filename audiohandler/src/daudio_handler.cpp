@@ -107,9 +107,20 @@ std::vector<DHItem> DAudioHandler::Query()
         dhItemVec.push_back(dhItem);
         DHLOGD("%s: Query result: dhId: %d, attrs: %s.", LOG_TAG, dhId, infoJson.dump().c_str());
     }
+    ablityForDumpVec_ = dhItemVec;
     return dhItemVec;
 }
 
+std::vector<DHItem> DAudioHandler::ablityForDump()
+{
+    DHLOGI("%s: Get audio ablity for dump.", LOG_TAG);
+    if (ablityForDumpVec_.size() > 0) {
+        return ablityForDumpVec_;
+    }
+    Initialize();
+    Query();
+    return ablityForDumpVec_;
+}
 int32_t DAudioHandler::QueryCodecInfo()
 {
     DHLOGI("%s: QueryCodecInfo.", LOG_TAG);
@@ -205,10 +216,10 @@ void DAudioHandler::GetSupportAudioInfo(AudioInfo &audioInfos, CoderInfo &encode
         spkInfos_.channels.push_back(CHANNEL_COUNT_DEFAULT);
     }
     if (micInfos_.formats.empty()) {
-        micInfos_.channels.push_back(SAMPLE_FORMAT_DEFAULT);
+        micInfos_.formats.push_back(SAMPLE_FORMAT_DEFAULT);
     }
     if (spkInfos_.formats.empty()) {
-        spkInfos_.channels.push_back(SAMPLE_FORMAT_DEFAULT);
+        spkInfos_.formats.push_back(SAMPLE_FORMAT_DEFAULT);
     }
 }
 

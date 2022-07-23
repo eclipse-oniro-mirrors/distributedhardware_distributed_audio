@@ -50,7 +50,8 @@ public:
     bool IsSupportPlugin() override;
     void RegisterPluginListener(std::shared_ptr<PluginListener> listener) override;
     void UnRegisterPluginListener() override;
-
+    std::vector<DHItem> ablityForDump();
+    std::vector<DHItem> ablityForDumpVec_;
 private:
     DAudioHandler();
     ~DAudioHandler();
