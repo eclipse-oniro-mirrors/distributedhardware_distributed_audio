@@ -122,7 +122,7 @@ HWTEST_F(EncodeProcessTest, encode_process_test_004, TestSize.Level1)
     EXPECT_NE(DH_SUCCESS, encodeProc_->StartAudioProcessor());
 
     EXPECT_EQ(DH_SUCCESS, encodeProc_->StopAudioProcessor());
-    EXPECT_NE(DH_SUCCESS, encodeProc_->ReleaseAudioProcessor());
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->ReleaseAudioProcessor());
 }
 
 /**
