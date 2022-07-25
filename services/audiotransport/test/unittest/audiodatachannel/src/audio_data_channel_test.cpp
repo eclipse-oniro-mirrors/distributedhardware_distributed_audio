@@ -48,34 +48,6 @@ HWTEST_F(AudioDataChannelTest, CreateSession_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: CreateSession_002
- * @tc.desc: Verify the CreateSession and ReleaseSession function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(AudioDataChannelTest, CreateSession_002, TestSize.Level1)
-{
-    auto listener = std::make_shared<MockIAudioChannelListener>();
-    EXPECT_EQ(DH_SUCCESS, dataChannel_->CreateSession(listener, DATA_SPEAKER_SESSION_NAME));
-    EXPECT_EQ(DH_SUCCESS, dataChannel_->ReleaseSession());
-}
-
-/**
- * @tc.name: OpenSession_001
- * @tc.desc: Verify the OpenSession and CloseSession function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(AudioDataChannelTest, OpenSession_001, TestSize.Level1)
-{
-    auto listener = std::make_shared<MockIAudioChannelListener>();
-    EXPECT_EQ(DH_SUCCESS, dataChannel_->CreateSession(listener, DATA_SPEAKER_SESSION_NAME));
-    dataChannel_->sessionName_ = DATA_SPEAKER_SESSION_NAME;
-    EXPECT_NE(DH_SUCCESS, dataChannel_->OpenSession());
-    EXPECT_EQ(DH_SUCCESS, dataChannel_->CloseSession());
-}
-
-/**
  * @tc.name: OpenSession_002
  * @tc.desc: Verify the OpenSession and CloseSession function.
  * @tc.type: FUNC

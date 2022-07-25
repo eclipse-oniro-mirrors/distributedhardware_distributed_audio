@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_out_path = "distributed_audio/audio_soft_bus_adapter_test"
+module_out_path = "distributed_audio/services/softbusadapter"
 
 config("module_private_config") {
   visibility = [ ":*" ]

@@ -16,7 +16,7 @@ import("//build/ohos_var.gni")
 import("//build/test.gni")
 import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_out_path = "distributed_audio/audioclient/spk_client_test"
+module_out_path = "distributed_audio/services/audioclient/spk_client_test"
 
 config("module_private_config") {
     visibility = [ ":*" ]

@@ -67,17 +67,6 @@ HWTEST_F(DSpeakerClientTest, SetUp_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: SetUp_002
- * @tc.desc: Verify the SetUp function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E6G
- */
-HWTEST_F(DSpeakerClientTest, SetUp_002, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, speakerClient_->SetUp(audioParam_));
-}
-
-/**
  * @tc.name: StartRender_001
  * @tc.desc: Verify the StartRender and StopRender function.
  * @tc.type: FUNC

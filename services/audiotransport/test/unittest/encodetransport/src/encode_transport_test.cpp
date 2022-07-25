@@ -31,40 +31,6 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
-const AudioParam LOC_PARA_ENC_TEST = {
-    {
-        SAMPLE_RATE_48000,
-        STEREO,
-        SAMPLE_S16LE,
-        AUDIO_CODEC_AAC
-    },
-    {
-        SOURCE_TYPE_INVALID,
-        0
-    },
-    {
-        CONTENT_TYPE_UNKNOWN,
-        STREAM_USAGE_UNKNOWN,
-        0
-    }
-};
-const AudioParam RMT_PARA_ENC_TEST = {
-    {
-        SAMPLE_RATE_48000,
-        STEREO,
-        SAMPLE_S16LE,
-        AUDIO_CODEC_AAC
-    },
-    {
-        SOURCE_TYPE_INVALID,
-        0
-    },
-    {
-        CONTENT_TYPE_UNKNOWN,
-        STREAM_USAGE_UNKNOWN,
-        0
-    }
-};
 const std::string RMT_DEV_ID_TEST = "RemoteTest";
 const std::string ROLE_TEST = "speaker";
 
@@ -86,18 +52,6 @@ void EncodeTransportTest::TearDown(void)
 {
     transCallback_ = nullptr;
     encodeTrans_ = nullptr;
-}
-
-/**
- * @tc.name: encode_transport_test_001
- * @tc.desc: Verify the configure and release transport function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(EncodeTransportTest, encode_transport_test_001, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->SetUp(LOC_PARA_ENC_TEST, RMT_PARA_ENC_TEST, transCallback_, ROLE_TEST));
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
 }
 
 /**
@@ -147,23 +101,6 @@ HWTEST_F(EncodeTransportTest, encode_transport_test_002, TestSize.Level1)
 }
 
 /**
- * @tc.name: encode_transport_test_003
- * @tc.desc: Verify the start and stop transport function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(EncodeTransportTest, encode_transport_test_003, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->SetUp(LOC_PARA_ENC_TEST, RMT_PARA_ENC_TEST, transCallback_, ROLE_TEST));
-    EXPECT_NE(encodeTrans_->audioChannel_, nullptr);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->audioChannel_->ReleaseSession());
-    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Start());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
-}
-
-/**
  * @tc.name: encode_transport_test_004
  * @tc.desc: Verify the start transport without configure transport function.
  * @tc.type: FUNC
@@ -172,146 +109,6 @@ HWTEST_F(EncodeTransportTest, encode_transport_test_003, TestSize.Level1)
 HWTEST_F(EncodeTransportTest, encode_transport_test_004, TestSize.Level1)
 {
     EXPECT_NE(DH_SUCCESS, encodeTrans_->Start());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
-}
-
-/**
- * @tc.name: encode_transport_test_005
- * @tc.desc: Verify the stop transport without start transport function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(EncodeTransportTest, encode_transport_test_005, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->SetUp(LOC_PARA_ENC_TEST, RMT_PARA_ENC_TEST, transCallback_, ROLE_TEST));
-    EXPECT_NE(encodeTrans_->audioChannel_, nullptr);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->audioChannel_->ReleaseSession());
-    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
-    EXPECT_NE(DH_SUCCESS, encodeTrans_->Stop());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
-}
-
-/**
- * @tc.name: encode_transport_test_006
- * @tc.desc: Verify the start and stop transport again function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(EncodeTransportTest, encode_transport_test_006, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->SetUp(LOC_PARA_ENC_TEST, RMT_PARA_ENC_TEST, transCallback_, ROLE_TEST));
-    EXPECT_NE(encodeTrans_->audioChannel_, nullptr);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->audioChannel_->ReleaseSession());
-    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Start());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
-
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Start());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
-}
-
-/**
- * @tc.name: encode_transport_test_007
- * @tc.desc: Verify the start transport again function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(EncodeTransportTest, encode_transport_test_007, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->SetUp(LOC_PARA_ENC_TEST, RMT_PARA_ENC_TEST, transCallback_, ROLE_TEST));
-    EXPECT_NE(encodeTrans_->audioChannel_, nullptr);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->audioChannel_->ReleaseSession());
-    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Start());
-    EXPECT_NE(DH_SUCCESS, encodeTrans_->Start());
-
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
-}
-
-/**
- * @tc.name: encode_transport_test_008
- * @tc.desc: Verify the stop transport again function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(EncodeTransportTest, encode_transport_test_008, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->SetUp(LOC_PARA_ENC_TEST, RMT_PARA_ENC_TEST, transCallback_, ROLE_TEST));
-    EXPECT_NE(encodeTrans_->audioChannel_, nullptr);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->audioChannel_->ReleaseSession());
-    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Start());
-
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
-    EXPECT_NE(DH_SUCCESS, encodeTrans_->Stop());
-
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
-}
-
-/**
- * @tc.name: encode_transport_test_009
- * @tc.desc: Verify feed audio transport function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(EncodeTransportTest, encode_transport_test_009, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->SetUp(LOC_PARA_ENC_TEST, RMT_PARA_ENC_TEST, transCallback_, ROLE_TEST));
-    EXPECT_NE(encodeTrans_->audioChannel_, nullptr);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->audioChannel_->ReleaseSession());
-    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Start());
-
-    size_t bufLen = 4096;
-    std::shared_ptr<AudioData> inputData = std::make_shared<AudioData>(bufLen);
-    EXPECT_EQ(EOK, memset_s(inputData->Data(), inputData->Size(), 0, inputData->Size()));
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->FeedAudioData(inputData));
-
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
-}
-
-/**
- * @tc.name: encode_transport_test_0010
- * @tc.desc: Verify feed audio transport function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(EncodeTransportTest, encode_transport_test_0010, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->SetUp(LOC_PARA_ENC_TEST, RMT_PARA_ENC_TEST, transCallback_, ROLE_TEST));
-    EXPECT_NE(encodeTrans_->audioChannel_, nullptr);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->audioChannel_->ReleaseSession());
-    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Start());
-
-    std::shared_ptr<AudioData> inputData = nullptr;
-    EXPECT_NE(DH_SUCCESS, encodeTrans_->FeedAudioData(inputData));
-
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
-}
-
-/**
- * @tc.name: encode_transport_test_0011
- * @tc.desc: Verify request audio transport function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(EncodeTransportTest, encode_transport_test_0011, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->SetUp(LOC_PARA_ENC_TEST, RMT_PARA_ENC_TEST, transCallback_, ROLE_TEST));
-    EXPECT_NE(encodeTrans_->audioChannel_, nullptr);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->audioChannel_->ReleaseSession());
-    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Start());
-
-    std::shared_ptr<AudioData> inputData = nullptr;
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->RequestAudioData(inputData));
-
     EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
     EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
 }

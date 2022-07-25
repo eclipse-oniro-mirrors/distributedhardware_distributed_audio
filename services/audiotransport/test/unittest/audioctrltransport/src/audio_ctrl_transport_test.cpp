@@ -179,17 +179,5 @@ HWTEST_F(AudioCtrlTransportTest, RegisterChannelListener_002, TestSize.Level1)
     std::shared_ptr<IAudioChannelListener> listener = std::make_shared<MockIAudioChannelListener>();
     EXPECT_EQ(DH_SUCCESS, trans->RegisterChannelListener());
 }
-
-/**
- * @tc.name: InitAudioCtrlTrans_001
- * @tc.desc: Verify the InitAudioCtrlTrans function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(AudioCtrlTransportTest, InitAudioCtrlTrans_001, TestSize.Level1)
-{
-    std::string peerDevId;
-    EXPECT_EQ(DH_SUCCESS, trans->InitAudioCtrlTrans(peerDevId));
-}
 } // namespace DistributedHardware
 } // namespace OHOS

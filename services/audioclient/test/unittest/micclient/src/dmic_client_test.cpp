@@ -75,17 +75,6 @@ HWTEST_F(DMicClientTest, SetUp_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: SetUp_002
- * @tc.desc: Verify the SetUp function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E6G
- */
-HWTEST_F(DMicClientTest, SetUp002, TestSize.Level1)
-{
-    EXPECT_EQ(DH_SUCCESS, micClient_->SetUp(audioParam_));
-}
-
-/**
  * @tc.name: StartCapture001
  * @tc.desc: Verify the StartCapture function.
  * @tc.type: FUNC

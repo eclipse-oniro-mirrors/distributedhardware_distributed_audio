@@ -49,35 +49,6 @@ HWTEST_F(AudioCtrlChannelTest, CreateSession_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: CreateSession_002
- * @tc.desc: Verify the CreateSession and ReleaseSession function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(AudioCtrlChannelTest, CreateSession_002, TestSize.Level1)
-{
-    auto listener = std::make_shared<MockIAudioChannelListener>();
-    EXPECT_EQ(DH_SUCCESS, ctrlChannel_->CreateSession(listener, CTRL_SESSION_NAME));
-    EXPECT_EQ(DH_SUCCESS, ctrlChannel_->ReleaseSession());
-}
-
-/**
- * @tc.name: OpenSession_001
- * @tc.desc: Verify the OpenSession function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(AudioCtrlChannelTest, OpenSession_001, TestSize.Level1)
-{
-    auto listener = std::make_shared<MockIAudioChannelListener>();
-    EXPECT_EQ(DH_SUCCESS, ctrlChannel_->CreateSession(listener, CTRL_SESSION_NAME));
-    ctrlChannel_->sessionName_ = CTRL_SESSION_NAME;
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, ctrlChannel_->OpenSession());
-    EXPECT_EQ(DH_SUCCESS, ctrlChannel_->CloseSession());
-    EXPECT_EQ(DH_SUCCESS, ctrlChannel_->ReleaseSession());
-}
-
-/**
  * @tc.name: OpenSession_002
  * @tc.desc: Verify the OpenSession function.
  * @tc.type: FUNC
