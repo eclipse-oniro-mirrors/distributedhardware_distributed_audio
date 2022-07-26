@@ -20,6 +20,7 @@
 
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hitrace.h"
 #include "daudio_log.h"
 #include "daudio_util.h"
 #include "daudio_source_load_callback.h"
@@ -47,6 +48,7 @@ DAudioSourceHandler::~DAudioSourceHandler()
 int32_t DAudioSourceHandler::InitSource(const std::string &params)
 {
     DHLOGI("%s: InitSource.", LOG_TAG);
+    DAUDIO_SYNC_TRACE(DAUDIO_SOURCE_LOAD_SYSTEM_ABILITY);
     if (dAudioSourceProxy_ == nullptr) {
         sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         if (samgr == nullptr) {
@@ -100,6 +102,7 @@ int32_t DAudioSourceHandler::RegisterDistributedHardware(const std::string &devI
         return ERR_DH_AUDIO_SA_IPCCALLBACK_NOT_INIT;
     }
 
+    DaudioStartAsyncTrace(DAUDIO_REGISTER_AUDIO, DAUDIO_REGISTER_AUDIO_TASKID);
     std::string reqId = GetRandomID();
     dAudioIpcCallback_->PushRegisterCallback(reqId, callback);
     return dAudioSourceProxy_->RegisterDistributedHardware(devId, dhId, param, reqId);
@@ -119,6 +122,7 @@ int32_t DAudioSourceHandler::UnregisterDistributedHardware(const std::string &de
         return ERR_DH_AUDIO_SA_IPCCALLBACK_NOT_INIT;
     }
 
+    DaudioStartAsyncTrace(DAUDIO_UNREGISTER_AUDIO, DAUDIO_UNREGISTER_AUDIO_TASKID);
     std::string reqId = GetRandomID();
     dAudioIpcCallback_->PushUnregisterCallback(reqId, callback);
     return dAudioSourceProxy_->UnregisterDistributedHardware(devId, dhId, reqId);

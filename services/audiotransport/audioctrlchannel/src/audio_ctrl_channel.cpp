@@ -13,9 +13,11 @@
  * limitations under the License.
  */
 
+#include "audio_ctrl_channel.h"
+
 #include <securec.h>
 
-#include "audio_ctrl_channel.h"
+#include "daudio_hitrace.h"
 
 using json = nlohmann::json;
 namespace OHOS {
@@ -29,6 +31,7 @@ int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListe
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
+    DAUDIO_SYNC_TRACE(DAUDIO_CREATE_CTRL_SESSION);
     int32_t ret =
         SoftbusAdapter::GetInstance().CreateSoftbusSessionServer(PKG_NAME, sessionName, peerDevId_);
     if (ret != DH_SUCCESS) {
@@ -52,6 +55,7 @@ int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListe
 int32_t AudioCtrlChannel::ReleaseSession()
 {
     DHLOGI("%s: ReleaseSession, peerDevId: %s", LOG_TAG, GetAnonyString(peerDevId_).c_str());
+    DAUDIO_SYNC_TRACE(DAUDIO_RELEASE_CTRL_SESSION);
     int32_t ret = SoftbusAdapter::GetInstance().RemoveSoftbusSessionServer(PKG_NAME, sessionName_, peerDevId_);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Release softbus session failed ret: %d.", LOG_TAG, ret);
@@ -72,6 +76,7 @@ int32_t AudioCtrlChannel::ReleaseSession()
 int32_t AudioCtrlChannel::OpenSession()
 {
     DHLOGI("%s: OpenSession, peerDevId: %s.", LOG_TAG, GetAnonyString(peerDevId_).c_str());
+    DaudioStartAsyncTrace(DAUDIO_OPEN_CTRL_SESSION, DAUDIO_OPEN_CTRL_SESSION_TASKID);
     int32_t sessionId =
         SoftbusAdapter::GetInstance().OpenSoftbusSession(sessionName_, sessionName_, peerDevId_);
     if (sessionId < 0) {
@@ -92,6 +97,7 @@ int32_t AudioCtrlChannel::CloseSession()
         return DH_SUCCESS;
     }
 
+    DAUDIO_SYNC_TRACE(DAUDIO_CLOSE_CTRL_SESSION);
     int32_t ret = SoftbusAdapter::GetInstance().CloseSoftbusSession(sessionId_);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Close ctrl session failed ret: %d.", LOG_TAG, ret);
@@ -163,6 +169,7 @@ void AudioCtrlChannel::OnSessionOpened(int32_t sessionId, int32_t result)
         return;
     }
     listener->OnSessionOpened();
+    DaudioFinishAsyncTrace(DAUDIO_OPEN_CTRL_SESSION, DAUDIO_OPEN_CTRL_SESSION_TASKID);
     sessionId_ = sessionId;
 }
 

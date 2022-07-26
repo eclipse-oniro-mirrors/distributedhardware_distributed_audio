@@ -18,8 +18,10 @@ import(
 
 ohos_shared_library("distributed_audio_sink_sdk") {
     include_dirs = [
+        "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
         "//utils/native/base/include",
         "${common_path}/include",
+        "${common_path}/dfx_utils/include",
         "${fwk_common_path}/utils/include",
         "include",
     ]
@@ -37,6 +39,7 @@ ohos_shared_library("distributed_audio_sink_sdk") {
 
     external_deps = [
         "hiviewdfx_hilog_native:libhilog",
+        "hitrace_native:hitrace_meter",
         "ipc:ipc_core",
         "safwk:system_ability_fwk",
         "samgr_standard:samgr_proxy",

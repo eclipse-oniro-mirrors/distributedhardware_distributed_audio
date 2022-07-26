@@ -20,6 +20,7 @@
 
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hitrace.h"
 #include "daudio_log.h"
 #include "daudio_sink_load_callback.h"
 
@@ -40,6 +41,7 @@ DAudioSinkHandler::~DAudioSinkHandler()
 int32_t DAudioSinkHandler::InitSink(const std::string &params)
 {
     DHLOGI("%s: InitSink.", LOG_TAG);
+    DAUDIO_SYNC_TRACE(DAUDIO_SOURCE_LOAD_SYSTEM_ABILITY);
     if (dAudioSinkProxy_ == nullptr) {
         sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         if (samgr == nullptr) {

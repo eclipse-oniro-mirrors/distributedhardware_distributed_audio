@@ -18,7 +18,9 @@ import(
 
 ohos_shared_library("distributed_audio_hdi_proxy") {
   include_dirs = [
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
     "${common_path}/include",
+    "${common_path}/dfx_utils/include",
     "${fwk_common_path}/utils/include",
     "include",
     "${services_path}/common/audiodata/include",
@@ -39,6 +41,7 @@ ohos_shared_library("distributed_audio_hdi_proxy") {
   ]
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
+    "hitrace_native:hitrace_meter",
     "hdf_core:libhdf_utils",
     "hdf_core:libhdi",
     "ipc:ipc_single",

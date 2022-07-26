@@ -24,6 +24,7 @@
 #include "audio_encode_transport.h"
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hitrace.h"
 #include "daudio_log.h"
 #include "daudio_util.h"
 
@@ -49,6 +50,7 @@ int32_t DSpeakerDev::EnableDSpeaker(const int32_t dhId, const std::string &capab
         return ret;
     }
     enabledPorts_.insert(dhId);
+    DaudioFinishAsyncTrace(DAUDIO_REGISTER_AUDIO, DAUDIO_REGISTER_AUDIO_TASKID);
     return ret;
 }
 
@@ -70,6 +72,7 @@ int32_t DSpeakerDev::DisableDSpeaker(const int32_t dhId)
         }
     }
     enabledPorts_.erase(PIN_OUT_DAUDIO_DEFAULT);
+    DaudioFinishAsyncTrace(DAUDIO_UNREGISTER_AUDIO, DAUDIO_UNREGISTER_AUDIO_TASKID);
     return DH_SUCCESS;
 }
 

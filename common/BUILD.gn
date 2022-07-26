@@ -17,14 +17,17 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 
 ohos_shared_library("distributed_audio_utils") {
     include_dirs = [
+        "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
         "//utils/native/base/include",
         "include",
+        "dfx_utils/include",
         "${services_path}/common/audioparam",
     ]
 
     sources = [
         "src/daudio_log.cpp",
         "src/daudio_util.cpp",
+        "dfx_utils/src/daudio_hitrace.cpp",
     ]
 
     deps = [
@@ -35,6 +38,7 @@ ohos_shared_library("distributed_audio_utils") {
     external_deps = [
         "dsoftbus:softbus_client",
         "hiviewdfx_hilog_native:libhilog",
+        "hitrace_native:hitrace_meter",
     ]
 
     defines = [

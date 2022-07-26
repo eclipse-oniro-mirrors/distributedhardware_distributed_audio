@@ -16,6 +16,7 @@
 #include "audio_encoder_processor.h"
 
 #include "daudio_errorcode.h"
+#include "daudio_hitrace.h"
 #include "daudio_log.h"
 #include "audio_encoder.h"
 
@@ -65,6 +66,7 @@ int32_t AudioEncoderProcessor::ReleaseAudioProcessor()
         return DH_SUCCESS;
     }
 
+    DAUDIO_SYNC_TRACE(DAUDIO_RELEASE_ENCODER_PROCESSOR);
     int32_t ret = audioEncoder_->ReleaseAudioCodec();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Release encoder fail. Error code: %d.", LOG_TAG, ret);
@@ -83,6 +85,7 @@ int32_t AudioEncoderProcessor::StartAudioProcessor()
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
+    DAUDIO_SYNC_TRACE(DAUDIO_START_ENCODER_PROCESSOR);
     int32_t ret = audioEncoder_->StartAudioCodec();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Start encoder fail. Error code: %d.", LOG_TAG, ret);
@@ -100,6 +103,7 @@ int32_t AudioEncoderProcessor::StopAudioProcessor()
         return DH_SUCCESS;
     }
 
+    DAUDIO_SYNC_TRACE(DAUDIO_STOP_ENCODER_PROCESSOR);
     int32_t ret = audioEncoder_->StopAudioCodec();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Stop encoder fail. Error code: %d.", LOG_TAG, ret);

@@ -23,6 +23,7 @@
 #include "audio_decode_transport.h"
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hitrace.h"
 #include "daudio_log.h"
 #include "daudio_util.h"
 
@@ -47,6 +48,7 @@ int32_t DMicDev::EnableDMic(const int32_t dhId, const std::string &capability)
         return ret;
     }
     enabledPorts_.insert(dhId);
+    DaudioFinishAsyncTrace(DAUDIO_REGISTER_AUDIO, DAUDIO_REGISTER_AUDIO_TASKID);
     return DH_SUCCESS;
 }
 
@@ -67,6 +69,7 @@ int32_t DMicDev::DisableDMic(const int32_t dhId)
         }
     }
     enabledPorts_.erase(PIN_IN_DAUDIO_DEFAULT);
+    DaudioFinishAsyncTrace(DAUDIO_UNREGISTER_AUDIO, DAUDIO_UNREGISTER_AUDIO_TASKID);
     return DH_SUCCESS;
 }
 

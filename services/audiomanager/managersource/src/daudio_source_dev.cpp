@@ -17,6 +17,7 @@
 
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hitrace.h"
 #include "daudio_log.h"
 #include "daudio_source_manager.h"
 #include "daudio_util.h"
@@ -450,6 +451,7 @@ int32_t DAudioSourceDev::EnableDSpeaker(const int32_t dhId, const std::string &a
         DHLOGI("%s: Create new speaker device.", LOG_TAG);
         speaker_ = std::make_shared<DSpeakerDev>(devId_, shared_from_this());
     }
+    DAUDIO_SYNC_TRACE(DAUDIO_ENABLE_SPK);
     return speaker_->EnableDSpeaker(dhId, attrs);
 }
 
@@ -459,6 +461,7 @@ int32_t DAudioSourceDev::EnableDMic(const int32_t dhId, const std::string &attrs
         DHLOGI("%s: Create new mic device.", LOG_TAG);
         mic_ = std::make_shared<DMicDev>(devId_, shared_from_this());
     }
+    DAUDIO_SYNC_TRACE(DAUDIO_ENABLE_MIC);
     return mic_->EnableDMic(dhId, attrs);
 }
 
@@ -515,6 +518,7 @@ int32_t DAudioSourceDev::DisableDSpeaker(const int32_t dhId)
         DHLOGE("%s: Speaker device is null.", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
+    DAUDIO_SYNC_TRACE(DAUDIO_DISABLE_SPK);
     return speaker_->DisableDSpeaker(dhId);
 }
 
@@ -524,6 +528,7 @@ int32_t DAudioSourceDev::DisableDMic(const int32_t dhId)
         DHLOGE("%s: Mic device is null.", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
+    DAUDIO_SYNC_TRACE(DAUDIO_DISABLE_MIC);
     return mic_->DisableDMic(dhId);
 }
 

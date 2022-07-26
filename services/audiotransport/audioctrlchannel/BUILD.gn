@@ -17,10 +17,12 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 
 ohos_shared_library("distributed_audio_ctrl_channel") {
     include_dirs = [
+        "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
         "//foundation/communication/dsoftbus/interfaces/kits/transport",
         "${fwk_common_path}/utils/include",
         "//third_party/json/include",
         "${common_path}/include",
+        "${common_path}/dfx_utils/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/audiodata/include",
         "${services_path}/audiotransport/audio_channel/include",
@@ -36,6 +38,10 @@ ohos_shared_library("distributed_audio_ctrl_channel") {
         "//utils/native/base:utils",
         "${common_path}:distributed_audio_utils",
         "//foundation/distributedhardware/distributed_audio/services/softbusadapter:distributed_audio_softbus_adapter",
+    ]
+
+    external_deps = [
+        "hitrace_native:hitrace_meter",
     ]
 
     defines = [

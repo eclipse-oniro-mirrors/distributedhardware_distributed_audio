@@ -17,6 +17,7 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 
 ohos_shared_library("distributed_audio_encoder_processor") {
     include_dirs = [
+        "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
         "//foundation/multimedia/player_framework/interfaces/innerkits/native/media/include",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
         "${fwk_common_path}/utils/include",
@@ -24,6 +25,7 @@ ohos_shared_library("distributed_audio_encoder_processor") {
 
     include_dirs += [
         "${common_path}/include",
+        "${common_path}/dfx_utils/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/audiodata/include",
         "${audio_processor_path}/encodeprocessor/include",
@@ -47,6 +49,7 @@ ohos_shared_library("distributed_audio_encoder_processor") {
     external_deps = [
         "multimedia_player_framework:media_client",
         "hiviewdfx_hilog_native:libhilog",
+        "hitrace_native:hitrace_meter",
     ]
 
     defines = [

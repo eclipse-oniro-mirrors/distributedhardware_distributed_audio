@@ -18,11 +18,13 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 ohos_shared_library("distributed_audio_manager_source") {
     include_dirs = [
         "include",
+        "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
         "//utils/native/base/include",
         "//third_party/json/include",
         "//foundation/communication/dsoftbus/interfaces/kits/transport",
         "${fwk_common_path}/utils/include",
         "${common_path}/include",
+        "${common_path}/dfx_utils/include",
         "${services_path}/audiocontrol/controlsource/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/taskProcessor/include",
@@ -76,6 +78,7 @@ ohos_shared_library("distributed_audio_manager_source") {
         "ipc:ipc_single",
         "utils_base:utils",
         "hiviewdfx_hilog_native:libhilog",
+        "hitrace_native:hitrace_meter",
         "ipc:ipc_core",
         "safwk:system_ability_fwk",
         "samgr_standard:samgr_proxy",
