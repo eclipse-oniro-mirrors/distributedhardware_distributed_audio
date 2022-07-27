@@ -24,6 +24,7 @@
 
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hisysevent.h"
 #include "daudio_log.h"
 #include "daudio_source_manager.h"
 #include "daudio_util.h"
@@ -76,6 +77,7 @@ int32_t DAudioSourceService::InitSource(const std::string &params, const sptr<ID
 int32_t DAudioSourceService::ReleaseSource()
 {
     DHLOGI("%s: Release source service, exit process.", LOG_TAG);
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_EXIT, "daudio source sa exit success.");
     DAudioSourceManager::GetInstance().UnInit();
     exit(0);
     return DH_SUCCESS;

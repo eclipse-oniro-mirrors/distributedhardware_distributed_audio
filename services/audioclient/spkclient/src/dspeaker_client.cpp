@@ -16,6 +16,7 @@
 #include "dspeaker_client.h"
 
 #include "daudio_constants.h"
+#include "daudio_hisysevent.h"
 #include "dh_utils_tool.h"
 
 namespace OHOS {
@@ -117,10 +118,14 @@ int32_t DSpeakerClient::StartRender()
     std::lock_guard<std::mutex> lck(devMtx_);
     if (audioRenderer_ == nullptr || clientStatus_ != CLIENT_STATUS_READY) {
         DHLOGE("%s: Audio renderer init failed or spk status wrong, status: %d.", LOG_TAG, (int32_t)clientStatus_);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
+            "daduio renderer init failed or spk status wrong.");
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
     if (!audioRenderer_->Start()) {
         DHLOGE("%s: Audio renderer start failed.", LOG_TAG);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_RENDER_STARTUP_FAILURE,
+            "daduio renderer start failed.");
         return ERR_DH_AUDIO_CLIENT_RENDER_STARTUP_FAILURE;
     }
     isRenderReady_.store(true);
@@ -135,10 +140,14 @@ int32_t DSpeakerClient::StopRender()
     std::lock_guard<std::mutex> lck(devMtx_);
     if (clientStatus_ != CLIENT_STATUS_START || !isRenderReady_.load()) {
         DHLOGE("%s: Renderer is not start or spk status wrong, status: %d.", LOG_TAG, (int32_t)clientStatus_);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
+            "daduio renderer is not start or spk status wrong.");
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
     if (audioRenderer_ == nullptr || speakerTrans_ == nullptr) {
         DHLOGE("%s: Audio renderer or speaker trans is nullptr.", LOG_TAG);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL,
+            "daduio renderer or speaker trans is nullptr.");
         return ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL;
     }
     isRenderReady_.store(false);
@@ -148,6 +157,8 @@ int32_t DSpeakerClient::StopRender()
 
     if (!audioRenderer_->Stop()) {
         DHLOGE("%s: Audio renderer stop failed", LOG_TAG);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_RENDER_STOP_FAILED,
+            "daduio renderer stop failed.");
         return ERR_DH_AUDIO_CLIENT_RENDER_STOP_FAILED;
     }
     clientStatus_ = CLIENT_STATUS_STOP;

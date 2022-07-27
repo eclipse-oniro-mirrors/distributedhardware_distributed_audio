@@ -15,6 +15,7 @@
 
 #include "daudio_sink_load_callback.h"
 
+#include "daudio_hisysevent.h"
 #include "daudio_log.h"
 #include "daudio_sink_handler.h"
 
@@ -38,6 +39,8 @@ void DAudioSinkLoadCallback::OnLoadSystemAbilitySuccess(
 void DAudioSinkLoadCallback::OnLoadSystemAbilityFail(int32_t systemAbilityId)
 {
     DHLOGE("%s: Load audio SA failed, systemAbilityId: %d.", LOG_TAG, systemAbilityId);
+    DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL,
+        "daudio sink LoadSystemAbility call failed.");
 }
 } // namespace DistributedHardware
 } // namespace OHOS

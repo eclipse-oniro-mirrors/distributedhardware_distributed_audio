@@ -17,6 +17,7 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 
 ohos_shared_library("dspeaker_client") {
     include_dirs = [
+        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
         "//foundation/multimedia/audio_framework/frameworks/native/common/include",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager/include",
@@ -24,6 +25,7 @@ ohos_shared_library("dspeaker_client") {
     ]
 
     include_dirs += [
+        "${common_path}/dfx_utils/include",
         "${common_path}/include",
         "${services_path}/audioclient/spkclient/include",
         "${services_path}/common/audiodata/include",

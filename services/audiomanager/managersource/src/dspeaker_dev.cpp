@@ -24,6 +24,7 @@
 #include "audio_encode_transport.h"
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hisysevent.h"
 #include "daudio_hitrace.h"
 #include "daudio_log.h"
 #include "daudio_util.h"
@@ -39,6 +40,8 @@ int32_t DSpeakerDev::EnableDSpeaker(const int32_t dhId, const std::string &capab
             shared_from_this());
         if (ret != DH_SUCCESS) {
             DHLOGE("%s: Register default speaker device failed, ret: %d.", LOG_TAG, ret);
+            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_REGISTER_FAIL, devId_, std::to_string(dhId),
+                ret, "daudio register default speaker device failed.");
             return ret;
         }
         enabledPorts_.insert(PIN_OUT_DAUDIO_DEFAULT);
@@ -47,10 +50,14 @@ int32_t DSpeakerDev::EnableDSpeaker(const int32_t dhId, const std::string &capab
     int32_t ret = DAudioHdiHandler::GetInstance().RegisterAudioDevice(devId_, dhId, capability, shared_from_this());
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Register audio device failed, ret: %d.", LOG_TAG, ret);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_REGISTER_FAIL, devId_, std::to_string(dhId),
+            ret, "daudio register speaker device failed.");
         return ret;
     }
     enabledPorts_.insert(dhId);
     DaudioFinishAsyncTrace(DAUDIO_REGISTER_AUDIO, DAUDIO_REGISTER_AUDIO_TASKID);
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUIDO_REGISTER, devId_, std::to_string(dhId),
+        "daudio spk enable success.");
     return ret;
 }
 
@@ -60,6 +67,8 @@ int32_t DSpeakerDev::DisableDSpeaker(const int32_t dhId)
     int32_t ret = DAudioHdiHandler::GetInstance().UnRegisterAudioDevice(devId_, dhId);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: UnRegister audio device failed, ret: %d.", LOG_TAG, ret);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_UNREGISTER_FAIL, devId_, std::to_string(dhId),
+            ret, "daudio unregister speaker device failed.");
         return ret;
     }
     enabledPorts_.erase(dhId);
@@ -68,11 +77,15 @@ int32_t DSpeakerDev::DisableDSpeaker(const int32_t dhId)
         int32_t ret = DAudioHdiHandler::GetInstance().UnRegisterAudioDevice(devId_, PIN_OUT_DAUDIO_DEFAULT);
         if (ret != DH_SUCCESS) {
             DHLOGE("%s: UnRegister default speaker device failed, ret: %d.", LOG_TAG, ret);
+            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_UNREGISTER_FAIL, devId_, std::to_string(dhId),
+                ret, "daudio unregister default speaker device failed.");
             return ret;
         }
     }
     enabledPorts_.erase(PIN_OUT_DAUDIO_DEFAULT);
     DaudioFinishAsyncTrace(DAUDIO_UNREGISTER_AUDIO, DAUDIO_UNREGISTER_AUDIO_TASKID);
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_UNREGISTER, devId_, std::to_string(dhId),
+        "daudio spk disable success.");
     return DH_SUCCESS;
 }
 
@@ -94,6 +107,8 @@ int32_t DSpeakerDev::OpenDevice(const std::string &devId, const int32_t dhId)
     event->type = AudioEventType::OPEN_SPEAKER;
     event->content = jParam.dump();
     cbObj->NotifyEvent(event);
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_OPEN, devId, std::to_string(dhId),
+        "daudio spk device open success.");
     return DH_SUCCESS;
 }
 
@@ -115,6 +130,8 @@ int32_t DSpeakerDev::CloseDevice(const std::string &devId, const int32_t dhId)
     event->type = AudioEventType::CLOSE_SPEAKER;
     event->content = jParam.dump();
     cbObj->NotifyEvent(event);
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_CLOSE, devId, std::to_string(dhId),
+        "daudio spk device close success.");
     return DH_SUCCESS;
 }
 

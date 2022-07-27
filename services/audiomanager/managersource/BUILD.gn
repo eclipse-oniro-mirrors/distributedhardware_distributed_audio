@@ -18,6 +18,7 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 ohos_shared_library("distributed_audio_manager_source") {
     include_dirs = [
         "include",
+        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
         "//utils/native/base/include",
         "//third_party/json/include",

@@ -18,8 +18,10 @@ import(
 
 ohos_shared_library("distributed_audio_sink") {
     include_dirs = [
+        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "//utils/native/base/include",
         "${fwk_common_path}/utils/include",
+        "${common_path}/dfx_utils/include",
         "${common_path}/include",
         "//utils/system/safwk/native/include",
         "${interfaces_path}/inner_kits/native_cpp/audio_sink/include",

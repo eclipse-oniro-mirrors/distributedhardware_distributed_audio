@@ -24,6 +24,7 @@
 
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hisysevent.h"
 #include "daudio_log.h"
 #include "daudio_sink_manager.h"
 #include "daudio_util.h"
@@ -77,6 +78,7 @@ int32_t DAudioSinkService::InitSink(const std::string &params)
 int32_t DAudioSinkService::ReleaseSink()
 {
     DHLOGI("%s: ReleaseSink, exit process", LOG_TAG);
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_EXIT, "daudio sink sa exit success.");
     exit(0);
     return DH_SUCCESS;
 }

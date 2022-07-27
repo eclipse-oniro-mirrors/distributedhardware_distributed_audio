@@ -17,6 +17,7 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 
 ohos_shared_library("dmic_client") {
     include_dirs = [
+        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
         "//foundation/multimedia/audio_framework/frameworks/native/common/include",
         "//foundation/multinedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
@@ -27,6 +28,7 @@ ohos_shared_library("dmic_client") {
         "${services_path}/audioclient/micclient/include",
         "${services_path}/audiotransport/encodetransport/includ",
         "${services_path}/common/audioeventcallback",
+        "${common_path}/dfx_utils/include",
         "${common_path}/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/audiodata/include",

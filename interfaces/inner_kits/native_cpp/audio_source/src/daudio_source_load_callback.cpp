@@ -15,6 +15,7 @@
 
 #include "daudio_source_load_callback.h"
 
+#include "daudio_hisysevent.h"
 #include "daudio_log.h"
 #include "daudio_source_handler.h"
 
@@ -35,6 +36,8 @@ void DAudioSourceLoadCallback::OnLoadSystemAbilitySuccess(int32_t systemAbilityI
 void DAudioSourceLoadCallback::OnLoadSystemAbilityFail(int32_t systemAbilityId)
 {
     DHLOGE("%s: Load audio SA failed, systemAbilityId: %d", LOG_TAG, systemAbilityId);
+    DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL,
+        "daudio source LoadSystemAbility call failed.");
 }
 } // namespace DistributedHardware
 } // namespace OHOS

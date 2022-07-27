@@ -18,11 +18,13 @@ import(
 
 ohos_shared_library("distributed_audio_source") {
     include_dirs = [
+        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "include",
         "//third_party/json/include",
         "//utils/native/base/include",
         "//utils/system/safwk/native/include",
         "//foundation/communication/dsoftbus/interfaces/kits/transport",
+        "${common_path}/dfx_utils/include",
         "${common_path}/include",
         "${fwk_common_path}/utils/include",
         "${interfaces_path}/inner_kits/native_cpp/audio_sink/include",

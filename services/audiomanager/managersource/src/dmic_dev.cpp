@@ -23,6 +23,7 @@
 #include "audio_decode_transport.h"
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hisysevent.h"
 #include "daudio_hitrace.h"
 #include "daudio_log.h"
 #include "daudio_util.h"
@@ -38,6 +39,8 @@ int32_t DMicDev::EnableDMic(const int32_t dhId, const std::string &capability)
             shared_from_this());
         if (ret != DH_SUCCESS) {
             DHLOGE("%s: Register default mic device failed, ret: %d.", LOG_TAG, ret);
+            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_REGISTER_FAIL, devId_, std::to_string(dhId),
+                ret, "daudio register default mic device failed.");
             return ret;
         }
         enabledPorts_.insert(PIN_IN_DAUDIO_DEFAULT);
@@ -45,10 +48,14 @@ int32_t DMicDev::EnableDMic(const int32_t dhId, const std::string &capability)
     int32_t ret = DAudioHdiHandler::GetInstance().RegisterAudioDevice(devId_, dhId, capability, shared_from_this());
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: register audio device failed, ret: %d", LOG_TAG, ret);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_REGISTER_FAIL, devId_, std::to_string(dhId),
+            ret, "daudio register audio mic device failed.");
         return ret;
     }
     enabledPorts_.insert(dhId);
     DaudioFinishAsyncTrace(DAUDIO_REGISTER_AUDIO, DAUDIO_REGISTER_AUDIO_TASKID);
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUIDO_REGISTER, devId_, std::to_string(dhId),
+        "daudio mic enable success.");
     return DH_SUCCESS;
 }
 
@@ -58,6 +65,8 @@ int32_t DMicDev::DisableDMic(const int32_t dhId)
     int32_t ret = DAudioHdiHandler::GetInstance().UnRegisterAudioDevice(devId_, dhId);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: unregister audio device failed, ret: %d", LOG_TAG, ret);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_UNREGISTER_FAIL, devId_, std::to_string(dhId),
+            ret, "daudio unregister audio mic device failed.");
     }
     enabledPorts_.erase(dhId);
 
@@ -65,11 +74,15 @@ int32_t DMicDev::DisableDMic(const int32_t dhId)
         int32_t ret = DAudioHdiHandler::GetInstance().UnRegisterAudioDevice(devId_, PIN_IN_DAUDIO_DEFAULT);
         if (ret != DH_SUCCESS) {
             DHLOGE("%s: UnRegister default mic device failed, ret: %d.", LOG_TAG, ret);
+            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_UNREGISTER_FAIL, devId_, std::to_string(dhId),
+                ret, "daudio unregister default mic device failed.");
             return ret;
         }
     }
     enabledPorts_.erase(PIN_IN_DAUDIO_DEFAULT);
     DaudioFinishAsyncTrace(DAUDIO_UNREGISTER_AUDIO, DAUDIO_UNREGISTER_AUDIO_TASKID);
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_UNREGISTER, devId_, std::to_string(dhId),
+        "daudio mic disable success.");
     return DH_SUCCESS;
 }
 
@@ -92,6 +105,8 @@ int32_t DMicDev::OpenDevice(const std::string &devId, const int32_t dhId)
     event->type = AudioEventType::OPEN_MIC;
     event->content = jParam.dump();
     cbObj->NotifyEvent(event);
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_OPEN, devId, std::to_string(dhId),
+        "daudio mic device open success.");
     return DH_SUCCESS;
 }
 
@@ -113,6 +128,8 @@ int32_t DMicDev::CloseDevice(const std::string &devId, const int32_t dhId)
     event->type = AudioEventType::CLOSE_MIC;
     event->content = jParam.dump();
     cbObj->NotifyEvent(event);
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_CLOSE, devId, std::to_string(dhId),
+        "daudio mic device close success.");
     return DH_SUCCESS;
 }
 

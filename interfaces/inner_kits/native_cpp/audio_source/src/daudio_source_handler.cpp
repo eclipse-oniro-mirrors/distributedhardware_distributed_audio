@@ -20,6 +20,7 @@
 
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hisysevent.h"
 #include "daudio_hitrace.h"
 #include "daudio_log.h"
 #include "daudio_util.h"
@@ -53,6 +54,9 @@ int32_t DAudioSourceHandler::InitSource(const std::string &params)
         sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         if (samgr == nullptr) {
             DHLOGE("%s: Failed to get system ability mgr.", LOG_TAG);
+            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL,
+                DISTRIBUTED_HARDWARE_AUDIO_SOURCE_SA_ID, ERR_DH_AUDIO_SA_GET_SAMGR_FAILED,
+                "daudio source get samgr failed.");
             return ERR_DH_AUDIO_SA_GET_SAMGR_FAILED;
         }
         sptr<DAudioSourceLoadCallback> loadCallback = new DAudioSourceLoadCallback(params);
@@ -60,6 +64,9 @@ int32_t DAudioSourceHandler::InitSource(const std::string &params)
         if (ret != ERR_OK) {
             DHLOGE("%s: Failed to Load systemAbility, systemAbilityId: %d, ret code: %d", LOG_TAG,
                 DISTRIBUTED_HARDWARE_AUDIO_SOURCE_SA_ID, ret);
+            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL,
+                DISTRIBUTED_HARDWARE_AUDIO_SOURCE_SA_ID, ERR_DH_AUDIO_SA_LOAD_FAILED,
+                "daudio source LoadSystemAbility call failed.");
             return ERR_DH_AUDIO_SA_LOAD_FAILED;
         }
     }
@@ -69,6 +76,8 @@ int32_t DAudioSourceHandler::InitSource(const std::string &params)
         [this]() { return dAudioSourceProxy_ != nullptr; });
     if (!waitStatus) {
         DHLOGE("%s: Load audio SA timeout.", LOG_TAG);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SOURCE_SA_ID,
+            ERR_DH_AUDIO_SA_LOAD_TIMEOUT, "daudio source sa load timeout.");
         return ERR_DH_AUDIO_SA_LOAD_TIMEOUT;
     }
     return DH_SUCCESS;
@@ -80,6 +89,8 @@ int32_t DAudioSourceHandler::ReleaseSource()
     std::lock_guard<std::mutex> lock(sourceProxyMutex_);
     if (dAudioSourceProxy_ == nullptr) {
         DHLOGE("%s: Daudio source proxy not init.", LOG_TAG);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SOURCE_SA_ID,
+            ERR_DH_AUDIO_SA_PROXY_NOT_INIT, "daudio source proxy not init.");
         return ERR_DH_AUDIO_SA_PROXY_NOT_INIT;
     }
 
@@ -163,10 +174,13 @@ void DAudioSourceHandler::FinishStartSA(const std::string &param, const sptr<IRe
     dAudioSourceProxy_ = iface_cast<IDAudioSource>(remoteObject);
     if ((dAudioSourceProxy_ == nullptr) || (!dAudioSourceProxy_->AsObject())) {
         DHLOGE("%s: Failed to get daudio source proxy.", LOG_TAG);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SOURCE_SA_ID,
+            ERR_DH_AUDIO_SA_PROXY_NOT_INIT, "daudio source get proxy failed.");
         return;
     }
     dAudioSourceProxy_->InitSource(param, dAudioIpcCallback_);
     sourceProxyConVar_.notify_one();
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_INIT, "daudio source sa load success.");
 }
 
 void DAudioSourceHandler::DAudioSourceSvrRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)

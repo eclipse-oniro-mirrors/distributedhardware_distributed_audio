@@ -17,6 +17,7 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 
 ohos_shared_library("distributed_audio_decoder_processor") {
     include_dirs = [
+        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
         "//foundation/multimedia/player_framework/interfaces/innerkits/native/media/include",
         "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",

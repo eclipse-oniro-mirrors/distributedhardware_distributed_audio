@@ -17,6 +17,7 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 
 ohos_shared_library("distributed_audio_utils") {
     include_dirs = [
+        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
         "//utils/native/base/include",
         "include",
@@ -27,6 +28,7 @@ ohos_shared_library("distributed_audio_utils") {
     sources = [
         "src/daudio_log.cpp",
         "src/daudio_util.cpp",
+        "dfx_utils/src/daudio_hisysevent.cpp",
         "dfx_utils/src/daudio_hitrace.cpp",
     ]
 
@@ -38,6 +40,7 @@ ohos_shared_library("distributed_audio_utils") {
     external_deps = [
         "dsoftbus:softbus_client",
         "hiviewdfx_hilog_native:libhilog",
+        "hisysevent_native:libhisysevent",
         "hitrace_native:hitrace_meter",
     ]
 

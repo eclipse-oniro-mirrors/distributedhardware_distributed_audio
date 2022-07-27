@@ -20,6 +20,7 @@
 
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
+#include "daudio_hisysevent.h"
 #include "daudio_hitrace.h"
 #include "daudio_log.h"
 #include "daudio_sink_load_callback.h"
@@ -46,6 +47,8 @@ int32_t DAudioSinkHandler::InitSink(const std::string &params)
         sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         if (samgr == nullptr) {
             DHLOGE("%s: Failed to get system ability mgr.", LOG_TAG);
+            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
+                ERR_DH_AUDIO_SA_GET_SAMGR_FAILED, "daudio sink get samgr failed.");
             return ERR_DH_AUDIO_SA_GET_SAMGR_FAILED;
         }
         sptr<DAudioSinkLoadCallback> loadCallback = new DAudioSinkLoadCallback(params);
@@ -53,6 +56,8 @@ int32_t DAudioSinkHandler::InitSink(const std::string &params)
         if (ret != ERR_OK) {
             DHLOGE("%s: Failed to Load systemAbility, systemAbilityId:%d, ret code:%d.",
                 LOG_TAG, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID, ret);
+            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
+                ERR_DH_AUDIO_SA_LOAD_FAILED, "daudio sink LoadSystemAbility call failed.");
             return ERR_DH_AUDIO_SA_LOAD_FAILED;
         }
     }
@@ -62,6 +67,8 @@ int32_t DAudioSinkHandler::InitSink(const std::string &params)
         [this]() { return dAudioSinkProxy_ != nullptr; });
     if (!waitStatus) {
         DHLOGE("%s: Audio load sa timeout.", LOG_TAG);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
+            ERR_DH_AUDIO_SA_LOAD_TIMEOUT, "daudio sink sa load timeout.");
         return ERR_DH_AUDIO_SA_LOAD_TIMEOUT;
     }
     return DH_SUCCESS;
@@ -73,6 +80,8 @@ int32_t DAudioSinkHandler::ReleaseSink()
     std::lock_guard<std::mutex> lock(sinkProxyMutex_);
     if (dAudioSinkProxy_ == nullptr) {
         DHLOGE("%s: Daudio sink proxy not init.", LOG_TAG);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
+            ERR_DH_AUDIO_SA_PROXY_NOT_INIT, "daudio sink proxy not init.");
         return ERR_DH_AUDIO_SA_PROXY_NOT_INIT;
     }
 
@@ -129,10 +138,13 @@ void DAudioSinkHandler::FinishStartSA(const std::string &param, const sptr<IRemo
     dAudioSinkProxy_ = iface_cast<IDAudioSink>(remoteObject);
     if ((dAudioSinkProxy_ == nullptr) || (!dAudioSinkProxy_->AsObject())) {
         DHLOGE("%s: Failed to get daudio sink proxy.", LOG_TAG);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
+            ERR_DH_AUDIO_SA_PROXY_NOT_INIT, "daudio sink get proxy failed.");
         return;
     }
     dAudioSinkProxy_->InitSink(param);
     sinkProxyConVar_.notify_one();
+    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_INIT, "daudio sink sa load success.");
 }
 
 void DAudioSinkHandler::DAudioSinkSvrRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
