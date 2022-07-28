@@ -74,7 +74,6 @@ public:
     int32_t ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescripterHAL &desc) override;
     int32_t GetMmapPosition(uint64_t &frames, AudioTimeStampHAL &time) override;
     const AudioDeviceDescriptorHAL &GetCaptureDesc();
-    void ReadStreamWait(const struct timeval &startTime);
 
 private:
     const char *AUDIO_LOG = "AudioCaptureInterfaceImpl";

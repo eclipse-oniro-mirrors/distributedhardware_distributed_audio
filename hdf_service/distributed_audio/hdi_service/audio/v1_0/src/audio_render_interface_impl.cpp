@@ -52,8 +52,6 @@ int32_t AudioRenderInterfaceImpl::RenderFrame(const std::vector<uint8_t> &frame,
 {
     DHLOGI("%s: Render frame[samplerate: %d, channelmask: %d, bitformat: %d].", AUDIO_LOG, devAttrs_.sampleRate,
         devAttrs_.channelCount, devAttrs_.format);
-    struct timeval startTime;
-    gettimeofday(&startTime, NULL);
 
     std::lock_guard<std::mutex> renderLck(renderMtx_);
     if (renderStatus_ != RENDER_STATUS_START) {
@@ -69,7 +67,6 @@ int32_t AudioRenderInterfaceImpl::RenderFrame(const std::vector<uint8_t> &frame,
         return HDF_FAILURE;
     }
 
-    WriteStreamWait(startTime);
     DHLOGI("%s: Render audio frame success.", AUDIO_LOG);
     return HDF_SUCCESS;
 }
@@ -303,23 +300,6 @@ int32_t AudioRenderInterfaceImpl::GetMmapPosition(uint64_t &frames, AudioTimeSta
 const AudioDeviceDescriptorHAL &AudioRenderInterfaceImpl::GetRenderDesc()
 {
     return devDesc_;
-}
-
-void AudioRenderInterfaceImpl::WriteStreamWait(const struct timeval &startTime)
-{
-    struct timeval endTime;
-    gettimeofday(&endTime, NULL);
-    int32_t passTime =
-        (endTime.tv_sec - startTime.tv_sec) * MILLISECOND_PER_SECOND + endTime.tv_usec - startTime.tv_usec;
-    if (passTime > AUDIO_FRAME_TIME_INTERFAL_DEFAULT) {
-        DHLOGD("%s: Write stream data use more than %d ms.", AUDIO_LOG, AUDIO_FRAME_TIME_INTERFAL_DEFAULT);
-        return;
-    } else {
-        int32_t remainTime = AUDIO_FRAME_TIME_INTERFAL_DEFAULT - passTime;
-        usleep(remainTime);
-    }
-
-    return;
 }
 
 void AudioRenderInterfaceImpl::SetVolumeInner(const uint32_t vol)

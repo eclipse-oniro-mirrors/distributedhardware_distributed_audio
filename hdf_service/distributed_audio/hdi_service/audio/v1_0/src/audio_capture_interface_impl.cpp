@@ -54,8 +54,6 @@ int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<uint8_t> &frame, uin
 {
     DHLOGI("%s: Capture frame[samplerate: %d, channelmask: %d, bitformat: %d].", AUDIO_LOG, devAttrs_.sampleRate,
         devAttrs_.channelCount, devAttrs_.format);
-    struct timeval startTime;
-    gettimeofday(&startTime, NULL);
 
     std::lock_guard<std::mutex> captureLck(captureMtx_);
     if (captureStatus_ != CAPTURE_STATUS_START) {
@@ -77,7 +75,6 @@ int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<uint8_t> &frame, uin
         return HDF_FAILURE;
     }
 
-    ReadStreamWait(startTime);
     DHLOGI("%s: Capture audio frame success.", AUDIO_LOG);
     return HDF_SUCCESS;
 }
@@ -261,24 +258,6 @@ int32_t AudioCaptureInterfaceImpl::GetMmapPosition(uint64_t &frames, AudioTimeSt
 const AudioDeviceDescriptorHAL &AudioCaptureInterfaceImpl::GetCaptureDesc()
 {
     return devDesc_;
-}
-
-void AudioCaptureInterfaceImpl::ReadStreamWait(const struct timeval &startTime)
-{
-    struct timeval endTime;
-    gettimeofday(&endTime, NULL);
-    int32_t passTime =
-        (endTime.tv_sec - startTime.tv_sec) * MILLISECOND_PER_SECOND + endTime.tv_usec - startTime.tv_usec;
-
-    if (passTime > AUDIO_FRAME_TIME_INTERFAL_DEFAULT) {
-        DHLOGD("%s: Write stream data use more than %d ms.", AUDIO_LOG, AUDIO_FRAME_TIME_INTERFAL_DEFAULT);
-        return;
-    } else {
-        int32_t remainTime = AUDIO_FRAME_TIME_INTERFAL_DEFAULT - passTime;
-        usleep(remainTime);
-    }
-
-    return;
 }
 } // V1_0
 } // Audio

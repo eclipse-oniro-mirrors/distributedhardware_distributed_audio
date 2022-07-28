@@ -82,7 +82,6 @@ public:
     int32_t GetMmapPosition(uint64_t &frames, AudioTimeStampHAL &time) override;
 
     const AudioDeviceDescriptorHAL &GetRenderDesc();
-    void WriteStreamWait(const struct timeval &startTime);
     void SetVolumeInner(const uint32_t vol);
     uint32_t GetVolumeInner();
 
