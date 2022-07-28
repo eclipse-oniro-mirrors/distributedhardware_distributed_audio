@@ -246,7 +246,7 @@ string DSpeakerClient::GetVolumeLevel()
     DHLOGI("%s: GetVolumeLevel begin.", LOG_TAG);
     std::stringstream ss;
     AudioStandard::AudioStreamType streamType = AudioStandard::AudioStreamType::STREAM_DEFAULT;
-    auto volumeType = static_cast<AudioStandard::AudioSystemManager::AudioVolumeType>(1);
+    auto volumeType = static_cast<AudioStandard::AudioVolumeType>(1);
     int32_t volumeLevel = AudioStandard::AudioSystemManager::GetInstance()->GetVolume(volumeType);
     bool isUpdateUi = false;
     ss << "VOLUME_CHANAGE;"
@@ -290,7 +290,7 @@ int32_t DSpeakerClient::GetAudioParameters(const std::shared_ptr<AudioEvent> &ev
         return ERR_DH_AUDIO_CLIENT_INVALID_EVENT_PARAM;
     }
     auto volumeType =
-        static_cast<AudioStandard::AudioSystemManager::AudioVolumeType>(std::stoi(volumeList[NUMBER_ONE]));
+        static_cast<AudioStandard::AudioVolumeType>(std::stoi(volumeList[NUMBER_ONE]));
     switch (audioEvent->type) {
         case VOLUME_GET: {
             auto volume = AudioStandard::AudioSystemManager::GetInstance()->GetVolume(volumeType);
@@ -328,7 +328,7 @@ int32_t DSpeakerClient::SetAudioParameters(const std::shared_ptr<AudioEvent> &ev
         DHLOGE("%s: Invalid event content parameter.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_INVALID_EVENT_PARAM;
     }
-    auto volumeType = static_cast<AudioStandard::AudioSystemManager::AudioVolumeType>(std::stoi(typeList[NUMBER_ONE]));
+    auto volumeType = static_cast<AudioStandard::AudioVolumeType>(std::stoi(typeList[NUMBER_ONE]));
     DHLOGE("%s: AudioVolumeType volumeType = %d.", LOG_TAG, volumeType);
     if (audioEvent->type != VOLUME_SET && audioEvent->type != VOLUME_MUTE_SET) {
         DHLOGE("%s: Invalid parameter.", LOG_TAG);
