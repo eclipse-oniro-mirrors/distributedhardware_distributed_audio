@@ -380,7 +380,7 @@ void SoftbusAdapter::SendAudioData()
         std::shared_ptr<SoftbusStreamData> streamData;
         {
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
-            sendDataCond_.wait_for(lock, std::chrono::seconds(DATA_WAIT_SECONDS),
+            sendDataCond_.wait_for(lock, std::chrono::milliseconds(DATA_WAIT_TIME),
                 [this]() { return !audioDataQueue_.empty(); });
             if (audioDataQueue_.empty()) {
                 continue;

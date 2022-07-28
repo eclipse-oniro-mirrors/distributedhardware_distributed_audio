@@ -76,6 +76,7 @@ private:
     constexpr static  size_t NUMBER_ONE = 1;
     constexpr static  size_t NUMBER_TWO = 2;
     constexpr static  size_t NUMBER_THREE = 3;
+    constexpr static  size_t REQUEST_DATA_WAIT = 10000;
 
     std::string devId_;
     std::thread renderDataThread_;

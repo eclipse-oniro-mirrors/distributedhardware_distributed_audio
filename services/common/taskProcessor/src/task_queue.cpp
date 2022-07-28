@@ -50,7 +50,7 @@ void TaskQueue::Run()
         std::shared_ptr<TaskImplInterface> task = nullptr;
         {
             std::unique_lock<std::mutex> lck(taskQueueMutex_);
-            taskQueueCond_.wait_for(lck, std::chrono::seconds(TASK_WAIT_SECONDS),
+            taskQueueCond_.wait_for(lck, std::chrono::milliseconds(TASK_WAIT_TIME),
                 [this]() { return !taskQueue_.empty(); });
             if (taskQueue_.empty()) {
                 continue;

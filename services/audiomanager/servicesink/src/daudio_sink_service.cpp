@@ -71,27 +71,25 @@ bool DAudioSinkService::Init()
 
 int32_t DAudioSinkService::InitSink(const std::string &params)
 {
-    DHLOGI("%s: InitSink", LOG_TAG);
+    DHLOGI("%s: Init distributed audio sink service.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkService::ReleaseSink()
 {
-    DHLOGI("%s: ReleaseSink, exit process", LOG_TAG);
-    DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_EXIT, "daudio sink sa exit success.");
-    exit(0);
+    DHLOGI("%s: Release distributed audio sink service.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkService::SubscribeLocalHardware(const std::string &dhId, const std::string &param)
 {
-    DHLOGI("%s: SubscribeLocalHardware", LOG_TAG);
+    DHLOGI("%s: Subscribe local hardware.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkService::UnsubscribeLocalHardware(const std::string &dhId)
 {
-    DHLOGI("%s: UnsubscribeLocalHardware", LOG_TAG);
+    DHLOGI("%s: Unsubscribe local hardware.", LOG_TAG);
     return DH_SUCCESS;
 }
 

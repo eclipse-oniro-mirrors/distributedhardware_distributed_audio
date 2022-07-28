@@ -190,6 +190,7 @@ void DSpeakerClient::PlayThreadRunning()
         int32_t writeOffSet = 0;
         if (reqDataRet != DH_SUCCESS && audioData == nullptr) {
             DHLOGD("%s: Failed to send data, ret: %d", LOG_TAG, reqDataRet);
+            usleep(REQUEST_DATA_WAIT);
             continue;
         }
 

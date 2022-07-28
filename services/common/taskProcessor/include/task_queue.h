@@ -39,7 +39,7 @@ private:
 
 private:
     static const constexpr char *LOG_TAG = "TaskQueue";
-    static constexpr uint8_t TASK_WAIT_SECONDS = 1;
+    static constexpr uint8_t TASK_WAIT_TIME = 20;
 
     std::mutex taskQueueMutex_;
     std::condition_variable taskQueueCond_;
