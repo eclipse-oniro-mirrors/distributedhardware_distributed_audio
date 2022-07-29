@@ -275,7 +275,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, OpenRenderDevice_001, TestSize.Level1)
     AudioSampleAttributesHAL attrs;
     AdapterTest_->extSpeakerCallback_ = new MockIDAudioCallback;
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->OpenRenderDevice(devDesc, attrs));
-    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->CloseRenderDevice(devDesc));
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->CloseRenderDevice(devDesc));
 }
 
 /**
@@ -290,7 +290,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, OpenCaptureDevice_001, TestSize.Level1)
     AudioSampleAttributesHAL attrs;
     AdapterTest_->extMicCallback_ = new MockIDAudioCallback();
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->OpenCaptureDevice(devDesc, attrs));
-    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->CloseCaptureDevice(devDesc));
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->CloseCaptureDevice(devDesc));
 }
 
 /**
