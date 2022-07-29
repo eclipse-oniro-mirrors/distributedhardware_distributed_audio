@@ -108,7 +108,8 @@
                 "//foundation/distributedhardware/distributed_audio/services/audiohdiproxy/test/unittest:daudio_hdi_proxy_test",
                 "//foundation/distributedhardware/distributed_audio/services/audioprocessor/test/unittest:daudio_processor_test",
                 "//foundation/distributedhardware/distributed_audio/services/audiotransport/test/unittest:daudio_transport_test",
-                "//foundation/distributedhardware/distributed_audio/services/softbusadapter/test/unittest:audio_soft_bus_adapter_test"
+                "//foundation/distributedhardware/distributed_audio/services/softbusadapter/test/unittest:audio_soft_bus_adapter_test",
+                "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/test/fuzztest:fuzztest"
             ]
         }
     }
