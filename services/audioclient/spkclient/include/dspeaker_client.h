@@ -44,6 +44,7 @@ namespace OHOS {
 namespace DistributedHardware {
 class DSpeakerClient : public IAudioDataTransCallback,
     public AudioStandard::VolumeKeyEventCallback,
+    public AudioStandard::AudioRendererCallback,
     public std::enable_shared_from_this<DSpeakerClient> {
 public:
     DSpeakerClient(const std::string &devId, const std::shared_ptr<IAudioEventCallback> &callback)
@@ -57,7 +58,9 @@ public:
     ~DSpeakerClient();
 
     int32_t OnStateChange(int32_t type) override;
+    void OnStateChange(const AudioStandard::RendererState state) override;
     void OnVolumeKeyEvent(AudioStandard::VolumeEvent event) override;
+    void OnInterrupt(const AudioStandard::InterruptEvent &interruptEvent) override;
     int32_t SetUp(const AudioParam &param);
     int32_t Release();
     int32_t StartRender();

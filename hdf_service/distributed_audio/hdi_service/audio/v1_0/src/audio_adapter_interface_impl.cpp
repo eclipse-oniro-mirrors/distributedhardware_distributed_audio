@@ -309,6 +309,12 @@ int32_t AudioAdapterInterfaceImpl::Notify(const uint32_t devId, const AudioEvent
         case HDF_AUDIO_EVENT_VOLUME_CHANGE:
             DHLOGI("%s: Notify event: VOLUME_CHANGE, event content: %s.", AUDIO_LOG, event.content.c_str());
             return HandleVolumeChangeEvent(event);
+        case HDF_AUDIO_EVENT_FOCUS_CHANGE:
+            DHLOGI("%s: Notify event: FOCUS_CHANGE, event content: %s.", AUDIO_LOG, event.content.c_str());
+            return HandleFocusChangeEvent(event);
+        case HDF_AUDIO_EVENT_RENDER_STATE_CHANGE:
+            DHLOGI("%s: Notify event: RENDER_STATE_CHANGE, event content: %s.", AUDIO_LOG, event.content.c_str());
+            return HandleRenderStateChangeEvent(event);
         case HDF_AUDIO_EVENT_OPEN_SPK_RESULT:
         case HDF_AUDIO_EVENT_CLOSE_SPK_RESULT:
         case HDF_AUDIO_EVENT_OPEN_MIC_RESULT:
@@ -565,6 +571,10 @@ int32_t AudioAdapterInterfaceImpl::HandleVolumeChangeEvent(const AudioEvent &eve
     }
     audioRender_->SetVolumeInner(vol);
 
+    if (event.content.rfind("FIRST_VOLUME_CHANAGE", 0) == 0) {
+        return DH_SUCCESS;
+    }
+
     if (paramCallback_ == nullptr) {
         DHLOGE("%s: Audio param observer is null.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_NULLPTR;
@@ -572,6 +582,38 @@ int32_t AudioAdapterInterfaceImpl::HandleVolumeChangeEvent(const AudioEvent &eve
     ret = paramCallback_->OnAudioParamNotify(AUDIO_EXT_PARAM_KEY_VOLUME, event.content, std::to_string(vol));
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Notify vol failed.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_FAIL;
+    }
+    return DH_SUCCESS;
+}
+
+int32_t AudioAdapterInterfaceImpl::HandleFocusChangeEvent(const AudioEvent &event)
+{
+    DHLOGI("%s: Focus change (%s).", AUDIO_LOG, event.content.c_str());
+    if (paramCallback_ == nullptr) {
+        DHLOGE("%s: Audio param observer is null.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
+    std::string val = "";
+    int32_t ret = paramCallback_->OnAudioParamNotify(AUDIO_EXT_PARAM_KEY_FOCUS, event.content, val);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Notify Focus failed.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_FAIL;
+    }
+    return DH_SUCCESS;
+}
+
+int32_t AudioAdapterInterfaceImpl::HandleRenderStateChangeEvent(const AudioEvent &event)
+{
+    DHLOGI("%s: RenderState change (%s).", AUDIO_LOG, event.content.c_str());
+    if (paramCallback_ == nullptr) {
+        DHLOGE("%s: Audio param observer is null.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
+    std::string val = "";
+    int32_t ret = paramCallback_->OnAudioParamNotify(AUDIO_EXT_PARAM_KEY_STATUS, event.content, val);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Notify render state failed.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_FAIL;
     }
     return DH_SUCCESS;

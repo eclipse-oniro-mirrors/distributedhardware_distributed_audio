@@ -52,11 +52,14 @@ typedef enum {
     VOLUME_MAX_GET = 35,
     VOLUME_MUTE_SET = 36,
 
-    SET_PARAM = 41,
-    SEND_PARAM = 42,
+    AUDIO_FOCUS_CHANGE = 41,
+    AUDIO_RENDER_STATE_CHANGE = 42,
 
-    AUDIO_ENCODER_ERR = 51,
-    AUDIO_DECODER_ERR = 52,
+    SET_PARAM = 51,
+    SEND_PARAM = 52,
+
+    AUDIO_ENCODER_ERR = 61,
+    AUDIO_DECODER_ERR = 62,
 } AudioEventType;
 
 typedef struct {
@@ -75,6 +78,8 @@ typedef enum {
     AUDIO_EVENT_CLOSE_MIC_RESULT = 7,
     AUDIO_EVENT_SPK_CLOSED = 8,
     AUDIO_EVENT_MIC_CLOSED = 9,
+    AUDIO_EVENT_FOCUS_CHANGE = 10,
+    AUDIO_EVENT_RENDER_STATE_CHANGE = 10,
 } AudioEventHDF;
 } // namespace DistributedHardware
 } // namespace OHOS

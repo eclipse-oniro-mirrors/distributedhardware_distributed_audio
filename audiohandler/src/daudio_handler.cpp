@@ -81,14 +81,7 @@ std::vector<DHItem> DAudioHandler::Query()
 
     auto audioDevices = audioSrv->GetDevices(AudioStandard::DeviceFlag::ALL_DEVICES_FLAG);
     for (auto dev : audioDevices) {
-        int32_t dhId;
-        if (dev->deviceType_ == AudioStandard::DeviceType::DEVICE_TYPE_SPEAKER) {
-            dhId = PIN_OUT_SPEAKER;
-        } else if (dev->deviceType_ == AudioStandard::DeviceType::DEVICE_TYPE_MIC) {
-            dhId = PIN_IN_MIC;
-        } else {
-            dhId = PIN_OUT_DAUDIO_DEFAULT;
-        }
+        auto dhId = audioSrv->GetPinValueFromType(dev->deviceType_, dev->deviceRole_);
 
         json infoJson;
         int32_t deviceType = GetDevTypeByDHId(dhId);
@@ -101,6 +94,8 @@ std::vector<DHItem> DAudioHandler::Query()
             infoJson["ChannelMasks"] = spkInfos_.channels;
             infoJson["Formats"] = spkInfos_.formats;
         }
+        infoJson["INTERRUPT_GROUP_ID"] = dev->interruptGroupId_;
+        infoJson["VOLUME_GROUP_ID"] = dev->volumeGroupId_;
         DHItem dhItem;
         dhItem.dhId = std::to_string(dhId);
         dhItem.attrs = infoJson.dump();

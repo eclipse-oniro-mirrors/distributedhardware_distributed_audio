@@ -250,7 +250,7 @@ string DSpeakerClient::GetVolumeLevel()
     auto volumeType = static_cast<AudioStandard::AudioVolumeType>(1);
     int32_t volumeLevel = AudioStandard::AudioSystemManager::GetInstance()->GetVolume(volumeType);
     bool isUpdateUi = false;
-    ss << "VOLUME_CHANAGE;"
+    ss << "FIRST_VOLUME_CHANAGE;"
        << "AUDIO_STREAM_TYPE=" << streamType << ";"
        << "VOLUME_LEVEL=" << volumeLevel << ";"
        << "IS_UPDATEUI=" << isUpdateUi << ";";
@@ -270,12 +270,53 @@ void DSpeakerClient::OnVolumeKeyEvent(AudioStandard::VolumeEvent volumeEvent)
     ss << "VOLUME_CHANAGE;"
        << "AUDIO_STREAM_TYPE=" << volumeEvent.volumeType << ";"
        << "VOLUME_LEVEL=" << volumeEvent.volume << ";"
-       << "IS_UPDATEUI=" << volumeEvent.updateUi << ";";
+       << "IS_UPDATEUI=" << volumeEvent.updateUi << ";"
+       << "VOLUME_GROUP_ID=" << volumeEvent.volumeGroupId << ";";
     std::string str = ss.str();
     DHLOGI("%s: Volume change notification result, event: %s.", LOG_TAG, str.c_str());
 
     std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
     audioEvent->type = VOLUME_CHANGE;
+    audioEvent->content = str;
+    eventCallback_->NotifyEvent(audioEvent);
+}
+
+void DSpeakerClient::OnInterrupt(const AudioStandard::InterruptEvent &interruptEvent)
+{
+    DHLOGI("%s: OnInterrupt.", LOG_TAG);
+    if (eventCallback_ == nullptr) {
+        DHLOGE("%s: EventCallback is nullptr.", LOG_TAG);
+        return;
+    }
+    std::stringstream ss;
+    ss << "INTERRUPT_EVENT;"
+       << "EVENT_TYPE=" << interruptEvent.eventType << ";"
+       << "FORCE_TYPE=" << interruptEvent.forceType << ";"
+       << "HINT_TYPE=" << interruptEvent.hintType << ";";
+    std::string str = ss.str();
+    DHLOGI("%s: Audio focus oninterrupt notification result, event: %s.", LOG_TAG, str.c_str());
+
+    std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
+    audioEvent->type = AUDIO_FOCUS_CHANGE;
+    audioEvent->content = str;
+    eventCallback_->NotifyEvent(audioEvent);
+}
+
+void DSpeakerClient::OnStateChange(const AudioStandard::RendererState state)
+{
+    DHLOGI("%s: On render state change. state: %d", LOG_TAG, state);
+    if (eventCallback_ == nullptr) {
+        DHLOGE("%s: EventCallback is nullptr.", LOG_TAG);
+        return;
+    }
+    std::stringstream ss;
+    ss << "RENDER_STATE_CHANGE_EVENT;"
+       << "STATE=" << state << ";";
+    std::string str = ss.str();
+    DHLOGI("%s: Audio render state changes notification result, event: %s.", LOG_TAG, str.c_str());
+
+    std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
+    audioEvent->type = AUDIO_RENDER_STATE_CHANGE;
     audioEvent->content = str;
     eventCallback_->NotifyEvent(audioEvent);
 }

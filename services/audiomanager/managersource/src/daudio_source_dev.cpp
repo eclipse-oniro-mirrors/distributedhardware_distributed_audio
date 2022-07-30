@@ -109,6 +109,12 @@ void DAudioSourceDev::NotifyEvent(const std::shared_ptr<AudioEvent> &event)
         case AudioEventType::VOLUME_CHANGE:
             HandleVolumeChange(event);
             break;
+        case AudioEventType::AUDIO_FOCUS_CHANGE:
+            HandleFocusChange(event);
+            break;
+        case AudioEventType::AUDIO_RENDER_STATE_CHANGE:
+            HandleRenderStateChange(event);
+            break;
         default:
             DHLOGE("%s: Unknown event type.", LOG_TAG);
     }
@@ -377,6 +383,22 @@ int32_t DAudioSourceDev::HandleVolumeChange(const std::shared_ptr<AudioEvent> &e
 {
     DHLOGI("%s: Start handle volume change.", LOG_TAG);
     auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeVolume, event->content, "volume change",
+        &DAudioSourceDev::OnTaskResult);
+    return taskQueue_->Produce(task);
+}
+
+int32_t DAudioSourceDev::HandleFocusChange(const std::shared_ptr<AudioEvent> &event)
+{
+    DHLOGI("%s: Start handle focus change.", LOG_TAG);
+    auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeFocus, event->content, "focus change",
+        &DAudioSourceDev::OnTaskResult);
+    return taskQueue_->Produce(task);
+}
+
+int32_t DAudioSourceDev::HandleRenderStateChange(const std::shared_ptr<AudioEvent> &event)
+{
+    DHLOGI("%s: Start handle render state change.", LOG_TAG);
+    auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeRenderState, event->content, "render state change",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
@@ -771,6 +793,42 @@ int32_t DAudioSourceDev::TaskChangeVolume(const std::string &args)
     int32_t ret = speaker_->NotifyHdfAudioEvent(event);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: TaskChangeVolume failed.", LOG_TAG);
+        return ret;
+    }
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSourceDev::TaskChangeFocus(const std::string &args)
+{
+    DHLOGI("%s: ChangeFocusTask. args: %s.", LOG_TAG, args.c_str());
+    if (speaker_ == nullptr) {
+        DHLOGE("%s: Speaker device not init", LOG_TAG);
+        return ERR_DH_AUDIO_SA_SPEAKER_DEVICE_NOT_INIT;
+    }
+    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    event->type = AudioEventType::AUDIO_FOCUS_CHANGE;
+    event->content = args;
+    int32_t ret = speaker_->NotifyHdfAudioEvent(event);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: TaskChangeFocus failed.", LOG_TAG);
+        return ret;
+    }
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSourceDev::TaskChangeRenderState(const std::string &args)
+{
+    DHLOGI("%s: ChangeRenderStateTask. args: %s.", LOG_TAG, args.c_str());
+    if (speaker_ == nullptr) {
+        DHLOGE("%s: Speaker device not init", LOG_TAG);
+        return ERR_DH_AUDIO_SA_SPEAKER_DEVICE_NOT_INIT;
+    }
+    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    event->type = AudioEventType::AUDIO_RENDER_STATE_CHANGE;
+    event->content = args;
+    int32_t ret = speaker_->NotifyHdfAudioEvent(event);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: TaskChangeRenderState failed.", LOG_TAG);
         return ret;
     }
     return DH_SUCCESS;

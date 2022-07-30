@@ -63,6 +63,8 @@ private:
     int32_t TaskCloseDMic(const std::string &args);
     int32_t TaskSetVolume(const std::string &args);
     int32_t TaskChangeVolume(const std::string &args);
+    int32_t TaskChangeFocus(const std::string &args);
+    int32_t TaskChangeRenderState(const std::string &args);
 
     void OnDisableTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
     void OnEnableTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
@@ -83,6 +85,8 @@ private:
     int32_t WaitForRPC(const AudioEventType type);
     int32_t HandleVolumeSet(const std::shared_ptr<AudioEvent> &event);
     int32_t HandleVolumeChange(const std::shared_ptr<AudioEvent> &event);
+    int32_t HandleFocusChange(const std::shared_ptr<AudioEvent> &event);
+    int32_t HandleRenderStateChange(const std::shared_ptr<AudioEvent> &event);
 
     int32_t NotifySinkDev(const AudioEventType type, const json Param, const std::string dhId);
     void NotifyHDF(const AudioEventType type, const std::string result);

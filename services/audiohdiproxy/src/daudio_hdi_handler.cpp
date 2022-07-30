@@ -191,6 +191,12 @@ int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, const int32_t dh
         case AudioEventType::MIC_CLOSED:
             newEvent.type = AUDIO_EVENT_MIC_CLOSED;
             break;
+        case AudioEventType::AUDIO_FOCUS_CHANGE:
+            newEvent.type = AUDIO_EVENT_FOCUS_CHANGE;
+            break;
+        case AudioEventType::AUDIO_RENDER_STATE_CHANGE:
+            newEvent.type = AUDIO_EVENT_RENDER_STATE_CHANGE;
+            break;
         default:
             DHLOGE("%s: Unsupport audio event.", LOG_TAG);
             break;

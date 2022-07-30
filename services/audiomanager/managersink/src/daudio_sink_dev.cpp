@@ -124,6 +124,12 @@ void DAudioSinkDev::NotifyEventSub(const std::shared_ptr<AudioEvent> &audioEvent
         case VOLUME_CHANGE:
             NotifyVolumeChange(audioEvent);
             break;
+        case AUDIO_FOCUS_CHANGE:
+            NotifyFocusChange(audioEvent);
+            break;
+        case AUDIO_RENDER_STATE_CHANGE:
+            NotifyRenderStateChange(audioEvent);
+            break;
         default:
             DHLOGE("%s: Unknown event type: %d", LOG_TAG, (int32_t)audioEvent->type);
     }
@@ -293,6 +299,22 @@ int32_t DAudioSinkDev::NotifyVolumeChange(const std::shared_ptr<AudioEvent> &aud
     DHLOGI("%s: Start NotifyVolumeChange.", LOG_TAG);
     std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskVolumeChange, audioEvent->content,
         "Sink NotifyVolumeChange", &DAudioSinkDev::OnTaskResult);
+    return taskQueue_->Produce(task);
+}
+
+int32_t DAudioSinkDev::NotifyFocusChange(const std::shared_ptr<AudioEvent> &audioEvent)
+{
+    DHLOGI("%s: Start NotifyFocusChange.", LOG_TAG);
+    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskFocusChange, audioEvent->content,
+        "Sink NotifyFocusChange", &DAudioSinkDev::OnTaskResult);
+    return taskQueue_->Produce(task);
+}
+
+int32_t DAudioSinkDev::NotifyRenderStateChange(const std::shared_ptr<AudioEvent> &audioEvent)
+{
+    DHLOGI("%s: Start NotifyRenderStateChange.", LOG_TAG);
+    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskRenderStateChange,
+        audioEvent->content, "Sink NotifyRenderStateChange", &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
@@ -504,6 +526,30 @@ int32_t DAudioSinkDev::TaskVolumeChange(const std::string &args)
     DHLOGI("%s: Audio volume changed.", LOG_TAG);
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
     event->type = AudioEventType::VOLUME_CHANGE;
+    event->content = args;
+    if (dAudioSinkDevCtrlMgr_ == nullptr) {
+        return ERR_DH_AUDIO_SA_SINKCTRLMGR_NOT_INIT;
+    }
+    return dAudioSinkDevCtrlMgr_->SendAudioEvent(event);
+}
+
+int32_t DAudioSinkDev::TaskFocusChange(const std::string &args)
+{
+    DHLOGI("%s: Audio focus changed.", LOG_TAG);
+    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    event->type = AudioEventType::AUDIO_FOCUS_CHANGE;
+    event->content = args;
+    if (dAudioSinkDevCtrlMgr_ == nullptr) {
+        return ERR_DH_AUDIO_SA_SINKCTRLMGR_NOT_INIT;
+    }
+    return dAudioSinkDevCtrlMgr_->SendAudioEvent(event);
+}
+
+int32_t DAudioSinkDev::TaskRenderStateChange(const std::string &args)
+{
+    DHLOGI("%s: Audio render state changed.", LOG_TAG);
+    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    event->type = AudioEventType::AUDIO_RENDER_STATE_CHANGE;
     event->content = args;
     if (dAudioSinkDevCtrlMgr_ == nullptr) {
         return ERR_DH_AUDIO_SA_SINKCTRLMGR_NOT_INIT;

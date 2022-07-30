@@ -94,6 +94,8 @@ public:
 private:
     int32_t SetAudioVolume(const std::string& condition, const std::string &param);
     int32_t GetAudioVolume(const std::string& condition, std::string &param);
+    int32_t HandleFocusChangeEvent(const AudioEvent &event);
+    int32_t HandleRenderStateChangeEvent(const AudioEvent &event);
     int32_t HandleVolumeChangeEvent(const AudioEvent &event);
     int32_t HandleSANotifyEvent(const AudioEvent &event);
     int32_t WaitForSANotify(const AudioDeviceEvent &event);

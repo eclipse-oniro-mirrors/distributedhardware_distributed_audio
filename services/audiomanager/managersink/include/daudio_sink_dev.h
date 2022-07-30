@@ -49,6 +49,8 @@ public:
     int32_t TaskCloseDMic(const std::string &args);
     int32_t TaskSetParameter(const std::string &args);
     int32_t TaskVolumeChange(const std::string &args);
+    int32_t TaskFocusChange(const std::string &args);
+    int32_t TaskRenderStateChange(const std::string &args);
     int32_t TaskSetVolume(const std::string &args);
     void OnTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
 
@@ -68,6 +70,8 @@ private:
     int32_t NotifySetVolume(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyVolumeChange(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifySetParam(const std::shared_ptr<AudioEvent> &audioEvent);
+    int32_t NotifyFocusChange(const std::shared_ptr<AudioEvent> &audioEvent);
+    int32_t NotifyRenderStateChange(const std::shared_ptr<AudioEvent> &audioEvent);
     bool JudgeJsonValid(const json &resultJson);
     void NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result);
 
