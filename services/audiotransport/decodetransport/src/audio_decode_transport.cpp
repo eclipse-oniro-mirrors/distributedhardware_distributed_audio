@@ -130,7 +130,8 @@ int32_t AudioDecodeTransport::RequestAudioData(std::shared_ptr<AudioData> &audio
     DHLOGD("%s: Request audio data, buf len: %d", LOG_TAG, dataQueue_.size());
     if (dataQueue_.empty()) {
         DHLOGD("data queue is empty");
-        return ERR_DH_AUDIO_CLIENT_RENDER_REQ_DATA_FAILED;
+        audioData = std::make_shared<AudioData>(FRAME_SIZE);
+        return DH_SUCCESS;
     } else {
         audioData = dataQueue_.front();
         dataQueue_.pop();
