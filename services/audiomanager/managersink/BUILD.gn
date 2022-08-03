@@ -1,48 +1,53 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import(
-    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_manager_sink") {
     include_dirs = [
-        "include",
         "//utils/native/base/include",
         "//third_party/json/include",
-        "${distributedaudio_path}/interfaces/inner_kits/native_cpp/audio_source/include",
-        "${common_path}/include",
+        "//foundation/communication/dsoftbus/interfaces/kits/transport",
         "${fwk_common_path}/utils/include",
-        "${services_path}/audiocontrol/controlsink/include",
-        "${services_path}/audioclient/micclient/include",
-        "${services_path}/audioclient/spkclient/include",
+        "${mediastandardfwk_path}/audiocapturer/include",
+        "${mediastandardfwk_path}/audiorenderer/include",
+        "${mediastandardfwk_path}/audiocommon/include",
+        "${mediastandardfwk_path}/audiomanager/include",
+    ]
+
+    include_dirs += [
+        "include",
+        "${common_path}/include",
+        "${innerkits_path}/native_cpp/audio_source/include",
+        "${audio_control_path}/controlsink/include",
+        "${audio_client_path}/micclient/include",
+        "${audio_client_path}/spkclient/include",
         "${services_path}/common/taskProcessor/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/audiodata/include",
         "${services_path}/common/audioeventcallback",
-
-        "${services_path}/audiotransport/audio_channel/include",
-        "${services_path}/audiotransport/audiodatachannel/include",
-        "${services_path}/audiotransport/encodetransport/include",
-        "${services_path}/audioprocessor/encodeprocessor/include",
-        "${services_path}/audiotransport/audioctrltransport/include",
-        "${services_path}/audiotransport/audioctrltransport/interface",
-        "${services_path}/audiotransport/interface",
-        "${services_path}/audioclient/transport/include",
-        "${services_path}/audiotransport/decodetransport/include",
-        "${services_path}/audioprocessor/decodeprocessor/include",
-        "${services_path}/audioprocessor/interface",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer/include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager/include",
-        "//foundation/distributedhardware/distributed_audio/services/audiotransport/encodetransport/include",
-        "//foundation/distributedhardware/distributed_audio/common/include",
-        "//foundation/distributedhardware/distributed_audio/services/common/audiodata/include",
-        "//foundation/distributedhardware/distributed_audio/services/common/audioparam",
-        "//foundation/distributedhardware/distributed_audio/services/audiotransport/encodetransport/includ",
-        "//foundation/distributedhardware/distributed_audio/services/audiotransport/interface",
-        "//foundation/distributedhardware/distributed_audio/services/common/audioeventcallback",
-        "//foundation/distributedhardware/distributed_audio/services/audiotransport/audio_channel/include",
-        "//foundation/communication/dsoftbus/interfaces/kits/transport",
+        "${audio_transport_path}/interface",
+        "${audio_transport_path}/audio_channel/include",
+        "${audio_transport_path}/audiodatachannel/include",
+        "${audio_transport_path}/encodetransport/include",
+        "${audio_transport_path}/decodetransport/include",
+        "${audio_transport_path}/audioctrltransport/include",
+        "${audio_transport_path}/audioctrltransport/interface",
+        "${audio_processor_path}/interface",
+        "${audio_processor_path}/decodeprocessor/include",
+        "${audio_processor_path}/encodeprocessor/include",
     ]
 
     sources = [
@@ -53,23 +58,21 @@ ohos_shared_library("distributed_audio_manager_sink") {
     deps = [
         "//utils/native/base:utils",
         "${common_path}:distributed_audio_utils",
-        "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audioext/v1_0:libdaudioext_proxy_1.0",
-        "//foundation/distributedhardware/distributed_audio/services/common:distributed_audio_service_common",
-        "//foundation/distributedhardware/distributed_audio/services/audiocontrol/controlsink:distributed_audio_sink_ctrl",
-
-        "//foundation/distributedhardware/distributed_audio/services/audiotransport/decodetransport:distributed_audio_decode_transport",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager:audio_client",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer:audio_renderer",
-        "//foundation/distributedhardware/distributed_audio/common:distributed_audio_utils",
-        "//foundation/distributedhardware/distributed_audio/services/audioclient/micclient:dmic_client",
-        "//foundation/distributedhardware/distributed_audio/services/audioclient/spkclient:dspeaker_client",
+        "${audio_client_path}/micclient:dmic_client",
+        "${audio_client_path}/spkclient:dspeaker_client",
+        "${mediastandardfwk_path}/audiomanager:audio_client",
+        "${mediastandardfwk_path}/audiorenderer:audio_renderer",
+        "${services_path}/common:distributed_audio_service_common",
+        "${audio_control_path}/controlsink:distributed_audio_sink_ctrl",
+        "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
+        "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
     ]
 
     external_deps = [
-        "hiviewdfx_hilog_native:libhilog",
         "ipc:ipc_core",
         "safwk:system_ability_fwk",
         "samgr_standard:samgr_proxy",
+        "hiviewdfx_hilog_native:libhilog",
     ]
 
     defines = [

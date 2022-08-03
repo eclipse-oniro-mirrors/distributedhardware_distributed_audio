@@ -19,27 +19,27 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 module_output_path = "distributed_audio/services/audiotransport/decode_transport_test"
 
 config("module_private_config") {
-  visibility = [ ":*" ]
+    visibility = [ ":*" ]
 
-  include_dirs = [
-      "//foundation/communication/dsoftbus/interfaces/kits/transport",
-      "${fwk_common_path}/utils/include",
-  ]
+    include_dirs = [
+        "//foundation/communication/dsoftbus/interfaces/kits/transport",
+        "${fwk_common_path}/utils/include",
+    ]
 
-  include_dirs += [
-      "${common_path}/include",
-      "${services_path}/common/audioparam",
-      "${services_path}/common/audiodata/include",
-      "${audio_transport_path}/audio_channel/include",
-      "${audio_transport_path}/audiodatachannel/include",
-      "${audio_transport_path}/decodetransport/include",
-      "${audio_transport_path}/interface",
-      "${audio_processor_path}/decodeprocessor/include",
-      "${audio_processor_path}/interface",
-      "${softbusadapter_path}/include",
-      "${audio_transport_path}/test/unittest/audiotranstestutils/include",
-      "${audio_transport_path}/test/unittest/decodetransport/include",
-  ]
+    include_dirs += [
+        "include",
+        "${common_path}/include",
+        "${softbusadapter_path}/include",
+        "${services_path}/common/audioparam",
+        "${services_path}/common/audiodata/include",
+        "${audio_processor_path}/interface",
+        "${audio_processor_path}/decodeprocessor/include",
+        "${audio_transport_path}/interface",
+        "${audio_transport_path}/audio_channel/include",
+        "${audio_transport_path}/audiodatachannel/include",
+        "${audio_transport_path}/decodetransport/include",
+        "${audio_transport_path}/test/unittest/audiotranstestutils/include",
+    ]
 }
 
 ohos_unittest("DecodeTransportTest") {

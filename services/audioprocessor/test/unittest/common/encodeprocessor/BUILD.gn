@@ -22,8 +22,8 @@ config("module_private_config") {
     visibility = [ ":*" ]
 
     include_dirs = [
-        "//foundation/multimedia/player_framework/interfaces/innerkits/native/media/include",
-        "//foundation/multimedia/audio_standard/interfaces/inner_api/native/audiocommon/include",
+        "${mediastandard_path}/interfaces/innerkits/native/media/include",
+        "${mediastandardfwk_path}/audiocommon/include",
         "${fwk_common_path}/utils/include",
     ]
 

@@ -13,23 +13,24 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import(
-    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_source_ctrl") {
     include_dirs = [
         "//utils/native/base/include",
         "${fwk_common_path}/utils/include",
-        "${common_path}/include",
+    ]
+
+    include_dirs += [
         "include",
+        "${common_path}/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/audioeventcallback",
-        "${services_path}/audiotransport/audioctrltransport/include",
-        "${services_path}/audiotransport/audioctrltransport/interface",
-        "${services_path}/audioclient/transport/include",
-        "${services_path}/audiotransport/interface",
-        "${services_path}/audiotransport/audio_channel/include",
         "${services_path}/common/audiodata/include",
+        "${audio_transport_path}/interface",
+        "${audio_transport_path}/audio_channel/include",
+        "${audio_transport_path}/audioctrltransport/include",
+        "${audio_transport_path}/audioctrltransport/interface",
     ]
 
     sources = [
@@ -39,11 +40,14 @@ ohos_shared_library("distributed_audio_source_ctrl") {
     deps = [
         "//utils/native/base:utils",
         "${common_path}:distributed_audio_utils",
-        "${services_path}/audiotransport/audioctrltransport:distributed_audio_ctrl_transport",
+        "${audio_transport_path}/audioctrltransport:distributed_audio_ctrl_transport",
     ]
 
     external_deps = [
         "hiviewdfx_hilog_native:libhilog",
+        "ipc:ipc_core",
+        "safwk:system_ability_fwk",
+        "samgr_standard:samgr_proxy",
     ]
 
     defines = [

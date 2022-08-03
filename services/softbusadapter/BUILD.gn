@@ -19,6 +19,9 @@ ohos_shared_library("distributed_audio_softbus_adapter") {
     include_dirs = [
         "//foundation/communication/dsoftbus/interfaces/kits/transport",
         "${fwk_common_path}/utils/include",
+    ]
+
+    include_dirs += [
         "${common_path}/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/audiodata/include",
@@ -26,9 +29,8 @@ ohos_shared_library("distributed_audio_softbus_adapter") {
     ]
 
     sources = [
-          "${services_path}/common/audiodata/src/audio_data.cpp",
-          "${softbusadapter_path}/src/softbus_adapter.cpp",
-
+        "src/softbus_adapter.cpp",
+        "${services_path}/common/audiodata/src/audio_data.cpp",
     ]
 
     deps = [
@@ -38,7 +40,6 @@ ohos_shared_library("distributed_audio_softbus_adapter") {
 
     external_deps = [
         "dsoftbus:softbus_client",
-
     ]
 
     defines = [

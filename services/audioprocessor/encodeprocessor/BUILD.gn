@@ -19,8 +19,8 @@ ohos_shared_library("distributed_audio_encoder_processor") {
     include_dirs = [
         "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
-        "//foundation/multimedia/player_framework/interfaces/innerkits/native/media/include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
+        "${mediastandard_path}/interfaces/innerkits/native/media/include",
+        "${mediastandardfwk_path}/audiocommon/include",
         "${fwk_common_path}/utils/include",
     ]
 

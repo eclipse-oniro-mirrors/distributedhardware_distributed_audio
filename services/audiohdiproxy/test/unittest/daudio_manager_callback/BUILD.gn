@@ -19,47 +19,50 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 module_out_path = "distributed_audio/services/audiohdiproxy/daudio_manager_callback"
 
 config("module_private_config") {
-  visibility = [ ":*" ]
+    visibility = [ ":*" ]
 
-  include_dirs = [
-    "${services_path}/audiohdiproxy/include",
-    "${services_path}/audiohdiproxy/test/unittest/services/audiohdiproxy/test/unittest/daudio_manager_callback/include",
-    "${common_path}/include",
-    "${fwk_common_path}/utils/include",
-    "include",
-    "${services_path}/common/audiodata/include",
-    "${services_path}/common/audioparam",
-    "${services_path}/common/audiodata/include",
-  ]
+    include_dirs = [
+        "${fwk_common_path}/utils/include",
+    ]
+
+    include_dirs += [
+        "include",
+        "${common_path}/include",
+        "${audio_hdi_proxy_path}/include",
+        "${services_path}/common/audiodata/include",
+        "${services_path}/common/audioparam",
+        "${services_path}/common/audiodata/include",
+    ]
 }
 
 ## UnitTest audiohdiproxy_test
 ohos_unittest("DAudioManagerCallbackTest") {
-  module_out_path = module_out_path
+    module_out_path = module_out_path
 
-  sources = [
-    "//foundation/distributedhardware/distributed_audio/services/audiohdiproxy/test/unittest/daudio_manager_callback/src/daudio_manager_callback_test.cpp"
-  ]
+    sources = [
+        "src/daudio_manager_callback_test.cpp"
+    ]
 
-  configs = [ ":module_private_config" ]
+    configs = [ ":module_private_config" ]
 
-  deps = [
-    "//third_party/googletest:gmock",
-    "//third_party/googletest:gtest_main",
-    "${services_path}/audiohdiproxy:distributed_audio_hdi_proxy",
-    "//utils/native/base:utils",
-    "${common_path}:distributed_audio_utils",
-    "//foundation/distributedhardware/distributed_audio/services/common:distributed_audio_service_common",
-    "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audioext/v1_0:libdaudioext_proxy_1.0",
-  ]
-  external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_single",
-    "utils_base:utils",
-  ]
+    deps = [
+        "//third_party/googletest:gmock",
+        "//third_party/googletest:gtest_main",
+        "//utils/native/base:utils",
+        "${common_path}:distributed_audio_utils",
+        "${services_path}/common:distributed_audio_service_common",
+        "${services_path}/audiohdiproxy:distributed_audio_hdi_proxy",
+        "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
+    ]
+
+    external_deps = [
+        "hiviewdfx_hilog_native:libhilog",
+        "ipc:ipc_single",
+        "utils_base:utils",
+    ]
 }
 
 group("daudio_manager_callback_test") {
-  testonly = true
-  deps = [":DAudioManagerCallbackTest"]
+    testonly = true
+    deps = [":DAudioManagerCallbackTest"]
 }

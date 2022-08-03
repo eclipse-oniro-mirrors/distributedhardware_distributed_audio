@@ -17,28 +17,31 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 
 ohos_shared_library("distributed_audio_ctrl_channel") {
     include_dirs = [
+        "//third_party/json/include",
+        "//foundation/communication/dsoftbus/interfaces/kits/transport",
         "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
-        "//foundation/communication/dsoftbus/interfaces/kits/transport",
         "${fwk_common_path}/utils/include",
-        "//third_party/json/include",
+    ]
+
+    include_dirs += [
+        "include",
         "${common_path}/include",
         "${common_path}/dfx_utils/include",
         "${services_path}/common/audioparam",
         "${services_path}/common/audiodata/include",
-        "${services_path}/audiotransport/audio_channel/include",
-        "${services_path}/audiotransport/audioctrlchannel/include",
+        "${audio_transport_path}/audio_channel/include",
         "${softbusadapter_path}/include",
     ]
 
     sources = [
-        "${services_path}/audiotransport/audioctrlchannel/src/audio_ctrl_channel.cpp",
+        "src/audio_ctrl_channel.cpp",
     ]
 
     deps = [
         "//utils/native/base:utils",
         "${common_path}:distributed_audio_utils",
-        "//foundation/distributedhardware/distributed_audio/services/softbusadapter:distributed_audio_softbus_adapter",
+        "${softbusadapter_path}:distributed_audio_softbus_adapter",
     ]
 
     external_deps = [

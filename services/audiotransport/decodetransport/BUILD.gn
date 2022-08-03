@@ -18,28 +18,31 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 ohos_shared_library("distributed_audio_decode_transport") {
     include_dirs = [
         "//foundation/communication/dsoftbus/interfaces/kits/transport",
-        "${common_path}/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${services_path}/audiotransport/audio_channel/include",
-        "${services_path}/audiotransport/audiodatachannel/include",
-        "${services_path}/audiotransport/decodetransport/include",
-        "${services_path}/audiotransport/interface",
-        "${services_path}/audioprocessor/decodeprocessor/include",
-        "${services_path}/audioprocessor/interface",
-        "${softbusadapter_path}/include",
         "${fwk_common_path}/utils/include",
     ]
 
+    include_dirs += [
+        "include",
+        "${common_path}/include",
+        "${services_path}/common/audioparam",
+        "${services_path}/common/audiodata/include",
+        "${audio_transport_path}/audio_channel/include",
+        "${audio_transport_path}/audiodatachannel/include",
+        "${audio_transport_path}/interface",
+        "${audio_processor_path}/decodeprocessor/include",
+        "${audio_processor_path}/interface",
+        "${softbusadapter_path}/include",
+    ]
+
     sources = [
-        "${services_path}/audiotransport/decodetransport/src/audio_decode_transport.cpp",
+        "src/audio_decode_transport.cpp",
     ]
 
     deps = [
         "//utils/native/base:utils",
         "${common_path}:distributed_audio_utils",
-        "${services_path}/audiotransport/audiodatachannel:distributed_audio_data_channel",
-        "${services_path}/audioprocessor/decodeprocessor:distributed_audio_decoder_processor",
+        "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
+        "${audio_processor_path}/decodeprocessor:distributed_audio_decoder_processor",
         "${services_path}/common:distributed_audio_service_common",
     ]
 
