@@ -18,38 +18,36 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 ohos_shared_library("dmic_client") {
     include_dirs = [
         "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
         "//foundation/multimedia/audio_framework/frameworks/native/common/include",
         "//foundation/multinedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
+        "${mediastandardfwk_path}/audiocommon/include",
     ]
 
     include_dirs += [
-        "${services_path}audiotransport/encodetransport/include",
-        "${services_path}/audioclient/micclient/include",
-        "${services_path}/audiotransport/encodetransport/includ",
-        "${services_path}/common/audioeventcallback",
+        "${audio_client_path}/micclient/include",
+        "${audio_processor_path}/encodeprocessor/include",
+        "${audio_processor_path}/interface",
+        "${audio_transport_path}/audio_channel/include",
+        "${audio_transport_path}/audiodatachannel/include",
+        "${audio_transport_path}/encodetransport/include",
+        "${audio_transport_path}/interface",
         "${common_path}/dfx_utils/include",
         "${common_path}/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${services_path}/audiotransport/audio_channel/include",
-        "${services_path}/audiotransport/audiodatachannel/include",
-        "${services_path}/audiotransport/encodetransport/include",
-        "${services_path}/audiotransport/interface",
-        "${services_path}/audioprocessor/encodeprocessor/include",
-        "${services_path}/audioprocessor/interface",
-        "${softbusadapter_path}/include",
         "${fwk_common_path}/utils/include",
+        "${services_path}/common/audiodata/include",
+        "${services_path}/common/audioeventcallback",
+        "${services_path}/common/audioparam",
+        "${softbusadapter_path}/include",
     ]
 
     sources = [
-        "${services_path}/audioclient/micclient/src/dmic_client.cpp",
+        "${audio_client_path}/micclient/src/dmic_client.cpp",
     ]
 
     deps = [
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocapturer:audio_capturer",
-        "${services_path}/audiotransport/encodetransport:distributed_audio_encode_transport",
-        "${distributedaudio_path}/common:distributed_audio_utils",
+        "${audio_transport_path}/encodetransport:distributed_audio_encode_transport",
+        "${common_path}:distributed_audio_utils",
+        "${mediastandardfwk_path}/audiocapturer:audio_capturer",
         "${services_path}/common:distributed_audio_service_common",
     ]
 

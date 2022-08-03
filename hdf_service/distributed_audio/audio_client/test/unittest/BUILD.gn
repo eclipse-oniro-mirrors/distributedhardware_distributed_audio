@@ -12,17 +12,19 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 module_output_path = "distributed_audio/hdf_service/audio_client"
 
 config("module_private_config") {
     visibility = [ ":*" ]
 
-    include_dirs = [
-        "//drivers/peripheral/audio/interfaces/include",
-        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/log/include",
-        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/include/",
-        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/include",
+    include_dirs = [ "//drivers/peripheral/audio/interfaces/include" ]
+
+    include_dirs += [
+        "${hdf_service_path}/hdi_service/common/log/include",
+        "${hdf_service_path}/hdi_service/common/include/",
+        "${hdf_service_path}/audio_client/include",
     ]
 }
 
@@ -31,29 +33,27 @@ ohos_unittest("AudioAdapterHdiTest") {
 
     configs = [ ":module_private_config" ]
 
-    sources = [
-        "audio_manager_test.cpp",
-    ]
+    sources = [ "audio_manager_test.cpp" ]
 
     deps = [
-        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client:daudio_client",
         "//third_party/googletest:gmock_main",
         "//third_party/googletest:gtest_main",
         "//third_party/libxml2:xml2",
         "//utils/native/base:utils",
+        "${hdf_service_path}/audio_client:daudio_client",
   ]
 
     public_deps = [
-        "//foundation/distributedhardware/distributed_audio/hdf_interfaces/distributed_audio/audio/v1_0:libdaudio_proxy_1.0",
-        "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common:libdaudio_hdf_utils"
+        "${hdf_interfaces_path}/audio/v1_0:libdaudio_proxy_1.0",
+        "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils"
     ]
 
-  external_deps = [
-    "hdf_core:libhdf_utils",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_single",
-    "utils_base:utils",
-  ]
+    external_deps = [
+        "hdf_core:libhdf_utils",
+        "hiviewdfx_hilog_native:libhilog",
+        "ipc:ipc_single",
+        "utils_base:utils",
+    ]
 
     defines = [
         "HI_LOG_ENABLE",
@@ -69,7 +69,6 @@ ohos_unittest("AudioAdapterHdiTest") {
         "-fno-common",
         "-fno-strict-aliasing",
     ]
-
 }
 
 group("audio_adapter_hdi_test") {

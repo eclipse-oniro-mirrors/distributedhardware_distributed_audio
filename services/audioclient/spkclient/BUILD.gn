@@ -18,41 +18,39 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 ohos_shared_library("dspeaker_client") {
     include_dirs = [
         "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
         "//foundation/multimedia/audio_framework/frameworks/native/common/include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager/include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer/include",
+        "${mediastandardfwk_path}/audiocommon/include",
+        "${mediastandardfwk_path}/audiomanager/include",
+        "${mediastandardfwk_path}/audiorenderer/include",
     ]
 
     include_dirs += [
-        "${common_path}/dfx_utils/include",
-        "${common_path}/include",
-        "${services_path}/audioclient/spkclient/include",
-        "${services_path}/common/audiodata/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/audiotransport/decodetransport/include",
-        "${services_path}/audiotransport/interface",
-        "${services_path}/common/audioeventcallback",
-        "${services_path}/audiotransport/audio_channel/include",
-        "${services_path}/audiotransport/audiodatachannel/include",
-        "${services_path}/audioprocessor/decodeprocessor/include",
-        "${services_path}/audioprocessor/interface",
-        "${softbusadapter_path}/include",
+        "${audio_client_path}/spkclient/include",
+        "${audio_processor_path}/decodeprocessor/include",
+        "${audio_processor_path}/interface",
+        "${audio_transport_path}/audio_channel/include",
+        "${audio_transport_path}/audiodatachannel/include",
+        "${audio_transport_path}/decodetransport/include",
+        "${audio_transport_path}/interface",
         "${fwk_common_path}/utils/include",
         "${fwk_utils_path}/include",
+        "${common_path}/dfx_utils/include",
+        "${common_path}/include",
+        "${services_path}/common/audiodata/include",
+        "${services_path}/common/audioeventcallback",
+        "${services_path}/common/audioparam",
+        "${softbusadapter_path}/include",
     ]
 
-    sources = [
-        "${services_path}/audioclient/spkclient/src/dspeaker_client.cpp",
-    ]
+    sources = [ "${audio_client_path}/spkclient/src/dspeaker_client.cpp" ]
 
     deps = [
-        "${services_path}/audiotransport/decodetransport:distributed_audio_decode_transport",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager:audio_client",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer:audio_renderer",
-        "${distributedaudio_path}/common:distributed_audio_utils",
-        "${services_path}/common:distributed_audio_service_common",
+        "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
+        "${common_path}:distributed_audio_utils",
         "${fwk_utils_path}:distributedhardwareutils",
+        "${mediastandardfwk_path}/audiomanager:audio_client",
+        "${mediastandardfwk_path}/audiorenderer:audio_renderer",
+        "${services_path}/common:distributed_audio_service_common",
     ]
 
     defines = [

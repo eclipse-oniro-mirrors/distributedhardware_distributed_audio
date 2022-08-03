@@ -12,63 +12,63 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 module_out_path = "distributed_audio/interfaces/audio_source_test"
 
 config("module_private_config") {
-  visibility = [ ":*" ]
-  include_dirs = [
-    "//third_party/json/include",
-    "${fwk_common_path}/utils/include",
-    "${fwk_utils_path}/include",
-  ]
+    visibility = [ ":*" ]
 
-  include_dirs += [
-    "./include",
-    "${common_path}/include",
-    "${services_path}/common/audiodata/include",
-    "${services_path}/common/audioparam",
-    "${services_path}/common/utils/include",
-    "${interfaces_path}/inner_kits/native_cpp/audio_source/include",
-    "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/include",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
-  ]
+    include_dirs = [
+        "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
+        "//third_party/json/include",
+        "${fwk_common_path}/utils/include",
+        "${fwk_utils_path}/include",
+    ]
+
+    include_dirs += [
+        "./include",
+        "${common_path}/include",
+        "${interfaces_path}/inner_kits/native_cpp/audio_source/include",
+        "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/include",
+        "${services_path}/common/audiodata/include",
+        "${services_path}/common/audioparam",
+        "${services_path}/common/utils/include",
+    ]
 }
 
 ## UnitTest AudioSourceTest
 ohos_unittest("AudioSourceTest") {
-  module_out_path = module_out_path
+    module_out_path = module_out_path
 
-  sources = [
-    "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/src/daudio_ipc_callback_test.cpp",
-    "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/src/daudio_source_handler_test.cpp",
-  ]
+    sources = [
+        "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/src/daudio_ipc_callback_test.cpp",
+        "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/src/daudio_source_handler_test.cpp",
+    ]
 
-  configs = [ ":module_private_config" ]
+    configs = [ ":module_private_config" ]
 
-  deps = [
-    "${fwk_utils_path}:distributedhardwareutils",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
-    "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/audio_source:distributed_audio_source_sdk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//third_party/googletest:gmock",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
+    deps = [
+        "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
+        "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+        "//third_party/googletest:gmock",
+        "//third_party/googletest:gtest_main",
+        "//utils/native/base:utils",
+        "${interfaces_path}/inner_kits/native_cpp/audio_source:distributed_audio_source_sdk",
+        "${fwk_utils_path}:distributedhardwareutils",
+    ]
 
-  external_deps = [
-    "dsoftbus:softbus_client",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "multimedia_player_framework:media_client",
-    "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
-  ]
+    external_deps = [
+        "dsoftbus:softbus_client",
+        "hiviewdfx_hilog_native:libhilog",
+        "ipc:ipc_core",
+        "multimedia_player_framework:media_client",
+        "safwk:system_ability_fwk",
+        "samgr_standard:samgr_proxy",
+    ]
 }
 
 group("audio_source_test") {
-  testonly = true
-  deps = [ ":AudioSourceTest" ]
+    testonly = true
+    deps = [ ":AudioSourceTest" ]
 }

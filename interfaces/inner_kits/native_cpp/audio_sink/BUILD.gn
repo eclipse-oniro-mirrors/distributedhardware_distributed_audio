@@ -13,18 +13,20 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import(
-    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_sink_sdk") {
     include_dirs = [
         "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
         "//utils/native/base/include",
+        "${fwk_common_path}/utils/include",
+    ]
+
+    include_dirs += [
+        "include",
         "${common_path}/include",
         "${common_path}/dfx_utils/include",
-        "${fwk_common_path}/utils/include",
-        "include",
     ]
 
     sources = [

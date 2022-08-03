@@ -14,17 +14,17 @@
 import("//build/ohos.gni")
 
 ohos_sa_profile("daudio_sa_profile") {
-  sources = [
-    "4805.xml",
-    "4806.xml",
-  ]
+    sources = [
+        "4805.xml",
+        "4806.xml",
+    ]
 
-  part_name = "distributed_audio"
+    part_name = "distributed_audio"
 }
 
 ohos_prebuilt_etc("daudio.cfg") {
-  relative_install_dir = "init"
-  source = "daudio.cfg"
-  part_name = "distributed_audio"
-  subsystem_name = "distributedhardware"
+    relative_install_dir = "init"
+    source = "daudio.cfg"
+    part_name = "distributed_audio"
+    subsystem_name = "distributedhardware"
 }

@@ -17,48 +17,53 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 module_out_path = "distributed_audio/interfaces/audio_sink_test"
 
 config("module_private_config") {
-  visibility = [ ":*" ]
-  include_dirs = [
-    "//third_party/json/include",
-    "${fwk_common_path}/utils/include",
-    "${fwk_utils_path}/include",
-    "${common_path}/include",
-    "./include",
-    "${services_path}/common/utils/include",
-    "${interfaces_path}/inner_kits/native_cpp/audio_sink/include",
-  ]
+    visibility = [ ":*" ]
 
+    include_dirs = [
+        "//third_party/json/include",
+        "${fwk_common_path}/utils/include",
+        "${fwk_utils_path}/include",
+    ]
+
+    include_dirs += [
+        "./include",
+        "${common_path}/include",
+        "${interfaces_path}/inner_kits/native_cpp/audio_sink/include",
+        "${services_path}/common/utils/include",
+    ]
 }
 
 ## UnitTest AudioSinkTest
 ohos_unittest("AudioSinkTest") {
-  module_out_path = module_out_path
+    module_out_path = module_out_path
 
-  sources = [ "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosinktest/src/daudio_sink_handler_test.cpp" ]
+    sources = [
+        "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosinktest/src/daudio_sink_handler_test.cpp",
+    ]
 
-  configs = [ ":module_private_config" ]
+    configs = [ ":module_private_config" ]
 
-  deps = [
-    "${common_path}:distributed_audio_utils",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
-    "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/audio_sink:distributed_audio_sink_sdk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//third_party/googletest:gmock",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
+    deps = [
+        "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
+        "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+        "//third_party/googletest:gmock",
+        "//third_party/googletest:gtest_main",
+        "//utils/native/base:utils",
+        "${common_path}:distributed_audio_utils",
+        "${distributedaudio_path}/interfaces/inner_kits/native_cpp/audio_sink:distributed_audio_sink_sdk",
+    ]
 
-  external_deps = [
-    "dsoftbus:softbus_client",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "multimedia_player_framework:media_client",
-    "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
-  ]
+    external_deps = [
+        "dsoftbus:softbus_client",
+        "hiviewdfx_hilog_native:libhilog",
+        "ipc:ipc_core",
+        "multimedia_player_framework:media_client",
+        "safwk:system_ability_fwk",
+        "samgr_standard:samgr_proxy",
+    ]
 }
 
 group("audio_sink_test") {
-  testonly = true
-  deps = [ ":AudioSinkTest" ]
+    testonly = true
+    deps = [ ":AudioSinkTest" ]
 }

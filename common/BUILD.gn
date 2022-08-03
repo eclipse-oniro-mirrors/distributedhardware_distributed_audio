@@ -20,16 +20,19 @@ ohos_shared_library("distributed_audio_utils") {
         "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
         "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
         "//utils/native/base/include",
-        "include",
+    ]
+
+    include_dirs += [
         "dfx_utils/include",
+        "include",
         "${services_path}/common/audioparam",
     ]
 
     sources = [
-        "src/daudio_log.cpp",
-        "src/daudio_util.cpp",
         "dfx_utils/src/daudio_hisysevent.cpp",
         "dfx_utils/src/daudio_hitrace.cpp",
+        "src/daudio_log.cpp",
+        "src/daudio_util.cpp",
     ]
 
     deps = [

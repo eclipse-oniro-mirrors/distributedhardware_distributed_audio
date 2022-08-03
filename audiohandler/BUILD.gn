@@ -17,37 +17,36 @@ import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni"
 
 ohos_shared_library("distributed_audio_handler") {
     include_dirs = [
-        "//utils/native/base/include",
-        "include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager/include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
-        "${fwk_common_path}/utils/include",
-        "${common_path}/include",
-        "//third_party/json/include",
-        "//foundation/multimedia/player_framework/interfaces/inner_api/native",
-        "//foundation/multimedia/player_framework/services/utils/include",
         "//foundation/multimedia/image_standard/interfaces/innerkits/include",
+        "//third_party/json/include",
+        "//utils/native/base/include",
+        "${fwk_common_path}/utils/include",
+        "${mediastandard_path}/interfaces/inner_api/native",
+        "${mediastandard_path}/services/utils/include",
+        "${mediastandardfwk_path}/audiomanager/include",
+        "${mediastandardfwk_path}/audiocommon/include",
+        "${mediastandardfwk_path}/audiocapturer/include",
+    ]
+
+    include_dirs += [
+        "include",
+        "${common_path}/include",
         "${services_path}/common/audioparam",
     ]
 
-    sources = [
-        "src/daudio_handler.cpp",
-    ]
+    sources = [ "src/daudio_handler.cpp" ]
 
     deps = [
+        "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
         "//utils/native/base:utils",
         "${common_path}:distributed_audio_utils",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiomanager:audio_client",
-        "//foundation/multimedia/player_framework/interfaces/inner_api/native:media_client",
-        "//foundation/multimedia/player_framework/services/utils:media_service_utils",
-        "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
-        "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocapturer:audio_capturer",
+        "${mediastandard_path}/interfaces/inner_api/native:media_client",
+        "${mediastandard_path}/services/utils:media_service_utils",
+        "${mediastandardfwk_path}/audiocapturer:audio_capturer",
+        "${mediastandardfwk_path}/audiomanager:audio_client",
     ]
 
-    external_deps = [
-        "hiviewdfx_hilog_native:libhilog",
-    ]
+    external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
 
     defines = [
         "HI_LOG_ENABLE",
