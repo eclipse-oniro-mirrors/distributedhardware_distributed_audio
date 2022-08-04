@@ -50,7 +50,7 @@ ohos_unittest("AudioSourceTest") {
 
     deps = [
         "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
-        "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+        "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
         "//third_party/googletest:gmock",
         "//third_party/googletest:gtest_main",
         "//utils/native/base:utils",
@@ -64,7 +64,7 @@ ohos_unittest("AudioSourceTest") {
         "ipc:ipc_core",
         "multimedia_player_framework:media_client",
         "safwk:system_ability_fwk",
-        "samgr_standard:samgr_proxy",
+        "samgr:samgr_proxy",
     ]
 }
 
