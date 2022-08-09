@@ -624,9 +624,11 @@ int32_t DAudioSourceDev::TaskCloseDSpeaker(const std::string &args)
         DHLOGE("%s: Speaker release failed.", LOG_TAG);
         closeStatus = false;
     }
-    json jAudioParam;
-    json jParam = json::parse(args, nullptr, false);
-    NotifySinkDev(CLOSE_SPEAKER, jAudioParam, jParam["dhId"]);
+    if (speaker_->IsOpened()) {
+        json jAudioParam;
+        json jParam = json::parse(args, nullptr, false);
+        NotifySinkDev(CLOSE_SPEAKER, jAudioParam, jParam["dhId"]);
+    }
 
     if (!closeStatus) {
         return ERR_DH_AUDIO_FAILED;
@@ -690,9 +692,11 @@ int32_t DAudioSourceDev::TaskCloseDMic(const std::string &args)
         DHLOGE("%s: Mic release failed.", LOG_TAG);
         closeStatus = false;
     }
-    json jAudioParam;
-    json jParam = json::parse(args, nullptr, false);
-    NotifySinkDev(CLOSE_MIC, jAudioParam, jParam["dhId"]);
+    if (mic_->IsOpened()) {
+        json jAudioParam;
+        json jParam = json::parse(args, nullptr, false);
+        NotifySinkDev(CLOSE_MIC, jAudioParam, jParam["dhId"]);
+    }
 
     if (!closeStatus) {
         return ERR_DH_AUDIO_FAILED;

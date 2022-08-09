@@ -89,7 +89,7 @@ public:
     int32_t CloseCaptureDevice(const AudioDeviceDescriptorHAL &desc);
     uint32_t GetVolumeGroup(const uint32_t devId);
     uint32_t GetInterruptGroup(const uint32_t devId);
-    bool isPortsNoReg() const;
+    bool isPortsNoReg();
 
 private:
     int32_t SetAudioVolume(const std::string& condition, const std::string &param);
@@ -115,7 +115,9 @@ private:
     sptr<AudioCaptureInterfaceImpl> audioCapture_ = nullptr;
     AudioParameter captureParam_;
 
-    std::mutex devOpMtx_;
+    std::mutex devMapMtx_;
+    std::mutex captureOptMtx_;
+    std::mutex renderOptMtx_;
     std::map<uint32_t, std::string> mapAudioDevice_;
     std::mutex spkWaitMutex_;
     std::condition_variable spkWaitCond_;

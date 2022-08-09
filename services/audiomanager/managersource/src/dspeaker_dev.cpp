@@ -64,6 +64,9 @@ int32_t DSpeakerDev::EnableDSpeaker(const int32_t dhId, const std::string &capab
 int32_t DSpeakerDev::DisableDSpeaker(const int32_t dhId)
 {
     DHLOGI("%s: DisableDSpeaker.", LOG_TAG);
+    if (dhId == curPort_) {
+        isOpened_.store(false);
+    }
     int32_t ret = DAudioHdiHandler::GetInstance().UnRegisterAudioDevice(devId_, dhId);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: UnRegister audio device failed, ret: %d.", LOG_TAG, ret);
@@ -132,6 +135,7 @@ int32_t DSpeakerDev::CloseDevice(const std::string &devId, const int32_t dhId)
     cbObj->NotifyEvent(event);
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_CLOSE, devId, std::to_string(dhId),
         "daudio spk device close success.");
+    curPort_ = 0;
     return DH_SUCCESS;
 }
 
