@@ -201,6 +201,12 @@ void DMicClient::CaptureThreadRunning()
     }
 }
 
+int32_t DMicClient::WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData)
+{
+    (void)audioData;
+    return DH_SUCCESS;
+}
+
 int32_t DMicClient::StopCapture()
 {
     DHLOGI("%s: Stop capturer.", LOG_TAG);

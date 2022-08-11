@@ -117,28 +117,6 @@ int32_t AudioDecodeTransport::FeedAudioData(std::shared_ptr<AudioData> &audioDat
     return DH_SUCCESS;
 }
 
-int32_t AudioDecodeTransport::GetAudioBuffLen()
-{
-    std::unique_lock<std::mutex> lock(dataQueueMtx_);
-    DHLOGD("Current Audio Buff size: %d", dataQueue_.size());
-    return dataQueue_.size();
-}
-
-int32_t AudioDecodeTransport::RequestAudioData(std::shared_ptr<AudioData> &audioData)
-{
-    std::unique_lock<std::mutex> lock(dataQueueMtx_);
-    DHLOGD("%s: Request audio data, buf len: %d", LOG_TAG, dataQueue_.size());
-    if (dataQueue_.empty()) {
-        DHLOGD("data queue is empty");
-        audioData = std::make_shared<AudioData>(FRAME_SIZE);
-        return DH_SUCCESS;
-    } else {
-        audioData = dataQueue_.front();
-        dataQueue_.pop();
-    }
-    return DH_SUCCESS;
-}
-
 void AudioDecodeTransport::OnSessionOpened()
 {
     DHLOGI("%s: On channel session opened.", LOG_TAG);
@@ -182,12 +160,7 @@ void AudioDecodeTransport::OnAudioDataDone(const std::shared_ptr<AudioData> &out
 {
     DHLOGI("%s: On audio data done.", LOG_TAG);
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
-    while (dataQueue_.size() > DATA_QUEUE_MAX_SIZE) {
-        DHLOGE("%s: Data queue overflow.", LOG_TAG);
-        dataQueue_.pop();
-    }
-    dataQueue_.push(outputData);
-    DHLOGI("push new spk data, buf len: %d", dataQueue_.size());
+    dataTransCallback_->WriteStreamBuffer(outputData);
 }
 
 void AudioDecodeTransport::OnStateNotify(const AudioEvent &event)

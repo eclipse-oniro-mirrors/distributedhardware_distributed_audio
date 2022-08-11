@@ -44,7 +44,6 @@ public:
     int32_t Stop() override;
     int32_t Release() override;
     int32_t FeedAudioData(std::shared_ptr<AudioData> &audioData) override;
-    int32_t RequestAudioData(std::shared_ptr<AudioData> &audioData) override;
 
     void OnSessionOpened() override;
     void OnSessionClosed() override;

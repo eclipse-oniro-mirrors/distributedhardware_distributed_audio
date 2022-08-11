@@ -325,5 +325,11 @@ int32_t DSpeakerDev::OnStateChange(int32_t type)
     cbObj->NotifyEvent(event);
     return DH_SUCCESS;
 }
+
+int32_t DSpeakerDev::WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData)
+{
+    (void) audioData;
+    return DH_SUCCESS;
+}
 } // DistributedHardware
 } // OHOS

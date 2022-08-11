@@ -254,14 +254,13 @@ int32_t DMicDev::WriteStreamData(const std::string& devId, const int32_t dhId, s
 
 int32_t DMicDev::ReadStreamData(const std::string &devId, const int32_t dhId, std::shared_ptr<AudioData> &data)
 {
-    if (micTrans_ == nullptr) {
-        DHLOGE("%s: ReadStreamData, micTrans is null.", LOG_TAG);
-        return ERR_DH_AUDIO_SA_MICTRANS_NULL;
-    }
-    int32_t ret = micTrans_->RequestAudioData(data);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s: ReadStreamData failed, ret: %d.", LOG_TAG, ret);
-        return ret;
+    std::lock_guard<std::mutex> lock(dataQueueMtx_);
+    if (dataQueue_.empty()) {
+        DHLOGI("%s: data queue is empty.", LOG_TAG);
+        data = std::make_shared<AudioData>(FRAME_SIZE);
+    } else {
+        data = dataQueue_.front();
+        dataQueue_.pop();
     }
     return DH_SUCCESS;
 }
@@ -310,6 +309,18 @@ int32_t DMicDev::OnStateChange(int32_t type)
         return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
     }
     cbObj->NotifyEvent(event);
+    return DH_SUCCESS;
+}
+
+int32_t DMicDev::WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData)
+{
+    std::lock_guard<std::mutex> lock(dataQueueMtx_);
+    while (dataQueue_.size() > DATA_QUEUE_MAX_SIZE) {
+        DHLOGI("%s: Data queue overflow.", LOG_TAG);
+        dataQueue_.pop();
+    }
+    dataQueue_.push(audioData);
+    DHLOGI("%s: Push new mic data, buf len: %d", LOG_TAG, dataQueue_.size());
     return DH_SUCCESS;
 }
 } // DistributedHardware

@@ -53,11 +53,6 @@ public:
     {
         return 0;
     }
-
-    int32_t RequestAudioData(std::shared_ptr<AudioData> &audioData) override
-    {
-        return 0;
-    }
 };
 } // namespace DistributedHardware
 } // namespace OHOS

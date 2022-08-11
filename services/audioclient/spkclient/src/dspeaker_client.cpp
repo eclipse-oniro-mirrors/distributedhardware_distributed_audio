@@ -21,10 +21,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-namespace {
-constexpr int32_t SPK_INTERVAL_US = 20000;
-constexpr int32_t SPK_BUFF_LEN = 5;
-}
 DSpeakerClient::~DSpeakerClient()
 {
     DHLOGI("%s: ~DSpeakerClient. Release speaker client.", LOG_TAG);
@@ -168,32 +164,19 @@ int32_t DSpeakerClient::StopRender()
 void DSpeakerClient::PlayThreadRunning()
 {
     DHLOGI("%s:Start the renderer thread.", LOG_TAG);
-    size_t bufferLen = NUMBER_ZERO;
-    if (audioRenderer_->GetBufferSize(bufferLen) != DH_SUCCESS) {
-        DHLOGE("%s: Failed to get minimum buffer.", LOG_TAG);
-        return;
-    }
-    DHLOGI("%s: Obtains the minimum buffer length, bufferlen: %d.", LOG_TAG, bufferLen);
-    bool needStartWait = true;
     while (isRenderReady_.load()) {
-        int64_t loopInTime = GetCurrentTime();
-        if (needStartWait &&
-            std::static_pointer_cast<AudioDecodeTransport>(speakerTrans_)->GetAudioBuffLen() <= SPK_BUFF_LEN) {
-            DHLOGD("Spk buff not enough, wait");
-            usleep(SPK_INTERVAL_US);
-            continue;
-        }
-        needStartWait = false;
-        std::shared_ptr<AudioData> audioData = nullptr;
-        int32_t reqDataRet = speakerTrans_->RequestAudioData(audioData);
-        int32_t writeLen = 0;
-        int32_t writeOffSet = 0;
-        if (reqDataRet != DH_SUCCESS && audioData == nullptr) {
-            DHLOGD("%s: Failed to send data, ret: %d", LOG_TAG, reqDataRet);
-            usleep(REQUEST_DATA_WAIT);
+        std::unique_lock<std::mutex> spkLck(dataQueueMtx_);
+        dataQueueCond_.wait_for(spkLck, std::chrono::milliseconds(REQUEST_DATA_WAIT),
+            [this]() { return !dataQueue_.empty(); });
+        if (dataQueue_.empty()) {
             continue;
         }
 
+        std::shared_ptr<AudioData> audioData = nullptr;
+        audioData = dataQueue_.front();
+        dataQueue_.pop();
+        int32_t writeLen = 0;
+        int32_t writeOffSet = 0;
         while (writeOffSet < static_cast<int32_t>(audioData->Capacity())) {
             writeLen = audioRenderer_->Write(audioData->Data() + writeOffSet,
                 static_cast<int32_t>(audioData->Capacity()) - writeOffSet);
@@ -204,16 +187,21 @@ void DSpeakerClient::PlayThreadRunning()
             }
             writeOffSet += writeLen;
         }
-
-        int64_t startSleepTime = GetCurrentTime();
-        int32_t sleepTime = SPK_INTERVAL_US - ((startSleepTime - loopInTime)) * 1000;
-        if (sleepTime > 0) {
-            usleep(sleepTime);
-        }
-        int64_t stopSleepTime = GetCurrentTime();
-        DHLOGD("%s: beam cost: %d, spk sleep time: %d ms, sleep arg: %d us", LOG_TAG, (startSleepTime - loopInTime),
-            (stopSleepTime - startSleepTime), sleepTime);
     }
+}
+
+int32_t DSpeakerClient::WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData)
+{
+    DHLOGI("%s: Write stream buffer.", LOG_TAG);
+    std::lock_guard<std::mutex> lock(dataQueueMtx_);
+    while (dataQueue_.size() > DATA_QUEUE_MAX_SIZE) {
+        DHLOGE("%s: Data queue overflow.", LOG_TAG);
+        dataQueue_.pop();
+    }
+    dataQueue_.push(audioData);
+    dataQueueCond_.notify_all();
+    DHLOGI("%s: Push new spk data, buf len: %d.", LOG_TAG, dataQueue_.size());
+    return DH_SUCCESS;
 }
 
 int32_t DSpeakerClient::OnStateChange(int32_t type)

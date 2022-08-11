@@ -32,7 +32,6 @@ public:
     virtual int32_t Stop() = 0;
     virtual int32_t Release() = 0;
     virtual int32_t FeedAudioData(std::shared_ptr<AudioData> &audioData) = 0;
-    virtual int32_t RequestAudioData(std::shared_ptr<AudioData> &audioData) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

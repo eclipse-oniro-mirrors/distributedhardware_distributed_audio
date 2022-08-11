@@ -132,10 +132,7 @@ int32_t AudioEncodeTransport::FeedAudioData(std::shared_ptr<AudioData> &audioDat
     }
     return DH_SUCCESS;
 }
-int32_t AudioEncodeTransport::RequestAudioData(std::shared_ptr<AudioData> &audioData)
-{
-    return DH_SUCCESS;
-}
+
 int32_t AudioEncodeTransport::InitAudioEncodeTrans(const AudioParam &localParam,
     const AudioParam &remoteParam, const std::string &role)
 {

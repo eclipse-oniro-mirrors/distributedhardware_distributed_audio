@@ -16,6 +16,7 @@
 #ifndef IAUDIO_DATATRANS_CALLBACK_H
 #define IAUDIO_DATATRANS_CALLBACK_H
 
+#include "audio_data.h"
 #include "audio_param.h"
 
 namespace OHOS {
@@ -25,6 +26,7 @@ public:
     IAudioDataTransCallback() = default;
     virtual ~IAudioDataTransCallback() = default;
     virtual int32_t OnStateChange(int32_t type) = 0;
+    virtual int32_t WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

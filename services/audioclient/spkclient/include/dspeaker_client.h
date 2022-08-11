@@ -59,6 +59,7 @@ public:
 
     int32_t OnStateChange(int32_t type) override;
     void OnStateChange(const AudioStandard::RendererState state) override;
+    int32_t WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData) override;
     void OnVolumeKeyEvent(AudioStandard::VolumeEvent event) override;
     void OnInterrupt(const AudioStandard::InterruptEvent &interruptEvent) override;
     int32_t SetUp(const AudioParam &param);
@@ -79,13 +80,17 @@ private:
     constexpr static  size_t NUMBER_ONE = 1;
     constexpr static  size_t NUMBER_TWO = 2;
     constexpr static  size_t NUMBER_THREE = 3;
+    constexpr static  size_t DATA_QUEUE_MAX_SIZE = 5;
     constexpr static  size_t REQUEST_DATA_WAIT = 10000;
 
     std::string devId_;
     std::thread renderDataThread_;
     AudioParam audioParam_;
     std::atomic<bool> isRenderReady_ = false;
+    std::mutex dataQueueMtx_;
     std::mutex devMtx_;
+    std::queue<std::shared_ptr<AudioData>> dataQueue_;
+    std::condition_variable dataQueueCond_;
     AudioClientStatus clientStatus_ = CLIENT_STATUS_IDLE;
 
     std::unique_ptr<AudioStandard::AudioRenderer> audioRenderer_ = nullptr;

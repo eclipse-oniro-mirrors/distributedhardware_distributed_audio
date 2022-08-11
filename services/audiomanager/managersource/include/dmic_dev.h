@@ -16,6 +16,7 @@
 #ifndef OHOS_DMIC_DEV_H
 #define OHOS_DMIC_DEV_H
 
+#include <queue>
 #include <set>
 #include "nlohmann/json.hpp"
 
@@ -60,12 +61,17 @@ public:
     std::shared_ptr<AudioParam> GetAudioParam();
     int32_t NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event);
     int32_t OnStateChange(int32_t type) override;
+    int32_t WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData) override;
 
 private:
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
+    static constexpr size_t DATA_QUEUE_MAX_SIZE = 5;
+    static constexpr size_t FRAME_SIZE = 4096;
     static const constexpr char *LOG_TAG = "DMicDev";
     std::string devId_;
     std::set<int32_t> enabledPorts_;
+    std::mutex dataQueueMtx_;
+    std::queue<std::shared_ptr<AudioData>> dataQueue_;
     int32_t curPort_ = 0;
 
     std::weak_ptr<IAudioEventCallback> audioEventCallback_;

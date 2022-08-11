@@ -49,7 +49,6 @@ public:
     int32_t Stop() override;
     int32_t Release() override;
     int32_t FeedAudioData(std::shared_ptr<AudioData> &audioData) override;
-    int32_t RequestAudioData(std::shared_ptr<AudioData> &audioData) override;
 
     void OnSessionOpened() override;
     void OnSessionClosed() override;
@@ -59,7 +58,6 @@ public:
     void OnAudioDataDone(const std::shared_ptr<AudioData> &outputData) override;
     void OnStateNotify(const AudioEvent &event) override;
 
-    int32_t GetAudioBuffLen();
 private:
     int32_t InitAudioDecodeTransport(const AudioParam &localParam, const AudioParam &remoteParam,
         const std::string &role);
