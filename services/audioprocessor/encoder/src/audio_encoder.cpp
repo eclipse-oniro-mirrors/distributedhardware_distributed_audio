@@ -177,6 +177,7 @@ int32_t AudioEncoder::StopAudioCodec()
 {
     DHLOGI("%s: Stop audio codec.", LOG_TAG);
     isEncoderRunning_.store(false);
+    encodeCond_.notify_all();
     StopInputThread();
 
     if (audioEncoder_ == nullptr) {
@@ -210,7 +211,6 @@ int32_t AudioEncoder::StopAudioCodec()
 
 void AudioEncoder::StopInputThread()
 {
-    DHLOGI("%s: Stop input thread.", LOG_TAG);
     if (encodeThread_.joinable()) {
         encodeThread_.join();
     }
@@ -223,7 +223,7 @@ void AudioEncoder::StopInputThread()
 
 int32_t AudioEncoder::FeedAudioData(const std::shared_ptr<AudioData> &inputData)
 {
-    DHLOGI("%s: Feed audio data.", LOG_TAG);
+    DHLOGD("%s: Feed audio data.", LOG_TAG);
     if (!isEncoderRunning_.load()) {
         DHLOGE("%s: Encoder is stopped.", LOG_TAG);
         return ERR_DH_AUDIO_CODEC_INPUT;
@@ -253,7 +253,9 @@ void AudioEncoder::InputEncodeAudioData()
         {
             std::unique_lock<std::mutex> lock(mtxData_);
             encodeCond_.wait_for(lock, std::chrono::milliseconds(ENCODE_WAIT_MILLISECONDS),
-                [this]() { return (!inputBufQueue_.empty() && !bufIndexQueue_.empty()); });
+                [this]() {
+                    return (!inputBufQueue_.empty() && !bufIndexQueue_.empty()) || !isEncoderRunning_.load();
+                });
 
             if (inputBufQueue_.empty() || bufIndexQueue_.empty()) {
                 continue;
@@ -302,7 +304,7 @@ int32_t AudioEncoder::ProcessData(const std::shared_ptr<AudioData> &audioData, c
 
     inputTimeStampUs_ = GetEncoderTimeStamp();
     Media::AVCodecBufferInfo bufferInfo = {inputTimeStampUs_, static_cast<int32_t>(audioData->Size()), 0};
-    DHLOGI("%s: AVCodec info, input time stamp %lld.", LOG_TAG, (long long)bufferInfo.presentationTimeUs);
+    DHLOGD("%s: AVCodec info, input time stamp %lld.", LOG_TAG, (long long)bufferInfo.presentationTimeUs);
 
     int32_t ret = audioEncoder_->QueueInputBuffer(bufferIndex, bufferInfo, Media::AVCODEC_BUFFER_FLAG_NONE);
     if (ret != Media::MSERR_OK) {
@@ -331,7 +333,7 @@ void AudioEncoder::IncreaseWaitEncodeCnt()
 {
     std::lock_guard<std::mutex> lck(mtxCnt_);
     waitOutputCount_++;
-    DHLOGI("Wait encoder output frames number is %d.", waitOutputCount_);
+    DHLOGD("Wait encoder output frames number is %d.", waitOutputCount_);
 }
 
 void AudioEncoder::ReduceWaitEncodeCnt()
@@ -341,7 +343,7 @@ void AudioEncoder::ReduceWaitEncodeCnt()
         DHLOGE("%s: Wait encoder output count %d.", LOG_TAG, waitOutputCount_);
     }
     waitOutputCount_--;
-    DHLOGI("%s: Wait encoder output frames number is %d.", LOG_TAG, waitOutputCount_);
+    DHLOGD("%s: Wait encoder output frames number is %d.", LOG_TAG, waitOutputCount_);
 }
 
 void AudioEncoder::OnInputBufferAvailable(uint32_t index)
@@ -385,7 +387,7 @@ void AudioEncoder::OnOutputBufferAvailable(uint32_t index, Media::AVCodecBufferI
     }
     outBuf->SetInt64("timeUs", info.presentationTimeUs);
     outputTimeStampUs_ = info.presentationTimeUs;
-    DHLOGI("%s: AVCodec info, output time stamp %lld.", LOG_TAG, (long long)info.presentationTimeUs);
+    DHLOGD("%s: AVCodec info, output time stamp %lld.", LOG_TAG, (long long)info.presentationTimeUs);
 
     ReduceWaitEncodeCnt();
     err = EncodeDone(outBuf);
@@ -411,7 +413,7 @@ void AudioEncoder::OnOutputFormatChanged(const Media::Format &format)
 
 void AudioEncoder::OnError(const AudioEvent &event)
 {
-    DHLOGI("%s: Encoder error.", LOG_TAG);
+    DHLOGE("%s: Encoder error.", LOG_TAG);
     std::shared_ptr<IAudioCodecCallback> targetCodecCallback = codecCallback_.lock();
     if (targetCodecCallback == nullptr) {
         DHLOGE("%s: Codec callback is null.", LOG_TAG);
@@ -423,7 +425,7 @@ void AudioEncoder::OnError(const AudioEvent &event)
 
 int32_t AudioEncoder::EncodeDone(const std::shared_ptr<AudioData> &outputData)
 {
-    DHLOGI("%s: Encode done.", LOG_TAG);
+    DHLOGD("%s: Encode done.", LOG_TAG);
     if (outputData == nullptr) {
         DHLOGE("%s: Output data is null.", LOG_TAG);
         return ERR_DH_AUDIO_BAD_VALUE;

@@ -175,6 +175,7 @@ int32_t AudioDecoder::StopAudioCodec()
 {
     DHLOGI("%s: Stop audio codec.", LOG_TAG);
     isDecoderRunning_.store(false);
+    decodeCond_.notify_all();
     StopInputThread();
 
     if (audioDecoder_ == nullptr) {
@@ -209,7 +210,6 @@ int32_t AudioDecoder::StopAudioCodec()
 
 void AudioDecoder::StopInputThread()
 {
-    DHLOGI("%s: Stop input thread.", LOG_TAG);
     if (decodeThread_.joinable()) {
         decodeThread_.join();
     }
@@ -217,11 +217,12 @@ void AudioDecoder::StopInputThread()
     std::lock_guard<std::mutex> dataLock(mtxData_);
     std::queue<uint32_t>().swap(bufIndexQueue_);
     std::queue<std::shared_ptr<AudioData>>().swap(inputBufQueue_);
+    DHLOGI("%s: Stop input thread success.", LOG_TAG);
 }
 
 int32_t AudioDecoder::FeedAudioData(const std::shared_ptr<AudioData> &inputData)
 {
-    DHLOGI("%s: Feed audio data.", LOG_TAG);
+    DHLOGD("%s: Feed audio data.", LOG_TAG);
     if (!isDecoderRunning_.load()) {
         DHLOGE("%s: Decoder is stopped.", LOG_TAG);
         return ERR_DH_AUDIO_CODEC_INPUT;
@@ -251,7 +252,9 @@ void AudioDecoder::InputDecodeAudioData()
         {
             std::unique_lock<std::mutex> lock(mtxData_);
             decodeCond_.wait_for(lock, std::chrono::milliseconds(DECODE_WAIT_MILLISECONDS),
-                [this]() { return (!inputBufQueue_.empty() && !bufIndexQueue_.empty()); });
+                [this]() {
+                    return (!inputBufQueue_.empty() && !bufIndexQueue_.empty()) || !isDecoderRunning_.load();
+                });
 
             if (inputBufQueue_.empty() || bufIndexQueue_.empty()) {
                 continue;
@@ -300,7 +303,7 @@ int32_t AudioDecoder::ProcessData(const std::shared_ptr<AudioData> &audioData, c
 
     inputTimeStampUs_ = GetDecoderTimeStamp();
     Media::AVCodecBufferInfo bufferInfo = {inputTimeStampUs_, static_cast<int32_t>(audioData->Size()), 0};
-    DHLOGI("%s: QueueInputBuffer. AVCodecBufferInfo presentationTimeUs %lld.", LOG_TAG,
+    DHLOGD("%s: QueueInputBuffer. AVCodecBufferInfo presentationTimeUs %lld.", LOG_TAG,
         (long long)bufferInfo.presentationTimeUs);
 
     auto bufferFlag = Media::AVCODEC_BUFFER_FLAG_NONE;
@@ -335,7 +338,7 @@ void AudioDecoder::IncreaseWaitDecodeCnt()
 {
     std::lock_guard<std::mutex> countLock(mtxCnt_);
     waitOutputCount_++;
-    DHLOGI("%s: Wait decoder output frames number is %d.", LOG_TAG, waitOutputCount_);
+    DHLOGD("%s: Wait decoder output frames number is %d.", LOG_TAG, waitOutputCount_);
 }
 
 void AudioDecoder::ReduceWaitDecodeCnt()
@@ -345,7 +348,7 @@ void AudioDecoder::ReduceWaitDecodeCnt()
         DHLOGE("%s: Wait decoder output count %d.", LOG_TAG, waitOutputCount_);
     }
     waitOutputCount_--;
-    DHLOGI("%s: Wait decoder output frames number is %d.", LOG_TAG, waitOutputCount_);
+    DHLOGD("%s: Wait decoder output frames number is %d.", LOG_TAG, waitOutputCount_);
 }
 
 void AudioDecoder::OnInputBufferAvailable(uint32_t index)
@@ -389,7 +392,7 @@ void AudioDecoder::OnOutputBufferAvailable(uint32_t index, Media::AVCodecBufferI
     }
     outBuf->SetInt64("timeUs", info.presentationTimeUs);
     outputTimeStampUs_ = info.presentationTimeUs;
-    DHLOGI("%s: AVCodec info, output time stamp %lld.", LOG_TAG, (long long)info.presentationTimeUs);
+    DHLOGD("%s: AVCodec info, output time stamp %lld.", LOG_TAG, (long long)info.presentationTimeUs);
 
     ReduceWaitDecodeCnt();
     err = DecodeDone(outBuf);
@@ -415,7 +418,7 @@ void AudioDecoder::OnOutputFormatChanged(const Media::Format &format)
 
 void AudioDecoder::OnError(const AudioEvent &event)
 {
-    DHLOGI("%s: Decoder error.", LOG_TAG);
+    DHLOGE("%s: Decoder error.", LOG_TAG);
     std::shared_ptr<IAudioCodecCallback> targetCodecCallback = codecCallback_.lock();
     if (targetCodecCallback == nullptr) {
         DHLOGE("%s: Codec callback is null.", LOG_TAG);
@@ -427,7 +430,7 @@ void AudioDecoder::OnError(const AudioEvent &event)
 
 int32_t AudioDecoder::DecodeDone(const std::shared_ptr<AudioData> &outputData)
 {
-    DHLOGI("%s: Decode done.", LOG_TAG);
+    DHLOGD("%s: Decode done.", LOG_TAG);
     if (outputData == nullptr) {
         DHLOGE("%s: Output data is null.", LOG_TAG);
         return ERR_DH_AUDIO_BAD_VALUE;

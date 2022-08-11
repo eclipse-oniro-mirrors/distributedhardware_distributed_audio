@@ -34,7 +34,7 @@ void AudioEncoderCallback::OnError(Media::AVCodecErrorType errorType, int32_t er
 
 void AudioEncoderCallback::OnInputBufferAvailable(uint32_t index)
 {
-    DHLOGI("%s: OnInputBufferAvailable. index %u.", LOG_TAG, index);
+    DHLOGD("%s: OnInputBufferAvailable. index %u.", LOG_TAG, index);
     std::shared_ptr<AudioEncoder> targetEncoderNode = audioEncoder_.lock();
     if (targetEncoderNode == nullptr) {
         DHLOGE("%s: audioEncoder is nullptr.", LOG_TAG);
@@ -57,7 +57,7 @@ void AudioEncoderCallback::OnOutputFormatChanged(const Media::Format &format)
 void AudioEncoderCallback::OnOutputBufferAvailable(uint32_t index, Media::AVCodecBufferInfo info,
     Media::AVCodecBufferFlag flag)
 {
-    DHLOGI("%s: OnOutputBufferAvailable. index %u.", LOG_TAG, index);
+    DHLOGD("%s: OnOutputBufferAvailable. index %u.", LOG_TAG, index);
     std::shared_ptr<AudioEncoder> targetEncoderNode = audioEncoder_.lock();
     if (targetEncoderNode == nullptr) {
         DHLOGE("%s: audioEncoder is nullptr.", LOG_TAG);

@@ -124,7 +124,7 @@ int32_t AudioEncoderProcessor::StopAudioProcessor()
 
 int32_t AudioEncoderProcessor::FeedAudioProcessor(const std::shared_ptr<AudioData> &inputData)
 {
-    DHLOGI("%s: Feed audio processor.", LOG_TAG);
+    DHLOGD("%s: Feed audio processor.", LOG_TAG);
     if (inputData == nullptr) {
         DHLOGE("%s: Input data is null.", LOG_TAG);
         return ERR_DH_AUDIO_BAD_VALUE;
@@ -149,7 +149,7 @@ void AudioEncoderProcessor::OnCodecDataDone(const std::shared_ptr<AudioData> &ou
         DHLOGE("%s: Output data is null.", LOG_TAG);
         return;
     }
-    DHLOGI("%s: Codec done. Output data size %zu.", LOG_TAG, outputData->Size());
+    DHLOGD("%s: Codec done. Output data size %zu.", LOG_TAG, outputData->Size());
 
     std::shared_ptr<IAudioProcessorCallback> targetProcCallback_ = procCallback_.lock();
     if (targetProcCallback_ == nullptr) {

@@ -92,7 +92,7 @@ int32_t AudioEncodeTransport::Stop()
 
 int32_t AudioEncodeTransport::Release()
 {
-    DHLOGI("%s: Stop.", LOG_TAG);
+    DHLOGI("%s: Release.", LOG_TAG);
     bool releaseStatus = true;
     int32_t ret;
     if (processor_ != nullptr) {
