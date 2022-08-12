@@ -1,46 +1,47 @@
 import("//build/ohos.gni")
 import("//drivers/hdf_core/adapter/uhdf2/uhdf.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("daudio_client") {
-    include_dirs = [ "//drivers//peripheral/audio/interfaces/include/" ]
+  include_dirs = [ "//drivers//peripheral/audio/interfaces/include/" ]
 
-    include_dirs += [
-        "./include",
-        "${hdf_service_path}/hdi_service/common/include/",
-        "${hdf_service_path}/hdi_service/common/log/include/",
-    ]
+  include_dirs += [
+    "./include",
+    "${hdf_service_path}/hdi_service/common/include/",
+    "${hdf_service_path}/hdi_service/common/log/include/",
+  ]
 
-    sources = [
-        "./src/daudio_adapter_internal.cpp",
-        "./src/daudio_capture_internal.cpp",
-        "./src/daudio_param_callback_internal.cpp",
-        "./src/daudio_render_callback_internal.cpp",
-        "./src/daudio_render_internal.cpp",
-        "./src/distributed_audio_client.cpp",
-    ]
+  sources = [
+    "./src/daudio_adapter_internal.cpp",
+    "./src/daudio_capture_internal.cpp",
+    "./src/daudio_param_callback_internal.cpp",
+    "./src/daudio_render_callback_internal.cpp",
+    "./src/daudio_render_internal.cpp",
+    "./src/distributed_audio_client.cpp",
+  ]
 
-    public_deps = [
-        "${hdf_interfaces_path}/audio/v1_0:libdaudio_proxy_1.0",
-        "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils"
-    ]
+  public_deps = [
+    "${hdf_interfaces_path}/audio/v1_0:libdaudio_proxy_1.0",
+    "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils",
+  ]
 
-    external_deps = [
-        "hdf_core:libhdf_utils",
-        "hiviewdfx_hilog_native:libhilog",
-        "ipc:ipc_single",
-        "utils_base:utils",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hdf_core:libhdf_utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_single",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudioHDF\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudioHDF\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    install_images = [ chipset_base_dir ]
+  install_images = [ chipset_base_dir ]
 
-    subsystem_name = "hdf"
+  subsystem_name = "hdf"
 
-    part_name = "drivers_peripheral_distributed_audio"
+  part_name = "drivers_peripheral_distributed_audio"
 }

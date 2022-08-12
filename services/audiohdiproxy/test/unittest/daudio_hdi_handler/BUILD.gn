@@ -14,55 +14,51 @@
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 module_out_path = "distributed_audio/services/audiohdiproxy/daudio_hdi_handler"
 
 config("module_private_config") {
-    visibility = [ ":*" ]
+  visibility = [ ":*" ]
 
-    include_dirs = [
-        "${fwk_common_path}/utils/include",
-    ]
+  include_dirs = [ "${fwk_common_path}/utils/include" ]
 
-    include_dirs += [
-        "include",
-        "${common_path}/include",
-        "${services_path}/common/audiodata/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${services_path}/audiohdiproxy/include",
-    ]
+  include_dirs += [
+    "include",
+    "${common_path}/include",
+    "${services_path}/common/audiodata/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
+    "${services_path}/audiohdiproxy/include",
+  ]
 }
 
 ## UnitTest audiohdiproxy_test
 ohos_unittest("DAudioHdiHandlerTest") {
-    module_out_path = module_out_path
+  module_out_path = module_out_path
 
-    sources = [
-        "src/daudio_hdi_handler_test.cpp"
-    ]
+  sources = [ "src/daudio_hdi_handler_test.cpp" ]
 
-    configs = [ ":module_private_config" ]
+  configs = [ ":module_private_config" ]
 
-    deps = [
-        "//third_party/googletest:gmock",
-        "//third_party/googletest:gtest_main",
-        "//utils/native/base:utils",
-        "${audio_hdi_proxy_path}:distributed_audio_hdi_proxy",
-        "${common_path}:distributed_audio_utils",
-        "${services_path}/common:distributed_audio_service_common",
-        "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
-    ]
+  deps = [
+    "${audio_hdi_proxy_path}:distributed_audio_hdi_proxy",
+    "${common_path}:distributed_audio_utils",
+    "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
+    "${services_path}/common:distributed_audio_service_common",
+    "//third_party/googletest:gmock",
+    "//third_party/googletest:gtest_main",
+  ]
 
-    external_deps = [
-        "hiviewdfx_hilog_native:libhilog",
-        "ipc:ipc_single",
-        "utils_base:utils",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_single",
+  ]
 }
 
 group("daudio_hdi_handler_test") {
-    testonly = true
-    deps = [":DAudioHdiHandlerTest"]
+  testonly = true
+  deps = [ ":DAudioHdiHandlerTest" ]
 }

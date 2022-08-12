@@ -13,44 +13,40 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_service_common") {
-    include_dirs = [
-        "//third_party/json/include",
-    ]
+  include_dirs = [ "//third_party/json/include" ]
 
-    include_dirs += [
-        "audiodata/include",
-        "audioparam",
-        "taskProcessor/include",
-        "${common_path}/include",
-    ]
+  include_dirs += [
+    "audiodata/include",
+    "audioparam",
+    "taskProcessor/include",
+    "${common_path}/include",
+  ]
 
-    sources = [
-        "audiodata/src/audio_data.cpp",
-        "taskProcessor/src/task_impl.cpp",
-        "taskProcessor/src/task_queue.cpp",
-    ]
+  sources = [
+    "audiodata/src/audio_data.cpp",
+    "taskProcessor/src/task_impl.cpp",
+    "taskProcessor/src/task_queue.cpp",
+  ]
 
-    deps = [
-        "//utils/native/base:utils",
-        "${common_path}:distributed_audio_utils",
-    ]
+  deps = [ "${common_path}:distributed_audio_utils" ]
 
-    external_deps = [
-        "ipc:ipc_single",
-        "utils_base:utils",
-        "hiviewdfx_hilog_native:libhilog",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_single",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudio_services_common\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudio_services_common\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    subsystem_name = "distributedhardware"
+  subsystem_name = "distributedhardware"
 
-    part_name = "distributed_audio"
+  part_name = "distributed_audio"
 }

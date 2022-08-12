@@ -13,48 +13,47 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_ctrl_channel") {
-    include_dirs = [
-        "//third_party/json/include",
-        "//foundation/communication/dsoftbus/interfaces/kits/transport",
-        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
-        "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
-        "${fwk_common_path}/utils/include",
-    ]
+  include_dirs = [
+    "//third_party/json/include",
+    "//foundation/communication/dsoftbus/interfaces/kits/transport",
+    "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+    "${fwk_common_path}/utils/include",
+  ]
 
-    include_dirs += [
-        "include",
-        "${common_path}/include",
-        "${common_path}/dfx_utils/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${audio_transport_path}/audio_channel/include",
-        "${softbusadapter_path}/include",
-    ]
+  include_dirs += [
+    "include",
+    "${common_path}/include",
+    "${common_path}/dfx_utils/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
+    "${audio_transport_path}/audio_channel/include",
+    "${softbusadapter_path}/include",
+  ]
 
-    sources = [
-        "src/audio_ctrl_channel.cpp",
-    ]
+  sources = [ "src/audio_ctrl_channel.cpp" ]
 
-    deps = [
-        "//utils/native/base:utils",
-        "${common_path}:distributed_audio_utils",
-        "${softbusadapter_path}:distributed_audio_softbus_adapter",
-    ]
+  deps = [
+    "${common_path}:distributed_audio_utils",
+    "${softbusadapter_path}:distributed_audio_softbus_adapter",
+  ]
 
-    external_deps = [
-        "hitrace_native:hitrace_meter",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hitrace_native:hitrace_meter",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudio_audioctrlchannel\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudio_audioctrlchannel\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    subsystem_name = "distributedhardware"
+  subsystem_name = "distributedhardware"
 
-    part_name = "distributed_audio"
+  part_name = "distributed_audio"
 }

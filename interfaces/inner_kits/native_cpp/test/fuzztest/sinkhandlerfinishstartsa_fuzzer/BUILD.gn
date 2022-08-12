@@ -14,21 +14,24 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("AudioSinkHandlerFinishStartSAFuzzTest") {
   module_out_path = "distributed_audio/sinkhandlerfinishstartsa"
-  fuzz_config_file =
-      "${innerkits_path}/native_cpp/test/fuzztest/sinkhandlerfinishstartsa_fuzzer"
+  fuzz_config_file = "${innerkits_path}/native_cpp/test/fuzztest/sinkhandlerfinishstartsa_fuzzer"
 
-  cflags = ["-g","-O0","-Wno-unused-variable","-fno-omit-frame-pointer"]
-  sources = [
-    "sinkhandlerfinishstartsa_fuzzer.cpp",
+  cflags = [
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
   ]
+  sources = [ "sinkhandlerfinishstartsa_fuzzer.cpp" ]
 
   include_dirs = [
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "${fwk_utils_path}/include/log",
     "${fwk_utils_path}/include",
@@ -45,7 +48,6 @@ ohos_fuzztest("AudioSinkHandlerFinishStartSAFuzzTest") {
   deps = [
     "${fwk_utils_path}:distributedhardwareutils",
     "${innerkits_path}/native_cpp/audio_sink:distributed_audio_sink_sdk",
-    "//utils/native/base:utils",
   ]
 
   defines = [
@@ -55,6 +57,7 @@ ohos_fuzztest("AudioSinkHandlerFinishStartSAFuzzTest") {
   ]
 
   external_deps = [
+    "c_utils:utils",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -62,6 +65,7 @@ ohos_fuzztest("AudioSinkHandlerFinishStartSAFuzzTest") {
     "samgr:samgr_proxy",
   ]
 }
+
 ###############################################################################
 group("fuzztest") {
   testonly = true

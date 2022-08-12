@@ -13,12 +13,13 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 group("daudio_hdi_proxy_test") {
-    testonly = true
-    deps = [
-        "${audio_hdi_proxy_path}/test/unittest/daudio_hdi_handler:daudio_hdi_handler_test",
-        "${audio_hdi_proxy_path}/test/unittest/daudio_manager_callback:daudio_manager_callback_test",
-    ]
+  testonly = true
+  deps = [
+    "${audio_hdi_proxy_path}/test/unittest/daudio_hdi_handler:daudio_hdi_handler_test",
+    "${audio_hdi_proxy_path}/test/unittest/daudio_manager_callback:daudio_manager_callback_test",
+  ]
 }

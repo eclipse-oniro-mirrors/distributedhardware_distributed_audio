@@ -13,12 +13,13 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 group("daudio_control_test") {
-    testonly = true
-    deps = [
-        "${audio_control_path}/test/unittest/controlsource:control_source_test",
-        "${audio_control_path}/test/unittest/controlsink:control_sink_test",
-    ]
+  testonly = true
+  deps = [
+    "${audio_control_path}/test/unittest/controlsink:control_sink_test",
+    "${audio_control_path}/test/unittest/controlsource:control_source_test",
+  ]
 }

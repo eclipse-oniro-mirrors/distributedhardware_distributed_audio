@@ -12,57 +12,59 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_out_path = "distributed_audio/services/audiotransport/audio_ctrl_transport_test"
+module_out_path =
+    "distributed_audio/services/audiotransport/audio_ctrl_transport_test"
 
 config("module_private_config") {
-    visibility = [ ":*" ]
+  visibility = [ ":*" ]
 
-    include_dirs = [
-        "//third_party/json/include",
-        "//foundation/graphic/standard/interfaces/innerkits/surface",
-        "${fwk_common_path}/utils/include",
-        "${fwk_utils_path}/include/",
-    ]
+  include_dirs = [
+    "//third_party/json/include",
+    "//foundation/graphic/standard/interfaces/innerkits/surface",
+    "${fwk_common_path}/utils/include",
+    "${fwk_utils_path}/include/",
+  ]
 
-    include_dirs += [
-        "include",
-        "${common_path}/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${services_path}/softbusadapter/include",
-        "${audio_transport_path}/audio_channel/include",
-        "${audio_transport_path}/audioctrlchannel/include",
-        "${audio_transport_path}/audioctrltransport/include",
-        "${audio_transport_path}/audioctrltransport/interface",
-        "${audio_transport_path}/test/unittest/audiotranstestutils/include",
-    ]
+  include_dirs += [
+    "include",
+    "${common_path}/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
+    "${services_path}/softbusadapter/include",
+    "${audio_transport_path}/audio_channel/include",
+    "${audio_transport_path}/audioctrlchannel/include",
+    "${audio_transport_path}/audioctrltransport/include",
+    "${audio_transport_path}/audioctrltransport/interface",
+    "${audio_transport_path}/test/unittest/audiotranstestutils/include",
+  ]
 }
 
 ## UnitTest audio_ctrl_transport_test
 ohos_unittest("AudioCtrlTransportTest") {
-    module_out_path = module_out_path
+  module_out_path = module_out_path
 
-    sources = [ "src/audio_ctrl_transport_test.cpp" ]
+  sources = [ "src/audio_ctrl_transport_test.cpp" ]
 
-    configs = [ ":module_private_config" ]
+  configs = [ ":module_private_config" ]
 
-    deps = [
-        "//third_party/googletest:gmock",
-        "//third_party/googletest:gtest_main",
-        "${audio_transport_path}/audioctrlchannel:distributed_audio_ctrl_channel",
-        "${audio_transport_path}/audioctrltransport:distributed_audio_ctrl_transport",
-    ]
+  deps = [
+    "${audio_transport_path}/audioctrlchannel:distributed_audio_ctrl_channel",
+    "${audio_transport_path}/audioctrltransport:distributed_audio_ctrl_transport",
+    "//third_party/googletest:gmock",
+    "//third_party/googletest:gtest_main",
+  ]
 
-    external_deps = [
-        "dsoftbus:softbus_client",
-        "hiviewdfx_hilog_native:libhilog",
-        "multimedia_player_framework:media_client",
-    ]
+  external_deps = [
+    "dsoftbus:softbus_client",
+    "hiviewdfx_hilog_native:libhilog",
+    "multimedia_player_framework:media_client",
+  ]
 }
 
 group("audio_ctrl_transport_test") {
-    testonly = true
-    deps = [ ":AudioCtrlTransportTest" ]
+  testonly = true
+  deps = [ ":AudioCtrlTransportTest" ]
 }

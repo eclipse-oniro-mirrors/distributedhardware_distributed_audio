@@ -13,68 +13,69 @@
 
 import("//build/ohos.gni")
 import("//drivers/hdf_core/adapter/uhdf2/uhdf.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("libdaudio_manager_daudio_ext_service_1.0") {
-    include_dirs = [
-        "${hdf_ser_aud_ext_path}/include",
-        "${hdf_ser_aud_path}/include",
-        "${hdf_service_path}/hdi_service/common/include",
-        "${hdf_service_path}/hdi_service/common/log/include",
-        "${hdf_service_path}/hdi_service/common/utils/include",
-    ]
+  include_dirs = [
+    "${hdf_ser_aud_ext_path}/include",
+    "${hdf_ser_aud_path}/include",
+    "${hdf_service_path}/hdi_service/common/include",
+    "${hdf_service_path}/hdi_service/common/log/include",
+    "${hdf_service_path}/hdi_service/common/utils/include",
+  ]
 
-    sources = [ "./src/daudio_manager_interface_impl.cpp" ]
+  sources = [ "./src/daudio_manager_interface_impl.cpp" ]
 
-    public_deps = [
-        "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils",
-        "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_stub_1.0",
-        "${hdf_ser_aud_path}:libaudio_manager_daudio_primary_service_1.0",
-    ]
+  public_deps = [
+    "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_stub_1.0",
+    "${hdf_ser_aud_path}:libaudio_manager_daudio_primary_service_1.0",
+    "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils",
+  ]
 
-    external_deps = [
-        "hdf_core:libhdf_host",
-        "hdf_core:libhdf_utils",
-        "hiviewdfx_hilog_native:libhilog",
-        "ipc:ipc_single",
-        "utils_base:utils",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hdf_core:libhdf_host",
+    "hdf_core:libhdf_utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_single",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudioHDF\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudioHDF\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    install_images = [ chipset_base_dir ]
-    subsystem_name = "hdf"
-    part_name = "drivers_peripheral_distributed_audio"
+  install_images = [ chipset_base_dir ]
+  subsystem_name = "hdf"
+  part_name = "drivers_peripheral_distributed_audio"
 }
 
 ohos_shared_library("libdaudio_ext_driver") {
-    include_dirs = [ "${hdf_ser_aud_ext_path}/include" ]
+  include_dirs = [ "${hdf_ser_aud_ext_path}/include" ]
 
-    sources = [ "./src/daudio_manager_driver.cpp" ]
+  sources = [ "./src/daudio_manager_driver.cpp" ]
 
-    deps = [ "${hdf_ser_aud_ext_path}:libdaudio_manager_daudio_ext_service_1.0" ]
+  deps = [ "${hdf_ser_aud_ext_path}:libdaudio_manager_daudio_ext_service_1.0" ]
 
-    external_deps = [
-        "hdf_core:libhdf_host",
-        "hdf_core:libhdf_ipc_adapter",
-        "hdf_core:libhdf_utils",
-        "hiviewdfx_hilog_native:libhilog",
-        "ipc:ipc_single",
-        "utils_base:utils",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hdf_core:libhdf_host",
+    "hdf_core:libhdf_ipc_adapter",
+    "hdf_core:libhdf_utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_single",
+  ]
 
-    install_images = [ chipset_base_dir ]
-    subsystem_name = "hdf"
-    part_name = "drivers_peripheral_distributed_audio"
+  install_images = [ chipset_base_dir ]
+  subsystem_name = "hdf"
+  part_name = "drivers_peripheral_distributed_audio"
 }
 
 group("hdf_daudio_ext_service") {
-    deps = [
-        ":libdaudio_ext_driver",
-        ":libdaudio_manager_daudio_ext_service_1.0",
-    ]
+  deps = [
+    ":libdaudio_ext_driver",
+    ":libdaudio_manager_daudio_ext_service_1.0",
+  ]
 }

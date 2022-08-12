@@ -15,7 +15,7 @@
                 "ipc",
                 "device_driver_framwork",
                 "hiviewdfx_hilog_native",
-                "utils_base"
+                "c_utils"
             ],
             "third_party": [
                 "bounds_checking_function"

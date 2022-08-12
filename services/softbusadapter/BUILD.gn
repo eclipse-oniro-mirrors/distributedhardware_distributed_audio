@@ -13,42 +13,41 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_softbus_adapter") {
-    include_dirs = [
-        "//foundation/communication/dsoftbus/interfaces/kits/transport",
-        "${fwk_common_path}/utils/include",
-    ]
+  include_dirs = [
+    "//foundation/communication/dsoftbus/interfaces/kits/transport",
+    "${fwk_common_path}/utils/include",
+  ]
 
-    include_dirs += [
-        "${common_path}/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${softbusadapter_path}/include",
-    ]
+  include_dirs += [
+    "${common_path}/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
+    "${softbusadapter_path}/include",
+  ]
 
-    sources = [
-        "src/softbus_adapter.cpp",
-        "${services_path}/common/audiodata/src/audio_data.cpp",
-    ]
+  sources = [
+    "${services_path}/common/audiodata/src/audio_data.cpp",
+    "src/softbus_adapter.cpp",
+  ]
 
-    deps = [
-        "//utils/native/base:utils",
-        "${common_path}:distributed_audio_utils",
-    ]
+  deps = [ "${common_path}:distributed_audio_utils" ]
 
-    external_deps = [
-        "dsoftbus:softbus_client",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudio_softbusadapter\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudio_softbusadapter\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    subsystem_name = "distributedhardware"
+  subsystem_name = "distributedhardware"
 
-    part_name = "distributed_audio"
+  part_name = "distributed_audio"
 }

@@ -11,62 +11,65 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//build/test.gni")
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import("//build/test.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_output_path = "distributed_audio/services/audioprocessor/encode_processor_test"
+module_output_path =
+    "distributed_audio/services/audioprocessor/encode_processor_test"
 
 config("module_private_config") {
-    visibility = [ ":*" ]
+  visibility = [ ":*" ]
 
-    include_dirs = [
-        "${mediastandard_path}/interfaces/innerkits/native/media/include",
-        "${mediastandardfwk_path}/audiocommon/include",
-        "${fwk_common_path}/utils/include",
-    ]
+  include_dirs = [
+    "${mediastandard_path}/interfaces/innerkits/native/media/include",
+    "${mediastandardfwk_path}/audiocommon/include",
+    "${fwk_common_path}/utils/include",
+  ]
 
-    include_dirs += [
-        "${common_path}/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${audio_processor_path}/encodeprocessor/include",
-        "${audio_processor_path}/encoder/include",
-        "${audio_processor_path}/interface",
-        "${audio_processor_path}/test/unittest/common",
-    ]
+  include_dirs += [
+    "${common_path}/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
+    "${audio_processor_path}/encodeprocessor/include",
+    "${audio_processor_path}/encoder/include",
+    "${audio_processor_path}/interface",
+    "${audio_processor_path}/test/unittest/common",
+  ]
 }
 
 ohos_unittest("EncodeProcessTest") {
-    module_out_path = module_output_path
+  module_out_path = module_output_path
 
-    sources = [
-        "encode_process_test.cpp",
-        "${audio_processor_path}/test/unittest/common/audio_processor_callback_test.h",
-    ]
+  sources = [
+    "${audio_processor_path}/test/unittest/common/audio_processor_callback_test.h",
+    "encode_process_test.cpp",
+  ]
 
-    configs = [ ":module_private_config" ]
+  configs = [ ":module_private_config" ]
 
-    deps = [ "//third_party/googletest:gtest_main",
-        "//utils/native/base:utils",
-        "${common_path}:distributed_audio_utils",
-        "${audio_processor_path}/encodeprocessor:distributed_audio_encoder_processor",
-    ]
+  deps = [
+    "${audio_processor_path}/encodeprocessor:distributed_audio_encoder_processor",
+    "${common_path}:distributed_audio_utils",
+    "//third_party/googletest:gtest_main",
+  ]
 
-    external_deps = [
-        "multimedia_player_framework:media_client",
-        "hiviewdfx_hilog_native:libhilog",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "multimedia_player_framework:media_client",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudio_proc_test\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudio_proc_test\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 }
 
 group("encode_processor_test") {
-    testonly = true
-    deps = [":EncodeProcessTest"]
+  testonly = true
+  deps = [ ":EncodeProcessTest" ]
 }

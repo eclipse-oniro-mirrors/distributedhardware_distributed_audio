@@ -14,57 +14,60 @@
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 module_out_path = "distributed_audio/services/audioclient/mic_client_test"
 
 config("module_private_config") {
-    visibility = [ ":*" ]
+  visibility = [ ":*" ]
 
-    include_dirs = [
-        "//foundation/multimedia/audio_framework/frameworks/native/common/include",
-        "//foundation/multinedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
-        "${mediastandardfwk_path}/audiocommon/include",
-    ]
+  include_dirs = [
+    "//foundation/multimedia/audio_framework/frameworks/native/common/include",
+    "//foundation/multinedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
+    "${mediastandardfwk_path}/audiocommon/include",
+  ]
 
-    include_dirs += [
-        "${audio_client_path}/micclient/include",
-        "${audio_client_path}/test/unittest/micclient/include",
-        "${audio_client_path}/test/unittest/audioclienttestutils/include",
-        "${audio_processor_path}/encodeprocessor/include",
-        "${audio_processor_path}/interface",
-        "${audio_transport_path}/audio_channel/include",
-        "${audio_transport_path}/audiodatachannel/include",
-        "${audio_transport_path}/encodetransport/include",
-        "${audio_transport_path}/interface",
-        "${common_path}/include",
-        "${fwk_common_path}/utils/include",
-        "${services_path}/common/audioeventcallback",
-        "${services_path}/common/audiodata/include",
-        "${services_path}/common/audioparam",
-        "${softbusadapter_path}/include",
-    ]
+  include_dirs += [
+    "${audio_client_path}/micclient/include",
+    "${audio_client_path}/test/unittest/micclient/include",
+    "${audio_client_path}/test/unittest/audioclienttestutils/include",
+    "${audio_processor_path}/encodeprocessor/include",
+    "${audio_processor_path}/interface",
+    "${audio_transport_path}/audio_channel/include",
+    "${audio_transport_path}/audiodatachannel/include",
+    "${audio_transport_path}/encodetransport/include",
+    "${audio_transport_path}/interface",
+    "${common_path}/include",
+    "${fwk_common_path}/utils/include",
+    "${services_path}/common/audioeventcallback",
+    "${services_path}/common/audiodata/include",
+    "${services_path}/common/audioparam",
+    "${softbusadapter_path}/include",
+  ]
 }
 
 ## UnitTest dmic_client_test
 ohos_unittest("MicClientTest") {
-    module_out_path = module_out_path
+  module_out_path = module_out_path
 
-    sources = [ "${audio_client_path}/test/unittest/micclient/src/dmic_client_test.cpp" ]
+  sources = [
+    "${audio_client_path}/test/unittest/micclient/src/dmic_client_test.cpp",
+  ]
 
-    configs = [ ":module_private_config" ]
+  configs = [ ":module_private_config" ]
 
-    deps = [
-        "//third_party/googletest:gmock",
-        "//third_party/googletest:gtest_main",
-        "${audio_client_path}/micclient:dmic_client",
-        "${audio_transport_path}/encodetransport:distributed_audio_encode_transport",
-        "${common_path}:distributed_audio_utils",
-        "${mediastandardfwk_path}/audiocapturer:audio_capturer",
-    ]
+  deps = [
+    "${audio_client_path}/micclient:dmic_client",
+    "${audio_transport_path}/encodetransport:distributed_audio_encode_transport",
+    "${common_path}:distributed_audio_utils",
+    "${mediastandardfwk_path}/audiocapturer:audio_capturer",
+    "//third_party/googletest:gmock",
+    "//third_party/googletest:gtest_main",
+  ]
 }
 
 group("mic_client_test") {
-    testonly = true
-    deps = [ ":MicClientTest" ]
+  testonly = true
+  deps = [ ":MicClientTest" ]
 }

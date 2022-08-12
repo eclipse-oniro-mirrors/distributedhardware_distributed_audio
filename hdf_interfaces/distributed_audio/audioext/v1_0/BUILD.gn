@@ -13,14 +13,14 @@
 
 import("//drivers/hdf_core/adapter/uhdf2/hdi.gni")
 hdi("daudioext") {
-    module_name = "daudioext"
-    sources = [
-        "IDAudioManager.idl",
-        "IDAudioCallback.idl",
-        "Types.idl",
-    ]
-    language = "cpp"
-    root = "ohos.hdi://foundation/distributedhardware/distributed_audio/hdf_interfaces/"
-    subsystem_name = "distributedhardware"
-    part_name = "drivers_interface_distributed_audio"
+  module_name = "daudioext"
+  sources = [
+    "IDAudioCallback.idl",
+    "IDAudioManager.idl",
+    "Types.idl",
+  ]
+  language = "cpp"
+  root = "ohos.hdi://foundation/distributedhardware/distributed_audio/hdf_interfaces/"
+  subsystem_name = "distributedhardware"
+  part_name = "drivers_interface_distributed_audio"
 }

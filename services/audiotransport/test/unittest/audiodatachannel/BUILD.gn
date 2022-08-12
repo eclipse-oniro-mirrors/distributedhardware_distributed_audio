@@ -12,56 +12,58 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_out_path = "distributed_audio/services/audiotransport/audio_data_channel_test"
+module_out_path =
+    "distributed_audio/services/audiotransport/audio_data_channel_test"
 
 config("module_private_config") {
-    visibility = [ ":*" ]
+  visibility = [ ":*" ]
 
-    include_dirs = [
-        "//third_party/json/include",
-        "//foundation/graphic/standard/interfaces/innerkits/surface",
-        "${fwk_common_path}/utils/include",
-        "${fwk_utils_path}/include/",
-    ]
+  include_dirs = [
+    "//third_party/json/include",
+    "//foundation/graphic/standard/interfaces/innerkits/surface",
+    "${fwk_common_path}/utils/include",
+    "${fwk_utils_path}/include/",
+  ]
 
-    include_dirs += [
-        "include",
-        "${common_path}/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${softbusadapter_path}/include",
-        "${audio_transport_path}/audio_channel/include",
-        "${audio_transport_path}/audiodatachannel/include",
-        "${audio_transport_path}/audioctrltransport/interface",
-        "${audio_transport_path}/test/unittest/audiotranstestutils/include",
-    ]
+  include_dirs += [
+    "include",
+    "${common_path}/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
+    "${softbusadapter_path}/include",
+    "${audio_transport_path}/audio_channel/include",
+    "${audio_transport_path}/audiodatachannel/include",
+    "${audio_transport_path}/audioctrltransport/interface",
+    "${audio_transport_path}/test/unittest/audiotranstestutils/include",
+  ]
 }
 
 ## UnitTest audio_data_channel_test
 ohos_unittest("AudioDataChannelTest") {
-    module_out_path = module_out_path
+  module_out_path = module_out_path
 
-    sources = [ "src/audio_data_channel_test.cpp" ]
+  sources = [ "src/audio_data_channel_test.cpp" ]
 
-    configs = [ ":module_private_config" ]
+  configs = [ ":module_private_config" ]
 
-    deps = [
-        "//third_party/googletest:gmock",
-        "//third_party/googletest:gtest_main",
-        "${softbusadapter_path}:distributed_audio_softbus_adapter",
-        "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
-    ]
+  deps = [
+    "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
+    "${softbusadapter_path}:distributed_audio_softbus_adapter",
+    "//third_party/googletest:gmock",
+    "//third_party/googletest:gtest_main",
+  ]
 
-    external_deps = [
-        "dsoftbus:softbus_client",
-        "hiviewdfx_hilog_native:libhilog",
-        "multimedia_player_framework:media_client",
-    ]
+  external_deps = [
+    "dsoftbus:softbus_client",
+    "hiviewdfx_hilog_native:libhilog",
+    "multimedia_player_framework:media_client",
+  ]
 }
 
 group("audio_data_channel_test") {
-    testonly = true
-    deps = [ ":AudioDataChannelTest" ]
+  testonly = true
+  deps = [ ":AudioDataChannelTest" ]
 }

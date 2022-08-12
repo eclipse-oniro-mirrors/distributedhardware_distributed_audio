@@ -12,66 +12,66 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 module_output_path = "distributed_audio/hdf_service/audio_client"
 
 config("module_private_config") {
-    visibility = [ ":*" ]
+  visibility = [ ":*" ]
 
-    include_dirs = [ "//drivers/peripheral/audio/interfaces/include" ]
+  include_dirs = [ "//drivers/peripheral/audio/interfaces/include" ]
 
-    include_dirs += [
-        "${hdf_service_path}/hdi_service/common/log/include",
-        "${hdf_service_path}/hdi_service/common/include/",
-        "${hdf_service_path}/audio_client/include",
-    ]
+  include_dirs += [
+    "${hdf_service_path}/hdi_service/common/log/include",
+    "${hdf_service_path}/hdi_service/common/include/",
+    "${hdf_service_path}/audio_client/include",
+  ]
 }
 
 ohos_unittest("AudioAdapterHdiTest") {
-    module_out_path = module_output_path
+  module_out_path = module_output_path
 
-    configs = [ ":module_private_config" ]
+  configs = [ ":module_private_config" ]
 
-    sources = [ "audio_manager_test.cpp" ]
+  sources = [ "audio_manager_test.cpp" ]
 
-    deps = [
-        "//third_party/googletest:gmock_main",
-        "//third_party/googletest:gtest_main",
-        "//third_party/libxml2:xml2",
-        "//utils/native/base:utils",
-        "${hdf_service_path}/audio_client:daudio_client",
+  deps = [
+    "${hdf_service_path}/audio_client:daudio_client",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//third_party/libxml2:xml2",
   ]
 
-    public_deps = [
-        "${hdf_interfaces_path}/audio/v1_0:libdaudio_proxy_1.0",
-        "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils"
-    ]
+  public_deps = [
+    "${hdf_interfaces_path}/audio/v1_0:libdaudio_proxy_1.0",
+    "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils",
+  ]
 
-    external_deps = [
-        "hdf_core:libhdf_utils",
-        "hiviewdfx_hilog_native:libhilog",
-        "ipc:ipc_single",
-        "utils_base:utils",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hdf_core:libhdf_utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_single",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"unittest\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"unittest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    cflags = [
-        "-Wall",
-        "-Wextra",
-        "-Werror",
-        "-fsigned-char",
-        "-fno-common",
-        "-fno-strict-aliasing",
-    ]
+  cflags = [
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fsigned-char",
+    "-fno-common",
+    "-fno-strict-aliasing",
+  ]
 }
 
 group("audio_adapter_hdi_test") {
-    testonly = true
-    deps = [ ":AudioAdapterHdiTest" ]
+  testonly = true
+  deps = [ ":AudioAdapterHdiTest" ]
 }

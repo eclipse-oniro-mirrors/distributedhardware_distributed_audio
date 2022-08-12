@@ -13,47 +13,46 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_utils") {
-    include_dirs = [
-        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
-        "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
-        "//utils/native/base/include",
-    ]
+  include_dirs = [
+    "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+    "//commonlibrary/c_utils/base/include",
+  ]
 
-    include_dirs += [
-        "dfx_utils/include",
-        "include",
-        "${services_path}/common/audioparam",
-    ]
+  include_dirs += [
+    "dfx_utils/include",
+    "include",
+    "${services_path}/common/audioparam",
+  ]
 
-    sources = [
-        "dfx_utils/src/daudio_hisysevent.cpp",
-        "dfx_utils/src/daudio_hitrace.cpp",
-        "src/daudio_log.cpp",
-        "src/daudio_util.cpp",
-    ]
+  sources = [
+    "dfx_utils/src/daudio_hisysevent.cpp",
+    "dfx_utils/src/daudio_hitrace.cpp",
+    "src/daudio_log.cpp",
+    "src/daudio_util.cpp",
+  ]
 
-    deps = [
-        "//utils/native/base:utils",
-        "${fwk_utils_path}:distributedhardwareutils",
-    ]
+  deps = [ "${fwk_utils_path}:distributedhardwareutils" ]
 
-    external_deps = [
-        "dsoftbus:softbus_client",
-        "hiviewdfx_hilog_native:libhilog",
-        "hisysevent_native:libhisysevent",
-        "hitrace_native:hitrace_meter",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "hisysevent_native:libhisysevent",
+    "hitrace_native:hitrace_meter",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudioUtils\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudioUtils\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    subsystem_name = "distributedhardware"
+  subsystem_name = "distributedhardware"
 
-    part_name = "distributed_audio"
+  part_name = "distributed_audio"
 }

@@ -13,12 +13,13 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 group("daudio_ipc2manager_test") {
-    testonly = true
-    deps = [
-        "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosinktest:audio_sink_test",
-        "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest:audio_source_test",
-    ]
+  testonly = true
+  deps = [
+    "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosinktest:audio_sink_test",
+    "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest:audio_source_test",
+  ]
 }

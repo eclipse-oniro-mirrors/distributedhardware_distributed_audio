@@ -13,50 +13,49 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_source_sdk") {
-    include_dirs = [
-        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
-        "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
-        "//utils/native/base/include",
-        "${fwk_common_path}/utils/include",
-    ]
+  include_dirs = [
+    "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+    "//commonlibrary/c_utils/base/include",
+    "${fwk_common_path}/utils/include",
+  ]
 
-    include_dirs += [
-        "include",
-        "${common_path}/include",
-        "${common_path}/dfx_utils/include",
-    ]
+  include_dirs += [
+    "include",
+    "${common_path}/include",
+    "${common_path}/dfx_utils/include",
+  ]
 
-    sources = [
-        "src/daudio_ipc_callback.cpp",
-        "src/daudio_ipc_callback_stub.cpp",
-        "src/daudio_source_handler.cpp",
-        "src/daudio_source_load_callback.cpp",
-        "src/daudio_source_proxy.cpp",
-    ]
+  sources = [
+    "src/daudio_ipc_callback.cpp",
+    "src/daudio_ipc_callback_stub.cpp",
+    "src/daudio_source_handler.cpp",
+    "src/daudio_source_load_callback.cpp",
+    "src/daudio_source_proxy.cpp",
+  ]
 
-    deps = [
-        "//utils/native/base:utils",
-        "${common_path}:distributed_audio_utils",
-    ]
+  deps = [ "${common_path}:distributed_audio_utils" ]
 
-    external_deps = [
-        "hiviewdfx_hilog_native:libhilog",
-        "hitrace_native:hitrace_meter",
-        "ipc:ipc_core",
-        "safwk:system_ability_fwk",
-        "samgr:samgr_proxy",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hitrace_native:hitrace_meter",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudiosourcesdk\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudiosourcesdk\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    subsystem_name = "distributedhardware"
+  subsystem_name = "distributedhardware"
 
-    part_name = "distributed_audio"
+  part_name = "distributed_audio"
 }

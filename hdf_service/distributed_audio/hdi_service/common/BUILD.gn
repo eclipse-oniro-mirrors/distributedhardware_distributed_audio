@@ -15,28 +15,28 @@ import("//build/ohos.gni")
 import("//drivers/hdf_core/adapter/uhdf2/uhdf.gni")
 
 ohos_shared_library("libdaudio_hdf_utils") {
-    include_dirs = [
-        "include",
-        "log/include",
-        "utils/include",
-    ]
+  include_dirs = [
+    "include",
+    "log/include",
+    "utils/include",
+  ]
 
-    sources = [
-        "log/src/daudio_log.cpp",
-        "utils/src/daudio_utils.cpp",
-    ]
+  sources = [
+    "log/src/daudio_log.cpp",
+    "utils/src/daudio_utils.cpp",
+  ]
 
-    external_deps = [
-        "hdf_core:libhdf_utils",
-        "hiviewdfx_hilog_native:libhilog",
-        "utils_base:utils",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hdf_core:libhdf_utils",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudioHdfUtils\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudioHdfUtils\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
   subsystem_name = "hdf"
   part_name = "drivers_peripheral_distributed_audio"

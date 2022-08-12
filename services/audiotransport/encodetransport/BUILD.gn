@@ -13,46 +13,45 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_encode_transport") {
-    include_dirs = [
-        "//foundation/communication/dsoftbus/interfaces/kits/transport",
-        "${fwk_common_path}/utils/include",
-    ]
+  include_dirs = [
+    "//foundation/communication/dsoftbus/interfaces/kits/transport",
+    "${fwk_common_path}/utils/include",
+  ]
 
-    include_dirs += [
-        "include",
-        "${common_path}/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${audio_transport_path}/audio_channel/include",
-        "${audio_transport_path}/audiodatachannel/include",
-        "${audio_transport_path}/interface",
-        "${audio_processor_path}/encodeprocessor/include",
-        "${audio_processor_path}/interface",
-        "${softbusadapter_path}/include",
-    ]
+  include_dirs += [
+    "include",
+    "${common_path}/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
+    "${audio_transport_path}/audio_channel/include",
+    "${audio_transport_path}/audiodatachannel/include",
+    "${audio_transport_path}/interface",
+    "${audio_processor_path}/encodeprocessor/include",
+    "${audio_processor_path}/interface",
+    "${softbusadapter_path}/include",
+  ]
 
-    sources = [
-        "src/audio_encode_transport.cpp",
-    ]
+  sources = [ "src/audio_encode_transport.cpp" ]
 
-    deps = [
-        "//utils/native/base:utils",
-        "${common_path}:distributed_audio_utils",
-        "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
-        "${audio_processor_path}/encodeprocessor:distributed_audio_encoder_processor",
-        "${services_path}/common:distributed_audio_service_common",
-    ]
+  external_deps = [ "c_utils:utils" ]
+  deps = [
+    "${audio_processor_path}/encodeprocessor:distributed_audio_encoder_processor",
+    "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
+    "${common_path}:distributed_audio_utils",
+    "${services_path}/common:distributed_audio_service_common",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudio_encodetransport\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudio_encodetransport\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    subsystem_name = "distributedhardware"
+  subsystem_name = "distributedhardware"
 
-    part_name = "distributed_audio"
+  part_name = "distributed_audio"
 }

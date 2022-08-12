@@ -13,12 +13,13 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 group("daudio_client_test") {
-    testonly = true
-    deps = [
-        "${audio_client_path}/test/unittest/micclient:mic_client_test",
-        "${audio_client_path}/test/unittest/spkclient:spk_client_test",
-    ]
+  testonly = true
+  deps = [
+    "${audio_client_path}/test/unittest/micclient:mic_client_test",
+    "${audio_client_path}/test/unittest/spkclient:spk_client_test",
+  ]
 }

@@ -13,75 +13,76 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_manager_sink") {
-    include_dirs = [
-        "//utils/native/base/include",
-        "//third_party/json/include",
-        "//foundation/communication/dsoftbus/interfaces/kits/transport",
-        "${fwk_common_path}/utils/include",
-        "${mediastandardfwk_path}/audiocapturer/include",
-        "${mediastandardfwk_path}/audiorenderer/include",
-        "${mediastandardfwk_path}/audiocommon/include",
-        "${mediastandardfwk_path}/audiomanager/include",
-    ]
+  include_dirs = [
+    "//commonlibrary/c_utils/base/include",
+    "//third_party/json/include",
+    "//foundation/communication/dsoftbus/interfaces/kits/transport",
+    "${fwk_common_path}/utils/include",
+    "${mediastandardfwk_path}/audiocapturer/include",
+    "${mediastandardfwk_path}/audiorenderer/include",
+    "${mediastandardfwk_path}/audiocommon/include",
+    "${mediastandardfwk_path}/audiomanager/include",
+  ]
 
-    include_dirs += [
-        "include",
-        "${common_path}/include",
-        "${innerkits_path}/native_cpp/audio_source/include",
-        "${audio_control_path}/controlsink/include",
-        "${audio_client_path}/micclient/include",
-        "${audio_client_path}/spkclient/include",
-        "${services_path}/common/taskProcessor/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${services_path}/common/audioeventcallback",
-        "${audio_transport_path}/interface",
-        "${audio_transport_path}/audio_channel/include",
-        "${audio_transport_path}/audiodatachannel/include",
-        "${audio_transport_path}/encodetransport/include",
-        "${audio_transport_path}/decodetransport/include",
-        "${audio_transport_path}/audioctrltransport/include",
-        "${audio_transport_path}/audioctrltransport/interface",
-        "${audio_processor_path}/interface",
-        "${audio_processor_path}/decodeprocessor/include",
-        "${audio_processor_path}/encodeprocessor/include",
-    ]
+  include_dirs += [
+    "include",
+    "${common_path}/include",
+    "${innerkits_path}/native_cpp/audio_source/include",
+    "${audio_control_path}/controlsink/include",
+    "${audio_client_path}/micclient/include",
+    "${audio_client_path}/spkclient/include",
+    "${services_path}/common/taskProcessor/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
+    "${services_path}/common/audioeventcallback",
+    "${audio_transport_path}/interface",
+    "${audio_transport_path}/audio_channel/include",
+    "${audio_transport_path}/audiodatachannel/include",
+    "${audio_transport_path}/encodetransport/include",
+    "${audio_transport_path}/decodetransport/include",
+    "${audio_transport_path}/audioctrltransport/include",
+    "${audio_transport_path}/audioctrltransport/interface",
+    "${audio_processor_path}/interface",
+    "${audio_processor_path}/decodeprocessor/include",
+    "${audio_processor_path}/encodeprocessor/include",
+  ]
 
-    sources = [
-        "src/daudio_sink_dev.cpp",
-        "src/daudio_sink_manager.cpp",
-    ]
+  sources = [
+    "src/daudio_sink_dev.cpp",
+    "src/daudio_sink_manager.cpp",
+  ]
 
-    deps = [
-        "//utils/native/base:utils",
-        "${common_path}:distributed_audio_utils",
-        "${audio_client_path}/micclient:dmic_client",
-        "${audio_client_path}/spkclient:dspeaker_client",
-        "${mediastandardfwk_path}/audiomanager:audio_client",
-        "${mediastandardfwk_path}/audiorenderer:audio_renderer",
-        "${services_path}/common:distributed_audio_service_common",
-        "${audio_control_path}/controlsink:distributed_audio_sink_ctrl",
-        "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
-        "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
-    ]
+  deps = [
+    "${audio_client_path}/micclient:dmic_client",
+    "${audio_client_path}/spkclient:dspeaker_client",
+    "${audio_control_path}/controlsink:distributed_audio_sink_ctrl",
+    "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
+    "${common_path}:distributed_audio_utils",
+    "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
+    "${mediastandardfwk_path}/audiomanager:audio_client",
+    "${mediastandardfwk_path}/audiorenderer:audio_renderer",
+    "${services_path}/common:distributed_audio_service_common",
+  ]
 
-    external_deps = [
-        "ipc:ipc_core",
-        "safwk:system_ability_fwk",
-        "samgr:samgr_proxy",
-        "hiviewdfx_hilog_native:libhilog",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudioSinkManager\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudioSinkManager\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    subsystem_name = "distributedhardware"
+  subsystem_name = "distributedhardware"
 
-    part_name = "distributed_audio"
+  part_name = "distributed_audio"
 }

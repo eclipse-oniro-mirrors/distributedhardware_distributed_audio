@@ -14,21 +14,25 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("AudioSourceHandlerUnregisterDistributedHardwareFuzzTest") {
-  module_out_path = "distributed_audio/sourcehandlerunregisterdistributedhardware"
-  fuzz_config_file =
-      "${innerkits_path}/native_cpp/test/fuzztest/sourcehandlerunregisterdistributedhardware_fuzzer"
+  module_out_path =
+      "distributed_audio/sourcehandlerunregisterdistributedhardware"
+  fuzz_config_file = "${innerkits_path}/native_cpp/test/fuzztest/sourcehandlerunregisterdistributedhardware_fuzzer"
 
-  cflags = ["-g","-O0","-Wno-unused-variable","-fno-omit-frame-pointer"]
-  sources = [
-    "sourcehandlerunregisterdistributedhardware_fuzzer.cpp",
+  cflags = [
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
   ]
+  sources = [ "sourcehandlerunregisterdistributedhardware_fuzzer.cpp" ]
 
   include_dirs = [
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "${fwk_utils_path}/include/log",
     "${fwk_utils_path}/include",
@@ -48,7 +52,6 @@ ohos_fuzztest("AudioSourceHandlerUnregisterDistributedHardwareFuzzTest") {
     "${fwk_services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${fwk_utils_path}:distributedhardwareutils",
     "${innerkits_path}/native_cpp/audio_source:distributed_audio_source_sdk",
-    "//utils/native/base:utils",
   ]
 
   defines = [
@@ -58,6 +61,7 @@ ohos_fuzztest("AudioSourceHandlerUnregisterDistributedHardwareFuzzTest") {
   ]
 
   external_deps = [
+    "c_utils:utils",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -65,6 +69,7 @@ ohos_fuzztest("AudioSourceHandlerUnregisterDistributedHardwareFuzzTest") {
     "samgr:samgr_proxy",
   ]
 }
+
 ###############################################################################
 group("fuzztest") {
   testonly = true

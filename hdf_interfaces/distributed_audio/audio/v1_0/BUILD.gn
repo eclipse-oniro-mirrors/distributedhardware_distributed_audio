@@ -13,18 +13,18 @@
 
 import("//drivers/hdf_core/adapter/uhdf2/hdi.gni")
 hdi("daudio") {
-    module_name = "daudio"
-    sources = [
-        "IAudioAdapter.idl",
-        "IAudioCapture.idl",
-        "IAudioManager.idl",
-        "IAudioParamCallback.idl",
-        "IAudioRender.idl",
-        "IAudioRenderCallback.idl",
-        "Types.idl",
-    ]
-    language = "cpp"
-    root = "ohos.hdi://foundation/distributedhardware/distributed_audio/hdf_interfaces/"
-    subsystem_name = "distributedhardware"
-    part_name = "drivers_interface_distributed_audio"
+  module_name = "daudio"
+  sources = [
+    "IAudioAdapter.idl",
+    "IAudioCapture.idl",
+    "IAudioManager.idl",
+    "IAudioParamCallback.idl",
+    "IAudioRender.idl",
+    "IAudioRenderCallback.idl",
+    "Types.idl",
+  ]
+  language = "cpp"
+  root = "ohos.hdi://foundation/distributedhardware/distributed_audio/hdf_interfaces/"
+  subsystem_name = "distributedhardware"
+  part_name = "drivers_interface_distributed_audio"
 }

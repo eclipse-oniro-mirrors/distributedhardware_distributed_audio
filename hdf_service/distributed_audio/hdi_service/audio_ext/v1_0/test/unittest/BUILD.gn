@@ -14,50 +14,51 @@
 import("//build/ohos.gni")
 import("//build/test.gni")
 import("//drivers/hdf_core/adapter/uhdf2/uhdf.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 module_out_path = "distributed_audio/hdf_service/hdi_service/audio_ext"
 
 config("module_private_config") {
-    visibility = [ ":*" ]
+  visibility = [ ":*" ]
 
-    include_dirs = [
-        "${hdf_ser_aud_path}/include",
-        "${hdf_ser_aud_ext_path}/test/unittest/include",
-        "${hdf_ser_aud_ext_path}/include",
-        "${hdf_service_path}/hdi_service/common/include",
-        "${hdf_service_path}/hdi_service/common/log/include",
-        "${hdf_service_path}/hdi_service/common/utils/include",
-    ]
+  include_dirs = [
+    "${hdf_ser_aud_path}/include",
+    "${hdf_ser_aud_ext_path}/test/unittest/include",
+    "${hdf_ser_aud_ext_path}/include",
+    "${hdf_service_path}/hdi_service/common/include",
+    "${hdf_service_path}/hdi_service/common/log/include",
+    "${hdf_service_path}/hdi_service/common/utils/include",
+  ]
 }
 
 ## UnitTest hdi_service_audio_ext_v1_0_test
 ohos_unittest("HDIServiceDaudioExtTest") {
-    module_out_path = module_out_path
+  module_out_path = module_out_path
 
-    sources = [ "${hdf_ser_aud_ext_path}/test/unittest/src/daudio_manager_interface_impl_test.cpp" ]
+  sources = [ "${hdf_ser_aud_ext_path}/test/unittest/src/daudio_manager_interface_impl_test.cpp" ]
 
-    configs = [ ":module_private_config" ]
+  configs = [ ":module_private_config" ]
 
-    public_deps = [
-        "//third_party/googletest:gmock",
-        "//third_party/googletest:gtest_main",
-        "${hdf_ser_aud_path}:libaudio_manager_daudio_primary_service_1.0",
-        "${hdf_ser_aud_ext_path}:libdaudio_manager_daudio_ext_service_1.0",
-        "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils",
-        "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_stub_1.0",
-    ]
+  public_deps = [
+    "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_stub_1.0",
+    "${hdf_ser_aud_ext_path}:libdaudio_manager_daudio_ext_service_1.0",
+    "${hdf_ser_aud_path}:libaudio_manager_daudio_primary_service_1.0",
+    "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils",
+    "//third_party/googletest:gmock",
+    "//third_party/googletest:gtest_main",
+  ]
 
-    external_deps = [
-        "hdf_core:libhdf_host",
-        "hdf_core:libhdf_utils",
-        "hiviewdfx_hilog_native:libhilog",
-        "ipc:ipc_single",
-        "utils_base:utils",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hdf_core:libhdf_host",
+    "hdf_core:libhdf_utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_single",
+  ]
 }
 
 group("hdi_service_audio_ext_test") {
-    testonly = true
-    deps = [ ":HDIServiceDaudioExtTest" ]
+  testonly = true
+  deps = [ ":HDIServiceDaudioExtTest" ]
 }

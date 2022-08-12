@@ -13,53 +13,52 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_hdi_proxy") {
-    include_dirs = [
-        "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
-        "${fwk_common_path}/utils/include",
-    ]
+  include_dirs = [
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+    "${fwk_common_path}/utils/include",
+  ]
 
-    include_dirs += [
-        "include",
-        "${common_path}/include",
-        "${common_path}/dfx_utils/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${services_path}/common/audiodata/include",
-    ]
+  include_dirs += [
+    "include",
+    "${common_path}/include",
+    "${common_path}/dfx_utils/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
+    "${services_path}/common/audiodata/include",
+  ]
 
-    sources = [
-        "src/daudio_hdf_operate.cpp",
-        "src/daudio_hdi_handler.cpp",
-        "src/daudio_manager_callback.cpp",
-    ]
+  sources = [
+    "src/daudio_hdf_operate.cpp",
+    "src/daudio_hdi_handler.cpp",
+    "src/daudio_manager_callback.cpp",
+  ]
 
-    deps = [
-        "//utils/native/base:utils",
-        "${common_path}:distributed_audio_utils",
-        "${services_path}/common:distributed_audio_service_common",
-        "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
-    ]
+  deps = [
+    "${common_path}:distributed_audio_utils",
+    "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
+    "${services_path}/common:distributed_audio_service_common",
+  ]
 
-    external_deps = [
-        "hiviewdfx_hilog_native:libhilog",
-        "hitrace_native:hitrace_meter",
-        "hdf_core:libhdf_utils",
-        "hdf_core:libhdi",
-        "ipc:ipc_single",
-        "utils_base:utils",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hdf_core:libhdf_utils",
+    "hdf_core:libhdi",
+    "hitrace_native:hitrace_meter",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_single",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daduiohdiproxy\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daduiohdiproxy\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    subsystem_name = "distributedhardware"
+  subsystem_name = "distributedhardware"
 
-    part_name = "distributed_audio"
+  part_name = "distributed_audio"
 }
-

@@ -12,57 +12,60 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 module_out_path = "distributed_audio/audio_handler_test"
 
 config("module_private_config") {
-    visibility = [ ":*" ]
+  visibility = [ ":*" ]
 
-    include_dirs = [
-        "//foundation/multimedia/image_standard/interfaces/innerkits/include",
-        "//third_party/json/include",
-        "//utils/native/base/include",
-        "${fwk_common_path}/utils/include",
-        "${mediastandard_path}/interfaces/inner_api/native",
-        "${mediastandard_path}/services/utils/include",
-        "${mediastandardfwk_path}/audiocapturer/include",
-        "${mediastandardfwk_path}/audiocommon/include",
-        "${mediastandardfwk_path}/audiomanager/include",
-    ]
+  include_dirs = [
+    "//foundation/multimedia/image_standard/interfaces/innerkits/include",
+    "//third_party/json/include",
+    "//commonlibrary/c_utils/base/include",
+    "${fwk_common_path}/utils/include",
+    "${mediastandard_path}/interfaces/inner_api/native",
+    "${mediastandard_path}/services/utils/include",
+    "${mediastandardfwk_path}/audiocapturer/include",
+    "${mediastandardfwk_path}/audiocommon/include",
+    "${mediastandardfwk_path}/audiomanager/include",
+  ]
 
-    include_dirs += [
-        "include",
-        "${common_path}/include",
-        "${distributedaudio_path}/audiohandler/include",
-        "${services_path}/common/audioparam",
-    ]
+  include_dirs += [
+    "include",
+    "${common_path}/include",
+    "${distributedaudio_path}/audiohandler/include",
+    "${services_path}/common/audioparam",
+  ]
 }
 
 ## UnitTest audio_handler_test
 ohos_unittest("AudioHandlerTest") {
-    module_out_path = module_out_path
+  module_out_path = module_out_path
 
-    sources = [ "${distributedaudio_path}/audiohandler/test/unittest/src/daudio_handler_test.cpp" ]
+  sources = [ "${distributedaudio_path}/audiohandler/test/unittest/src/daudio_handler_test.cpp" ]
 
-    configs = [ ":module_private_config" ]
+  configs = [ ":module_private_config" ]
 
-    deps = [
-        "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
-        "//third_party/googletest:gtest_main",
-        "//utils/native/base:utils",
-        "${common_path}:distributed_audio_utils",
-        "${distributedaudio_path}/audiohandler:distributed_audio_handler",
-        "${mediastandard_path}/interfaces/inner_api/native:media_client",
-        "${mediastandard_path}/services/utils:media_service_utils",
-        "${mediastandardfwk_path}/audiocapturer:audio_capturer",
-        "${mediastandardfwk_path}/audiomanager:audio_client",
-    ]
+  deps = [
+    "${common_path}:distributed_audio_utils",
+    "${distributedaudio_path}/audiohandler:distributed_audio_handler",
+    "${mediastandard_path}/interfaces/inner_api/native:media_client",
+    "${mediastandard_path}/services/utils:media_service_utils",
+    "${mediastandardfwk_path}/audiocapturer:audio_capturer",
+    "${mediastandardfwk_path}/audiomanager:audio_client",
+    "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
+    "//third_party/googletest:gtest_main",
+  ]
 
-    external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
 }
 
 group("audio_handler_test") {
-    testonly = true
-    deps = [ ":AudioHandlerTest" ]
+  testonly = true
+  deps = [ ":AudioHandlerTest" ]
 }

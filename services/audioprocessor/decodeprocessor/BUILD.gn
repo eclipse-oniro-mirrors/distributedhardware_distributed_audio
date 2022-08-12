@@ -13,53 +13,54 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_decoder_processor") {
-    include_dirs = [
-        "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
-        "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
-        "${mediastandard_path}/interfaces/innerkits/native/media/include",
-        "${mediastandardfwk_path}/audiocommon/include",
-        "${fwk_common_path}/utils/include",
-    ]
+  include_dirs = [
+    "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+    "${mediastandard_path}/interfaces/innerkits/native/media/include",
+    "${mediastandardfwk_path}/audiocommon/include",
+    "${fwk_common_path}/utils/include",
+  ]
 
-    include_dirs += [
-        "${common_path}/include",
-        "${common_path}/dfx_utils/include",
-        "${services_path}/common/audioparam",
-        "${services_path}/common/audiodata/include",
-        "${audio_processor_path}/decodeprocessor/include",
-        "${audio_processor_path}/decoder/include",
-        "${audio_processor_path}/interface",
-    ]
+  include_dirs += [
+    "${common_path}/include",
+    "${common_path}/dfx_utils/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
+    "${audio_processor_path}/decodeprocessor/include",
+    "${audio_processor_path}/decoder/include",
+    "${audio_processor_path}/interface",
+  ]
 
-    sources = [
-        "${audio_processor_path}/decodeprocessor/src/audio_decoder_processor.cpp",
-        "${audio_processor_path}/decoder/src/audio_decoder.cpp",
-        "${audio_processor_path}/decoder/src/audio_decoder_callback.cpp",
-        "${services_path}/common/audiodata/src/audio_data.cpp",
-    ]
+  sources = [
+    "${audio_processor_path}/decodeprocessor/src/audio_decoder_processor.cpp",
+    "${audio_processor_path}/decoder/src/audio_decoder.cpp",
+    "${audio_processor_path}/decoder/src/audio_decoder_callback.cpp",
+    "${services_path}/common/audiodata/src/audio_data.cpp",
+  ]
 
-    deps = [
-        "//utils/native/base:utils",
-        "${fwk_utils_path}:distributedhardwareutils",
-        "${common_path}:distributed_audio_utils",
-    ]
+  deps = [
+    "${common_path}:distributed_audio_utils",
+    "${fwk_utils_path}:distributedhardwareutils",
+  ]
 
-    external_deps = [
-        "multimedia_player_framework:media_client",
-        "hiviewdfx_hilog_native:libhilog",
-        "hitrace_native:hitrace_meter",
-    ]
+  external_deps = [
+    "c_utils:utils",
+    "hitrace_native:hitrace_meter",
+    "hiviewdfx_hilog_native:libhilog",
+    "multimedia_player_framework:media_client",
+  ]
 
-    defines = [
-        "HI_LOG_ENABLE",
-        "DH_LOG_TAG=\"daudio_decode_proc\"",
-        "LOG_DOMAIN=0xD004100",
-    ]
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudio_decode_proc\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
 
-    subsystem_name = "distributedhardware"
+  subsystem_name = "distributedhardware"
 
-    part_name = "distributed_audio"
+  part_name = "distributed_audio"
 }
