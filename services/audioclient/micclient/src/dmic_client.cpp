@@ -24,7 +24,7 @@ namespace DistributedHardware {
 DMicClient::~DMicClient()
 {
     if (micTrans_ != nullptr) {
-        DHLOGI("%s: ~DMicClient. Release mic client.", LOG_TAG);
+        DHLOGI("%s: Release mic client.", LOG_TAG);
         StopCapture();
     }
 }
