@@ -101,8 +101,6 @@ void DAudioSourceDev::NotifyEvent(const std::shared_ptr<AudioEvent> &event)
             HandleCtrlTransClosed(event);
             break;
         case AudioEventType::VOLUME_SET:
-            HandleVolumeSet(event);
-            break;
         case AudioEventType::VOLUME_MUTE_SET:
             HandleVolumeSet(event);
             break;
@@ -774,7 +772,7 @@ int32_t DAudioSourceDev::TaskSetVolume(const std::string &args)
         return ERR_DH_AUDIO_SA_SOURCECTRLMGR_NOT_INIT;
     }
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    event->type = AudioEventType::VOLUME_SET;
+    event->type = getEventTypeFromArgs(args);
     event->content = args;
     int32_t ret = audioSourceCtrlMgr_->SendAudioEvent(event);
     if (ret != DH_SUCCESS) {
@@ -900,6 +898,15 @@ void from_json(const json &j, AudioParam &audioParam)
     j.at("contentType").get_to(audioParam.renderOpts.contentType);
     j.at("streamUsage").get_to(audioParam.renderOpts.streamUsage);
     j.at("sourceType").get_to(audioParam.CaptureOpts.sourceType);
+}
+
+AudioEventType DAudioSourceDev::getEventTypeFromArgs(const std::string &args)
+{
+    std::string::size_type volume_mute_set = args.find("VOLUME_MUTE_SET");
+    if (volume_mute_set != std::string::npos) {
+        return AudioEventType::VOLUME_MUTE_SET;
+    }
+    return AudioEventType::VOLUME_SET;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

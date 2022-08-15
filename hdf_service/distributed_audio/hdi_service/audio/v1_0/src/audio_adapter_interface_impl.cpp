@@ -532,11 +532,22 @@ int32_t AudioAdapterInterfaceImpl::SetAudioVolume(const std::string& condition, 
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     std::string content = condition;
-    int32_t ret = SetAudioParamStr(content, VOLUME_LEVEL, param);
+    std::string valueParam = param;
+    int32_t type = getEventTypeFromCondition(content);
+    EXT_PARAM_EVENT eventType;
+    if (type == VolumeEventType::EVENT_IS_STREAM_MUTE) {
+        valueParam = "0";
+        eventType = HDF_AUDIO_EVNET_MUTE_SET;
+        isStreamMute_ = 1;
+    } else {
+        eventType = HDF_AUDIO_EVENT_VOLUME_SET;
+        isStreamMute_ = 0;
+    }
+    int32_t ret = SetAudioParamStr(content, VOLUME_LEVEL, valueParam);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Can not set vol value, ret = %d.", AUDIO_LOG, ret);
     }
-    AudioEvent event = { HDF_AUDIO_EVENT_VOLUME_SET, content };
+    AudioEvent event = { eventType, content };
     ret = extSpeakerCallback_->NotifyEvent(adpDescriptor_.adapterName, audioRender_->GetRenderDesc().pins, event);
     if (ret != HDF_SUCCESS) {
         DHLOGE("%s: NotifyEvent failed.", AUDIO_LOG);
@@ -547,14 +558,38 @@ int32_t AudioAdapterInterfaceImpl::SetAudioVolume(const std::string& condition, 
 
 int32_t AudioAdapterInterfaceImpl::GetAudioVolume(const std::string& condition, std::string &param)
 {
-    (void) condition;
     if (audioRender_ == nullptr) {
         DHLOGD("%s: Render has not been created.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    uint32_t vol = audioRender_->GetVolumeInner();
+    int32_t type = getEventTypeFromCondition(condition);
+    uint32_t vol;
+    switch (type) {
+        case VolumeEventType::EVENT_GET_VOLUME:
+            vol = audioRender_->GetVolumeInner();
+            break;
+        case VolumeEventType::EVENT_GET_MAX_VOLUME:
+            vol = audioRender_->GetMaxVolumeInner();
+            break;
+        case VolumeEventType::EVENT_GET_MIN_VOLUME:
+            vol = audioRender_->GetMinVolumeInner();
+            break;
+        case VolumeEventType::EVENT_IS_STREAM_MUTE:
+            vol = isStreamMute_;
+            break;
+        default:
+            vol = 0;
+            DHLOGE("%s: Get volume failed.", AUDIO_LOG);
+    }
     param = std::to_string(vol);
     return DH_SUCCESS;
+}
+
+int32_t AudioAdapterInterfaceImpl::getEventTypeFromCondition(const std::string &condition)
+{
+    std::string::size_type position = condition.find_first_of(";");
+    int32_t type = std::stoi(condition.substr(11, position - 11));
+    return (VolumeEventType)type;
 }
 
 int32_t AudioAdapterInterfaceImpl::HandleVolumeChangeEvent(const AudioEvent &event)
@@ -564,18 +599,30 @@ int32_t AudioAdapterInterfaceImpl::HandleVolumeChangeEvent(const AudioEvent &eve
         DHLOGD("%s: Render has not been created.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    int32_t vol = 0;
+    int32_t vol = AUDIO_DEFAULT_MIN_VOLUME_LEVEL;
     int32_t ret = GetAudioParamInt(event.content, VOLUME_LEVEL, vol);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Get volume value failed.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_FAIL;
     }
-    audioRender_->SetVolumeInner(vol);
 
     if (event.content.rfind("FIRST_VOLUME_CHANAGE", 0) == 0) {
+        int32_t maxVol = AUDIO_DEFAULT_MAX_VOLUME_LEVEL;
+        ret = GetAudioParamInt(event.content, MAX_VOLUME_LEVEL, maxVol);
+        if (ret != DH_SUCCESS) {
+            DHLOGE("%s: Get max volume value failed, use defult max volume.", AUDIO_LOG);
+        }
+        int32_t minVol = AUDIO_DEFAULT_MIN_VOLUME_LEVEL;
+        ret = GetAudioParamInt(event.content, MIN_VOLUME_LEVEL, minVol);
+        if (ret != DH_SUCCESS) {
+            DHLOGE("%s: Get min volume value failed, use defult min volume.", AUDIO_LOG);
+        }
+        audioRender_->SetVolumeInner(vol);
+        audioRender_->SetVolumeRangeInner(maxVol, minVol);
         return DH_SUCCESS;
     }
 
+    audioRender_->SetVolumeInner(vol);
     if (paramCallback_ == nullptr) {
         DHLOGE("%s: Audio param observer is null.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_NULLPTR;
@@ -705,7 +752,7 @@ int32_t AudioAdapterInterfaceImpl::HandleDeviceClosed(const AudioEvent &event)
     DHLOGI("%s: Handle device closed, event type: %d.", AUDIO_LOG, event.type);
     if (paramCallback_ != nullptr) {
         std::stringstream ss;
-        ss << "DEVICE_TYPE=" <<
+        ss << "ERR_EVENT;DEVICE_TYPE=" <<
             (event.type == HDF_AUDIO_EVENT_SPK_CLOSED ? AUDIO_DEVICE_TYPE_SPEAKER : AUDIO_DEVICE_TYPE_MIC) << ";";
         int32_t ret = paramCallback_->OnAudioParamNotify(AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_STATUS, ss.str(),
             std::to_string(EVENT_DEV_CLOSED));

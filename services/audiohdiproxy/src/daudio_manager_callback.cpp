@@ -98,6 +98,9 @@ int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t d
         case AudioEventHDF::AUDIO_EVENT_VOLUME_SET:
             newEvent.type = AudioEventType::VOLUME_SET;
             break;
+        case AudioEventHDF::AUDIO_EVENT_MUTE_SET:
+            newEvent.type = AudioEventType::VOLUME_MUTE_SET;
+            break;
         default:
             DHLOGE("%s: Unsupport event tpye.", LOG_TAG);
             break;

@@ -94,6 +94,7 @@ private:
     void NotifyMicEvent(const std::shared_ptr<AudioEvent> &event);
     bool IsSpeakerEvent(const std::shared_ptr<AudioEvent> &event);
     bool IsMicEvent(const std::shared_ptr<AudioEvent> &event);
+    AudioEventType getEventTypeFromArgs (const std::string &args);
 
 private:
     static const constexpr char *LOG_TAG = "DAudioSourceDev";

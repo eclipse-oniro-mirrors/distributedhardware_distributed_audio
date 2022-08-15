@@ -308,10 +308,30 @@ void AudioRenderInterfaceImpl::SetVolumeInner(const uint32_t vol)
     vol_ = vol;
 }
 
+
+void AudioRenderInterfaceImpl::SetVolumeRangeInner(const uint32_t volMax, const uint32_t volMin)
+{
+    std::lock_guard<std::mutex> volLck(volMtx_);
+    volMin_ = volMin;
+    volMax_ = volMax;
+}
+
 uint32_t AudioRenderInterfaceImpl::GetVolumeInner()
 {
     std::lock_guard<std::mutex> volLck(volMtx_);
     return vol_;
+}
+
+uint32_t AudioRenderInterfaceImpl::GetMaxVolumeInner()
+{
+    std::lock_guard<std::mutex> volLck(volMtx_);
+    return volMax_;
+}
+
+uint32_t AudioRenderInterfaceImpl::GetMinVolumeInner()
+{
+    std::lock_guard<std::mutex> volLck(volMtx_);
+    return volMin_;
 }
 } // V1_0
 } // Audio

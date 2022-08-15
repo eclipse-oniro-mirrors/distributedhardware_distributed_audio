@@ -51,6 +51,13 @@ typedef enum {
     EVENT_CLOSE_MIC,
 } AudioDeviceEvent;
 
+typedef enum {
+    EVENT_GET_VOLUME = 1,
+    EVENT_GET_MIN_VOLUME = 2,
+    EVENT_GET_MAX_VOLUME = 3,
+    EVENT_IS_STREAM_MUTE = 4,
+} VolumeEventType;
+
 class AudioAdapterInterfaceImpl : public IAudioAdapter {
 public:
     AudioAdapterInterfaceImpl(const AudioAdapterDescriptorHAL &desc);
@@ -100,6 +107,7 @@ private:
     int32_t HandleSANotifyEvent(const AudioEvent &event);
     int32_t WaitForSANotify(const AudioDeviceEvent &event);
     int32_t HandleDeviceClosed(const AudioEvent &event);
+    int32_t getEventTypeFromCondition(const std::string& condition);
 
 private:
     const char *AUDIO_LOG = "AudioAdapterInterfaceImpl";
@@ -131,6 +139,7 @@ private:
 
     uint32_t spkPinInUse_ = 0;
     uint32_t micPinInUse_ = 0;
+    uint32_t isStreamMute_ = 0;
 };
 } // V1_0
 } // Audio

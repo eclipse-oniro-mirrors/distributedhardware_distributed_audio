@@ -39,6 +39,8 @@ const std::string INTERRUPT_GROUP_ID = "INTERRUPT_GROUP_ID";
 // Distributed Auido Parameters
 const std::string VOLUME_LEVEL = "VOLUME_LEVEL";
 const std::string VOLUME_EVENT_TYPE = "EVENT_TYPE";
+const std::string MAX_VOLUME_LEVEL = "MAX_VOLUME_LEVEL";
+const std::string MIN_VOLUME_LEVEL = "MIN_VOLUME_LEVEL";
 
 const std::string HDF_EVENT_RESULT_SUCCESS = "DH_SUCCESS";
 const std::string HDF_EVENT_RESULT_FAILED = "DH_FAILED";
@@ -57,6 +59,9 @@ constexpr uint32_t AUDIO_DATA_SIZE_DEFAULT = 4096;
 
 constexpr int32_t MILLISECOND_PER_SECOND = 1000;
 constexpr int32_t AUDIO_FRAME_TIME_INTERFAL_DEFAULT = 20000;
+
+constexpr uint32_t AUDIO_DEFAULT_MAX_VOLUME_LEVEL = 15;
+constexpr uint32_t AUDIO_DEFAULT_MIN_VOLUME_LEVEL = 0;
 } // DistributeHardware
 } // OHOS
 #endif // OHOS_DAUDIO_CONSTANTS_H

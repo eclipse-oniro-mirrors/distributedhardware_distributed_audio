@@ -80,6 +80,7 @@ typedef enum {
     AUDIO_EVENT_MIC_CLOSED = 9,
     AUDIO_EVENT_FOCUS_CHANGE = 10,
     AUDIO_EVENT_RENDER_STATE_CHANGE = 11,
+    AUDIO_EVENT_MUTE_SET = 12,
 } AudioEventHDF;
 } // namespace DistributedHardware
 } // namespace OHOS

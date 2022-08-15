@@ -237,11 +237,15 @@ string DSpeakerClient::GetVolumeLevel()
     AudioStandard::AudioStreamType streamType = AudioStandard::AudioStreamType::STREAM_DEFAULT;
     auto volumeType = static_cast<AudioStandard::AudioVolumeType>(1);
     int32_t volumeLevel = AudioStandard::AudioSystemManager::GetInstance()->GetVolume(volumeType);
+    int32_t maxVolumeLevel = AudioStandard::AudioSystemManager::GetInstance()->GetMaxVolume(volumeType);
+    int32_t minVolumeLevel = AudioStandard::AudioSystemManager::GetInstance()->GetMinVolume(volumeType);
     bool isUpdateUi = false;
     ss << "FIRST_VOLUME_CHANAGE;"
        << "AUDIO_STREAM_TYPE=" << streamType << ";"
        << "VOLUME_LEVEL=" << volumeLevel << ";"
-       << "IS_UPDATEUI=" << isUpdateUi << ";";
+       << "IS_UPDATEUI=" << isUpdateUi << ";"
+       << "MAX_VOLUME_LEVEL=" << maxVolumeLevel << ";"
+       << "MIN_VOLUME_LEVEL=" << minVolumeLevel << ";";
     std::string str = ss.str();
     DHLOGI("%s: GetVolumeLevel result, event: %s.", LOG_TAG, str.c_str());
     return str;

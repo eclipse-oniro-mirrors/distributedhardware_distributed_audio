@@ -83,7 +83,10 @@ public:
 
     const AudioDeviceDescriptorHAL &GetRenderDesc();
     void SetVolumeInner(const uint32_t vol);
+    void SetVolumeRangeInner(const uint32_t maxVol, const uint32_t minVol);
     uint32_t GetVolumeInner();
+    uint32_t GetMaxVolumeInner();
+    uint32_t GetMinVolumeInner();
 
 private:
     const char *AUDIO_LOG = "AudioRenderInterfaceImpl";
@@ -94,6 +97,8 @@ private:
     float renderSpeed_ = 0;
     std::mutex volMtx_;
     uint32_t vol_ = 0;
+    uint32_t volMax_ = 0;
+    uint32_t volMin_ = 0;
     std::mutex renderMtx_;
     AudioChannelModeHAL channelMode_ = AUDIO_CHANNEL_NORMAL;
     AudioRenderStatus renderStatus_ = RENDER_STATUS_CLOSE;
