@@ -48,13 +48,7 @@ class DSpeakerClient : public IAudioDataTransCallback,
     public std::enable_shared_from_this<DSpeakerClient> {
 public:
     DSpeakerClient(const std::string &devId, const std::shared_ptr<IAudioEventCallback> &callback)
-        : devId_(devId), eventCallback_(callback)
-        {
-            audioParam_.comParam.sampleRate = AudioSampleRate::SAMPLE_RATE_8000;
-            audioParam_.comParam.channelMask = AudioChannel::MONO;
-            audioParam_.comParam.bitFormat = AudioSampleFormat::SAMPLE_U8;
-            audioParam_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
-        };
+        : devId_(devId), eventCallback_(callback) {};
     ~DSpeakerClient();
 
     int32_t OnStateChange(int32_t type) override;

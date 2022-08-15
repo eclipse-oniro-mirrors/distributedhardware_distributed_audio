@@ -20,6 +20,7 @@
 #include <set>
 #include "nlohmann/json.hpp"
 
+#include "audio_param.h"
 #include "daudio_hdi_handler.h"
 #include "iaudio_datatrans_callback.h"
 #include "iaudio_data_transport.h"
@@ -34,12 +35,7 @@ class DMicDev : public IDAudioHdiCallback,
     public std::enable_shared_from_this<DMicDev> {
 public:
     DMicDev(const std::string &devId, std::shared_ptr<IAudioEventCallback> callback)
-        : devId_(devId), audioEventCallback_(callback)
-        {
-            sampleRate_ = AudioSampleRate::SAMPLE_RATE_8000;
-            channelMask_ = AudioChannel::MONO;
-            bitFormat_ = AudioSampleFormat::SAMPLE_U8;
-        };
+        : devId_(devId), audioEventCallback_(callback) {};
     ~DMicDev() = default;
 
     int32_t EnableDMic(const int32_t dhId, const std::string &capability);
@@ -58,7 +54,7 @@ public:
     int32_t Release();
     bool IsOpened();
 
-    std::shared_ptr<AudioParam> GetAudioParam();
+    AudioParam GetAudioParam() const;
     int32_t NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event);
     int32_t OnStateChange(int32_t type) override;
     int32_t WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData) override;
@@ -78,12 +74,8 @@ private:
     std::shared_ptr<IAudioDataTransport> micTrans_ = nullptr;
 
     // Mic capture parameters
-    AudioSampleRate sampleRate_;
-    AudioChannel channelMask_;
-    AudioSampleFormat bitFormat_;
-    uint32_t frameSize_ = 0;
-    uint32_t period_ = 0;
-    std::string extParam_;
+    AudioParamHDF paramHDF_;
+    AudioParam param_;
 
     std::atomic<bool> isTransReady_ = false;
     std::atomic<bool> isOpened_ = false;

@@ -20,6 +20,7 @@
 #include <set>
 #include "nlohmann/json.hpp"
 
+#include "audio_param.h"
 #include "idaudio_hdi_callback.h"
 #include "daudio_hdi_handler.h"
 #include "iaudio_data_transport.h"
@@ -34,15 +35,7 @@ class DSpeakerDev : public IDAudioHdiCallback,
     public std::enable_shared_from_this<DSpeakerDev> {
 public:
     DSpeakerDev(const std::string &devId, std::shared_ptr<IAudioEventCallback> callback)
-        : devId_(devId), audioEventCallback_(callback)
-        {
-            audioParamHDF_.sampleRate = AudioSampleRate::SAMPLE_RATE_8000;
-            audioParamHDF_.channelMask = AudioChannel::MONO;
-            audioParamHDF_.bitFormat = AudioSampleFormat::SAMPLE_U8;
-            audioParamHDF_.streamUsage = StreamUsage::STREAM_USAGE_UNKNOWN;
-            audioParamHDF_.frameSize = 0;
-            audioParamHDF_.period = 0;
-        };
+        : devId_(devId), audioEventCallback_(callback) {};
     ~DSpeakerDev() = default;
 
     int32_t EnableDSpeaker(const int32_t dhId, const std::string& capability);
@@ -64,7 +57,7 @@ public:
     int32_t Release();
     bool IsOpened();
 
-    std::shared_ptr<AudioParam> GetAudioParam();
+    AudioParam GetAudioParam() const;
     int32_t NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event);
 
 private:
@@ -77,7 +70,8 @@ private:
     std::shared_ptr<IAudioDataTransport> speakerTrans_ = nullptr;
 
     // Speaker render parameters
-    AudioParamHDF audioParamHDF_;
+    AudioParamHDF paramHDF_;
+    AudioParam param_;
 
     std::atomic<bool> isTransReady_ = false;
     std::atomic<bool> isOpened_ = false;

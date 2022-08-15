@@ -580,7 +580,7 @@ int32_t DAudioSourceDev::TaskOpenDSpeaker(const std::string &args)
 
     json jAudioParam;
     json jParam = json::parse(args, nullptr, false);
-    to_json(jAudioParam, *(speaker_->GetAudioParam()));
+    to_json(jAudioParam, speaker_->GetAudioParam());
     int32_t ret = NotifySinkDev(OPEN_SPEAKER, jAudioParam, jParam["dhId"]);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Notify sink open speaker failed.", LOG_TAG);
@@ -650,7 +650,7 @@ int32_t DAudioSourceDev::TaskOpenDMic(const std::string &args)
 
     json jAudioParam;
     json jParam = json::parse(args, nullptr, false);
-    to_json(jAudioParam, *(mic_->GetAudioParam()));
+    to_json(jAudioParam, mic_->GetAudioParam());
     ret = NotifySinkDev(OPEN_MIC, jAudioParam, jParam["dhId"]);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Notify sink open speaker failed.", LOG_TAG);

@@ -33,7 +33,6 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
         param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.renderOpts.contentType,
         param.renderOpts.streamUsage);
     audioParam_ = param;
-    audioParam_.comParam.bitFormat = SAMPLE_S16LE;
     AudioStandard::AudioRendererOptions rendererOptions = {
         {
             static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
@@ -44,7 +43,7 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
         {
             static_cast<AudioStandard::ContentType>(audioParam_.renderOpts.contentType),
             static_cast<AudioStandard::StreamUsage>(audioParam_.renderOpts.streamUsage),
-            NUMBER_ZERO,
+            0,
         }
     };
     std::lock_guard<std::mutex> lck(devMtx_);

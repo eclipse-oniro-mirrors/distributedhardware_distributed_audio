@@ -42,6 +42,11 @@ public:
 
     int32_t ReadStreamData(const std::string& adpName, int32_t devId,
 	    OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData& data) override;
+
+private:
+    int32_t GetAudioParamHDF(const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter& param,
+        AudioParamHDF& paramHDF);
+
 private:
     static const constexpr char *LOG_TAG = "HDI Proxy: DAudioManagerCallback";
     std::shared_ptr<IDAudioHdiCallback> callback_;

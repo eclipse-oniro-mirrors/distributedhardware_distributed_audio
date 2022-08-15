@@ -19,6 +19,8 @@
 #include <hdf_base.h>
 #include <securec.h>
 
+#include "audio_types.h"
+
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
@@ -57,6 +59,47 @@ int32_t DAudioManagerCallback::CloseDevice(const std::string& adpName, int32_t d
     return HDF_SUCCESS;
 }
 
+int32_t DAudioManagerCallback::GetAudioParamHDF(const AudioParameter& param, AudioParamHDF& paramHDF)
+{
+    paramHDF.sampleRate = static_cast<AudioSampleRate>(param.sampleRate);
+    paramHDF.channelMask = static_cast<AudioChannel>(param.channelCount);
+    switch (static_cast<AudioFormat>(param.format)) {
+        case AUDIO_FORMAT_PCM_8_BIT:
+            paramHDF.bitFormat = AudioSampleFormat::SAMPLE_U8;
+            break;
+        case AUDIO_FORMAT_PCM_16_BIT:
+            paramHDF.bitFormat = AudioSampleFormat::SAMPLE_S16LE;
+            break;
+        case AUDIO_FORMAT_PCM_24_BIT:
+            paramHDF.bitFormat = AudioSampleFormat::SAMPLE_S24LE;
+            break;
+        default:
+            DHLOGE("%s: Format [%zu] does not support conversion.", LOG_TAG, param.format);
+            return HDF_FAILURE;
+    }
+    switch (static_cast<AudioCategory>(param.streamUsage)) {
+        case AUDIO_IN_MEDIA:
+            paramHDF.streamUsage = StreamUsage::STREAM_USAGE_MEDIA;
+            break;
+        case AUDIO_IN_COMMUNICATION:
+            paramHDF.streamUsage = StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION;
+            break;
+        case AUDIO_IN_RINGTONE:
+            paramHDF.streamUsage = StreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE;
+            break;
+        default:
+            DHLOGE("%s: Stream usage [%zu] does not support conversion.", LOG_TAG, param.streamUsage);
+            return HDF_FAILURE;
+    }
+    paramHDF.frameSize = param.frameSize;
+    paramHDF.period = param.period;
+    paramHDF.ext = param.ext;
+    DHLOGI("%s: HDF Param: sample rate %d, channel %d, bit format %d, stream usage %d, frame size %zu, " +
+        "period %zu, ext {%s}.", LOG_TAG, paramHDF.sampleRate, paramHDF.channelMask, paramHDF.bitFormat,
+        paramHDF.streamUsage, paramHDF.frameSize, paramHDF.period, paramHDF.ext.c_str());
+    return HDF_SUCCESS;
+}
+
 int32_t DAudioManagerCallback::SetParameters(const std::string& adpName, int32_t devId, const AudioParameter& param)
 {
     DHLOGI("%s: SetParameters enter", LOG_TAG);
@@ -65,16 +108,13 @@ int32_t DAudioManagerCallback::SetParameters(const std::string& adpName, int32_t
         return HDF_FAILURE;
     }
 
-    AudioParamHDF newParam = {
-        .sampleRate = AudioSampleRate(param.sampleRate),
-        .channelMask = AudioChannel(param.channelCount),
-        .bitFormat = AudioSampleFormat(param.format),
-        .streamUsage = StreamUsage(param.streamUsage),
-        .frameSize = param.frameSize,
-        .period = param.period,
-        .ext = param.ext,
-    };
-    int32_t ret = callback_->SetParameters(adpName, devId, newParam);
+    AudioParamHDF paramHDF;
+    int32_t ret = GetAudioParamHDF(param, paramHDF);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Get audio HDF param failed.", LOG_TAG);
+        return HDF_FAILURE;
+    }
+    ret = callback_->SetParameters(adpName, devId, paramHDF);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Call hdi callback failed", LOG_TAG);
         return HDF_FAILURE;

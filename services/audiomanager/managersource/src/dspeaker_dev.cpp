@@ -150,8 +150,16 @@ int32_t DSpeakerDev::SetParameters(const std::string &devId, const int32_t dhId,
         return ERR_DH_AUDIO_FAILED;
     }
     curPort_ = dhId;
-    audioParamHDF_ = param;
-    audioParamHDF_.bitFormat = SAMPLE_S16LE;
+    paramHDF_ = param;
+
+    param_.comParam.sampleRate = paramHDF_.sampleRate;
+    param_.comParam.channelMask = paramHDF_.channelMask;
+    param_.comParam.bitFormat = paramHDF_.bitFormat;
+    param_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
+    param_.renderOpts.contentType = CONTENT_TYPE_MUSIC;
+    param_.renderOpts.streamUsage = paramHDF_.streamUsage;
+    param_.CaptureOpts.sourceType = SOURCE_TYPE_MIC;
+    param_.CaptureOpts.capturerFlags = 0;
     return DH_SUCCESS;
 }
 
@@ -177,12 +185,7 @@ int32_t DSpeakerDev::SetUp()
         speakerTrans_ = std::make_shared<AudioEncodeTransport>(devId_);
     }
 
-    AudioParam param;
-    param.comParam.sampleRate = audioParamHDF_.sampleRate;
-    param.comParam.channelMask = audioParamHDF_.channelMask;
-    param.comParam.bitFormat = audioParamHDF_.bitFormat;
-    param.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
-    int32_t ret = speakerTrans_->SetUp(param, param, shared_from_this(), "speaker");
+    int32_t ret = speakerTrans_->SetUp(param_, param_, shared_from_this(), "speaker");
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Speaker trans set up failed. ret:%d", LOG_TAG, ret);
         return ret;
@@ -277,17 +280,9 @@ int32_t DSpeakerDev::WriteStreamData(const std::string &devId, const int32_t dhI
     return DH_SUCCESS;
 }
 
-std::shared_ptr<AudioParam> DSpeakerDev::GetAudioParam()
+AudioParam DSpeakerDev::GetAudioParam() const
 {
-    std::shared_ptr<AudioParam> param = std::make_shared<AudioParam>();
-    param->comParam.sampleRate = audioParamHDF_.sampleRate;
-    param->comParam.channelMask = audioParamHDF_.channelMask;
-    param->comParam.bitFormat = audioParamHDF_.bitFormat;
-    param->renderOpts.contentType = CONTENT_TYPE_MUSIC;
-    param->renderOpts.streamUsage = STREAM_USAGE_MEDIA;
-    param->CaptureOpts.sourceType = SOURCE_TYPE_MIC;
-    param->CaptureOpts.capturerFlags = 0;
-    return param;
+    return param_;
 }
 
 int32_t DSpeakerDev::NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event)

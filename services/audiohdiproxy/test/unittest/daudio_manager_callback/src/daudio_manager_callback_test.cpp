@@ -110,12 +110,12 @@ HWTEST_F(DAudioManagerCallbackTest, SetParameters_002, TestSize.Level1)
     manCallback_->callback_ = std::make_shared<MockIDAudioHdiCallback>();
     EXPECT_EQ(HDF_SUCCESS, manCallback_->OpenDevice(adpName_, devId_));
     OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter param = {
-        .format = 4800,
+        .format = 0x1u,
         .channelCount = 2,
-        .sampleRate = 16,
-        .period = 64,
-        .frameSize = 1,
-        .streamUsage = 1,
+        .sampleRate = 48000,
+        .period = 0,
+        .frameSize = 0,
+        .streamUsage = 0,
         .ext = "HDF_SUCCESS"
     };
     EXPECT_EQ(HDF_SUCCESS, manCallback_->SetParameters(adpName_, devId_, param));

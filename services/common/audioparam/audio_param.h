@@ -76,11 +76,11 @@ typedef enum {
     STREAM_USAGE_NOTIFICATION_RINGTONE = 6
 } StreamUsage;
 
-typedef struct {
-    AudioSampleRate sampleRate;
-    AudioChannel channelMask;
-    AudioSampleFormat bitFormat;
-    AudioCodecType codecType;
+typedef struct AudioCommonParam {
+    AudioSampleRate sampleRate = SAMPLE_RATE_8000;
+    AudioChannel channelMask = MONO;
+    AudioSampleFormat bitFormat = SAMPLE_U8;
+    AudioCodecType codecType = AUDIO_CODEC_AAC;
 } AudioCommonParam;
 
 

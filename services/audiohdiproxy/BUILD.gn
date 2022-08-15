@@ -19,6 +19,7 @@ import(
 ohos_shared_library("distributed_audio_hdi_proxy") {
   include_dirs = [
     "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+    "//drivers//peripheral/audio/interfaces/include/",
     "${fwk_common_path}/utils/include",
   ]
 

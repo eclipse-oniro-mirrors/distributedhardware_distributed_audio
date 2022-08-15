@@ -63,7 +63,6 @@ int32_t DMicClient::SetUp(const AudioParam &param)
     DHLOGI("%s: Param: {sampleRate: %d, bitFormat: %d, channelMask: %d, sourceType: %d}.", LOG_TAG,
         param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.CaptureOpts.sourceType);
     audioParam_ = param;
-    audioParam_.comParam.bitFormat = SAMPLE_S16LE;
     AudioStandard::AudioCapturerOptions capturerOptions = {
         {
             static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
@@ -73,7 +72,7 @@ int32_t DMicClient::SetUp(const AudioParam &param)
         },
         {
             static_cast<AudioStandard::SourceType>(audioParam_.CaptureOpts.sourceType),
-            NUMBER_ZERO,
+            0,
         }
     };
     std::lock_guard<std::mutex> lck(devMtx_);
@@ -164,7 +163,7 @@ int32_t DMicClient::StartCapture()
 void DMicClient::CaptureThreadRunning()
 {
     DHLOGI("%s: Start the capturer thread.", LOG_TAG);
-    size_t bufferLen = NUMBER_ZERO;
+    size_t bufferLen = 0;
     int32_t ret = audioCapturer_->GetBufferSize(bufferLen);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Failed to get minimum buffer.", LOG_TAG);
@@ -173,24 +172,24 @@ void DMicClient::CaptureThreadRunning()
     DHLOGI("%s: Obtains the minimum buffer length, bufferlen: %d.", LOG_TAG, bufferLen);
     while (isCaptureReady_.load()) {
         std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(bufferLen);
-        size_t bytesRead = NUMBER_ZERO;
+        size_t bytesRead = 0;
         while (bytesRead < bufferLen) {
             auto start = std::chrono::high_resolution_clock::now();
             int32_t len = audioCapturer_->Read(*(audioData->Data() + bytesRead), bufferLen - bytesRead, isBlocking_);
             auto stop = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             DHLOGI("%s: Audio Capturer Read in microseconds TimeTaken =(%ds).", LOG_TAG, (long long)duration.count());
-            if (len >= NUMBER_ZERO) {
+            if (len >= 0) {
                 bytesRead += (size_t)len;
             } else {
                 bytesRead = (size_t)len;
                 break;
             }
         }
-        if (bytesRead < NUMBER_ZERO) {
+        if (bytesRead < 0) {
             DHLOGI("%s: Bytes read failed, bytesRead: %d.", LOG_TAG, bytesRead);
             break;
-        } else if (bytesRead == NUMBER_ZERO) {
+        } else if (bytesRead == 0) {
             continue;
         }
 

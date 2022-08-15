@@ -384,6 +384,7 @@ int32_t AudioAdapterInterfaceImpl::OpenRenderDevice(const AudioDeviceDescriptorH
     renderParam_.format = attrs.format;
     renderParam_.channelCount = attrs.channelCount;
     renderParam_.sampleRate = attrs.sampleRate;
+    renderParam_.streamUsage = attrs.type;
 
     int32_t ret = extSpeakerCallback_->SetParameters(adpDescriptor_.adapterName, desc.pins, renderParam_);
     if (ret != HDF_SUCCESS) {
@@ -443,6 +444,7 @@ int32_t AudioAdapterInterfaceImpl::OpenCaptureDevice(const AudioDeviceDescriptor
     captureParam_.format = attrs.format;
     captureParam_.channelCount = attrs.channelCount;
     captureParam_.sampleRate = attrs.sampleRate;
+    captureParam_.streamUsage = attrs.type;
 
     int32_t ret = extMicCallback_->SetParameters(adpDescriptor_.adapterName, desc.pins, captureParam_);
     if (ret != HDF_SUCCESS) {
