@@ -84,7 +84,7 @@ int32_t AudioEncoderProcessor::StartAudioProcessor()
     if (audioEncoder_ == nullptr) {
         DHLOGE("%s: Encoder is null.", LOG_TAG);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_BAD_VALUE,
-            "daduio encoder is null.");
+            "daudio encoder is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
@@ -93,7 +93,7 @@ int32_t AudioEncoderProcessor::StartAudioProcessor()
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Start encoder fail. Error code: %d.", LOG_TAG, ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
-            "daduio start encoder fail.");
+            "daudio start encoder fail.");
         return ret;
     }
 
@@ -106,7 +106,7 @@ int32_t AudioEncoderProcessor::StopAudioProcessor()
     if (audioEncoder_ == nullptr) {
         DHLOGE("%s: Encoder is null.", LOG_TAG);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_BAD_VALUE,
-            "daduio encoder is null.");
+            "daudio encoder is null.");
         return DH_SUCCESS;
     }
 
@@ -115,7 +115,7 @@ int32_t AudioEncoderProcessor::StopAudioProcessor()
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Stop encoder fail. Error code: %d.", LOG_TAG, ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
-            "daduio stop decoder fail.");
+            "daudio stop decoder fail.");
         return ret;
     }
 

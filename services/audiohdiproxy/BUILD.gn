@@ -55,7 +55,7 @@ ohos_shared_library("distributed_audio_hdi_proxy") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daduiohdiproxy\"",
+    "DH_LOG_TAG=\"daudiohdiproxy\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

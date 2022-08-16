@@ -27,6 +27,9 @@ std::string GetAnonyString(const std::string &value);
 int32_t GetDevTypeByDHId(int32_t dhId);
 int64_t GetNowTimeMs();
 int64_t GetNowTimeUs();
+int32_t GetAudioParamStr(const std::string &params, const std::string &key, std::string &value);
+int32_t GetAudioParamBool(const std::string &params, const std::string &key, bool &value);
+int32_t GetAudioParamInt(const std::string &params, const std::string &key, int32_t &value);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DAUDIO_UTIL_H

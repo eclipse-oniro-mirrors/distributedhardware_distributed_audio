@@ -534,23 +534,28 @@ int32_t AudioAdapterInterfaceImpl::SetAudioVolume(const std::string& condition, 
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     std::string content = condition;
-    std::string valueParam = param;
     int32_t type = getEventTypeFromCondition(content);
     EXT_PARAM_EVENT eventType;
+
     if (type == VolumeEventType::EVENT_IS_STREAM_MUTE) {
-        valueParam = "0";
+        if (param == IS_MUTE_STATUS) {
+            streamMuteStatus_ = 1;
+        } else if (param == NOT_MUTE_STATUS) {
+            streamMuteStatus_ = 0;
+        } else {
+            DHLOGE("%s: Mute param is error.", AUDIO_LOG);
+            return ERR_DH_AUDIO_HDF_FAIL;
+        }
         eventType = HDF_AUDIO_EVNET_MUTE_SET;
-        isStreamMute_ = 1;
+        SetAudioParamStr(content, STREAM_MUTE_STATUS, param);
     } else {
         eventType = HDF_AUDIO_EVENT_VOLUME_SET;
-        isStreamMute_ = 0;
-    }
-    int32_t ret = SetAudioParamStr(content, VOLUME_LEVEL, valueParam);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Can not set vol value, ret = %d.", AUDIO_LOG, ret);
+        streamMuteStatus_ = 0;
+        SetAudioParamStr(content, VOLUME_LEVEL, param);
     }
     AudioEvent event = { eventType, content };
-    ret = extSpeakerCallback_->NotifyEvent(adpDescriptor_.adapterName, audioRender_->GetRenderDesc().pins, event);
+    int32_t ret =
+        extSpeakerCallback_->NotifyEvent(adpDescriptor_.adapterName, audioRender_->GetRenderDesc().pins, event);
     if (ret != HDF_SUCCESS) {
         DHLOGE("%s: NotifyEvent failed.", AUDIO_LOG);
         return ERR_DH_AUDIO_HDF_FAIL;
@@ -577,7 +582,7 @@ int32_t AudioAdapterInterfaceImpl::GetAudioVolume(const std::string& condition, 
             vol = audioRender_->GetMinVolumeInner();
             break;
         case VolumeEventType::EVENT_IS_STREAM_MUTE:
-            vol = isStreamMute_;
+            vol = streamMuteStatus_;
             break;
         default:
             vol = 0;

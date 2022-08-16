@@ -79,6 +79,10 @@ const std::string KEY_DEVICE_TYPE = "deviceType";
 
 const std::string HDF_EVENT_RESULT_SUCCESS = "DH_SUCCESS";
 const std::string HDF_EVENT_RESULT_FAILED = "DH_FAILED";
+
+const std::string STREAM_MUTE_STATUS = "STREAM_MUTE_STATUS";
+const std::string AUDIO_VOLUME_TYPE = "AUDIO_VOLUME_TYPE";
+const std::string VOLUME_LEVEL = "VOLUME_LEVEL";
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DAUDIO_CONSTANTS_H

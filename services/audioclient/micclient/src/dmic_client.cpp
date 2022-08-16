@@ -125,7 +125,7 @@ int32_t DMicClient::StartCapture()
     if (audioCapturer_ == nullptr || micTrans_ == nullptr || clientStatus_ != CLIENT_STATUS_READY) {
         DHLOGE("%s: Audio capturer init failed or mic status wrong, status: %d.", LOG_TAG, (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
-            "daduio init failed or mic status wrong.");
+            "daudio init failed or mic status wrong.");
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
 
@@ -133,7 +133,7 @@ int32_t DMicClient::StartCapture()
         DHLOGE("%s: Audio capturer start failed.", LOG_TAG);
         audioCapturer_->Release();
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_CAPTURER_START_FAILED,
-            "daduio capturer start failed.");
+            "daudio capturer start failed.");
         return ERR_DH_AUDIO_CLIENT_CAPTURER_START_FAILED;
     }
 
@@ -141,7 +141,7 @@ int32_t DMicClient::StartCapture()
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Mic trans start failed.", LOG_TAG);
         micTrans_->Release();
-        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret, "daduio mic trans start failed.");
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret, "daudio mic trans start failed.");
         return ret;
     }
     DHLOGI("%s: Wait for channel session opened.", LOG_TAG);
@@ -153,7 +153,7 @@ int32_t DMicClient::StartCapture()
         micTrans_->Stop();
         micTrans_->Release();
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_TRANS_TIMEOUT,
-            "daduio open channel failed.");
+            "daudio open channel failed.");
         return ERR_DH_AUDIO_CLIENT_TRANS_TIMEOUT;
     }
     clientStatus_ = CLIENT_STATUS_START;
@@ -213,13 +213,13 @@ int32_t DMicClient::StopCapture()
     if (clientStatus_ != CLIENT_STATUS_START || !isCaptureReady_.load()) {
         DHLOGE("%s: Renderer is not start or spk status wrong, status: %d.", LOG_TAG, (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
-            "daduio renderer is not start or spk status wrong.");
+            "daudio renderer is not start or spk status wrong.");
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
     if (audioCapturer_ == nullptr || micTrans_ == nullptr) {
         DHLOGE("%s: The capturer or mictrans is not instantiated.", LOG_TAG);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL,
-            ERR_DH_AUDIO_CLIENT_CAPTURER_OR_MICTRANS_INSTANCE, "daduio capturer or mictrans is not instantiated.");
+            ERR_DH_AUDIO_CLIENT_CAPTURER_OR_MICTRANS_INSTANCE, "daudio capturer or mictrans is not instantiated.");
         return ERR_DH_AUDIO_CLIENT_CAPTURER_OR_MICTRANS_INSTANCE;
     }
 

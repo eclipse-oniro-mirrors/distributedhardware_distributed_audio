@@ -119,7 +119,7 @@ void DAudioSinkDev::NotifyEventSub(const std::shared_ptr<AudioEvent> &audioEvent
             NotifySetVolume(audioEvent);
             break;
         case VOLUME_MUTE_SET:
-            NotifySetVolume(audioEvent);
+            NotifySetMute(audioEvent);
             break;
         case VOLUME_CHANGE:
             NotifyVolumeChange(audioEvent);
@@ -288,9 +288,17 @@ int32_t DAudioSinkDev::NotifySetParam(const std::shared_ptr<AudioEvent> &audioEv
 
 int32_t DAudioSinkDev::NotifySetVolume(const std::shared_ptr<AudioEvent> &audioEvent)
 {
-    DHLOGI("%s: Start notifySetVolume.", LOG_TAG);
+    DHLOGI("%s: Start notify set volume.", LOG_TAG);
     std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskSetVolume, audioEvent->content,
         "Sink NotifySetVolume", &DAudioSinkDev::OnTaskResult);
+    return taskQueue_->Produce(task);
+}
+
+int32_t DAudioSinkDev::NotifySetMute(const std::shared_ptr<AudioEvent> &audioEvent)
+{
+    DHLOGI("%s: Start notify set mute.", LOG_TAG);
+    std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskSetMute, audioEvent->content,
+        "Sink NotifySetMute", &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
 }
 
@@ -518,6 +526,25 @@ int32_t DAudioSinkDev::TaskSetVolume(const std::string &args)
         return ret;
     }
     DHLOGI("%s: Set audio volume success.", LOG_TAG);
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSinkDev::TaskSetMute(const std::string &args)
+{
+    DHLOGI("%s:Set audio mute.", LOG_TAG);
+    if (speakerClient_ == nullptr) {
+        DHLOGE("%s: Speaker client already closed.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    event->type = AudioEventType::VOLUME_MUTE_SET;
+    event->content = args;
+    int32_t ret = speakerClient_->SetMute(event);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Set mute failed.", LOG_TAG);
+        return ret;
+    }
+    DHLOGI("%s: Set mute success.", LOG_TAG);
     return DH_SUCCESS;
 }
 

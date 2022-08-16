@@ -60,7 +60,7 @@ public:
     int32_t Release();
     int32_t StartRender();
     int32_t StopRender();
-    int32_t GetAudioParameters(const std::shared_ptr<AudioEvent> &event);
+    int32_t SetMute(const std::shared_ptr<AudioEvent> &event);
     int32_t SetAudioParameters(const std::shared_ptr<AudioEvent> &event);
     std::string GetVolumeLevel();
 
@@ -70,10 +70,6 @@ private:
 
 private:
     constexpr static const char *LOG_TAG = "DSpeakerClient";
-    constexpr static size_t NUMBER_ZERO = 0;
-    constexpr static size_t NUMBER_ONE = 1;
-    constexpr static size_t NUMBER_TWO = 2;
-    constexpr static size_t NUMBER_THREE = 3;
     constexpr static size_t DATA_QUEUE_MAX_SIZE = 5;
     constexpr static size_t REQUEST_DATA_WAIT = 10;
 

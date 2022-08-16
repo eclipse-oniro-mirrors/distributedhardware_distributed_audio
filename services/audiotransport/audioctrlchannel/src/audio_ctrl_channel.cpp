@@ -30,7 +30,7 @@ int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListe
     if (!listener) {
         DHLOGE("%s: Channel listener is null.", LOG_TAG);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_TRANS_NULL_VALUE,
-            "daduio channel listener is null.");
+            "daudio channel listener is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
@@ -40,7 +40,7 @@ int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListe
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Create softbus session failed ret: %d.", LOG_TAG, ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
-            "daduio create softbus session failed.");
+            "daudio create softbus session failed.");
         return ret;
     }
 
@@ -49,7 +49,7 @@ int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListe
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Register softbus adapter listener failed ret: %d.", LOG_TAG, ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
-            "daduio register softbus adapter listener failed.");
+            "daudio register softbus adapter listener failed.");
         return ret;
     }
 
@@ -67,7 +67,7 @@ int32_t AudioCtrlChannel::ReleaseSession()
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Release softbus session failed ret: %d.", LOG_TAG, ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
-            "daduio release softbus session failed.");
+            "daudio release softbus session failed.");
         return ret;
     }
 
@@ -75,7 +75,7 @@ int32_t AudioCtrlChannel::ReleaseSession()
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: UnRegister softbus adapter listener failed ret: %d.", LOG_TAG, ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
-            "daduio unRegister softbus adapter listener failed.");
+            "daudio unRegister softbus adapter listener failed.");
         return ret;
     }
     channelListener_.reset();
@@ -93,7 +93,7 @@ int32_t AudioCtrlChannel::OpenSession()
     if (sessionId < 0) {
         DHLOGE("%s: Open ctrl session failed, ret: %d.", LOG_TAG, sessionId);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_TRANS_ERROR,
-            "daduio open ctrl session failed.");
+            "daudio open ctrl session failed.");
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
     sessionId_ = sessionId;
@@ -115,7 +115,7 @@ int32_t AudioCtrlChannel::CloseSession()
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Close ctrl session failed ret: %d.", LOG_TAG, ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
-            "daduio close ctrl session failed.");
+            "daudio close ctrl session failed.");
         return ret;
     }
     sessionId_ = 0;

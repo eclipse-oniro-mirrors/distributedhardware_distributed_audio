@@ -139,7 +139,10 @@ private:
 
     uint32_t spkPinInUse_ = 0;
     uint32_t micPinInUse_ = 0;
-    uint32_t isStreamMute_ = 0;
+    uint32_t streamMuteStatus_ = 0;
+
+    const std::string NOT_MUTE_STATUS = "0";
+    const std::string IS_MUTE_STATUS = "1";
 };
 } // V1_0
 } // Audio

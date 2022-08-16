@@ -902,7 +902,7 @@ void from_json(const json &j, AudioParam &audioParam)
 
 AudioEventType DAudioSourceDev::getEventTypeFromArgs(const std::string &args)
 {
-    std::string::size_type volume_mute_set = args.find("VOLUME_MUTE_SET");
+    std::string::size_type volume_mute_set = args.find(STREAM_MUTE_STATUS);
     if (volume_mute_set != std::string::npos) {
         return AudioEventType::VOLUME_MUTE_SET;
     }

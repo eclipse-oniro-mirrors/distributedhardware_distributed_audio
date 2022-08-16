@@ -17,6 +17,7 @@
 
 #include "daudio_constants.h"
 #include "daudio_hisysevent.h"
+#include "daudio_util.h"
 #include "dh_utils_tool.h"
 
 namespace OHOS {
@@ -114,13 +115,13 @@ int32_t DSpeakerClient::StartRender()
     if (audioRenderer_ == nullptr || clientStatus_ != CLIENT_STATUS_READY) {
         DHLOGE("%s: Audio renderer init failed or spk status wrong, status: %d.", LOG_TAG, (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
-            "daduio renderer init failed or spk status wrong.");
+            "daudio renderer init failed or spk status wrong.");
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
     if (!audioRenderer_->Start()) {
         DHLOGE("%s: Audio renderer start failed.", LOG_TAG);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_RENDER_STARTUP_FAILURE,
-            "daduio renderer start failed.");
+            "daudio renderer start failed.");
         return ERR_DH_AUDIO_CLIENT_RENDER_STARTUP_FAILURE;
     }
     isRenderReady_.store(true);
@@ -136,13 +137,13 @@ int32_t DSpeakerClient::StopRender()
     if (clientStatus_ != CLIENT_STATUS_START || !isRenderReady_.load()) {
         DHLOGE("%s: Renderer is not start or spk status wrong, status: %d.", LOG_TAG, (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
-            "daduio renderer is not start or spk status wrong.");
+            "daudio renderer is not start or spk status wrong.");
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
     if (audioRenderer_ == nullptr || speakerTrans_ == nullptr) {
         DHLOGE("%s: Audio renderer or speaker trans is nullptr.", LOG_TAG);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL,
-            "daduio renderer or speaker trans is nullptr.");
+            "daudio renderer or speaker trans is nullptr.");
         return ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL;
     }
     isRenderReady_.store(false);
@@ -153,7 +154,7 @@ int32_t DSpeakerClient::StopRender()
     if (!audioRenderer_->Stop()) {
         DHLOGE("%s: Audio renderer stop failed", LOG_TAG);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_RENDER_STOP_FAILED,
-            "daduio renderer stop failed.");
+            "daudio renderer stop failed.");
         return ERR_DH_AUDIO_CLIENT_RENDER_STOP_FAILED;
     }
     clientStatus_ = CLIENT_STATUS_STOP;
@@ -314,64 +315,31 @@ void DSpeakerClient::OnStateChange(const AudioStandard::RendererState state)
     eventCallback_->NotifyEvent(audioEvent);
 }
 
-int32_t DSpeakerClient::GetAudioParameters(const std::shared_ptr<AudioEvent> &event)
-{
-    DHLOGI("%s: Get the volume.", LOG_TAG);
-    std::shared_ptr<AudioEvent> audioEvent = event;
-    std::vector<std::string> volumeList;
-    StringSplit(audioEvent->content, '=', volumeList);
-    if (volumeList[NUMBER_ZERO] != "VOLUMETYPE") {
-        DHLOGE("%s: Invalid event content parameter.", LOG_TAG);
-        return ERR_DH_AUDIO_CLIENT_INVALID_EVENT_PARAM;
-    }
-    auto volumeType =
-        static_cast<AudioStandard::AudioVolumeType>(std::stoi(volumeList[NUMBER_ONE]));
-    switch (audioEvent->type) {
-        case VOLUME_GET: {
-            auto volume = AudioStandard::AudioSystemManager::GetInstance()->GetVolume(volumeType);
-            DHLOGI("%s: Get the current volume, volume: %d.", LOG_TAG, volume);
-            return volume;
-        }
-        case VOLUME_MIN_GET: {
-            auto volume = AudioStandard::AudioSystemManager::GetInstance()->GetMinVolume(volumeType);
-            DHLOGI("%s: Get the Minimum  volume, volume: %d.", LOG_TAG, volume);
-            return volume;
-        }
-        case VOLUME_MAX_GET: {
-            auto volume = AudioStandard::AudioSystemManager::GetInstance()->GetMaxVolume(volumeType);
-            DHLOGI("%s: Get the Maximum  volume, volume: %d.", LOG_TAG, volume);
-            return volume;
-        }
-        default:
-            DHLOGE("%s: Invalid event type parameter.", LOG_TAG);
-            return ERR_DH_AUDIO_CLIENT_INVALID_EVENT_PARAM;
-    }
-}
-
 int32_t DSpeakerClient::SetAudioParameters(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("%s: Set the volume, arg: %s.", LOG_TAG, event->content.c_str());
-    std::shared_ptr<AudioEvent> audioEvent = event;
-    std::vector<std::string> conditionList;
-    std::vector<std::string> typeList;
-    std::vector<std::string> levelList;
-    StringSplit(audioEvent->content, ';', conditionList);
-    StringSplit(conditionList[NUMBER_TWO], '=', typeList);
-    StringSplit(conditionList[NUMBER_THREE], '=', levelList);
 
-    if (typeList[NUMBER_ZERO] != "AUDIO_VOLUME_TYPE") {
-        DHLOGE("%s: Invalid event content parameter.", LOG_TAG);
-        return ERR_DH_AUDIO_CLIENT_INVALID_EVENT_PARAM;
+    int32_t audioVolumeType;
+    int32_t ret = GetAudioParamInt(event->content, AUDIO_VOLUME_TYPE, audioVolumeType);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Get audio volume type failed.", LOG_TAG);
+        return ret;
     }
-    auto volumeType = static_cast<AudioStandard::AudioVolumeType>(std::stoi(typeList[NUMBER_ONE]));
-    DHLOGE("%s: AudioVolumeType volumeType = %d.", LOG_TAG, volumeType);
-    if (audioEvent->type != VOLUME_SET && audioEvent->type != VOLUME_MUTE_SET) {
+    auto volumeType = static_cast<AudioStandard::AudioVolumeType>(audioVolumeType);
+    DHLOGI("%s: AudioVolumeType volumeType = %d.", LOG_TAG, volumeType);
+    if (event->type != VOLUME_SET) {
         DHLOGE("%s: Invalid parameter.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_INVALID_VOLUME_PARAMETER;
     }
-    DHLOGE("%s: volume level = %d.", LOG_TAG, std::stoi(levelList[NUMBER_ONE]));
-    int32_t ret =
-        AudioStandard::AudioSystemManager::GetInstance()->SetVolume(volumeType, std::stoi(levelList[NUMBER_ONE]));
+
+    int32_t audioVolumeLevel;
+    ret = GetAudioParamInt(event->content, VOLUME_LEVEL, audioVolumeLevel);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Get audio volume level failed.", LOG_TAG);
+        return ret;
+    }
+    DHLOGI("%s: volume level = %d.", LOG_TAG, audioVolumeLevel);
+    ret = AudioStandard::AudioSystemManager::GetInstance()->SetVolume(volumeType, audioVolumeLevel);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Voloume set failed.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_SET_VOLUME_FAILED;
@@ -379,23 +347,35 @@ int32_t DSpeakerClient::SetAudioParameters(const std::shared_ptr<AudioEvent> &ev
     return DH_SUCCESS;
 }
 
-void DSpeakerClient::StringSplit(const std::string &str, const uint8_t &splits, std::vector<std::string> &res)
+int32_t DSpeakerClient::SetMute(const std::shared_ptr<AudioEvent> &event)
 {
-    if (splits != '=' && splits != ';') {
-        DHLOGI("%s: Splits error.", LOG_TAG);
-        return;
+    DHLOGI("%s: Set mute, arg: %s.", LOG_TAG, event->content.c_str());
+    int32_t audioVolumeType;
+    int32_t ret = GetAudioParamInt(event->content, AUDIO_VOLUME_TYPE, audioVolumeType);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Get audio volume type failed.", LOG_TAG);
+        return ret;
     }
-    char ch = splits;
 
-    if (str.empty()) {
-        DHLOGI("%s: The string is empty.", LOG_TAG);
-        return;
+    bool muteStatus;
+    ret = GetAudioParamBool(event->content, STREAM_MUTE_STATUS, muteStatus);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Get mute status failed.", LOG_TAG);
+        return ret;
     }
-    std::stringstream ss(str);
-    std::string temp;
-    while (getline(ss, temp, ch)) {
-        res.push_back(temp);
+
+    auto volumeType = static_cast<AudioStandard::AudioVolumeType>(audioVolumeType);
+    DHLOGI("%s: AudioVolumeType volumeType = %d.", LOG_TAG, volumeType);
+    if (event->type != VOLUME_MUTE_SET) {
+        DHLOGE("%s: Invalid parameter.", LOG_TAG);
+        return ERR_DH_AUDIO_CLIENT_INVALID_VOLUME_PARAMETER;
     }
+    ret = AudioStandard::AudioSystemManager::GetInstance()->SetMute(volumeType, muteStatus);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Mute set failed.", LOG_TAG);
+        return ERR_DH_AUDIO_CLIENT_SET_MUTE_FAILED;
+    }
+    return DH_SUCCESS;
 }
 } // DistributedHardware
 } // OHOS

@@ -118,5 +118,39 @@ int64_t GetNowTimeUs()
         std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
     return nowUs.count();
 }
+
+int32_t GetAudioParamStr(const std::string &params, const std::string &key, std::string &value)
+{
+    size_t step = key.size();
+    if (step >= params.size()) {
+        return ERR_DH_AUDIO_FAILED;
+    }
+    size_t pos = params.find(key);
+    if (pos == params.npos || params.at(pos + step) != '=') {
+        return ERR_DH_AUDIO_NOT_FOUND_KEY;
+    }
+    size_t splitPosEnd = params.find(';', pos);
+    if (splitPosEnd != params.npos) {
+        value = params.substr(pos + step + 1, splitPosEnd - pos - step - 1);
+    } else {
+        value = params.substr(pos + step + 1);
+    }
+    return DH_SUCCESS;
+}
+
+int32_t GetAudioParamBool(const std::string &params, const std::string &key, bool &value)
+{
+    std::string val;
+    GetAudioParamStr(params, key, val);
+    value = (val != "0");
+    return DH_SUCCESS;
+}
+int32_t GetAudioParamInt(const std::string &params, const std::string &key, int32_t &value)
+{
+    std::string val = "0";
+    int32_t ret = GetAudioParamStr(params, key, val);
+    value = std::stoi(val);
+    return ret;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -41,6 +41,7 @@ const std::string VOLUME_LEVEL = "VOLUME_LEVEL";
 const std::string VOLUME_EVENT_TYPE = "EVENT_TYPE";
 const std::string MAX_VOLUME_LEVEL = "MAX_VOLUME_LEVEL";
 const std::string MIN_VOLUME_LEVEL = "MIN_VOLUME_LEVEL";
+const std::string STREAM_MUTE_STATUS = "STREAM_MUTE_STATUS";
 
 const std::string HDF_EVENT_RESULT_SUCCESS = "DH_SUCCESS";
 const std::string HDF_EVENT_RESULT_FAILED = "DH_FAILED";
