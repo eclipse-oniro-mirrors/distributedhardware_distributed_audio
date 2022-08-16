@@ -164,16 +164,18 @@ void DSpeakerClient::PlayThreadRunning()
 {
     DHLOGI("%s:Start the renderer thread.", LOG_TAG);
     while (isRenderReady_.load()) {
-        std::unique_lock<std::mutex> spkLck(dataQueueMtx_);
-        dataQueueCond_.wait_for(spkLck, std::chrono::milliseconds(REQUEST_DATA_WAIT),
-            [this]() { return !dataQueue_.empty(); });
-        if (dataQueue_.empty()) {
-            continue;
-        }
-
         std::shared_ptr<AudioData> audioData = nullptr;
-        audioData = dataQueue_.front();
-        dataQueue_.pop();
+        {
+            std::unique_lock<std::mutex> spkLck(dataQueueMtx_);
+            dataQueueCond_.wait_for(spkLck, std::chrono::milliseconds(REQUEST_DATA_WAIT),
+                [this]() { return !dataQueue_.empty(); });
+            if (dataQueue_.empty()) {
+                continue;
+            }
+
+            audioData = dataQueue_.front();
+            dataQueue_.pop();
+        }
         int32_t writeLen = 0;
         int32_t writeOffSet = 0;
         while (writeOffSet < static_cast<int32_t>(audioData->Capacity())) {
