@@ -376,7 +376,6 @@ std::shared_ptr<ISoftbusListener> &SoftbusAdapter::GetSoftbusListenerById(int32_
 void SoftbusAdapter::SendAudioData()
 {
     while (isAudioDataReady_) {
-        DHLOGI("%s: SendAudioData enter.", LOG_TAG);
         std::shared_ptr<SoftbusStreamData> streamData;
         {
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
