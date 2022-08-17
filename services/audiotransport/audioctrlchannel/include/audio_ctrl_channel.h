@@ -57,8 +57,7 @@ private:
     std::weak_ptr<IAudioChannelListener> channelListener_;
 };
 
-void to_audioEventJson(json &j, const std::shared_ptr<AudioEvent> &audioEvent);
-void from_audioEventJson(const json &j, std::shared_ptr<AudioEvent> &audioEvent);
+int32_t from_audioEventJson(const json &j, std::shared_ptr<AudioEvent> &audioEvent);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_AUDIO_CTRL_CHANNEL_H

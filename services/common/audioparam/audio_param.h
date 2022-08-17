@@ -95,13 +95,13 @@ typedef struct AudioRenderOptions {
     int32_t renderFlags = 0;
 } AudioRenderOptions;
 
-typedef struct {
-    AudioSampleRate sampleRate;
-    AudioChannel channelMask;
-    AudioSampleFormat bitFormat;
-    StreamUsage streamUsage;
-    uint32_t frameSize;
-    uint32_t period;
+typedef struct AudioParamHDF {
+    AudioSampleRate sampleRate = SAMPLE_RATE_8000;
+    AudioChannel channelMask = MONO;
+    AudioSampleFormat bitFormat = SAMPLE_U8;
+    StreamUsage streamUsage = STREAM_USAGE_UNKNOWN;
+    uint32_t frameSize = 0;
+    uint32_t period = 0;
     std::string ext;
 } AudioParamHDF;
 

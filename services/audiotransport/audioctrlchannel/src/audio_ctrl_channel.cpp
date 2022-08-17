@@ -139,7 +139,8 @@ int32_t AudioCtrlChannel::SendEvent(const std::shared_ptr<AudioEvent> &audioEven
     }
 
     json jAudioEvent;
-    to_audioEventJson(jAudioEvent, audioEvent);
+    jAudioEvent["type"] = audioEvent->type;
+    jAudioEvent["content"] = audioEvent->content;
     std::string message = jAudioEvent.dump();
     int ret = SendMsg(message);
     if (ret != DH_SUCCESS) {
@@ -231,9 +232,12 @@ void AudioCtrlChannel::OnBytesReceived(int32_t sessionId, const void *data, uint
 
     std::string message(buf, buf + dataLen);
     DHLOGI("%s: OnBytesReceived message: %s.", LOG_TAG, message.c_str());
-    json jParam = json::parse(message, nullptr, false);
     std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
-    from_audioEventJson(jParam, audioEvent);
+    json jParam = json::parse(message, nullptr, false);
+    if (from_audioEventJson(jParam, audioEvent) != DH_SUCCESS) {
+        DHLOGE("%s: OnBytesReceived, Get audioEvent from json failed.", LOG_TAG);
+        return;
+    }
     free(buf);
     DHLOGI("%s: OnBytesReceived end", LOG_TAG);
 
@@ -251,18 +255,20 @@ void AudioCtrlChannel::OnStreamReceived(int32_t sessionId, const StreamData *dat
     DHLOGI("%s: OnAudioStreamReceived ctrl channel not support yet.", LOG_TAG);
 }
 
-void to_audioEventJson(json &j, const std::shared_ptr<AudioEvent> &audioEvent)
+int from_audioEventJson(const json &j, std::shared_ptr<AudioEvent> &audioEvent)
 {
-    j = json {
-        { "type", audioEvent->type },
-        { "content", audioEvent->content },
-    };
-}
+    if (j.is_discarded()) {
+        DHLOGE("AudioCtrlChannel: Json data is discarded.");
+        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
+    }
 
-void from_audioEventJson(const json &j, std::shared_ptr<AudioEvent> &audioEvent)
-{
+    if (!j.contains("type") || !j.contains("content")) {
+        DHLOGE("AudioCtrlChannel: Some key values do not exist in json data.");
+        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
+    }
     j.at("type").get_to(audioEvent->type);
     j.at("content").get_to(audioEvent->content);
+    return DH_SUCCESS;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

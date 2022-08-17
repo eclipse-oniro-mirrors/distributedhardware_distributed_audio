@@ -331,6 +331,7 @@ int32_t DAudioSinkDev::TaskOpenCtrlChannel(const std::string &args)
     DHLOGI("%s: Open ctrl channel.", LOG_TAG);
     json jParam = json::parse(args, nullptr, false);
     if (!JudgeJsonValid(jParam)) {
+        DHLOGE("%s: Open ctrl param json is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
 
@@ -381,14 +382,19 @@ int32_t DAudioSinkDev::TaskOpenDSpeaker(const std::string &args)
     DHLOGI("%s: Open speaker device.", LOG_TAG);
     json jParam = json::parse(args, nullptr, false);
     if (!JudgeJsonValid(jParam)) {
+        DHLOGE("%s: Open speaker json is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
-    AudioParam audioParam;
-    from_json(jParam["audioParam"], audioParam);
     spkDhId_ = jParam["dhId"];
+    AudioParam audioParam;
+    int32_t ret = from_json(jParam["audioParam"], audioParam);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Get audio param from json failed, error code %d.", LOG_TAG, ret);
+        return ret;
+    }
 
     speakerClient_ = std::make_shared<DSpeakerClient>(devId_, shared_from_this());
-    int32_t ret = speakerClient_->SetUp(audioParam);
+    ret = speakerClient_->SetUp(audioParam);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Setup speaker failed.", LOG_TAG);
         NotifySourceDev(NOTIFY_OPEN_SPEAKER_RESULT, spkDhId_, ERR_DH_AUDIO_FAILED);
@@ -437,14 +443,19 @@ int32_t DAudioSinkDev::TaskOpenDMic(const std::string &args)
     DHLOGI("%s: Open mic device.", LOG_TAG);
     json jParam = json::parse(args, nullptr, false);
     if (!JudgeJsonValid(jParam)) {
+        DHLOGE("%s: Open mic json is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
-    AudioParam audioParam;
-    from_json(jParam["audioParam"], audioParam);
     micDhId_ = jParam["dhId"];
+    AudioParam audioParam;
+    int32_t ret = from_json(jParam["audioParam"], audioParam);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Get audio param from json failed, error code %d.", LOG_TAG, ret);
+        return ret;
+    }
 
     micClient_ = std::make_shared<DMicClient>(devId_, shared_from_this());
-    int32_t ret = micClient_->SetUp(audioParam);
+    ret = micClient_->SetUp(audioParam);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: SetUp mic failed.", LOG_TAG);
         NotifySourceDev(NOTIFY_OPEN_MIC_RESULT, micDhId_, ERR_DH_AUDIO_FAILED);
@@ -499,6 +510,7 @@ int32_t DAudioSinkDev::TaskSetParameter(const std::string &args)
     DHLOGI("%s: Set audio param.", LOG_TAG);
     json resultJson = json::parse(args, nullptr, false);
     if (!JudgeJsonValid(resultJson)) {
+        DHLOGE("%s: Result json is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_ENABLE_PARAM_INVALID;
     }
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
@@ -609,19 +621,31 @@ bool DAudioSinkDev::JudgeJsonValid(const json &resultJson)
         return false;
     }
     if (!resultJson.contains("dhId")) {
-        DHLOGE("%s: JudgeJsonValid: result json is invalid not contains", LOG_TAG);
+        DHLOGE("%s: JudgeJsonValid: result json dose not contain key.", LOG_TAG);
         return false;
     }
     return true;
 }
-void from_json(const json &j, AudioParam &audioParam)
+
+int32_t from_json(const json &j, AudioParam &audioParam)
 {
-    j.at("channels").get_to(audioParam.comParam.channelMask);
-    j.at("contentType").get_to(audioParam.renderOpts.contentType);
-    j.at("format").get_to(audioParam.comParam.bitFormat);
+    if (j.is_discarded()) {
+        DHLOGE("DAudioSinkDev: Json data is discarded.");
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
+    }
+
+    if (!j.contains("samplingRate") || !j.contains("channels") || !j.contains("format") ||
+        !j.contains("sourceType") || !j.contains("contentType") || !j.contains("streamUsage")) {
+        DHLOGE("DAudioSinkDev: Json data dose not contain some keys.");
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
+    }
     j.at("samplingRate").get_to(audioParam.comParam.sampleRate);
-    j.at("streamUsage").get_to(audioParam.renderOpts.streamUsage);
+    j.at("channels").get_to(audioParam.comParam.channelMask);
+    j.at("format").get_to(audioParam.comParam.bitFormat);
     j.at("sourceType").get_to(audioParam.CaptureOpts.sourceType);
+    j.at("contentType").get_to(audioParam.renderOpts.contentType);
+    j.at("streamUsage").get_to(audioParam.renderOpts.streamUsage);
+    return DH_SUCCESS;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

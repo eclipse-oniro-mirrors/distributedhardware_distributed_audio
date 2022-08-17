@@ -94,7 +94,7 @@ private:
     std::mutex taskQueueMutex_;
     std::shared_ptr<TaskQueue> taskQueue_;
 };
-void from_json(const json &j, AudioParam &audioParam);
+int32_t from_json(const json &j, AudioParam &audioParam);
 } // DistributedHardware
 } // OHOS
 #endif // OHOS_DAUDIO_SINK_DEV_H

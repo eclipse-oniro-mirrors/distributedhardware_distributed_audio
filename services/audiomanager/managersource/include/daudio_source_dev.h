@@ -124,7 +124,6 @@ private:
     uint8_t rpcNotify_ = 0;
 };
 void to_json(json &j, const AudioParam &audioParam);
-void from_json(const json &j, AudioParam &audioParam);
 } // DistributedHardware
 } // OHOS
 #endif // OHOS_DAUDIO_SOURCE_DEV_H
