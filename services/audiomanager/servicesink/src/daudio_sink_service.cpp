@@ -72,12 +72,14 @@ bool DAudioSinkService::Init()
 int32_t DAudioSinkService::InitSink(const std::string &params)
 {
     DHLOGI("%s: Init distributed audio sink service.", LOG_TAG);
+    DAudioSinkManager::GetInstance().Init();
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkService::ReleaseSink()
 {
     DHLOGI("%s: Release distributed audio sink service.", LOG_TAG);
+    DAudioSinkManager::GetInstance().UnInit();
     return DH_SUCCESS;
 }
 

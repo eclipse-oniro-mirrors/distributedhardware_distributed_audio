@@ -33,10 +33,10 @@ DAudioSourceManager::DAudioSourceManager()
 
 DAudioSourceManager::~DAudioSourceManager()
 {
-    DHLOGI("%s: Distributed audio source manager destructed.", LOG_TAG);
     if (devClearThread_.joinable()) {
         devClearThread_.join();
     }
+    DHLOGI("%s: Distributed audio source manager destructed.", LOG_TAG);
 }
 
 int32_t DAudioSourceManager::Init(const sptr<IDAudioIpcCallback> &callback)
@@ -193,7 +193,7 @@ int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::s
 
 void DAudioSourceManager::RemoteSinkSvrRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
-    DHLOGI("DAudioSourceManager::OnRemoteDied.");
+    DHLOGI("%s: DAudioSourceManager::OnRemoteDied.", LOG_TAG);
 }
 
 int32_t DAudioSourceManager::OnEnableDAudio(const std::string &devId, const std::string &dhId, const int32_t result)

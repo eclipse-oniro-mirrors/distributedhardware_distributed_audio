@@ -33,14 +33,19 @@ DAudioSinkManager::DAudioSinkManager()
 
 DAudioSinkManager::~DAudioSinkManager()
 {
+    if (devClearThread_.joinable()) {
+        devClearThread_.join();
+    }
     DHLOGI("%s: Distributed audio sink manager deconstructed.", LOG_TAG);
 }
 
 int32_t DAudioSinkManager::Init()
 {
     DHLOGI("%s: DAudioSinkManager Init.", LOG_TAG);
+    remoteSourceSvrRecipient_ = new RemoteSourceSvrRecipient();
     if (remoteSourceSvrRecipient_ == nullptr) {
-        remoteSourceSvrRecipient_ = new RemoteSourceSvrRecipient();
+        DHLOGE("%s: RemoteiSourceSvrRecipient is nullptr.", LOG_TAG);
+        return ERR_DH_AUDIO_NULLPTR;
     }
     return DH_SUCCESS;
 }
@@ -49,16 +54,20 @@ int32_t DAudioSinkManager::UnInit()
 {
     DHLOGI("%s: DAudioSinkManager UnInit.", LOG_TAG);
     std::lock_guard<std::mutex> lock(remoteSvrMutex_);
-    if (remoteSourceSvrRecipient_ != nullptr) {
-        remoteSourceSvrRecipient_ = nullptr;
-    }
+    remoteSourceSvrRecipient_ = nullptr;
     remoteSvrProxyMap_.clear();
-    for (auto iter = dAudioSinkDevMap_.begin(); iter != dAudioSinkDevMap_.end(); iter++) {
-        if (iter->second != nullptr) {
-            iter->second->SleepAudioDev();
+    {
+        std::lock_guard<std::mutex> lock(devMapMutex_);
+        for (auto iter = dAudioSinkDevMap_.begin(); iter != dAudioSinkDevMap_.end(); iter++) {
+            if (iter->second != nullptr) {
+                iter->second->SleepAudioDev();
+            }
         }
+        dAudioSinkDevMap_.clear();
     }
-    dAudioSinkDevMap_.clear();
+    if (devClearThread_.joinable()) {
+        devClearThread_.join();
+    }
     return DH_SUCCESS;
 }
 
