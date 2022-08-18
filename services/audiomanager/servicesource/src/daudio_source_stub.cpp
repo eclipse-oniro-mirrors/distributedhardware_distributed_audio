@@ -38,13 +38,13 @@ int32_t DAudioSourceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Me
     std::u16string desc = DAudioSourceStub::GetDescriptor();
     std::u16string remoteDesc = data.ReadInterfaceToken();
     if (desc != remoteDesc) {
-        DHLOGE("%s: remoteDesc is invalid.", LOG_TAG);
+        DHLOGE("%s: RemoteDesc is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_INVALID_INTERFACE_TOKEN;
     }
 
     const auto &iter = memberFuncMap_.find(code);
     if (iter == memberFuncMap_.end()) {
-        DHLOGE("%s: invalid request code.", LOG_TAG);
+        DHLOGE("%s: Invalid request code.", LOG_TAG);
         return ERR_DH_AUDIO_SA_INVALID_REQUEST_CODE;
     }
     DAudioSourceServiceFunc &func = iter->second;
@@ -56,7 +56,7 @@ int32_t DAudioSourceStub::InitSourceInner(MessageParcel &data, MessageParcel &re
     std::string param = data.ReadString();
     sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();
     if (remoteObject == nullptr) {
-        DHLOGE("Read param failed.");
+        DHLOGE("%s: Read param failed.", LOG_TAG);
         return ERR_DH_AUDIO_SA_READ_PARAM_FAILED;
     }
 
@@ -84,7 +84,7 @@ int32_t DAudioSourceStub::RegisterDistributedHardwareInner(MessageParcel &data, 
     EnableParam enableParam;
     enableParam.version = version;
     enableParam.attrs = attrs;
-    DHLOGI("%s: RegisterDistributedHardwareInner dhId: %s", LOG_TAG, dhId.c_str());
+
     int32_t ret = RegisterDistributedHardware(networkId, dhId, enableParam, reqId);
     reply.WriteInt32(ret);
     return DH_SUCCESS;
@@ -96,6 +96,7 @@ int32_t DAudioSourceStub::UnregisterDistributedHardwareInner(MessageParcel &data
     std::string networkId = data.ReadString();
     std::string dhId = data.ReadString();
     std::string reqId = data.ReadString();
+
     int32_t ret = UnregisterDistributedHardware(networkId, dhId, reqId);
     reply.WriteInt32(ret);
     return DH_SUCCESS;
@@ -108,6 +109,7 @@ int32_t DAudioSourceStub::ConfigDistributedHardwareInner(MessageParcel &data, Me
     std::string dhId = data.ReadString();
     std::string key = data.ReadString();
     std::string value = data.ReadString();
+
     int32_t ret = ConfigDistributedHardware(networkId, dhId, key, value);
     reply.WriteInt32(ret);
     return DH_SUCCESS;

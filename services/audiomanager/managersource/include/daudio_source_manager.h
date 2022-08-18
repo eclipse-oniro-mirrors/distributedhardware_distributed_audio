@@ -28,12 +28,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-typedef struct {
-    std::string devId;
-    std::shared_ptr<DAudioSourceDev> dev;
-    std::map<std::string, std::string> ports;
-} AudioDevice;
-
 class DAudioSourceManager {
     DECLARE_SINGLE_INSTANCE_BASE(DAudioSourceManager);
 
@@ -47,27 +41,31 @@ public:
         const std::string &eventContent);
     int32_t DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
         const std::string &eventContent);
-
     int32_t OnEnableDAudio(const std::string &devId, const std::string &dhId, const int32_t result);
     int32_t OnDisableDAudio(const std::string &devId, const std::string &dhId, const int32_t result);
 
 private:
-    class RemoteSinkSvrRecipient : public IRemoteObject::DeathRecipient {
-    public:
-        void OnRemoteDied(const wptr<IRemoteObject> &remote) override;
-    };
     DAudioSourceManager();
     ~DAudioSourceManager();
+    int32_t CreateAudioDevice(const std::string &devId);
+    void DeleteAudioDevice(const std::string &devId, const std::string &dhId);
+    std::string GetRequestId(const std::string &devId, const std::string &dhId);
     void ClearAudioDev(const std::string &devId);
+
+    typedef struct {
+        std::string devId;
+        std::shared_ptr<DAudioSourceDev> dev;
+        std::map<std::string, std::string> ports;
+    } AudioDevice;
 
 private:
     static const constexpr char *LOG_TAG = "DAudioSourceManager";
+    std::string localDevId_;
     std::mutex devMapMtx_;
     std::map<std::string, AudioDevice> audioDevMap_;
     std::mutex remoteSvrMutex_;
-    sptr<RemoteSinkSvrRecipient> remoteSvrRecipient_ = nullptr;
     std::map<std::string, sptr<IDAudioSink>> remoteSvrProxyMap_;
-    sptr<IDAudioIpcCallback> daudioIpcCallback_ = nullptr;
+    sptr<IDAudioIpcCallback> ipcCallback_ = nullptr;
     std::shared_ptr<DAudioSourceMgrCallback> daudioMgrCallback_ = nullptr;
     std::thread devClearThread_;
 };

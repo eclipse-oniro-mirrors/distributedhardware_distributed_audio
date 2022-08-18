@@ -45,19 +45,19 @@ void DAudioSourceService::OnStart()
 void DAudioSourceService::OnStop()
 {
     DHLOGI("%s: Distributed audio service on stop.", LOG_TAG);
-    registerToService_ = false;
+    isServiceStarted_ = false;
 }
 
 bool DAudioSourceService::Init()
 {
-    if (!registerToService_) {
+    if (!isServiceStarted_) {
         DHLOGI("%s: Publish distributed audio service.", LOG_TAG);
         bool ret = Publish(this);
         if (!ret) {
             DHLOGE("%s: Publish service failed.", LOG_TAG);
             return false;
         }
-        registerToService_ = true;
+        isServiceStarted_ = true;
     }
     return true;
 }
@@ -76,9 +76,10 @@ int32_t DAudioSourceService::InitSource(const std::string &params, const sptr<ID
 
 int32_t DAudioSourceService::ReleaseSource()
 {
-    DHLOGI("%s: Release source service, exit process.", LOG_TAG);
+    DHLOGI("%s: Release source service.", LOG_TAG);
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_EXIT, "daudio source sa exit success.");
     DAudioSourceManager::GetInstance().UnInit();
+    DHLOGI("%s: Audio source service process exit.", LOG_TAG);
     exit(0);
     return DH_SUCCESS;
 }
