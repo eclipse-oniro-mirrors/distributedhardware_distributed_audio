@@ -29,7 +29,7 @@ class AudioDataChannel : public IAudioChannel,
     public ISoftbusListener,
     public std::enable_shared_from_this<AudioDataChannel> {
 public:
-    AudioDataChannel(const std::string &peerDevId) : peerDevId_(peerDevId) {};
+    explicit AudioDataChannel(const std::string &peerDevId) : peerDevId_(peerDevId) {};
     ~AudioDataChannel() = default;
 
     int32_t CreateSession(const std::shared_ptr<IAudioChannelListener> &listener,

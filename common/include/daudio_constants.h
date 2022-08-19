@@ -83,6 +83,24 @@ const std::string HDF_EVENT_RESULT_FAILED = "DH_FAILED";
 const std::string STREAM_MUTE_STATUS = "STREAM_MUTE_STATUS";
 const std::string AUDIO_VOLUME_TYPE = "AUDIO_VOLUME_TYPE";
 const std::string VOLUME_LEVEL = "VOLUME_LEVEL";
+
+constexpr const char *KEY_TYPE = "type";
+constexpr const char *KEY_CONTENT = "content";
+constexpr const char *KEY_DH_ID = "dhId";
+constexpr const char *KEY_DEV_ID = "devId";
+constexpr const char *KEY_RESULT = "result";
+constexpr const char *KEY_EVENT_TYPE = "eventType";
+
+constexpr const char *KEY_AUDIO_PARAM = "audioParam";
+constexpr const char *KEY_NET_WORK_ID = "networkId";
+constexpr const char *KEY_ATTRS = "attrs";
+
+constexpr const char *KEY_SAMPLING_RATE = "samplingRate";
+constexpr const char *KEY_CHANNELS = "channels";
+constexpr const char *KEY_FORMAT = "format";
+constexpr const char *KEY_SOURCE_TYPE = "sourceType";
+constexpr const char *KEY_CONTENT_TYPE = "contentType";
+constexpr const char *KEY_STREAM_USAGE = "streamUsage";
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DAUDIO_CONSTANTS_H

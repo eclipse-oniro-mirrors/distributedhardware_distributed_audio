@@ -136,7 +136,10 @@ void AudioCtrlTransport::OnSessionClosed()
     callback->OnStateChange(AudioEventType::CTRL_CLOSED);
 }
 
-void AudioCtrlTransport::OnDataReceived(const std::shared_ptr<AudioData> &data) {}
+void AudioCtrlTransport::OnDataReceived(const std::shared_ptr<AudioData> &data)
+{
+    (void)data;
+}
 
 void AudioCtrlTransport::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
 {

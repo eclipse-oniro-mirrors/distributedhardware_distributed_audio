@@ -337,7 +337,7 @@ int32_t DAudioSinkDev::TaskOpenCtrlChannel(const std::string &args)
 
     if (dAudioSinkDevCtrlMgr_ != nullptr && dAudioSinkDevCtrlMgr_->IsOpened()) {
         DHLOGI("%s: Ctrl channel already opened.", LOG_TAG);
-        NotifySourceDev(NOTIFY_OPEN_CTRL_RESULT, jParam["dhId"], DH_SUCCESS);
+        NotifySourceDev(NOTIFY_OPEN_CTRL_RESULT, jParam[KEY_DH_ID], DH_SUCCESS);
         return DH_SUCCESS;
     }
 
@@ -345,11 +345,11 @@ int32_t DAudioSinkDev::TaskOpenCtrlChannel(const std::string &args)
     int32_t ret = dAudioSinkDevCtrlMgr_->SetUp();
     if (ret != DH_SUCCESS) {
         DHLOGE("%s:SetUp ctrl mgr failed.", LOG_TAG);
-        NotifySourceDev(NOTIFY_OPEN_CTRL_RESULT, jParam["dhId"], ERR_DH_AUDIO_FAILED);
+        NotifySourceDev(NOTIFY_OPEN_CTRL_RESULT, jParam[KEY_DH_ID], ERR_DH_AUDIO_FAILED);
         return ret;
     }
 
-    NotifySourceDev(NOTIFY_OPEN_CTRL_RESULT, jParam["dhId"], DH_SUCCESS);
+    NotifySourceDev(NOTIFY_OPEN_CTRL_RESULT, jParam[KEY_DH_ID], DH_SUCCESS);
     DHLOGI("%s: Open ctrl channel success, notify open ctrl result.", LOG_TAG);
     return DH_SUCCESS;
 }
@@ -385,9 +385,9 @@ int32_t DAudioSinkDev::TaskOpenDSpeaker(const std::string &args)
         DHLOGE("%s: Open speaker json is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
-    spkDhId_ = jParam["dhId"];
+    spkDhId_ = jParam[KEY_DH_ID];
     AudioParam audioParam;
-    int32_t ret = from_json(jParam["audioParam"], audioParam);
+    int32_t ret = from_json(jParam[KEY_AUDIO_PARAM], audioParam);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Get audio param from json failed, error code %d.", LOG_TAG, ret);
         return ret;
@@ -446,9 +446,9 @@ int32_t DAudioSinkDev::TaskOpenDMic(const std::string &args)
         DHLOGE("%s: Open mic json is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
-    micDhId_ = jParam["dhId"];
+    micDhId_ = jParam[KEY_DH_ID];
     AudioParam audioParam;
-    int32_t ret = from_json(jParam["audioParam"], audioParam);
+    int32_t ret = from_json(jParam[KEY_AUDIO_PARAM], audioParam);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Get audio param from json failed, error code %d.", LOG_TAG, ret);
         return ret;
@@ -607,10 +607,10 @@ void DAudioSinkDev::OnTaskResult(int32_t resultCode, const std::string &result, 
 void DAudioSinkDev::NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result)
 {
     json jEvent;
-    jEvent["dhId"] = dhId;
-    jEvent["result"] = result;
-    jEvent["eventType"] = type;
-    jEvent["devId"] = localDevId_;
+    jEvent[KEY_DH_ID] = dhId;
+    jEvent[KEY_RESULT] = result;
+    jEvent[KEY_EVENT_TYPE] = type;
+    jEvent[KEY_DEV_ID] = localDevId_;
     DAudioSinkManager::GetInstance().DAudioNotify(devId_, dhId, type, jEvent.dump());
 }
 
@@ -620,7 +620,7 @@ bool DAudioSinkDev::JudgeJsonValid(const json &resultJson)
         DHLOGE("%s: JudgeJsonValid: result json is invalid", LOG_TAG);
         return false;
     }
-    if (!resultJson.contains("dhId")) {
+    if (!resultJson.contains(KEY_DH_ID)) {
         DHLOGE("%s: JudgeJsonValid: result json dose not contain key.", LOG_TAG);
         return false;
     }
@@ -634,17 +634,17 @@ int32_t from_json(const json &j, AudioParam &audioParam)
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
 
-    if (!j.contains("samplingRate") || !j.contains("channels") || !j.contains("format") ||
-        !j.contains("sourceType") || !j.contains("contentType") || !j.contains("streamUsage")) {
+    if (!j.contains(KEY_SAMPLING_RATE) || !j.contains(KEY_CHANNELS) || !j.contains(KEY_FORMAT) ||
+        !j.contains(KEY_SOURCE_TYPE) || !j.contains(KEY_CONTENT_TYPE) || !j.contains(KEY_STREAM_USAGE)) {
         DHLOGE("DAudioSinkDev: Json data dose not contain some keys.");
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
-    j.at("samplingRate").get_to(audioParam.comParam.sampleRate);
-    j.at("channels").get_to(audioParam.comParam.channelMask);
-    j.at("format").get_to(audioParam.comParam.bitFormat);
-    j.at("sourceType").get_to(audioParam.CaptureOpts.sourceType);
-    j.at("contentType").get_to(audioParam.renderOpts.contentType);
-    j.at("streamUsage").get_to(audioParam.renderOpts.streamUsage);
+    j.at(KEY_SAMPLING_RATE).get_to(audioParam.comParam.sampleRate);
+    j.at(KEY_CHANNELS).get_to(audioParam.comParam.channelMask);
+    j.at(KEY_FORMAT).get_to(audioParam.comParam.bitFormat);
+    j.at(KEY_SOURCE_TYPE).get_to(audioParam.CaptureOpts.sourceType);
+    j.at(KEY_CONTENT_TYPE).get_to(audioParam.renderOpts.contentType);
+    j.at(KEY_STREAM_USAGE).get_to(audioParam.renderOpts.streamUsage);
     return DH_SUCCESS;
 }
 } // namespace DistributedHardware

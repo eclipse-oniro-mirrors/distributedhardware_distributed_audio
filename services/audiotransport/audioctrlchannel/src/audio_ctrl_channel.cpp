@@ -139,8 +139,8 @@ int32_t AudioCtrlChannel::SendEvent(const std::shared_ptr<AudioEvent> &audioEven
     }
 
     json jAudioEvent;
-    jAudioEvent["type"] = audioEvent->type;
-    jAudioEvent["content"] = audioEvent->content;
+    jAudioEvent[KEY_TYPE] = audioEvent->type;
+    jAudioEvent[KEY_CONTENT] = audioEvent->content;
     std::string message = jAudioEvent.dump();
     int ret = SendMsg(message);
     if (ret != DH_SUCCESS) {
@@ -262,12 +262,12 @@ int from_audioEventJson(const json &j, std::shared_ptr<AudioEvent> &audioEvent)
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
-    if (!j.contains("type") || !j.contains("content")) {
+    if (!j.contains(KEY_TYPE) || !j.contains(KEY_CONTENT)) {
         DHLOGE("AudioCtrlChannel: Some key values do not exist in json data.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
-    j.at("type").get_to(audioEvent->type);
-    j.at("content").get_to(audioEvent->content);
+    j.at(KEY_TYPE).get_to(audioEvent->type);
+    j.at(KEY_CONTENT).get_to(audioEvent->content);
     return DH_SUCCESS;
 }
 } // namespace DistributedHardware

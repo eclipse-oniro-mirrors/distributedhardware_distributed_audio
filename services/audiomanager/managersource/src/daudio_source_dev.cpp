@@ -52,9 +52,9 @@ int32_t DAudioSourceDev::EnableDAudio(const std::string &dhId, const std::string
 {
     DHLOGI("%s: EnableDAudio, dhId: %s.", LOG_TAG, dhId.c_str());
     json jParam;
-    jParam["networkId"] = devId_;
-    jParam["dhId"] = dhId;
-    jParam["attrs"] = attrs;
+    jParam[KEY_NET_WORK_ID] = devId_;
+    jParam[KEY_DH_ID] = dhId;
+    jParam[KEY_ATTRS] = attrs;
     auto task =
         GenerateTask(this, &DAudioSourceDev::TaskEnableDAudio, jParam.dump(), "", &DAudioSourceDev::OnEnableTaskResult);
     DHLOGI("%s: EnableDAudio task generate success.", LOG_TAG);
@@ -65,8 +65,8 @@ int32_t DAudioSourceDev::DisableDAudio(const std::string &dhId)
 {
     DHLOGI("%s: DisableDAudio, dhId: %s.", LOG_TAG, dhId.c_str());
     json jParam;
-    jParam["networkId"] = devId_;
-    jParam["dhId"] = dhId;
+    jParam[KEY_NET_WORK_ID] = devId_;
+    jParam[KEY_DH_ID] = dhId;
     auto task = GenerateTask(this, &DAudioSourceDev::TaskDisableDAudio, jParam.dump(), "",
         &DAudioSourceDev::OnDisableTaskResult);
     DHLOGI("%s: DisableDAudio task generate success.", LOG_TAG);
@@ -340,11 +340,11 @@ int32_t DAudioSourceDev::HandleNotifyRPC(const std::shared_ptr<AudioEvent> &even
 {
     std::lock_guard<std::mutex> dataLock(rpcWaitMutex_);
     json jParam = json::parse(event->content, nullptr, false);
-    if (jParam.is_discarded() || !jParam.contains("result")) {
+    if (jParam.is_discarded() || !jParam.contains(KEY_RESULT)) {
         DHLOGE("%s: Notify RPC param json is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
-    rpcResult_ = (jParam["result"] == DH_SUCCESS) ? true : false;
+    rpcResult_ = (jParam[KEY_RESULT] == DH_SUCCESS) ? true : false;
     DHLOGI("%s: Notify RPC event: %d, result: %d.", LOG_TAG, (int32_t)event->type, (int32_t)rpcResult_);
     switch (event->type) {
         case AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT:
@@ -444,21 +444,21 @@ int32_t DAudioSourceDev::TaskEnableDAudio(const std::string &args)
     DHLOGI("%s: Enable audio device.", LOG_TAG);
     json jParam = json::parse(args, nullptr, false);
     if (jParam.is_discarded() ||
-        !jParam.contains("networkId") || !jParam.contains("dhId") || !jParam.contains("attrs")) {
+        !jParam.contains(KEY_NET_WORK_ID) || !jParam.contains(KEY_DH_ID) || !jParam.contains(KEY_ATTRS)) {
         DHLOGE("%s: Enable param json is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_ENABLE_PARAM_INVALID;
     }
-    if (jParam["networkId"] != devId_) {
+    if (jParam[KEY_NET_WORK_ID] != devId_) {
         DHLOGE("%s: Enable daudio, devId id is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_ENABLE_PARAM_INVALID;
     }
-    int32_t dhId = std::stoi((std::string)jParam["dhId"]);
+    int32_t dhId = std::stoi((std::string)jParam[KEY_DH_ID]);
 
     switch (GetDevTypeByDHId(dhId)) {
         case AUDIO_DEVICE_TYPE_SPEAKER:
-            return EnableDSpeaker(dhId, jParam["attrs"]);
+            return EnableDSpeaker(dhId, jParam[KEY_ATTRS]);
         case AUDIO_DEVICE_TYPE_MIC:
-            return EnableDMic(dhId, jParam["attrs"]);
+            return EnableDMic(dhId, jParam[KEY_ATTRS]);
         case AUDIO_DEVICE_TYPE_UNKNOWN:
         default:
             DHLOGE("%s: Unknown audio device.", LOG_TAG);
@@ -491,12 +491,12 @@ void DAudioSourceDev::OnEnableTaskResult(int32_t resultCode, const std::string &
     (void)funcName;
     DHLOGI("%s: OnEnableTaskResult.", LOG_TAG);
     json resultJson = json::parse(result, nullptr, false);
-    if (resultJson.is_discarded() || !resultJson.contains("dhId") || !resultJson.contains("networkId")) {
+    if (resultJson.is_discarded() || !resultJson.contains(KEY_DH_ID) || !resultJson.contains(KEY_NET_WORK_ID)) {
         DHLOGE("%s: result json is invalid.", LOG_TAG);
         return;
     }
-    std::string devId = resultJson["networkId"];
-    std::string dhId = resultJson["dhId"];
+    std::string devId = resultJson[KEY_NET_WORK_ID];
+    std::string dhId = resultJson[KEY_DH_ID];
     mgrCallback_->OnEnableAudioResult(devId, dhId, resultCode);
 }
 
@@ -504,15 +504,15 @@ int32_t DAudioSourceDev::TaskDisableDAudio(const std::string &args)
 {
     DHLOGI("%s, TaskDisableDAudio.", LOG_TAG);
     json jParam = json::parse(args, nullptr, false);
-    if (jParam.is_discarded() || !jParam.contains("networkId") || !jParam.contains("dhId")) {
+    if (jParam.is_discarded() || !jParam.contains(KEY_NET_WORK_ID) || !jParam.contains(KEY_DH_ID)) {
         DHLOGE("%s: Disable param json is invalid.", LOG_TAG);
         return ERR_DH_AUDIO_SA_DISABLE_PARAM_INVALID;
     }
-    if (jParam["networkId"] != devId_) {
+    if (jParam[KEY_NET_WORK_ID] != devId_) {
         DHLOGE("%s: disable daudio, network id is invalid", LOG_TAG);
         return ERR_DH_AUDIO_SA_ENABLE_PARAM_INVALID;
     }
-    int32_t dhId = std::stoi((std::string)jParam["dhId"]);
+    int32_t dhId = std::stoi((std::string)jParam[KEY_DH_ID]);
     switch (GetDevTypeByDHId(dhId)) {
         case AUDIO_DEVICE_TYPE_SPEAKER:
             return DisableDSpeaker(dhId);
@@ -550,12 +550,12 @@ void DAudioSourceDev::OnDisableTaskResult(int32_t resultCode, const std::string 
     (void)funcName;
     DHLOGI("%s: OnDisableTaskResult.", LOG_TAG);
     json resultJson = json::parse(result, nullptr, false);
-    if (resultJson.is_discarded() || !resultJson.contains("dhId") || !resultJson.contains("networkId")) {
+    if (resultJson.is_discarded() || !resultJson.contains(KEY_DH_ID) || !resultJson.contains(KEY_NET_WORK_ID)) {
         DHLOGE("%s: Result json is invalid.", LOG_TAG);
         return;
     }
-    std::string devId = resultJson["networkId"];
-    std::string dhId = resultJson["dhId"];
+    std::string devId = resultJson[KEY_NET_WORK_ID];
+    std::string dhId = resultJson[KEY_DH_ID];
     mgrCallback_->OnDisableAudioResult(devId, dhId, resultCode);
 }
 
@@ -571,12 +571,12 @@ int32_t DAudioSourceDev::TaskOpenDSpeaker(const std::string &args)
     to_json(jAudioParam, speaker_->GetAudioParam());
 
     json jParam = json::parse(args, nullptr, false);
-    if (jParam.is_discarded() || !jParam.contains("dhId")) {
+    if (jParam.is_discarded() || !jParam.contains(KEY_DH_ID)) {
         DHLOGE("%s: Open speaker param json is invalid", LOG_TAG);
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
 
-    int32_t ret = NotifySinkDev(OPEN_SPEAKER, jAudioParam, jParam["dhId"]);
+    int32_t ret = NotifySinkDev(OPEN_SPEAKER, jAudioParam, jParam[KEY_DH_ID]);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Notify sink open speaker failed.", LOG_TAG);
         return ret;
@@ -620,11 +620,11 @@ int32_t DAudioSourceDev::TaskCloseDSpeaker(const std::string &args)
     if (speaker_->IsOpened()) {
         json jAudioParam;
         json jParam = json::parse(args, nullptr, false);
-        if (jParam.is_discarded() || !jParam.contains("dhId")) {
+        if (jParam.is_discarded() || !jParam.contains(KEY_DH_ID)) {
             DHLOGE("%s: Close speaker param json is invalid", LOG_TAG);
             return ERR_DH_AUDIO_SA_PARAM_INVALID;
         }
-        NotifySinkDev(CLOSE_SPEAKER, jAudioParam, jParam["dhId"]);
+        NotifySinkDev(CLOSE_SPEAKER, jAudioParam, jParam[KEY_DH_ID]);
     }
 
     if (!closeStatus) {
@@ -649,13 +649,13 @@ int32_t DAudioSourceDev::TaskOpenDMic(const std::string &args)
 
     json jAudioParam;
     json jParam = json::parse(args, nullptr, false);
-    if (jParam.is_discarded() || !jParam.contains("dhId")) {
+    if (jParam.is_discarded() || !jParam.contains(KEY_DH_ID)) {
         DHLOGE("%s: Open mic param json is invalid", LOG_TAG);
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
 
     to_json(jAudioParam, mic_->GetAudioParam());
-    ret = NotifySinkDev(OPEN_MIC, jAudioParam, jParam["dhId"]);
+    ret = NotifySinkDev(OPEN_MIC, jAudioParam, jParam[KEY_DH_ID]);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Notify sink open speaker failed.", LOG_TAG);
         mic_->Release();
@@ -697,11 +697,11 @@ int32_t DAudioSourceDev::TaskCloseDMic(const std::string &args)
     if (mic_->IsOpened()) {
         json jAudioParam;
         json jParam = json::parse(args, nullptr, false);
-        if (jParam.is_discarded() || !jParam.contains("dhId")) {
+        if (jParam.is_discarded() || !jParam.contains(KEY_DH_ID)) {
             DHLOGE("%s: Close mic param json is invalid", LOG_TAG);
             return ERR_DH_AUDIO_SA_PARAM_INVALID;
         }
-        NotifySinkDev(CLOSE_MIC, jAudioParam, jParam["dhId"]);
+        NotifySinkDev(CLOSE_MIC, jAudioParam, jParam[KEY_DH_ID]);
     }
 
     if (!closeStatus) {
@@ -721,12 +721,12 @@ int32_t DAudioSourceDev::TaskOpenCtrlChannel(const std::string &args)
 
     json jAudioParam;
     json jParam = json::parse(args, nullptr, false);
-    if (jParam.is_discarded() || !jParam.contains("dhId")) {
+    if (jParam.is_discarded() || !jParam.contains(KEY_DH_ID)) {
         DHLOGE("%s: Open ctrl channel param json is invalid", LOG_TAG);
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
 
-    int32_t ret = NotifySinkDev(OPEN_CTRL, jAudioParam, jParam["dhId"]);
+    int32_t ret = NotifySinkDev(OPEN_CTRL, jAudioParam, jParam[KEY_DH_ID]);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: Notify sink open ctrl failed.", LOG_TAG);
         return ret;
@@ -862,10 +862,10 @@ int32_t DAudioSourceDev::NotifySinkDev(const AudioEventType type, const json Par
 {
     constexpr uint32_t eventOffset = 4;
     json jParam;
-    jParam["dhId"] = dhId;
-    jParam["audioParam"] = Param;
-    jParam["eventType"] = type;
-    jParam["networkId"] = localDevId_;
+    jParam[KEY_DH_ID] = dhId;
+    jParam[KEY_AUDIO_PARAM] = Param;
+    jParam[KEY_EVENT_TYPE] = type;
+    jParam[KEY_NET_WORK_ID] = localDevId_;
     DAudioSourceManager::GetInstance().DAudioNotify(devId_, dhId, type, jParam.dump());
 
     return WaitForRPC((AudioEventType)((int32_t)type + eventOffset));
@@ -903,12 +903,12 @@ AudioEventType DAudioSourceDev::getEventTypeFromArgs(const std::string &args)
 void to_json(json &j, const AudioParam &audioParam)
 {
     j = json {
-        {"samplingRate", audioParam.comParam.sampleRate},
-        {"format", audioParam.comParam.bitFormat},
-        {"channels", audioParam.comParam.channelMask},
-        {"contentType", audioParam.renderOpts.contentType},
-        {"streamUsage", audioParam.renderOpts.streamUsage},
-        {"sourceType", audioParam.CaptureOpts.sourceType},
+        {KEY_SAMPLING_RATE, audioParam.comParam.sampleRate},
+        {KEY_FORMAT, audioParam.comParam.bitFormat},
+        {KEY_CHANNELS, audioParam.comParam.channelMask},
+        {KEY_CONTENT_TYPE, audioParam.renderOpts.contentType},
+        {KEY_STREAM_USAGE, audioParam.renderOpts.streamUsage},
+        {KEY_SOURCE_TYPE, audioParam.CaptureOpts.sourceType},
     };
 }
 } // namespace DistributedHardware
