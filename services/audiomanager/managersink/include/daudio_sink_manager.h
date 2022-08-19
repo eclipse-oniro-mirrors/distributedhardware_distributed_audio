@@ -40,20 +40,15 @@ public:
     void NotifyEvent(const std::string &devId, const int32_t eventType, const std::string &eventContent);
 
 private:
-    class RemoteSourceSvrRecipient : public IRemoteObject::DeathRecipient {
-    public:
-        void OnRemoteDied(const wptr<IRemoteObject> &remote) override;
-    };
     DAudioSinkManager();
     ~DAudioSinkManager();
     void ClearAudioDev(const std::string &devId);
-
+    int32_t CreateAudioDevice(const std::string &devId);
     static const constexpr char *LOG_TAG = "DAudioSinkManager";
     std::mutex devMapMutex_;
     std::unordered_map<std::string, std::shared_ptr<DAudioSinkDev>> dAudioSinkDevMap_;
     std::mutex remoteSvrMutex_;
     std::map<std::string, sptr<IDAudioSource>> remoteSvrProxyMap_;
-    sptr<RemoteSourceSvrRecipient> remoteSourceSvrRecipient_ = nullptr;
     std::thread devClearThread_;
 };
 } // DistributedHardware

@@ -28,7 +28,7 @@ namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DAudioSinkManager);
 DAudioSinkManager::DAudioSinkManager()
 {
-    DHLOGI("%s: Distributed audio sink manager constructed.", LOG_TAG);
+    DHLOGI("Distributed audio sink manager constructed.");
 }
 
 DAudioSinkManager::~DAudioSinkManager()
@@ -36,25 +36,19 @@ DAudioSinkManager::~DAudioSinkManager()
     if (devClearThread_.joinable()) {
         devClearThread_.join();
     }
-    DHLOGI("%s: Distributed audio sink manager deconstructed.", LOG_TAG);
+    DHLOGI("Distributed audio sink manager deconstructed.");
 }
 
 int32_t DAudioSinkManager::Init()
 {
-    DHLOGI("%s: DAudioSinkManager Init.", LOG_TAG);
-    remoteSourceSvrRecipient_ = new RemoteSourceSvrRecipient();
-    if (remoteSourceSvrRecipient_ == nullptr) {
-        DHLOGE("%s: RemoteiSourceSvrRecipient is nullptr.", LOG_TAG);
-        return ERR_DH_AUDIO_NULLPTR;
-    }
+    DHLOGI("%s: Init audio sink manager.", LOG_TAG);
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkManager::UnInit()
 {
-    DHLOGI("%s: DAudioSinkManager UnInit.", LOG_TAG);
+    DHLOGI("%s: UnInit audio sink manager.", LOG_TAG);
     std::lock_guard<std::mutex> lock(remoteSvrMutex_);
-    remoteSourceSvrRecipient_ = nullptr;
     remoteSvrProxyMap_.clear();
     {
         std::lock_guard<std::mutex> lock(devMapMutex_);
@@ -87,15 +81,23 @@ int32_t DAudioSinkManager::HandleDAudioNotify(const std::string &devId, const st
     std::lock_guard<std::mutex> lock(devMapMutex_);
     auto iter = dAudioSinkDevMap_.find(devId);
     if (iter == dAudioSinkDevMap_.end()) {
-        DHLOGI("%s: Create audio sink dev.", LOG_TAG);
-        std::shared_ptr<DAudioSinkDev> sinkDev = std::make_shared<DAudioSinkDev>(devId);
-        if (sinkDev->AwakeAudioDev() != DH_SUCCESS) {
-            DHLOGE("%s: Awake audio dev failed.", LOG_TAG);
+        if (CreateAudioDevice(devId) != DH_SUCCESS) {
             return ERR_DH_AUDIO_FAILED;
         }
-        dAudioSinkDevMap_.emplace(devId, sinkDev);
     }
     NotifyEvent(devId, eventType, eventContent);
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSinkManager::CreateAudioDevice(const std::string &devId)
+{
+    DHLOGI("%s: Create audio sink dev.", LOG_TAG);
+    auto sinkDev = std::make_shared<DAudioSinkDev>(devId);
+    if (sinkDev->AwakeAudioDev() != DH_SUCCESS) {
+        DHLOGE("%s: Awake audio dev failed.", LOG_TAG);
+        return ERR_DH_AUDIO_FAILED;
+    }
+    dAudioSinkDevMap_.emplace(devId, sinkDev);
     return DH_SUCCESS;
 }
 
@@ -150,11 +152,6 @@ void DAudioSinkManager::NotifyEvent(const std::string &devId, const int32_t even
     audioEvent->type = (AudioEventType)eventType;
     audioEvent->content = eventContent;
     dAudioSinkDevMap_[devId]->NotifyEvent(audioEvent);
-}
-
-void DAudioSinkManager::RemoteSourceSvrRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
-{
-    DHLOGI("%s: DAudioSinkManager::OnRemoteDied.", LOG_TAG);
 }
 
 void DAudioSinkManager::ClearAudioDev(const std::string &devId)

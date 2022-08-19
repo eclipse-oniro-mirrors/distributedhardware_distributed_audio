@@ -19,11 +19,12 @@
 #include <condition_variable>
 #include <mutex>
 
+#include "nlohmann/json.hpp"
+
 #include "daudio_sink_dev_ctrl_manager.h"
 #include "dmic_client.h"
 #include "dspeaker_client.h"
 #include "task_queue.h"
-#include "nlohmann/json.hpp"
 #include "iaudio_event_callback.h"
 
 using json = nlohmann::json;

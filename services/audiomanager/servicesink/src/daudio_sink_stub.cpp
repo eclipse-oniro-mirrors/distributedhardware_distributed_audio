@@ -33,7 +33,7 @@ DAudioSinkStub::DAudioSinkStub()
 
 DAudioSinkStub::~DAudioSinkStub()
 {
-    DHLOGI("%s: Distributed audio sink stub destructed.", LOG_TAG);
+    DHLOGI("%s: Distributed audio sink stub deconstructed.", LOG_TAG);
 }
 
 int32_t DAudioSinkStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)

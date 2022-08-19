@@ -40,7 +40,7 @@ DAudioSinkService::DAudioSinkService(int32_t saId, bool runOnCreate) : SystemAbi
 
 void DAudioSinkService::OnStart()
 {
-    DHLOGI("%s: OnStart", LOG_TAG);
+    DHLOGI("%s: OnStart.", LOG_TAG);
     if (!Init()) {
         DHLOGE("%s: Init failed.", LOG_TAG);
         return;
@@ -50,20 +50,20 @@ void DAudioSinkService::OnStart()
 
 void DAudioSinkService::OnStop()
 {
-    DHLOGI("%s: OnStop", LOG_TAG);
-    registerToService_ = false;
+    DHLOGI("%s: OnStop.", LOG_TAG);
+    isServiceStarted_ = false;
 }
 
 bool DAudioSinkService::Init()
 {
-    DHLOGI("%s: Start init", LOG_TAG);
-    if (!registerToService_) {
+    DHLOGI("%s: Start init.", LOG_TAG);
+    if (!isServiceStarted_) {
         bool ret = Publish(this);
         if (!ret) {
             DHLOGE("%s: Publish service failed.", LOG_TAG);
             return false;
         }
-        registerToService_ = true;
+        isServiceStarted_ = true;
     }
     DHLOGI("%s: Init success.", LOG_TAG);
     return true;
