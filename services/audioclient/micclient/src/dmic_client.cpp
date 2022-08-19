@@ -43,18 +43,24 @@ int32_t DMicClient::OnStateChange(int32_t type)
             std::unique_lock<std::mutex> lck(channelWaitMutex_);
             channelWaitCond_.notify_all();
             event->type = AudioEventType::MIC_OPENED;
-            eventCallback_->NotifyEvent(event);
-            return DH_SUCCESS;
+            break;
         }
         case AudioEventType::DATA_CLOSED: {
             event->type = AudioEventType::MIC_CLOSED;
-            eventCallback_->NotifyEvent(event);
-            return DH_SUCCESS;
+            break;
         }
         default:
             DHLOGE("%s: Invalid parameter type: %d.", LOG_TAG, type);
             return ERR_DH_AUDIO_CLIENT_STATE_IS_INVALID;
     }
+
+    std::shared_ptr<IAudioEventCallback> cbObj = eventCallback_.lock();
+    if (cbObj == nullptr) {
+        DHLOGE("%s: Event callback is nullptr.", LOG_TAG);
+        return ERR_DH_AUDIO_CLIENT_EVENT_CALLBACK_IS_NULL;
+    }
+    cbObj->NotifyEvent(event);
+    return DH_SUCCESS;
 }
 
 int32_t DMicClient::SetUp(const AudioParam &param)

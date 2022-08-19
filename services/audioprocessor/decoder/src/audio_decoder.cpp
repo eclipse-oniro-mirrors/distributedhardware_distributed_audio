@@ -303,8 +303,8 @@ int32_t AudioDecoder::ProcessData(const std::shared_ptr<AudioData> &audioData, c
 
     inputTimeStampUs_ = GetDecoderTimeStamp();
     Media::AVCodecBufferInfo bufferInfo = {inputTimeStampUs_, static_cast<int32_t>(audioData->Size()), 0};
-    DHLOGD("%s: QueueInputBuffer. AVCodecBufferInfo presentationTimeUs %lld.", LOG_TAG,
-        (long long)bufferInfo.presentationTimeUs);
+    DHLOGD("%s: Queue input buffer. AVCodec Info: input time stamp %lld, data size %zu.", LOG_TAG,
+        (long long)bufferInfo.presentationTimeUs, audioData->Size());
 
     auto bufferFlag = Media::AVCODEC_BUFFER_FLAG_NONE;
     if (bufferInfo.presentationTimeUs == 0) {
@@ -392,7 +392,8 @@ void AudioDecoder::OnOutputBufferAvailable(uint32_t index, Media::AVCodecBufferI
     }
     outBuf->SetInt64("timeUs", info.presentationTimeUs);
     outputTimeStampUs_ = info.presentationTimeUs;
-    DHLOGD("%s: AVCodec info, output time stamp %lld.", LOG_TAG, (long long)info.presentationTimeUs);
+    DHLOGD("%s: Get output buffer. AVCodec info: output time stamp %lld, data size %zu.", LOG_TAG,
+        (long long)info.presentationTimeUs, outBuf->Size());
 
     ReduceWaitDecodeCnt();
     err = DecodeDone(outBuf);

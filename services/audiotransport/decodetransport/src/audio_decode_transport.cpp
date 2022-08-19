@@ -121,7 +121,7 @@ void AudioDecodeTransport::OnSessionOpened()
 {
     DHLOGI("%s: On channel session opened.", LOG_TAG);
     if (dataTransCallback_ == nullptr) {
-        DHLOGI("%s: On channel session opened. callback is nullptr", LOG_TAG);
+        DHLOGE("%s: On channel session opened. callback is nullptr.", LOG_TAG);
         return;
     }
     dataTransCallback_->OnStateChange(AudioEventType::DATA_OPENED);
@@ -131,7 +131,7 @@ void AudioDecodeTransport::OnSessionClosed()
 {
     DHLOGI("%s: On channel session close.", LOG_TAG);
     if (dataTransCallback_ == nullptr) {
-        DHLOGI("%s: On channel session close, callback is nullptr.", LOG_TAG);
+        DHLOGE("%s: On channel session close, callback is nullptr.", LOG_TAG);
         return;
     }
     dataTransCallback_->OnStateChange(AudioEventType::DATA_CLOSED);

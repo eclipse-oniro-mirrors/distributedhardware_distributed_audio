@@ -16,8 +16,8 @@
 #ifndef AUDIO_ENCODE_TRANSPORT_H
 #define AUDIO_ENCODE_TRANSPORT_H
 
-#include <mutex>
 #include <memory>
+#include <mutex>
 #include <queue>
 #include <string>
 #include <thread>

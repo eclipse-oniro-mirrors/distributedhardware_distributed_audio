@@ -62,8 +62,8 @@ typedef enum {
     AUDIO_DECODER_ERR = 62,
 } AudioEventType;
 
-typedef struct {
-    AudioEventType type;
+typedef struct AudioEvent {
+    AudioEventType type = EVENT_UNKNOWN;
     std::string content;
 } AudioEvent;
 

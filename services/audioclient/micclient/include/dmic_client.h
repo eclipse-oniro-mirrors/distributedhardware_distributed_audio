@@ -70,7 +70,7 @@ private:
     std::mutex devMtx_;
     AudioClientStatus clientStatus_ = CLIENT_STATUS_IDLE;
 
-    std::shared_ptr<IAudioEventCallback> eventCallback_ = nullptr;
+    std::weak_ptr<IAudioEventCallback> eventCallback_;
     std::unique_ptr<AudioStandard::AudioCapturer> audioCapturer_ = nullptr;
     std::shared_ptr<IAudioDataTransport> micTrans_ = nullptr;
 };

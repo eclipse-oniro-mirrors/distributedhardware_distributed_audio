@@ -222,13 +222,15 @@ int32_t DSpeakerClient::OnStateChange(int32_t type)
         }
         default:
             DHLOGE("%s: Invalid parameter type: %d.", LOG_TAG, type);
-            break;
+            return ERR_DH_AUDIO_CLIENT_STATE_IS_INVALID;
     }
-    if (eventCallback_ == nullptr) {
-        DHLOGE("%s: Event callback is null.", LOG_TAG);
-        return ERR_DH_AUDIO_NULLPTR;
+
+    std::shared_ptr<IAudioEventCallback> cbObj = eventCallback_.lock();
+    if (cbObj == nullptr) {
+        DHLOGE("%s: Event callback is nullptr.", LOG_TAG);
+        return ERR_DH_AUDIO_CLIENT_EVENT_CALLBACK_IS_NULL;
     }
-    eventCallback_->NotifyEvent(event);
+    cbObj->NotifyEvent(event);
     return DH_SUCCESS;
 }
 
@@ -256,8 +258,9 @@ string DSpeakerClient::GetVolumeLevel()
 void DSpeakerClient::OnVolumeKeyEvent(AudioStandard::VolumeEvent volumeEvent)
 {
     DHLOGI("%s: OnVolumeKeyEvent.", LOG_TAG);
-    if (eventCallback_ == nullptr) {
-        DHLOGE("%s: EventCallback is nullptr.", LOG_TAG);
+    std::shared_ptr<IAudioEventCallback> cbObj = eventCallback_.lock();
+    if (cbObj == nullptr) {
+        DHLOGE("%s: Event callback is nullptr.", LOG_TAG);
         return;
     }
     std::stringstream ss;
@@ -272,14 +275,15 @@ void DSpeakerClient::OnVolumeKeyEvent(AudioStandard::VolumeEvent volumeEvent)
     std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
     audioEvent->type = VOLUME_CHANGE;
     audioEvent->content = str;
-    eventCallback_->NotifyEvent(audioEvent);
+    cbObj->NotifyEvent(audioEvent);
 }
 
 void DSpeakerClient::OnInterrupt(const AudioStandard::InterruptEvent &interruptEvent)
 {
     DHLOGI("%s: OnInterrupt.", LOG_TAG);
-    if (eventCallback_ == nullptr) {
-        DHLOGE("%s: EventCallback is nullptr.", LOG_TAG);
+    std::shared_ptr<IAudioEventCallback> cbObj = eventCallback_.lock();
+    if (cbObj == nullptr) {
+        DHLOGE("%s: Event callback is nullptr.", LOG_TAG);
         return;
     }
     std::stringstream ss;
@@ -293,14 +297,15 @@ void DSpeakerClient::OnInterrupt(const AudioStandard::InterruptEvent &interruptE
     std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
     audioEvent->type = AUDIO_FOCUS_CHANGE;
     audioEvent->content = str;
-    eventCallback_->NotifyEvent(audioEvent);
+    cbObj->NotifyEvent(audioEvent);
 }
 
 void DSpeakerClient::OnStateChange(const AudioStandard::RendererState state)
 {
     DHLOGI("%s: On render state change. state: %d", LOG_TAG, state);
-    if (eventCallback_ == nullptr) {
-        DHLOGE("%s: EventCallback is nullptr.", LOG_TAG);
+    std::shared_ptr<IAudioEventCallback> cbObj = eventCallback_.lock();
+    if (cbObj == nullptr) {
+        DHLOGE("%s: Event callback is nullptr.", LOG_TAG);
         return;
     }
     std::stringstream ss;
@@ -312,7 +317,7 @@ void DSpeakerClient::OnStateChange(const AudioStandard::RendererState state)
     std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
     audioEvent->type = AUDIO_RENDER_STATE_CHANGE;
     audioEvent->content = str;
-    eventCallback_->NotifyEvent(audioEvent);
+    cbObj->NotifyEvent(audioEvent);
 }
 
 int32_t DSpeakerClient::SetAudioParameters(const std::shared_ptr<AudioEvent> &event)
