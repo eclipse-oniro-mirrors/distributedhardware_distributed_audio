@@ -62,11 +62,12 @@ ohos_unittest("SpeakerClientTest") {
     "${audio_client_path}/spkclient:dspeaker_client",
     "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
     "${common_path}:distributed_audio_utils",
-    "${mediastandardfwk_path}/audiomanager:audio_client",
     "${mediastandardfwk_path}/audiorenderer:audio_renderer",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
   ]
+
+  external_deps = [ "multimedia_audio_framework:audio_client" ]
 }
 
 group("spk_client_test") {
