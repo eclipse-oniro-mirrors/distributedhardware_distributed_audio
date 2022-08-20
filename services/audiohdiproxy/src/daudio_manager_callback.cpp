@@ -130,10 +130,7 @@ int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t d
         DHLOGE("%s: Register hdi callback is nullptr", LOG_TAG);
         return HDF_FAILURE;
     }
-    AudioEvent newEvent = {
-        .type = AudioEventType::EVENT_UNKNOWN,
-        .content = event.content
-    };
+    AudioEvent newEvent(AudioEventType::EVENT_UNKNOWN, event.content);
     switch (event.type) {
         case AudioEventHDF::AUDIO_EVENT_VOLUME_SET:
             newEvent.type = AudioEventType::VOLUME_SET;

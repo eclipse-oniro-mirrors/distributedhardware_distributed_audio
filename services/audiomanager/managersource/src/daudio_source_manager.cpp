@@ -132,9 +132,7 @@ int32_t DAudioSourceManager::HandleDAudioNotify(const std::string &devId, const 
         return ERR_DH_AUDIO_SA_DEVICE_NOT_EXIST;
     }
 
-    auto audioEvent = std::make_shared<AudioEvent>();
-    audioEvent->type = (AudioEventType)eventType;
-    audioEvent->content = eventContent;
+    auto audioEvent = std::make_shared<AudioEvent>(eventType, eventContent);
     audioDevMap_[devId].dev->NotifyEvent(audioEvent);
     return DH_SUCCESS;
 }
@@ -145,9 +143,9 @@ int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::s
     DHLOGI("%s: DAudioNotify, devId: %s, dhId: %s, eventType: %d.", LOG_TAG, GetAnonyString(devId).c_str(),
         dhId.c_str(), eventType);
     {
-        std::lock_guard<std::mutex> autoLock(remoteSvrMutex_);
-        auto sinkProxy = remoteSvrProxyMap_.find(devId);
-        if (sinkProxy != remoteSvrProxyMap_.end()) {
+        std::lock_guard<std::mutex> lck(remoteSvrMutex_);
+        auto sinkProxy = sinkServiceMap_.find(devId);
+        if (sinkProxy != sinkServiceMap_.end()) {
             if (sinkProxy->second != nullptr) {
                 sinkProxy->second->DAudioNotify(localDevId_, dhId, eventType, eventContent);
                 return DH_SUCCESS;
@@ -171,8 +169,8 @@ int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::s
         return ERR_DH_AUDIO_SA_GET_REMOTE_SINK_FAILED;
     }
     {
-        std::lock_guard<std::mutex> autoLock(remoteSvrMutex_);
-        remoteSvrProxyMap_[devId] = remoteSvrProxy;
+        std::lock_guard<std::mutex> lck(remoteSvrMutex_);
+        sinkServiceMap_[devId] = remoteSvrProxy;
         remoteSvrProxy->DAudioNotify(localDevId_, dhId, eventType, eventContent);
     }
     return DH_SUCCESS;
@@ -218,7 +216,7 @@ int32_t DAudioSourceManager::CreateAudioDevice(const std::string &devId)
 {
     DHLOGI("%s: Create audio device.", LOG_TAG);
     auto sourceDev = std::make_shared<DAudioSourceDev>(devId, daudioMgrCallback_);
-    if (sourceDev->AwakeAudioDev() != DH_SUCCESS) {
+    if (sourceDev->AwakeAudioDev(localDevId_) != DH_SUCCESS) {
         DHLOGE("%s: Create new audio device failed.", LOG_TAG);
         return ERR_DH_AUDIO_FAILED;
     }

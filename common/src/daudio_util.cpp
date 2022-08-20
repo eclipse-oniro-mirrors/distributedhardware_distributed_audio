@@ -145,6 +145,7 @@ int32_t GetAudioParamBool(const std::string &params, const std::string &key, boo
     value = (val != "0");
     return DH_SUCCESS;
 }
+
 int32_t GetAudioParamInt(const std::string &params, const std::string &key, int32_t &value)
 {
     std::string val = "0";

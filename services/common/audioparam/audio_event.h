@@ -62,11 +62,6 @@ typedef enum {
     AUDIO_DECODER_ERR = 62,
 } AudioEventType;
 
-typedef struct AudioEvent {
-    AudioEventType type = EVENT_UNKNOWN;
-    std::string content;
-} AudioEvent;
-
 typedef enum {
     AUDIO_EVENT_UNKNOWN = 0,
     AUDIO_EVENT_VOLUME_SET = 1,
@@ -82,6 +77,15 @@ typedef enum {
     AUDIO_EVENT_RENDER_STATE_CHANGE = 11,
     AUDIO_EVENT_MUTE_SET = 12,
 } AudioEventHDF;
+class AudioEvent {
+public:
+    AudioEvent() = default;
+    AudioEvent(const AudioEventType t, const std::string &c) : type(t), content(c) {};
+    AudioEvent(const int32_t t, const std::string &c) : type((AudioEventType)t), content(c) {};
+    ~AudioEvent() = default;
+    AudioEventType type = EVENT_UNKNOWN;
+    std::string content;
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DAUDIO_AUDIO_EVENT_H

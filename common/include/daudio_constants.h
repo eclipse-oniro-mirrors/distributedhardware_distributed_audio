@@ -90,9 +90,7 @@ constexpr const char *KEY_DH_ID = "dhId";
 constexpr const char *KEY_DEV_ID = "devId";
 constexpr const char *KEY_RESULT = "result";
 constexpr const char *KEY_EVENT_TYPE = "eventType";
-
 constexpr const char *KEY_AUDIO_PARAM = "audioParam";
-constexpr const char *KEY_NET_WORK_ID = "networkId";
 constexpr const char *KEY_ATTRS = "attrs";
 
 constexpr const char *KEY_SAMPLING_RATE = "samplingRate";

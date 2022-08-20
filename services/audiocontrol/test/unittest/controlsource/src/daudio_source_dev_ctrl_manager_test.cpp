@@ -26,7 +26,7 @@ void DAudioSourceDevCtrlMgrTest::TearDownTestCase(void) {}
 
 void DAudioSourceDevCtrlMgrTest::SetUp(void)
 {
-    std::string networkId = "networkId";
+    std::string networkId = "devId";
     std::shared_ptr<IAudioEventCallback> audioEventCallback = nullptr;
     sourceDevCtrl_ = std::make_shared<DAudioSourceDevCtrlMgr>(networkId, audioEventCallback);
 }

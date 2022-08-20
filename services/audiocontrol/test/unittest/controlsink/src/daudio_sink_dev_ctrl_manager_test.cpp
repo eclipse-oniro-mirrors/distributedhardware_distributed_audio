@@ -26,7 +26,7 @@ void DAudioSinkDevCtrlMgrTest::TearDownTestCase(void) {}
 
 void DAudioSinkDevCtrlMgrTest::SetUp(void)
 {
-    std::string networkId = "networkId";
+    std::string networkId = "devId";
     std::shared_ptr<IAudioEventCallback> audioEventCallback = nullptr;
     sinkDevCtrl_ = std::make_shared<DAudioSinkDevCtrlMgr>(networkId, audioEventCallback);
 }

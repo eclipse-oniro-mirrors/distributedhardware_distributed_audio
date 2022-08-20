@@ -17,6 +17,7 @@
 #define OHOS_DAUDIO_SOURCE_DEV_H
 
 #include <mutex>
+#include <initializer_list>
 #include "nlohmann/json.hpp"
 
 #include "audio_event.h"
@@ -40,7 +41,7 @@ public:
         : devId_(devId), mgrCallback_(callback) {};
     ~DAudioSourceDev() = default;
 
-    int32_t AwakeAudioDev();
+    int32_t AwakeAudioDev(const std::string localDevId);
     void SleepAudioDev();
 
     int32_t EnableDAudio(const std::string &dhId, const std::string &attrs);
@@ -89,12 +90,16 @@ private:
     int32_t HandleRenderStateChange(const std::shared_ptr<AudioEvent> &event);
 
     int32_t NotifySinkDev(const AudioEventType type, const json Param, const std::string dhId);
-    void NotifyHDF(const AudioEventType type, const std::string result);
+    int32_t NotifyHDF(const AudioEventType type, const std::string result);
     void NotifySpeakerEvent(const std::shared_ptr<AudioEvent> &event);
     void NotifyMicEvent(const std::shared_ptr<AudioEvent> &event);
     bool IsSpeakerEvent(const std::shared_ptr<AudioEvent> &event);
     bool IsMicEvent(const std::shared_ptr<AudioEvent> &event);
+    int32_t OpenCtrlTrans(const std::shared_ptr<AudioEvent> &event);
+    int32_t CloseCtrlTrans(const std::shared_ptr<AudioEvent> &event, bool isSpk);
     AudioEventType getEventTypeFromArgs (const std::string &args);
+    void to_json(json &j, const AudioParam &param);
+    bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);
 
 private:
     static const constexpr char *LOG_TAG = "DAudioSourceDev";
@@ -115,7 +120,7 @@ private:
     std::shared_ptr<DSpeakerDev> speaker_;
     std::shared_ptr<DMicDev> mic_;
 
-    std::shared_ptr<DAudioSourceDevCtrlMgr> audioSourceCtrlMgr_;
+    std::shared_ptr<DAudioSourceDevCtrlMgr> audioCtrlMgr_;
     std::mutex taskQueueMutex_;
 
     std::mutex rpcWaitMutex_;
@@ -123,7 +128,6 @@ private:
     bool rpcResult_ = false;
     uint8_t rpcNotify_ = 0;
 };
-void to_json(json &j, const AudioParam &audioParam);
 } // DistributedHardware
 } // OHOS
 #endif // OHOS_DAUDIO_SOURCE_DEV_H
