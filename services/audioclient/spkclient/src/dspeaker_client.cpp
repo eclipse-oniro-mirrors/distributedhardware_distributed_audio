@@ -53,6 +53,7 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
         DHLOGE("%s: Audio renderer create failed.", LOG_TAG);
         return ERR_DH_AUDIO_CLIENT_CREATE_RENDER_FAILED;
     }
+    audioRenderer_ ->SetRendererCallback(shared_from_this());
     speakerTrans_ = std::make_shared<AudioDecodeTransport>(devId_);
     int32_t ret = speakerTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), "speaker");
     if (ret != DH_SUCCESS) {
