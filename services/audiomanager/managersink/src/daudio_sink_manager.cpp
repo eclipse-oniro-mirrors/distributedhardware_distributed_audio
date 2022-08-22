@@ -49,7 +49,7 @@ int32_t DAudioSinkManager::UnInit()
 {
     DHLOGI("%s: UnInit audio sink manager.", LOG_TAG);
     std::lock_guard<std::mutex> lock(remoteSvrMutex_);
-    remoteSvrProxyMap_.clear();
+    sourceServiceMap_.clear();
     {
         std::lock_guard<std::mutex> lock(devMapMutex_);
         for (auto iter = dAudioSinkDevMap_.begin(); iter != dAudioSinkDevMap_.end(); iter++) {
@@ -93,7 +93,7 @@ int32_t DAudioSinkManager::CreateAudioDevice(const std::string &devId)
 {
     DHLOGI("%s: Create audio sink dev.", LOG_TAG);
     auto sinkDev = std::make_shared<DAudioSinkDev>(devId);
-    if (sinkDev->AwakeAudioDev() != DH_SUCCESS) {
+    if (sinkDev->AwakeAudioDev(devId) != DH_SUCCESS) {
         DHLOGE("%s: Awake audio dev failed.", LOG_TAG);
         return ERR_DH_AUDIO_FAILED;
     }
@@ -113,9 +113,9 @@ int32_t DAudioSinkManager::DAudioNotify(const std::string &devId, const std::str
         return ret;
     }
     {
-        std::lock_guard<std::mutex> autoLock(remoteSvrMutex_);
-        auto sinkProxy = remoteSvrProxyMap_.find(devId);
-        if (sinkProxy != remoteSvrProxyMap_.end()) {
+        std::lock_guard<std::mutex> lck(remoteSvrMutex_);
+        auto sinkProxy = sourceServiceMap_.find(devId);
+        if (sinkProxy != sourceServiceMap_.end()) {
             if (sinkProxy->second != nullptr) {
                 sinkProxy->second->DAudioNotify(localNetworkId, dhId, eventType, eventContent);
                 return DH_SUCCESS;
@@ -139,8 +139,8 @@ int32_t DAudioSinkManager::DAudioNotify(const std::string &devId, const std::str
         return ERR_DH_AUDIO_SA_GET_REMOTE_SINK_FAILED;
     }
     {
-        std::lock_guard<std::mutex> autoLock(remoteSvrMutex_);
-        remoteSvrProxyMap_[devId] = remoteSvrProxy;
+        std::lock_guard<std::mutex> lck(remoteSvrMutex_);
+        sourceServiceMap_[devId] = remoteSvrProxy;
         remoteSvrProxy->DAudioNotify(localNetworkId, dhId, eventType, eventContent);
     }
     return DH_SUCCESS;
@@ -148,9 +148,7 @@ int32_t DAudioSinkManager::DAudioNotify(const std::string &devId, const std::str
 
 void DAudioSinkManager::NotifyEvent(const std::string &devId, const int32_t eventType, const std::string &eventContent)
 {
-    auto audioEvent = std::make_shared<AudioEvent>();
-    audioEvent->type = (AudioEventType)eventType;
-    audioEvent->content = eventContent;
+    auto audioEvent = std::make_shared<AudioEvent>(eventType, eventContent);
     dAudioSinkDevMap_[devId]->NotifyEvent(audioEvent);
 }
 

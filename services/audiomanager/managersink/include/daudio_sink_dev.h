@@ -18,6 +18,7 @@
 
 #include <condition_variable>
 #include <mutex>
+#include <initializer_list>
 
 #include "nlohmann/json.hpp"
 
@@ -36,11 +37,10 @@ public:
     DAudioSinkDev(const std::string &networkId);
     ~DAudioSinkDev();
 
-    int32_t AwakeAudioDev();
+    int32_t AwakeAudioDev(const std::string localDevId);
     void SleepAudioDev();
 
     void NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent) override;
-    void NotifyEventSub(const std::shared_ptr<AudioEvent> &audioEvent);
 
     int32_t TaskOpenCtrlChannel(const std::string &args);
     int32_t TaskCloseCtrlChannel(const std::string &args);
@@ -57,6 +57,12 @@ public:
     void OnTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
 
 private:
+    bool IsSpeakerEvent(const std::shared_ptr<AudioEvent> &event);
+    bool IsMicEvent(const std::shared_ptr<AudioEvent> &event);
+    bool IsVolumeEvent(const std::shared_ptr<AudioEvent> &event);
+    void NotifySpeakerEvent(const std::shared_ptr<AudioEvent> &event);
+    void NotifyMicEvent(const std::shared_ptr<AudioEvent> &event);
+    void NotifyVolumeEvent(const std::shared_ptr<AudioEvent> &event);
     int32_t NotifyOpenCtrlChannel(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyCloseCtrlChannel(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyCtrlOpened(const std::shared_ptr<AudioEvent> &audioEvent);
@@ -75,15 +81,14 @@ private:
     int32_t NotifySetMute(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyFocusChange(const std::shared_ptr<AudioEvent> &audioEvent);
     int32_t NotifyRenderStateChange(const std::shared_ptr<AudioEvent> &audioEvent);
-    bool JudgeJsonValid(const json &resultJson);
     void NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result);
+    int32_t from_json(const json &j, AudioParam &audioParam);
+    bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);
 
-    static constexpr uint8_t RPC_WAIT_SECONDS = 5;
-    static constexpr uint8_t TASK_QUEUE_CAPACITY = 20;
     static const constexpr char *LOG_TAG = "DAudioSinkDev";
     std::shared_ptr<DSpeakerClient> speakerClient_;
     std::shared_ptr<DMicClient> micClient_;
-    std::shared_ptr<DAudioSinkDevCtrlMgr> dAudioSinkDevCtrlMgr_;
+    std::shared_ptr<DAudioSinkDevCtrlMgr> audioCtrlMgr_;
     std::string devId_;
     std::string localDevId_;
     std::string spkDhId_;
@@ -95,7 +100,6 @@ private:
     std::mutex taskQueueMutex_;
     std::shared_ptr<TaskQueue> taskQueue_;
 };
-int32_t from_json(const json &j, AudioParam &audioParam);
 } // DistributedHardware
 } // OHOS
 #endif // OHOS_DAUDIO_SINK_DEV_H

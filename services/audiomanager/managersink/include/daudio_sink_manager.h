@@ -48,7 +48,7 @@ private:
     std::mutex devMapMutex_;
     std::unordered_map<std::string, std::shared_ptr<DAudioSinkDev>> dAudioSinkDevMap_;
     std::mutex remoteSvrMutex_;
-    std::map<std::string, sptr<IDAudioSource>> remoteSvrProxyMap_;
+    std::map<std::string, sptr<IDAudioSource>> sourceServiceMap_;
     std::thread devClearThread_;
 };
 } // DistributedHardware
