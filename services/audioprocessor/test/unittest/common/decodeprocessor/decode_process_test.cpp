@@ -221,7 +221,7 @@ HWTEST_F(DecodeProcessTest, decode_process_test_009, TestSize.Level1)
  * @tc.name: decode_process_test_0010
  * @tc.desc: Verify feed audio processor function.
  * @tc.type: FUNC
- * @tc.require: AR000H0J9E
+ * @tc.require: AR000H0E5U
  */
 HWTEST_F(DecodeProcessTest, decode_process_test_0010, TestSize.Level1)
 {
