@@ -34,28 +34,32 @@ int32_t DMicDev::EnableDMic(const int32_t dhId, const std::string &capability)
 {
     DHLOGI("%s: EnableDMic dhId: %d.", LOG_TAG, dhId);
     if (enabledPorts_.empty()) {
-        DHLOGI("%s: Enable default mic device.", LOG_TAG);
-        int32_t ret = DAudioHdiHandler::GetInstance().RegisterAudioDevice(devId_, PIN_IN_DAUDIO_DEFAULT, capability,
-            shared_from_this());
-        if (ret != DH_SUCCESS) {
-            DHLOGE("%s: Register default mic device failed, ret: %d.", LOG_TAG, ret);
-            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_REGISTER_FAIL, devId_, std::to_string(dhId),
-                ret, "daudio register default mic device failed.");
-            return ret;
+        if (EnableDevice(PIN_IN_DAUDIO_DEFAULT, capability) != DH_SUCCESS) {
+            return ERR_DH_AUDIO_FAILED;
         }
-        enabledPorts_.insert(PIN_IN_DAUDIO_DEFAULT);
     }
-    int32_t ret = DAudioHdiHandler::GetInstance().RegisterAudioDevice(devId_, dhId, capability, shared_from_this());
+    int32_t ret = EnableDevice(dhId, capability);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: register audio device failed, ret: %d", LOG_TAG, ret);
-        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_REGISTER_FAIL, devId_, std::to_string(dhId),
-            ret, "daudio register audio mic device failed.");
         return ret;
     }
-    enabledPorts_.insert(dhId);
+
     DaudioFinishAsyncTrace(DAUDIO_REGISTER_AUDIO, DAUDIO_REGISTER_AUDIO_TASKID);
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUIDO_REGISTER, devId_, std::to_string(dhId),
         "daudio mic enable success.");
+    return DH_SUCCESS;
+}
+
+int32_t DMicDev::EnableDevice(const int32_t dhId, const std::string &capability)
+{
+    DHLOGI("%s: Enable default mic device.", LOG_TAG);
+    int32_t ret = DAudioHdiHandler::GetInstance().RegisterAudioDevice(devId_, dhId, capability, shared_from_this());
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: Register mic device failed, ret: %d.", LOG_TAG, ret);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_REGISTER_FAIL, devId_, std::to_string(dhId), ret,
+            "daudio register mic device failed.");
+        return ret;
+    }
+    enabledPorts_.insert(dhId);
     return DH_SUCCESS;
 }
 
@@ -65,27 +69,32 @@ int32_t DMicDev::DisableDMic(const int32_t dhId)
     if (dhId == curPort_) {
         isOpened_.store(false);
     }
-    int32_t ret = DAudioHdiHandler::GetInstance().UnRegisterAudioDevice(devId_, dhId);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("%s: unregister audio device failed, ret: %d", LOG_TAG, ret);
-        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_UNREGISTER_FAIL, devId_, std::to_string(dhId),
-            ret, "daudio unregister audio mic device failed.");
+    if (DisableDevice(dhId) != DH_SUCCESS) {
+        return ERR_DH_AUDIO_FAILED;
     }
-    enabledPorts_.erase(dhId);
 
     if (enabledPorts_.size() == SINGLE_ITEM && enabledPorts_.find(PIN_IN_DAUDIO_DEFAULT) != enabledPorts_.end()) {
-        int32_t ret = DAudioHdiHandler::GetInstance().UnRegisterAudioDevice(devId_, PIN_IN_DAUDIO_DEFAULT);
-        if (ret != DH_SUCCESS) {
-            DHLOGE("%s: UnRegister default mic device failed, ret: %d.", LOG_TAG, ret);
-            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_UNREGISTER_FAIL, devId_, std::to_string(dhId),
-                ret, "daudio unregister default mic device failed.");
-            return ret;
+        if (DisableDevice(PIN_IN_DAUDIO_DEFAULT) != DH_SUCCESS) {
+            return ERR_DH_AUDIO_FAILED;
         }
     }
-    enabledPorts_.erase(PIN_IN_DAUDIO_DEFAULT);
+
     DaudioFinishAsyncTrace(DAUDIO_UNREGISTER_AUDIO, DAUDIO_UNREGISTER_AUDIO_TASKID);
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_UNREGISTER, devId_, std::to_string(dhId),
         "daudio mic disable success.");
+    return DH_SUCCESS;
+}
+
+int32_t DMicDev::DisableDevice(const int32_t dhId)
+{
+    int32_t ret = DAudioHdiHandler::GetInstance().UnRegisterAudioDevice(devId_, dhId);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("%s: unregister audio device failed, ret: %d", LOG_TAG, ret);
+        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_UNREGISTER_FAIL, devId_, std::to_string(dhId), ret,
+            "daudio unregister audio mic device failed.");
+        return ret;
+    }
+    enabledPorts_.erase(dhId);
     return DH_SUCCESS;
 }
 
@@ -97,16 +106,8 @@ int32_t DMicDev::OpenDevice(const std::string &devId, const int32_t dhId)
         DHLOGE("%s: OpenDevice, callback is null.", LOG_TAG);
         return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
     }
-    if (devId != devId_ || dhId != curPort_) {
-        DHLOGE("%s: Device id or port id is wrong.", LOG_TAG);
-        return ERR_DH_AUDIO_FAILED;
-    }
-
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    json jParam;
-    jParam["dhId"] = std::to_string(dhId);
-    event->type = AudioEventType::OPEN_MIC;
-    event->content = jParam.dump();
+    json jParam = { { KEY_DH_ID, std::to_string(dhId) } };
+    auto event = std::make_shared<AudioEvent>(AudioEventType::OPEN_MIC, jParam.dump());
     cbObj->NotifyEvent(event);
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_OPEN, devId, std::to_string(dhId),
         "daudio mic device open success.");
@@ -121,15 +122,8 @@ int32_t DMicDev::CloseDevice(const std::string &devId, const int32_t dhId)
         DHLOGE("%s: CloseDevice, callback is null", LOG_TAG);
         return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
     }
-    if (devId != devId_ || dhId != curPort_) {
-        DHLOGE("%s: Device id or port id is wrong.", LOG_TAG);
-        return ERR_DH_AUDIO_FAILED;
-    }
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    json jParam;
-    jParam["dhId"] = std::to_string(dhId);
-    event->type = AudioEventType::CLOSE_MIC;
-    event->content = jParam.dump();
+    json jParam = { { KEY_DH_ID, std::to_string(dhId) } };
+    auto event = std::make_shared<AudioEvent>(AudioEventType::CLOSE_MIC, jParam.dump());
     cbObj->NotifyEvent(event);
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_CLOSE, devId, std::to_string(dhId),
         "daudio mic device close success.");
@@ -143,11 +137,6 @@ int32_t DMicDev::SetParameters(const std::string &devId, const int32_t dhId, con
         "framesize: %d, ext{%s}}.",
         LOG_TAG, param.sampleRate, param.channelMask, param.bitFormat, param.period, param.frameSize,
         param.ext.c_str());
-    if (devId != devId_) {
-        DHLOGE("%s: Device Id is wrong, set mic parameters failed.", LOG_TAG);
-        return ERR_DH_AUDIO_FAILED;
-    }
-
     curPort_ = dhId;
     paramHDF_ = param;
 
@@ -155,8 +144,6 @@ int32_t DMicDev::SetParameters(const std::string &devId, const int32_t dhId, con
     param_.comParam.channelMask = paramHDF_.channelMask;
     param_.comParam.bitFormat = paramHDF_.bitFormat;
     param_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
-    param_.renderOpts.contentType = CONTENT_TYPE_MUSIC;
-    param_.renderOpts.streamUsage = paramHDF_.streamUsage;
     param_.CaptureOpts.sourceType = SOURCE_TYPE_MIC;
     param_.CaptureOpts.capturerFlags = 0;
     return DH_SUCCESS;
@@ -170,7 +157,7 @@ int32_t DMicDev::NotifyEvent(const std::string &devId, int32_t dhId, const Audio
         DHLOGE("%s: Eventcallback is null", LOG_TAG);
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
-    std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
+    auto audioEvent = std::make_shared<AudioEvent>(event.type, event.content);
     cbObj->NotifyEvent(audioEvent);
     return DH_SUCCESS;
 }
@@ -254,7 +241,7 @@ int32_t DMicDev::ReadStreamData(const std::string &devId, const int32_t dhId, st
 {
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     if (dataQueue_.empty()) {
-        DHLOGI("%s: data queue is empty.", LOG_TAG);
+        DHLOGE("%s: data queue is empty.", LOG_TAG);
         data = std::make_shared<AudioData>(FRAME_SIZE);
     } else {
         data = dataQueue_.front();
@@ -306,11 +293,11 @@ int32_t DMicDev::WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData)
 {
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     while (dataQueue_.size() > DATA_QUEUE_MAX_SIZE) {
-        DHLOGI("%s: Data queue overflow.", LOG_TAG);
+        DHLOGE("%s: Data queue overflow.", LOG_TAG);
         dataQueue_.pop();
     }
     dataQueue_.push(audioData);
-    DHLOGI("%s: Push new mic data, buf len: %d", LOG_TAG, dataQueue_.size());
+    DHLOGD("%s: Push new mic data, buf len: %d", LOG_TAG, dataQueue_.size());
     return DH_SUCCESS;
 }
 } // DistributedHardware

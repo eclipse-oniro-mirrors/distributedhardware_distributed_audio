@@ -61,6 +61,10 @@ public:
     int32_t NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event);
 
 private:
+    int32_t EnableDevice(const int32_t dhId, const std::string &capability);
+    int32_t DisableDevice(const int32_t dhId);
+
+private:
     static const constexpr char *LOG_TAG = "DSpeakerDev";
     std::string devId_;
     std::set<int32_t> enabledPorts_;

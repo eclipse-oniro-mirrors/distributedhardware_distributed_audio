@@ -60,6 +60,10 @@ public:
     int32_t WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData) override;
 
 private:
+    int32_t EnableDevice(const int32_t dhId, const std::string &capability);
+    int32_t DisableDevice(const int32_t dhId);
+
+private:
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
     static constexpr size_t DATA_QUEUE_MAX_SIZE = 5;
     static constexpr size_t FRAME_SIZE = 4096;
