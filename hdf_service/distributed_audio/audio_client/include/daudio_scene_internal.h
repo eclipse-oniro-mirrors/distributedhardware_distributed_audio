@@ -53,7 +53,8 @@ int32_t AudioSceneInternal<T>::SelectScene(AudioHandle handle, const struct Audi
     } else {
         sceneHAL.desc.desc = scene->desc.desc;
     }
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SelectScene(sceneHAL);
+    return (context == nullptr || context->proxy_ == nullptr) ?
+        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SelectScene(sceneHAL);
 }
 
 template<typename T>
@@ -78,12 +79,8 @@ int32_t AudioSceneInternal<T>::CheckSceneCapability(AudioHandle handle, const st
         sceneHAL.desc.desc = scene->desc.desc;
     }
 
-    if (context == nullptr) {
-        DHLOGE("%s:The context is empty.", AUDIO_LOG);
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
-    } else {
-        return context->proxy_->CheckSceneCapability(sceneHAL, *supported);
-    }
+    return (context == nullptr || context->proxy_ == nullptr) ?
+        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->CheckSceneCapability(sceneHAL, *supported);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

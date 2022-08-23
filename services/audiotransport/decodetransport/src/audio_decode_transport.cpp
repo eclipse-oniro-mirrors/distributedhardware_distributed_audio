@@ -160,7 +160,7 @@ void AudioDecodeTransport::OnAudioDataDone(const std::shared_ptr<AudioData> &out
 {
     DHLOGI("%s: On audio data done.", LOG_TAG);
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
-    dataTransCallback_->WriteStreamBuffer(outputData);
+    dataTransCallback_->OnDecodeTransDataDone(outputData);
 }
 
 void AudioDecodeTransport::OnStateNotify(const AudioEvent &event)

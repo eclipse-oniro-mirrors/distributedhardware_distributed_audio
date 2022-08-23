@@ -289,7 +289,7 @@ int32_t DMicDev::OnStateChange(int32_t type)
     return DH_SUCCESS;
 }
 
-int32_t DMicDev::WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData)
+int32_t DMicDev::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData)
 {
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     while (dataQueue_.size() > DATA_QUEUE_MAX_SIZE) {

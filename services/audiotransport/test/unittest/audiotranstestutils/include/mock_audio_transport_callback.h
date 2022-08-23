@@ -29,7 +29,7 @@ public:
     ~MockAudioTransportCallback() = default;
 
     int32_t OnStateChange(int32_t state) override;
-    int32_t WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData) override;
+    int32_t OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData) override;
 };
 
 int32_t MockAudioTransportCallback::OnStateChange(int32_t state)
@@ -38,10 +38,10 @@ int32_t MockAudioTransportCallback::OnStateChange(int32_t state)
     return DH_SUCCESS;
 }
 
-int32_t MockAudioTransportCallback::WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData)
+int32_t MockAudioTransportCallback::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData)
 {
     (void) audioData;
-    DHLOGE("Test : MockAudioTransportCallback WriteStreamBuffer.");
+    DHLOGE("Test : MockAudioTransportCallback OnDecodeTransDataDone.");
     return DH_SUCCESS;
 }
 } // namespace DistributedHardware

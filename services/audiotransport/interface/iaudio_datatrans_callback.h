@@ -26,7 +26,7 @@ public:
     IAudioDataTransCallback() = default;
     virtual ~IAudioDataTransCallback() = default;
     virtual int32_t OnStateChange(int32_t type) = 0;
-    virtual int32_t WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData) = 0;
+    virtual int32_t OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

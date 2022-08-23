@@ -53,7 +53,7 @@ public:
 
     int32_t OnStateChange(int32_t type) override;
     void OnStateChange(const AudioStandard::RendererState state) override;
-    int32_t WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData) override;
+    int32_t OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData) override;
     void OnVolumeKeyEvent(AudioStandard::VolumeEvent event) override;
     void OnInterrupt(const AudioStandard::InterruptEvent &interruptEvent) override;
     int32_t SetUp(const AudioParam &param);

@@ -78,6 +78,10 @@ static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct Audio
     std::lock_guard<std::mutex> lock(context->mtx_);
 
     std::vector<AudioAdapterDescriptorHAL> descriptors;
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: GetAllAdaptersInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     int32_t ret = context->proxy_->GetAllAdapters(descriptors);
     if (ret != DH_SUCCESS) {
         *descs = nullptr;
@@ -118,6 +122,10 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct Au
         .adapterName = desc->adapterName,
     };
     sptr<IAudioAdapter> adapterProxy = nullptr;
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: LoadAdaptersInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     int32_t ret = context->proxy_->LoadAdapter(descriptor, adapterProxy);
     if (ret != DH_SUCCESS) {
         DHLOGE("%s: LoadAdapterInternal loadAdapter failed.", AUDIO_LOG);
@@ -146,6 +154,10 @@ static void UnloadAdapterInternal(struct AudioManager *manager, struct AudioAdap
 
     AudioManagerContext *context = reinterpret_cast<AudioManagerContext *>(manager);
     AudioAdapterContext *adapterContext = reinterpret_cast<AudioAdapterContext *>(adapter);
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: UnLoadAdaptersInternal context proxy is nullptr.", AUDIO_LOG);
+        return;
+    }
 
     std::lock_guard<std::mutex> lock(context->mtx_);
     for (auto it = context->adapters_.begin(); it != context->adapters_.end(); it++) {

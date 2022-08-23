@@ -305,7 +305,7 @@ int32_t DSpeakerDev::OnStateChange(int32_t type)
     return DH_SUCCESS;
 }
 
-int32_t DSpeakerDev::WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData)
+int32_t DSpeakerDev::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData)
 {
     (void) audioData;
     return DH_SUCCESS;

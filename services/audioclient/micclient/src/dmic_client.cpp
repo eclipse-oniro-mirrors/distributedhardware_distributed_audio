@@ -206,7 +206,7 @@ void DMicClient::CaptureThreadRunning()
     }
 }
 
-int32_t DMicClient::WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData)
+int32_t DMicClient::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData)
 {
     (void)audioData;
     return DH_SUCCESS;

@@ -57,7 +57,7 @@ public:
     AudioParam GetAudioParam() const;
     int32_t NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event);
     int32_t OnStateChange(int32_t type) override;
-    int32_t WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData) override;
+    int32_t OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData) override;
 
 private:
     int32_t EnableDevice(const int32_t dhId, const std::string &capability);

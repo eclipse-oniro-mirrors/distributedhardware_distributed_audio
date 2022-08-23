@@ -16,6 +16,7 @@
 #include "daudio_hdf_operate.h"
 
 #include <hdf_io_service_if.h>
+#include <hdf_base.h>
 
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
@@ -59,12 +60,12 @@ int32_t DaudioHdfOperate::LoadDaudioHDFImpl()
                 hdfOperateCon_.notify_one();
             }
         }));
-    if (servMgr_->RegisterServiceStatusListener(listener, DEVICE_CLASS_AUDIO) != 0) {
+    if (servMgr_->RegisterServiceStatusListener(listener, DEVICE_CLASS_AUDIO) != HDF_SUCCESS) {
         DHLOGE("%s: RegisterServiceStatusListener failed!", LOG_TAG);
         return ERR_DH_AUDIO_NULLPTR;
     }
 
-    if (devmgr_->LoadDevice(AUDIO_SERVICE_NAME) != 0) {
+    if (devmgr_->LoadDevice(AUDIO_SERVICE_NAME) != HDF_SUCCESS) {
         DHLOGE("%s: Load audio service failed!", LOG_TAG);
         return ERR_DH_AUDIO_FAILED;
     }
@@ -73,7 +74,7 @@ int32_t DaudioHdfOperate::LoadDaudioHDFImpl()
         return ERR_DH_AUDIO_FAILED;
     }
 
-    if (devmgr_->LoadDevice(AUDIOEXT_SERVICE_NAME) != 0) {
+    if (devmgr_->LoadDevice(AUDIOEXT_SERVICE_NAME) != HDF_SUCCESS) {
         DHLOGE("%s: Load provider service failed!", LOG_TAG);
         return ERR_DH_AUDIO_FAILED;
     }
@@ -82,7 +83,7 @@ int32_t DaudioHdfOperate::LoadDaudioHDFImpl()
         return ERR_DH_AUDIO_FAILED;
     }
 
-    if (servMgr_->UnregisterServiceStatusListener(listener) != 0) {
+    if (servMgr_->UnregisterServiceStatusListener(listener) != HDF_SUCCESS) {
         DHLOGE("%s: UnregisterServiceStatusListener failed!", LOG_TAG);
     }
     return DH_SUCCESS;
@@ -113,11 +114,11 @@ int32_t DaudioHdfOperate::UnLoadDaudioHDFImpl()
     }
 
     int32_t ret = devmgr_->UnloadDevice(AUDIO_SERVICE_NAME);
-    if (ret != 0) {
+    if (ret != HDF_SUCCESS) {
         DHLOGE("%s: Unload audio service failed, ret: %d", LOG_TAG, ret);
     }
     ret = devmgr_->UnloadDevice(AUDIOEXT_SERVICE_NAME);
-    if (ret != 0) {
+    if (ret != HDF_SUCCESS) {
         DHLOGE("%s: Unload provider service failed, ret: %d", LOG_TAG, ret);
     }
     audioServStatus_ = INVALID_VALUE;

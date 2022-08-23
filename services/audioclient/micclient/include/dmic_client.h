@@ -46,7 +46,7 @@ public:
         : devId_(devId), eventCallback_(callback) {};
     ~DMicClient();
     int32_t OnStateChange(int32_t type) override;
-    int32_t WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData) override;
+    int32_t OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData) override;
     int32_t SetUp(const AudioParam &param);
     int32_t Release();
     int32_t StartCapture();

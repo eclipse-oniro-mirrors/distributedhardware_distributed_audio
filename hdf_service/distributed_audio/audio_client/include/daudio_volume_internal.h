@@ -47,7 +47,8 @@ int32_t AudioVolumeInternal<T>::SetMute(AudioHandle handle, bool mute)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetMute(mute);
+    return (context == nullptr || context->proxy_ == nullptr) ?
+        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetMute(mute);
 }
 
 template<typename T>
@@ -59,7 +60,8 @@ int32_t AudioVolumeInternal<T>::GetMute(AudioHandle handle, bool *mute)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetMute(*mute);
+    return (context == nullptr || context->proxy_ == nullptr) ?
+        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetMute(*mute);
 }
 
 template<typename T>
@@ -71,7 +73,8 @@ int32_t AudioVolumeInternal<T>::SetVolume(AudioHandle handle, float volume)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetVolume(volume);
+    return (context == nullptr || context->proxy_ == nullptr) ?
+        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetVolume(volume);
 }
 
 template<typename T>
@@ -83,7 +86,8 @@ int32_t AudioVolumeInternal<T>::GetVolume(AudioHandle handle, float *volume)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetVolume(*volume);
+    return (context == nullptr || context->proxy_ == nullptr) ?
+        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetVolume(*volume);
 }
 
 template<typename T>
@@ -95,7 +99,8 @@ int32_t AudioVolumeInternal<T>::GetGainThreshold(AudioHandle handle, float *min,
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetGainThreshold(*min, *max);
+    return (context == nullptr || context->proxy_ == nullptr) ?
+        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetGainThreshold(*min, *max);
 }
 
 template<typename T>
@@ -107,7 +112,8 @@ int32_t AudioVolumeInternal<T>::SetGain(AudioHandle handle, float gain)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetGain(gain);
+    return (context == nullptr || context->proxy_ == nullptr) ?
+        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetGain(gain);
 }
 
 template<typename T>
@@ -119,7 +125,8 @@ int32_t AudioVolumeInternal<T>::GetGain(AudioHandle handle, float *gain)
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    return (context == nullptr) ? ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetGain(*gain);
+    return (context == nullptr || context->proxy_ == nullptr) ?
+        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetGain(*gain);
 }
 } // DistributedHardware
 } // OHOS

@@ -193,7 +193,7 @@ void DSpeakerClient::PlayThreadRunning()
     }
 }
 
-int32_t DSpeakerClient::WriteStreamBuffer(const std::shared_ptr<AudioData> &audioData)
+int32_t DSpeakerClient::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData)
 {
     DHLOGI("%s: Write stream buffer.", LOG_TAG);
     std::lock_guard<std::mutex> lock(dataQueueMtx_);

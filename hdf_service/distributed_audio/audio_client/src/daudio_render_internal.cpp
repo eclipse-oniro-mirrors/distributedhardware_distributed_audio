@@ -35,6 +35,10 @@ static int32_t GetLatencyInternal(struct AudioRender *render, uint32_t *ms)
     }
 
     AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: GetLatencyInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     return context->proxy_->GetLatency(*ms);
 }
 
@@ -48,6 +52,10 @@ static int32_t RenderFrameInternal(struct AudioRender *render, const void *frame
     }
 
     AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: RenderFrameInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     const uint8_t *uframe = reinterpret_cast<const uint8_t *>(frame);
     std::vector<uint8_t> frameHal(requestBytes);
     int32_t ret = memcpy_s(frameHal.data(), requestBytes, uframe, requestBytes);
@@ -66,6 +74,10 @@ static int32_t GetRenderPositionInternal(struct AudioRender *render, uint64_t *f
     }
 
     AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: GetRenderPositionInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     AudioTimeStampHAL timeHal;
     int32_t ret = context->proxy_->GetRenderPosition(*frames, timeHal);
     if (ret != DH_SUCCESS) {
@@ -84,6 +96,10 @@ static int32_t SetRenderSpeedInternal(struct AudioRender *render, float speed)
     }
 
     AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: SetRenderSpeedInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     return context->proxy_->SetRenderSpeed(speed);
 }
 
@@ -95,6 +111,10 @@ static int32_t GetRenderSpeedInternal(struct AudioRender *render, float *speed)
     }
 
     AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: GetRenderSpeedInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     return context->proxy_->GetRenderSpeed(*speed);
 }
 
@@ -106,6 +126,10 @@ static int32_t SetChannelModeInternal(struct AudioRender *render, enum AudioChan
     }
 
     AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: SetChannelModeInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     return context->proxy_->SetChannelMode(static_cast<AudioChannelModeHAL>(mode));
 }
 
@@ -117,6 +141,10 @@ static int32_t GetChannelModeInternal(struct AudioRender *render, enum AudioChan
     }
 
     AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: GetChannelModeInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     return context->proxy_->GetChannelMode(*(reinterpret_cast<AudioChannelModeHAL *>(mode)));
 }
 
@@ -128,11 +156,12 @@ static int32_t RegCallbackInternal(struct AudioRender *render, RenderCallback ca
     }
 
     AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: RegCallbackInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     std::lock_guard<std::mutex> lock(context->mtx_);
-    if (context->callbackInternal_ == nullptr) {
-        context->callbackInternal_ = std::make_unique<AudioRenderCallbackContext>(callback, cookie);
-    } else if (callback != context->callback_) {
-        context->callbackInternal_ = nullptr;
+    if (context->callbackInternal_ == nullptr || callback != context->callback_) {
         context->callbackInternal_ = std::make_unique<AudioRenderCallbackContext>(callback, cookie);
     } else {
         return DH_SUCCESS;
@@ -159,6 +188,10 @@ static int32_t DrainBufferInternal(struct AudioRender *render, enum AudioDrainNo
     }
 
     AudioRenderContext *context = reinterpret_cast<AudioRenderContext *>(render);
+    if (context == nullptr || context->proxy_ == nullptr) {
+        DHLOGE("%s: DrainBufferInternal context proxy is nullptr.", AUDIO_LOG);
+        return ERR_DH_AUDIO_HDF_NULLPTR;
+    }
     return context->proxy_->DrainBuffer(*(reinterpret_cast<AudioDrainNotifyTypeHAL *>(type)));
 }
 
