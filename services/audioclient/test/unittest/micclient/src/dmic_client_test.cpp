@@ -26,8 +26,8 @@ void DMicClientTest::TearDownTestCase(void) {}
 void DMicClientTest::SetUp()
 {
     std::string devId = "hello";
-    std::shared_ptr<IAudioEventCallback> callback = std::make_shared<MockIAudioEventCallback>();
-    micClient_ = std::make_shared<DMicClient>(devId, callback);
+    clientCallback_ = std::make_shared<MockIAudioEventCallback>();
+    micClient_ = std::make_shared<DMicClient>(devId, clientCallback_);
     micClient_->micTrans_ = std::make_shared<MockIAudioDataTransport>();
 
     audioParam_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
@@ -37,7 +37,11 @@ void DMicClientTest::SetUp()
     audioParam_.CaptureOpts.sourceType = SourceType::SOURCE_TYPE_MIC;
 }
 
-void DMicClientTest::TearDown() {}
+void DMicClientTest::TearDown()
+{
+    clientCallback_ = nullptr;
+    micClient_ = nullptr;
+}
 
 /**
  * @tc.name: OnStateChange_001

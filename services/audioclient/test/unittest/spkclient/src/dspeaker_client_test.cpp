@@ -26,8 +26,8 @@ void DSpeakerClientTest::TearDownTestCase(void) {}
 void DSpeakerClientTest::SetUp()
 {
     std::string devId = "hello";
-    std::shared_ptr<IAudioEventCallback> callback = std::make_shared<MockIAudioEventCallback>();
-    speakerClient_ = std::make_shared<DSpeakerClient>(devId, callback);
+    clientCallback_ = std::make_shared<MockIAudioEventCallback>();
+    speakerClient_ = std::make_shared<DSpeakerClient>(devId, clientCallback_);
     speakerClient_->speakerTrans_ = std::make_shared<MockIAudioDataTransport>();
 
     audioParam_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
@@ -41,6 +41,7 @@ void DSpeakerClientTest::SetUp()
 void DSpeakerClientTest::TearDown()
 {
     speakerClient_ = nullptr;
+    clientCallback_ = nullptr;
 }
 
 /**

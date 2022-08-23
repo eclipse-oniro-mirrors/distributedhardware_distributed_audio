@@ -33,6 +33,7 @@ public:
     void SetUp();
     void TearDown();
 
+    std::shared_ptr<IAudioEventCallback> clientCallback_ = nullptr;
     std::shared_ptr<DSpeakerClient> speakerClient_ = nullptr;
     AudioParam audioParam_;
 };
