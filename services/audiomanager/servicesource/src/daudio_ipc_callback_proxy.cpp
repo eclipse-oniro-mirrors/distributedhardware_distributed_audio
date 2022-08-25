@@ -17,6 +17,9 @@
 
 #include "daudio_errorcode.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioIpcCallbackProxy"
+
 namespace OHOS {
 namespace DistributedHardware {
 int32_t DAudioIpcCallbackProxy::OnNotifyRegResult(const std::string &devId, const std::string &dhId,

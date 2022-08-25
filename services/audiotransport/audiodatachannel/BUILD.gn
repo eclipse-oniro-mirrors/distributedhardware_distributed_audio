@@ -47,7 +47,7 @@ ohos_shared_library("distributed_audio_data_channel") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daudio_audiodatachannel\"",
+
     "LOG_DOMAIN=0xD004100",
   ]
 

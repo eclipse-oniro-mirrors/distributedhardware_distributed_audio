@@ -47,8 +47,6 @@ public:
         const StreamFrameInfo *streamFrameInfo) override;
 
 private:
-    static const constexpr char *LOG_TAG = "AudioDataChannel";
-
     const std::string peerDevId_;
     int32_t sessionId_ = 0;
     std::string sessionName_;

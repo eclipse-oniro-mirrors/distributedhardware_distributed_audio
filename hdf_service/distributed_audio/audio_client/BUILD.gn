@@ -35,7 +35,6 @@ ohos_shared_library("daudio_client") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daudioHDF\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

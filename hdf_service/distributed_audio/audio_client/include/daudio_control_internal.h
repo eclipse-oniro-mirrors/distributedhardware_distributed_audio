@@ -21,6 +21,9 @@
 #include "audio_types.h"
 #include "daudio_errcode.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AudioControlInternal"
+
 namespace OHOS {
 namespace DistributedHardware {
 template<typename T>
@@ -33,18 +36,13 @@ public:
     static int32_t Flush(AudioHandle handle);
     static int32_t TurnStandbyMode(AudioHandle handle);
     static int32_t AudioDevDump(AudioHandle handle, int32_t range, int32_t fd);
-
-public:
-    static const char *AUDIO_LOG;
 };
-template<typename T>
-const char *AudioControlInternal<T>::AUDIO_LOG = "AudioSceneInternal";
 
 template<typename T>
 int32_t AudioControlInternal<T>::Start(AudioHandle handle)
 {
     if (handle == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
@@ -57,7 +55,7 @@ template<typename T>
 int32_t AudioControlInternal<T>::Stop(AudioHandle handle)
 {
     if (handle == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
@@ -70,7 +68,7 @@ template<typename T>
 int32_t AudioControlInternal<T>::Pause(AudioHandle handle)
 {
     if (handle == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
@@ -83,7 +81,7 @@ template<typename T>
 int32_t AudioControlInternal<T>::Resume(AudioHandle handle)
 {
     if (handle == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
@@ -96,7 +94,7 @@ template<typename T>
 int32_t AudioControlInternal<T>::Flush(AudioHandle handle)
 {
     if (handle == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
@@ -109,7 +107,7 @@ template<typename T>
 int32_t AudioControlInternal<T>::TurnStandbyMode(AudioHandle handle)
 {
     if (handle == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
@@ -122,7 +120,7 @@ template<typename T>
 int32_t AudioControlInternal<T>::AudioDevDump(AudioHandle handle, int32_t range, int32_t fd)
 {
     if (handle == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 

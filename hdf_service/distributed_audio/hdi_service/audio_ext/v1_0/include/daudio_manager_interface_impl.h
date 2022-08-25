@@ -68,7 +68,6 @@ private:
     static Deletor deletor;
 
 private:
-    const char *AUDIO_LOG = "DAudioManagerInterfaceImpl";
     OHOS::HDI::DistributedAudio::Audio::V1_0::AudioManagerInterfaceImpl *audiomgr_;
     static DAudioManagerInterfaceImpl *dmgr;
     static std::mutex mutex_dmgr;

@@ -25,26 +25,26 @@
 #include "daudio_volume_internal.h"
 
 #define HDF_LOG_TAG HDF_AUDIO
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioCaptureInternal"
 
 namespace OHOS {
 namespace DistributedHardware {
-static const char * const AUDIO_LOG = "DAudioCaptureInternal";
-
 static int32_t GetCapturePositionInternal(struct AudioCapture *capture, uint64_t *frames, struct AudioTimeStamp *time)
 {
     if (capture == nullptr || frames == nullptr || time == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
     AudioCaptureContext *context = reinterpret_cast<AudioCaptureContext *>(capture);
     if (context == nullptr || context->proxy_ == nullptr) {
-        DHLOGE("%s: GetCapturePositionInternal context proxy is nullptr.", AUDIO_LOG);
+        DHLOGE("GetCapturePositionInternal context proxy is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     AudioTimeStampHAL timeHal;
     int32_t ret = context->proxy_->GetCapturePosition(*frames, timeHal);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s:Get capture position failed.", AUDIO_LOG);
+        DHLOGE("Get capture position failed.");
         return ret;
     }
     time->tvSec = (int64_t)timeHal.tvSec;
@@ -56,26 +56,26 @@ static int32_t CaptureFrameInternal(struct AudioCapture *capture, void *frame, u
     uint64_t *replyBytes)
 {
     if (capture == nullptr || frame == nullptr || requestBytes == 0 || replyBytes == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
     AudioCaptureContext *context = reinterpret_cast<AudioCaptureContext *>(capture);
     if (context == nullptr || context->proxy_ == nullptr) {
-        DHLOGE("%s: CaptureFrameInternal context proxy is nullptr.", AUDIO_LOG);
+        DHLOGE("CaptureFrameInternal context proxy is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     uint8_t *uframe = reinterpret_cast<uint8_t *>(frame);
     std::vector<uint8_t> frameHal;
     int32_t ret = context->proxy_->CaptureFrame(frameHal, requestBytes, *replyBytes);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s:The CaptureFrame is failed.", AUDIO_LOG);
+        DHLOGE("The CaptureFrame is failed.");
         return ret;
     }
 
     ret = memcpy_s(uframe, requestBytes, frameHal.data(), requestBytes);
     if (ret != EOK) {
-        DHLOGE("%s: DaudioCaptureInternal captureFrameInternal memcpy_s failed ret: %d.", AUDIO_LOG, ret);
+        DHLOGE("DaudioCaptureInternal captureFrameInternal memcpy_s failed ret: %d.", ret);
         return ERR_DH_AUDIO_HDF_FAILURE;
     }
     return DH_SUCCESS;

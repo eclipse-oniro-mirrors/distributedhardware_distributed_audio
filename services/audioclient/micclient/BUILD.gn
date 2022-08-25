@@ -52,7 +52,6 @@ ohos_shared_library("dmic_client") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daudio_mic_client\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

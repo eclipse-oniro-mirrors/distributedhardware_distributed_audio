@@ -19,6 +19,9 @@
 #include "audio_types.h"
 #include "daudio_errcode.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AudioSceneInternal"
+
 namespace OHOS {
 namespace DistributedHardware {
 using namespace OHOS::HDI::DistributedAudio::Audio::V1_0;
@@ -27,18 +30,13 @@ class AudioSceneInternal final {
 public:
     static int32_t CheckSceneCapability(AudioHandle handle, const struct AudioSceneDescriptor *scene, bool *supported);
     static int32_t SelectScene(AudioHandle handle, const struct AudioSceneDescriptor *scene);
-
-public:
-    static const char *AUDIO_LOG;
 };
-template<typename T>
-const char *AudioSceneInternal<T>::AUDIO_LOG = "AudioSceneInternal";
 
 template<typename T>
 int32_t AudioSceneInternal<T>::SelectScene(AudioHandle handle, const struct AudioSceneDescriptor *scene)
 {
     if (handle == nullptr || scene == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
@@ -62,7 +60,7 @@ int32_t AudioSceneInternal<T>::CheckSceneCapability(AudioHandle handle, const st
     bool *supported)
 {
     if (handle == nullptr || scene == nullptr || supported == nullptr) {
-        DHLOGE("%s:The parameter is empty.", AUDIO_LOG);
+        DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 

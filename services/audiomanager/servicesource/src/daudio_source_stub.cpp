@@ -20,6 +20,9 @@
 #include "daudio_ipc_callback_proxy.h"
 #include "daudio_log.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioSourceStub"
+
 namespace OHOS {
 namespace DistributedHardware {
 DAudioSourceStub::DAudioSourceStub()
@@ -38,13 +41,13 @@ int32_t DAudioSourceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Me
     std::u16string desc = DAudioSourceStub::GetDescriptor();
     std::u16string remoteDesc = data.ReadInterfaceToken();
     if (desc != remoteDesc) {
-        DHLOGE("%s: RemoteDesc is invalid.", LOG_TAG);
+        DHLOGE("RemoteDesc is invalid.");
         return ERR_DH_AUDIO_SA_INVALID_INTERFACE_TOKEN;
     }
 
     const auto &iter = memberFuncMap_.find(code);
     if (iter == memberFuncMap_.end()) {
-        DHLOGE("%s: Invalid request code.", LOG_TAG);
+        DHLOGE("Invalid request code.");
         return ERR_DH_AUDIO_SA_INVALID_REQUEST_CODE;
     }
     DAudioSourceServiceFunc &func = iter->second;
@@ -56,7 +59,7 @@ int32_t DAudioSourceStub::InitSourceInner(MessageParcel &data, MessageParcel &re
     std::string param = data.ReadString();
     sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();
     if (remoteObject == nullptr) {
-        DHLOGE("%s: Read param failed.", LOG_TAG);
+        DHLOGE("Read param failed.");
         return ERR_DH_AUDIO_SA_READ_PARAM_FAILED;
     }
 

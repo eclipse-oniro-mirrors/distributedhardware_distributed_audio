@@ -39,7 +39,6 @@ public:
         const std::string &eventContent) override;
 
 private:
-    static const constexpr char *LOG_TAG = "DAudioSourceProxy";
     static inline BrokerDelegator<DAudioSourceProxy> delegator_;
 };
 } // namespace DistributedHardware

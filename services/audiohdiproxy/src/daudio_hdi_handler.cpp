@@ -26,64 +26,67 @@
 #include "daudio_log.h"
 #include "daudio_util.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioHdiHandler"
+
 namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DAudioHdiHandler);
 
 DAudioHdiHandler::DAudioHdiHandler()
 {
-    DHLOGI("%s: DAudioHdiHandler construct", LOG_TAG);
+    DHLOGI("DAudioHdiHandler construct");
 }
 
 DAudioHdiHandler::~DAudioHdiHandler()
 {
-    DHLOGI("%s: ~DAudioHdiHandler", LOG_TAG);
+    DHLOGI("~DAudioHdiHandler");
 }
 
 int32_t DAudioHdiHandler::InitHdiHandler()
 {
-    DHLOGI("%s: Init hdi handler.", LOG_TAG);
+    DHLOGI("Init hdi handler.");
     if (audioSrvHdf_ != nullptr) {
         return DH_SUCCESS;
     }
 
     DAUDIO_SYNC_TRACE(DAUDIO_LOAD_HDF_DRIVER);
-    DHLOGI("%s: Load hdf driver start.", LOG_TAG);
+    DHLOGI("Load hdf driver start.");
     int32_t ret = DaudioHdfOperate::GetInstance().LoadDaudioHDFImpl();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Load hdf driver failed, ret: %d", LOG_TAG, ret);
+        DHLOGE("Load hdf driver failed, ret: %d", ret);
         return ret;
     }
-    DHLOGI("%s: Load hdf driver end.", LOG_TAG);
+    DHLOGI("Load hdf driver end.");
 
     audioSrvHdf_ = IDAudioManager::Get(HDF_AUDIO_SERVICE_NAME.c_str(), false);
     if (audioSrvHdf_ == nullptr) {
-        DHLOGE("%s: Can not get hdf audio manager.", LOG_TAG);
+        DHLOGE("Can not get hdf audio manager.");
         return ERR_DH_AUDIO_HDI_PROXY_NOT_INIT;
     }
 
-    DHLOGI("%s: Init hdi handler success.", LOG_TAG);
+    DHLOGI("Init hdi handler success.");
     return DH_SUCCESS;
 }
 
 int32_t DAudioHdiHandler::UninitHdiHandler()
 {
-    DHLOGI("%s: Unload hdf driver start.", LOG_TAG);
+    DHLOGI("Unload hdf driver start.");
     int32_t ret = DaudioHdfOperate::GetInstance().UnLoadDaudioHDFImpl();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Unload hdf driver failed, ret: %d", LOG_TAG, ret);
+        DHLOGE("Unload hdf driver failed, ret: %d", ret);
         return ret;
     }
-    DHLOGI("%s: Uninit hdi handler success.", LOG_TAG);
+    DHLOGI("Uninit hdi handler success.");
     return DH_SUCCESS;
 }
 
 int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, const int32_t dhId,
     const std::string &capability, const std::shared_ptr<IDAudioHdiCallback> &callbackObjParam)
 {
-    DHLOGI("%s: RegisterAudioDevice, adpname: %s, dhId: %d", LOG_TAG, GetAnonyString(devId).c_str(), dhId);
+    DHLOGI("RegisterAudioDevice, adpname: %s, dhId: %d", GetAnonyString(devId).c_str(), dhId);
     if (audioSrvHdf_ == nullptr) {
-        DHLOGE("%s: Audio hdi proxy not init.", LOG_TAG);
+        DHLOGE("Audio hdi proxy not init.");
         return ERR_DH_AUDIO_HDI_PROXY_NOT_INIT;
     }
     std::string searchKey;
@@ -96,7 +99,7 @@ int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, const in
             break;
         case AUDIO_DEVICE_TYPE_UNKNOWN:
         default:
-            DHLOGE("%s: Unknown audio device.", LOG_TAG);
+            DHLOGE("Unknown audio device.");
             return ERR_DH_AUDIO_HDI_UNKOWN_DEVTYPE;
     }
     {
@@ -118,12 +121,12 @@ int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, const in
 
     auto iter = mapAudioMgrCallback_.find(searchKey);
     if (iter == mapAudioMgrCallback_.end()) {
-        DHLOGE("%s: Can not find callback. devId: %s", LOG_TAG, GetAnonyString(devId).c_str());
+        DHLOGE("Can not find callback. devId: %s", GetAnonyString(devId).c_str());
         return ERR_DH_AUDIO_HDI_CALLBACK_NOT_EXIST;
     }
     int32_t res = audioSrvHdf_->RegisterAudioDevice(devId, dhId, capability, iter->second);
     if (res != HDF_SUCCESS) {
-        DHLOGE("%s: Call hdf proxy register failed, res: %d", LOG_TAG, res);
+        DHLOGE("Call hdf proxy register failed, res: %d", res);
         return ERR_DH_AUDIO_HDI_CALL_FAILED;
     }
     return DH_SUCCESS;
@@ -133,13 +136,13 @@ int32_t DAudioHdiHandler::UnRegisterAudioDevice(const std::string &devId, const 
 {
     DHLOGI("UnRegisterAudioDevice, adpname: %s, dhId: %d", GetAnonyString(devId).c_str(), dhId);
     if (audioSrvHdf_ == nullptr) {
-        DHLOGE("%s: Audio hdi proxy not init", LOG_TAG);
+        DHLOGE("Audio hdi proxy not init");
         return ERR_DH_AUDIO_HDI_PROXY_NOT_INIT;
     }
 
     int32_t res = audioSrvHdf_->UnRegisterAudioDevice(devId, dhId);
     if (res != HDF_SUCCESS) {
-        DHLOGE("%s: Call hdf proxy unregister failed, res: %d", LOG_TAG, res);
+        DHLOGE("Call hdf proxy unregister failed, res: %d", res);
         return ERR_DH_AUDIO_HDI_CALL_FAILED;
     }
 
@@ -147,7 +150,7 @@ int32_t DAudioHdiHandler::UnRegisterAudioDevice(const std::string &devId, const 
         std::lock_guard<std::mutex> devLck(devMapMtx_);
         auto iter = mapAudioMgrDhIds_.find(devId);
         if (iter == mapAudioMgrDhIds_.end()) {
-            DHLOGE("%s: Can not find register devId. devId: %s", LOG_TAG, GetAnonyString(devId).c_str());
+            DHLOGE("Can not find register devId. devId: %s", GetAnonyString(devId).c_str());
             return ERR_DH_AUDIO_HDI_CALLBACK_NOT_EXIST;
         }
 
@@ -162,7 +165,7 @@ int32_t DAudioHdiHandler::UnRegisterAudioDevice(const std::string &devId, const 
 int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, const int32_t dhId,
     const std::shared_ptr<AudioEvent> &audioEvent)
 {
-    DHLOGI("%s: NotifyEvent adpname: %s, dhId: %d, event type: %d, event content: %s.", LOG_TAG,
+    DHLOGI("NotifyEvent adpname: %s, dhId: %d, event type: %d, event content: %s.",
         GetAnonyString(devId).c_str(), dhId, audioEvent->type, audioEvent->content.c_str());
     if (audioSrvHdf_ == nullptr) {
         DHLOGE("Audio hdi proxy not init");
@@ -198,13 +201,13 @@ int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, const int32_t dh
             newEvent.type = AUDIO_EVENT_RENDER_STATE_CHANGE;
             break;
         default:
-            DHLOGE("%s: Unsupport audio event.", LOG_TAG);
+            DHLOGE("Unsupport audio event.");
             break;
     }
 
     int32_t res = audioSrvHdf_->NotifyEvent(devId, dhId, newEvent);
     if (res != HDF_SUCCESS) {
-        DHLOGE("%s: Call hdf proxy NotifyEvent failed, res: %d", LOG_TAG, res);
+        DHLOGE("Call hdf proxy NotifyEvent failed, res: %d", res);
         return ERR_DH_AUDIO_HDI_CALL_FAILED;
     }
     return DH_SUCCESS;

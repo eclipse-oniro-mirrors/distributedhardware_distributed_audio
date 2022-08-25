@@ -29,76 +29,79 @@
 #include "daudio_sink_manager.h"
 #include "daudio_util.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioSinkService"
+
 namespace OHOS {
 namespace DistributedHardware {
 REGISTER_SYSTEM_ABILITY_BY_ID(DAudioSinkService, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID, true);
 
 DAudioSinkService::DAudioSinkService(int32_t saId, bool runOnCreate) : SystemAbility(saId, runOnCreate)
 {
-    DHLOGI("%s: Distributed audio sink service constructed.", LOG_TAG);
+    DHLOGI("Distributed audio sink service constructed.");
 }
 
 void DAudioSinkService::OnStart()
 {
-    DHLOGI("%s: OnStart.", LOG_TAG);
+    DHLOGI("OnStart.");
     if (!Init()) {
-        DHLOGE("%s: Init failed.", LOG_TAG);
+        DHLOGE("Init failed.");
         return;
     }
-    DHLOGI("%s: Start success.", LOG_TAG);
+    DHLOGI("Start success.");
 }
 
 void DAudioSinkService::OnStop()
 {
-    DHLOGI("%s: OnStop.", LOG_TAG);
+    DHLOGI("OnStop.");
     isServiceStarted_ = false;
 }
 
 bool DAudioSinkService::Init()
 {
-    DHLOGI("%s: Start init.", LOG_TAG);
+    DHLOGI("Start init.");
     if (!isServiceStarted_) {
         bool ret = Publish(this);
         if (!ret) {
-            DHLOGE("%s: Publish service failed.", LOG_TAG);
+            DHLOGE("Publish service failed.");
             return false;
         }
         isServiceStarted_ = true;
     }
-    DHLOGI("%s: Init success.", LOG_TAG);
+    DHLOGI("Init success.");
     return true;
 }
 
 int32_t DAudioSinkService::InitSink(const std::string &params)
 {
-    DHLOGI("%s: Init distributed audio sink service.", LOG_TAG);
+    DHLOGI("Init distributed audio sink service.");
     DAudioSinkManager::GetInstance().Init();
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkService::ReleaseSink()
 {
-    DHLOGI("%s: Release distributed audio sink service.", LOG_TAG);
+    DHLOGI("Release distributed audio sink service.");
     DAudioSinkManager::GetInstance().UnInit();
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkService::SubscribeLocalHardware(const std::string &dhId, const std::string &param)
 {
-    DHLOGI("%s: Subscribe local hardware.", LOG_TAG);
+    DHLOGI("Subscribe local hardware.");
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkService::UnsubscribeLocalHardware(const std::string &dhId)
 {
-    DHLOGI("%s: Unsubscribe local hardware.", LOG_TAG);
+    DHLOGI("Unsubscribe local hardware.");
     return DH_SUCCESS;
 }
 
 void DAudioSinkService::DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
     const std::string &eventContent)
 {
-    DHLOGI("%s: DAudioNotify devId:%s, dhId:%s, eventType:%d.", LOG_TAG, GetAnonyString(devId).c_str(),
+    DHLOGI("DAudioNotify devId:%s, dhId:%s, eventType:%d.", GetAnonyString(devId).c_str(),
         dhId.c_str(), eventType);
     DAudioSinkManager::GetInstance().HandleDAudioNotify(devId, dhId, eventType, eventContent);
 }

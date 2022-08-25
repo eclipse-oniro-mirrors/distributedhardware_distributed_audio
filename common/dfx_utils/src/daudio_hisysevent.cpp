@@ -19,7 +19,8 @@ namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DAudioHisysevent);
 
-static const constexpr char *LOG_TAG = "DAudioHisysevent";
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioHisysevent"
 
 void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, const std::string &msg)
 {
@@ -29,7 +30,7 @@ void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, const
         OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "MSG", msg);
     if (res != DH_SUCCESS) {
-        DHLOGE("%s: Write HiSysEvent error, res: %d.", LOG_TAG, res);
+        DHLOGE("Write HiSysEvent error, res: %d.", res);
     }
 }
 
@@ -42,7 +43,7 @@ void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, int32
         "SAID", saId,
         "MSG", msg);
     if (res != DH_SUCCESS) {
-        DHLOGE("%s: Write HiSysEvent error, res: %d.", LOG_TAG, res);
+        DHLOGE("Write HiSysEvent error, res: %d.", res);
     }
 }
 
@@ -57,7 +58,7 @@ void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, const
         "DHID", GetAnonyString(dhId),
         "MSG", msg);
     if (res != DH_SUCCESS) {
-        DHLOGE("%s:Write HiSysEvent error, res:%d.", LOG_TAG, res);
+        DHLOGE("Write HiSysEvent error, res:%d.", res);
     }
 }
 
@@ -69,7 +70,7 @@ void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, const st
         OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
         "MSG", msg);
         if (res != DH_SUCCESS) {
-            DHLOGE("%s:Write HiSysEvent error, res:%d.", LOG_TAG, res);
+            DHLOGE("Write HiSysEvent error, res:%d.", res);
         }
 }
 
@@ -84,7 +85,7 @@ void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, int32_t 
         "ERRCODE", errorCode,
         "MSG", msg);
         if (res != DH_SUCCESS) {
-            DHLOGE("%s:Write HiSysEvent error, res:%d.", LOG_TAG, res);
+            DHLOGE("Write HiSysEvent error, res:%d.", res);
         }
 }
 
@@ -97,7 +98,7 @@ void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, int32_t 
         "ERRCODE", errorCode,
         "MSG", msg);
     if (res != DH_SUCCESS) {
-        DHLOGE("%s:Write HiSysEvent error, res:%d.", LOG_TAG, res);
+        DHLOGE("Write HiSysEvent error, res:%d.", res);
     }
 }
 
@@ -112,7 +113,7 @@ void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, const st
         "DHID", GetAnonyString(dhId),
         "ERRCODE", errorCode, "MSG", msg);
     if (res != DH_SUCCESS) {
-        DHLOGE("%s:Write HiSysEvent error, res:%d.", LOG_TAG, res);
+        DHLOGE("Write HiSysEvent error, res:%d.", res);
     }
 }
 } // namespace DistributedHardware

@@ -19,6 +19,9 @@
 #include "daudio_log.h"
 #include "daudio_sink_handler.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioSinkLoadCallback"
+
 namespace OHOS {
 namespace DistributedHardware {
 DAudioSinkLoadCallback::DAudioSinkLoadCallback(const std::string &params) : params_(params) {}
@@ -26,10 +29,10 @@ DAudioSinkLoadCallback::DAudioSinkLoadCallback(const std::string &params) : para
 void DAudioSinkLoadCallback::OnLoadSystemAbilitySuccess(
     int32_t systemAbilityId, const sptr<IRemoteObject> &remoteObject)
 {
-    DHLOGI("%s: Load audio SA success, systemAbilityId: %d, remoteObject result: %s.",
-        LOG_TAG, systemAbilityId, (remoteObject != nullptr) ? "true" : "false");
+    DHLOGI("Load audio SA success, systemAbilityId: %d, remoteObject result: %s.",
+        systemAbilityId, (remoteObject != nullptr) ? "true" : "false");
     if (remoteObject == nullptr) {
-        DHLOGE("%s: RemoteObject is nullptr.", LOG_TAG);
+        DHLOGE("RemoteObject is nullptr.");
         return;
     }
 
@@ -38,7 +41,7 @@ void DAudioSinkLoadCallback::OnLoadSystemAbilitySuccess(
 
 void DAudioSinkLoadCallback::OnLoadSystemAbilityFail(int32_t systemAbilityId)
 {
-    DHLOGE("%s: Load audio SA failed, systemAbilityId: %d.", LOG_TAG, systemAbilityId);
+    DHLOGE("Load audio SA failed, systemAbilityId: %d.", systemAbilityId);
     DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL,
         "daudio sink LoadSystemAbility call failed.");
 }

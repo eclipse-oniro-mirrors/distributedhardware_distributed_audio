@@ -23,6 +23,9 @@
 #include "daudio_log.h"
 #include "daudio_util.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioSinkManager"
+
 namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DAudioSinkManager);
@@ -41,13 +44,13 @@ DAudioSinkManager::~DAudioSinkManager()
 
 int32_t DAudioSinkManager::Init()
 {
-    DHLOGI("%s: Init audio sink manager.", LOG_TAG);
+    DHLOGI("Init audio sink manager.");
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkManager::UnInit()
 {
-    DHLOGI("%s: UnInit audio sink manager.", LOG_TAG);
+    DHLOGI("UnInit audio sink manager.");
     std::lock_guard<std::mutex> lock(remoteSvrMutex_);
     sourceServiceMap_.clear();
     {
@@ -67,7 +70,7 @@ int32_t DAudioSinkManager::UnInit()
 
 void DAudioSinkManager::OnSinkDevReleased(const std::string &devId)
 {
-    DHLOGI("%s: Release audio device devId: %s.", LOG_TAG, GetAnonyString(devId).c_str());
+    DHLOGI("Release audio device devId: %s.", GetAnonyString(devId).c_str());
     if (devClearThread_.joinable()) {
         devClearThread_.join();
     }
@@ -77,7 +80,7 @@ void DAudioSinkManager::OnSinkDevReleased(const std::string &devId)
 int32_t DAudioSinkManager::HandleDAudioNotify(const std::string &devId, const std::string &dhId,
     const int32_t eventType, const std::string &eventContent)
 {
-    DHLOGI("%s: Recive audio event from devId: %s, event type: %d.", LOG_TAG, GetAnonyString(devId).c_str(), eventType);
+    DHLOGI("Recive audio event from devId: %s, event type: %d.", GetAnonyString(devId).c_str(), eventType);
     std::lock_guard<std::mutex> lock(devMapMutex_);
     auto iter = dAudioSinkDevMap_.find(devId);
     if (iter == dAudioSinkDevMap_.end()) {
@@ -91,10 +94,10 @@ int32_t DAudioSinkManager::HandleDAudioNotify(const std::string &devId, const st
 
 int32_t DAudioSinkManager::CreateAudioDevice(const std::string &devId)
 {
-    DHLOGI("%s: Create audio sink dev.", LOG_TAG);
+    DHLOGI("Create audio sink dev.");
     auto sinkDev = std::make_shared<DAudioSinkDev>(devId);
     if (sinkDev->AwakeAudioDev(devId) != DH_SUCCESS) {
-        DHLOGE("%s: Awake audio dev failed.", LOG_TAG);
+        DHLOGE("Awake audio dev failed.");
         return ERR_DH_AUDIO_FAILED;
     }
     dAudioSinkDevMap_.emplace(devId, sinkDev);
@@ -104,12 +107,12 @@ int32_t DAudioSinkManager::CreateAudioDevice(const std::string &devId)
 int32_t DAudioSinkManager::DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
     const std::string &eventContent)
 {
-    DHLOGI("%s: DAudioNotify, devId: %s, dhId: %s, eventType: %d.", LOG_TAG, GetAnonyString(devId).c_str(),
+    DHLOGI("DAudioNotify, devId: %s, dhId: %s, eventType: %d.", GetAnonyString(devId).c_str(),
         dhId.c_str(), eventType);
     std::string localNetworkId;
     int32_t ret = GetLocalDeviceNetworkId(localNetworkId);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Get local network id failed.", LOG_TAG);
+        DHLOGE("Get local network id failed.");
         return ret;
     }
     {
@@ -125,17 +128,17 @@ int32_t DAudioSinkManager::DAudioNotify(const std::string &devId, const std::str
 
     auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgr == nullptr) {
-        DHLOGE("%s: Failed to get system ability mgr.", LOG_TAG);
+        DHLOGE("Failed to get system ability mgr.");
         return ERR_DH_AUDIO_SA_GET_SAMGR_FAILED;
     }
     auto remoteObject = samgr->GetSystemAbility(DISTRIBUTED_HARDWARE_AUDIO_SOURCE_SA_ID, devId);
     if (remoteObject == nullptr) {
-        DHLOGE("%s: remoteObject is null.", LOG_TAG);
+        DHLOGE("remoteObject is null.");
         return ERR_DH_AUDIO_SA_GET_REMOTE_SINK_FAILED;
     }
     sptr<IDAudioSource> remoteSvrProxy = iface_cast<IDAudioSource>(remoteObject);
     if (remoteSvrProxy == nullptr) {
-        DHLOGE("%s: Failed to get remote daudio sink SA.", LOG_TAG);
+        DHLOGE("Failed to get remote daudio sink SA.");
         return ERR_DH_AUDIO_SA_GET_REMOTE_SINK_FAILED;
     }
     {
@@ -157,11 +160,11 @@ void DAudioSinkManager::ClearAudioDev(const std::string &devId)
     std::lock_guard<std::mutex> lock(devMapMutex_);
     auto dev = dAudioSinkDevMap_.find(devId);
     if (dev == dAudioSinkDevMap_.end()) {
-        DHLOGD("%s: Device not register.", LOG_TAG);
+        DHLOGD("Device not register.");
         return;
     }
     if (dev->second == nullptr) {
-        DHLOGD("%s: Device already released.", LOG_TAG);
+        DHLOGD("Device already released.");
         return;
     }
     dev->second->SleepAudioDev();

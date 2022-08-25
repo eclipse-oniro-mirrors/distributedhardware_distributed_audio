@@ -27,6 +27,9 @@
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioUtils"
+
 namespace OHOS {
 namespace DistributedHardware {
 constexpr int32_t WORD_WIDTH_8 = 8;

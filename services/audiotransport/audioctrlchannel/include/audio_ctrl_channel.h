@@ -47,8 +47,6 @@ public:
         const StreamFrameInfo *streamFrameInfo) override;
 
 private:
-    static const constexpr char *LOG_TAG = "AudioCtrlChannel";
-
     int32_t SendMsg(string &message);
     const int32_t MSG_MAX_SIZE = 45 * 1024;
     const std::string peerDevId_;

@@ -18,6 +18,9 @@
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "TaskQueue"
+
 namespace OHOS {
 namespace DistributedHardware {
 void TaskQueue::Start()
@@ -31,20 +34,20 @@ void TaskQueue::Start()
 
 void TaskQueue::Stop()
 {
-    DHLOGI("%s: Stop task queue.", LOG_TAG);
+    DHLOGI("Stop task queue.");
     isQuitTaskQueue_ = true;
     if (mainThreadLoop_.joinable()) {
         mainThreadLoop_.join();
     }
-    DHLOGI("%s: Stop task queue success.", LOG_TAG);
+    DHLOGI("Stop task queue success.");
 }
 
 void TaskQueue::Run()
 {
-    DHLOGI("%s: Task queue running.", LOG_TAG);
+    DHLOGI("Task queue running.");
     while (taskQueueReady_) {
         if (isQuitTaskQueue_ && taskQueue_.empty()) {
-            DHLOGI("%s: Task queue quit.", LOG_TAG);
+            DHLOGI("Task queue quit.");
             break;
         }
         std::shared_ptr<TaskImplInterface> task = nullptr;
@@ -74,7 +77,7 @@ int32_t TaskQueue::Produce(std::shared_ptr<TaskImplInterface> &task)
 {
     std::lock_guard<std::mutex> lck(taskQueueMutex_);
     if (taskQueue_.size() >= maxSize_) {
-        DHLOGI("%s: task queue is full, size: %zu", LOG_TAG, taskQueue_.size());
+        DHLOGI("task queue is full, size: %zu", taskQueue_.size());
         return ERR_DH_AUDIO_SA_TASKQUEUE_FULL;
     }
     taskQueue_.push(task);

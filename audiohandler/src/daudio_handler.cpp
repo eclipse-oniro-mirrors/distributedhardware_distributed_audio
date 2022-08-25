@@ -28,6 +28,9 @@
 #include "daudio_log.h"
 #include "daudio_util.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioHandler"
+
 using json = nlohmann::json;
 
 namespace OHOS {
@@ -44,25 +47,25 @@ DAudioHandler::DAudioHandler()
     spkInfos_.channelMinVal = 0;
     micInfos_.channelMaxVal = 0;
     micInfos_.channelMinVal = 0;
-    DHLOGI("%s: DAudioHandler constructed.", LOG_TAG);
+    DHLOGI("DAudioHandler constructed.");
 }
 
 DAudioHandler::~DAudioHandler()
 {
-    DHLOGI("%s: DAudioHandler destructed.", LOG_TAG);
+    DHLOGI("DAudioHandler destructed.");
 }
 
 int32_t DAudioHandler::Initialize()
 {
-    DHLOGI("%s: Initialize.", LOG_TAG);
+    DHLOGI("Initialize.");
     int32_t ret = QueryCodecInfo();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: QueryCodecInfo failed.", LOG_TAG);
+        DHLOGE("QueryCodecInfo failed.");
         return ret;
     }
     ret = QueryAudioInfo();
     if (ret != DH_SUCCESS) {
-        DHLOGI("%s: QueryAudioInfo failed.", LOG_TAG);
+        DHLOGI("QueryAudioInfo failed.");
         return ret;
     }
     GetSupportAudioInfo(audioInfos_, encoderInfos_, decoderInfos_);
@@ -71,11 +74,11 @@ int32_t DAudioHandler::Initialize()
 
 std::vector<DHItem> DAudioHandler::Query()
 {
-    DHLOGI("%s: Query hardware info.", LOG_TAG);
+    DHLOGI("Query hardware info.");
     auto audioSrv = AudioStandard::AudioSystemManager::GetInstance();
     std::vector<DHItem> dhItemVec;
     if (audioSrv == nullptr) {
-        DHLOGE("%s: Can not get audio system manager.", LOG_TAG);
+        DHLOGE("Can not get audio system manager.");
         return dhItemVec;
     }
 
@@ -100,7 +103,7 @@ std::vector<DHItem> DAudioHandler::Query()
         dhItem.dhId = std::to_string(dhId);
         dhItem.attrs = infoJson.dump();
         dhItemVec.push_back(dhItem);
-        DHLOGD("%s: Query result: dhId: %d, attrs: %s.", LOG_TAG, dhId, infoJson.dump().c_str());
+        DHLOGD("Query result: dhId: %d, attrs: %s.", dhId, infoJson.dump().c_str());
     }
     ablityForDumpVec_ = dhItemVec;
     return dhItemVec;
@@ -108,7 +111,7 @@ std::vector<DHItem> DAudioHandler::Query()
 
 std::vector<DHItem> DAudioHandler::ablityForDump()
 {
-    DHLOGI("%s: Get audio ablity for dump.", LOG_TAG);
+    DHLOGI("Get audio ablity for dump.");
     if (ablityForDumpVec_.size() > 0) {
         return ablityForDumpVec_;
     }
@@ -118,16 +121,16 @@ std::vector<DHItem> DAudioHandler::ablityForDump()
 }
 int32_t DAudioHandler::QueryCodecInfo()
 {
-    DHLOGI("%s: QueryCodecInfo.", LOG_TAG);
+    DHLOGI("QueryCodecInfo.");
     auto avCodecList = Media::AVCodecListFactory::CreateAVCodecList();
     if (avCodecList == nullptr) {
-        DHLOGE("%s: Query avcodec info failed.", LOG_TAG);
+        DHLOGE("Query avcodec info failed.");
         return ERR_DH_AUDIO_NULLPTR;
     }
 
     bool queryFlag = false;
     for (auto codec : avCodecList->GetAudioEncoderCaps()) {
-        DHLOGE("%s: check encoder.", LOG_TAG);
+        DHLOGE("check encoder.");
         if (codec->GetCodecInfo()->GetName() != AVENC_AAC || codec == nullptr || codec->GetCodecInfo() == nullptr) {
             continue;
         }
@@ -139,7 +142,7 @@ int32_t DAudioHandler::QueryCodecInfo()
     }
 
     for (auto codec : avCodecList->GetAudioDecoderCaps()) {
-        DHLOGE("%s: check decoder.", LOG_TAG);
+        DHLOGE("check decoder.");
         if (codec->GetCodecInfo()->GetName() != AVENC_AAC || codec == nullptr || codec->GetCodecInfo() == nullptr) {
             continue;
         }
@@ -151,7 +154,7 @@ int32_t DAudioHandler::QueryCodecInfo()
     }
 
     if (queryFlag == false) {
-        DHLOGE("%s: QueryCodecInfo failed.", LOG_TAG);
+        DHLOGE("QueryCodecInfo failed.");
         return ERR_DH_AUDIO_FAILED;
     }
     return DH_SUCCESS;
@@ -159,7 +162,7 @@ int32_t DAudioHandler::QueryCodecInfo()
 
 int32_t DAudioHandler::QueryAudioInfo()
 {
-    DHLOGE("%s: Begin QueryCodecInfo.", LOG_TAG);
+    DHLOGE("Begin QueryCodecInfo.");
     audioInfos_.sampleRates = OHOS::AudioStandard::AudioCapturer::GetSupportedSamplingRates();
     audioInfos_.formats = OHOS::AudioStandard::AudioCapturer::GetSupportedFormats();
     audioInfos_.channels = OHOS::AudioStandard::AudioCapturer::GetSupportedChannels();
@@ -220,26 +223,26 @@ void DAudioHandler::GetSupportAudioInfo(AudioInfo &audioInfos, CoderInfo &encode
 
 std::map<std::string, std::string> DAudioHandler::QueryExtraInfo()
 {
-    DHLOGI("%s: QueryExtraInfo", LOG_TAG);
+    DHLOGI("QueryExtraInfo");
     std::map<std::string, std::string> extraInfo;
     return extraInfo;
 }
 
 bool DAudioHandler::IsSupportPlugin()
 {
-    DHLOGI("%s: IsSupportPlugin", LOG_TAG);
+    DHLOGI("IsSupportPlugin");
     return false;
 }
 
 void DAudioHandler::RegisterPluginListener(std::shared_ptr<PluginListener> listener)
 {
-    DHLOGI("%s: Register plugin listener", LOG_TAG);
+    DHLOGI("Register plugin listener");
     listener_ = listener;
 }
 
 void DAudioHandler::UnRegisterPluginListener()
 {
-    DHLOGI("%s: UnRegister plugin listener", LOG_TAG);
+    DHLOGI("UnRegister plugin listener");
     listener_ = nullptr;
 }
 

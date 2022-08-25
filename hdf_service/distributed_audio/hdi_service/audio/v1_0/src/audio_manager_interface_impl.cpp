@@ -25,6 +25,9 @@
 #include "daudio_log.h"
 #include "daudio_utils.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AudioManagerInterfaceImpl"
+
 using namespace OHOS::DistributedHardware;
 namespace OHOS {
 namespace HDI {
@@ -40,86 +43,86 @@ extern "C" IAudioManager *AudioManagerImplGetInstance(void)
 
 AudioManagerInterfaceImpl::AudioManagerInterfaceImpl()
 {
-    DHLOGD("%s: Distributed Audio Manager constructed.", AUDIO_LOG);
+    DHLOGD("Distributed Audio Manager constructed.");
 }
 
 AudioManagerInterfaceImpl::~AudioManagerInterfaceImpl()
 {
-    DHLOGD("%s: Distributed Audio Manager destructed.", AUDIO_LOG);
+    DHLOGD("Distributed Audio Manager destructed.");
 }
 
 int32_t AudioManagerInterfaceImpl::GetAllAdapters(std::vector<AudioAdapterDescriptorHAL> &descriptors)
 {
-    DHLOGI("%s: Get all distributed audio adapters.", AUDIO_LOG);
+    DHLOGI("Get all distributed audio adapters.");
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
     for (auto &adp : mapAudioAdapter_) {
         descriptors.push_back(adp.second->GetAdapterDesc());
     }
 
-    DHLOGI("%s: Get adapters success, total is (%zu). ", AUDIO_LOG, mapAudioAdapter_.size());
+    DHLOGI("Get adapters success, total is (%zu). ", mapAudioAdapter_.size());
     return HDF_SUCCESS;
 }
 
 int32_t AudioManagerInterfaceImpl::LoadAdapter(const AudioAdapterDescriptorHAL &descriptor,
     sptr<IAudioAdapter> &adapter)
 {
-    DHLOGI("%s: Load distributed audio adapter: %s.", AUDIO_LOG, GetAnonyString(descriptor.adapterName).c_str());
+    DHLOGI("Load distributed audio adapter: %s.", GetAnonyString(descriptor.adapterName).c_str());
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
     auto adp = mapAudioAdapter_.find(descriptor.adapterName);
     if (adp == mapAudioAdapter_.end()) {
-        DHLOGE("%s: Load audio adapter failed, can not find adapter.", AUDIO_LOG);
+        DHLOGE("Load audio adapter failed, can not find adapter.");
         adapter = nullptr;
         return HDF_FAILURE;
     }
 
     int32_t ret = adp->second->AdapterLoad();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Load audio adapter failed, adapter return: %d.", AUDIO_LOG, ret);
+        DHLOGE("Load audio adapter failed, adapter return: %d.", ret);
         adapter = nullptr;
         return HDF_FAILURE;
     }
 
     adapter = adp->second;
-    DHLOGI("%s: Load adapter success.", AUDIO_LOG);
+    DHLOGI("Load adapter success.");
     return HDF_SUCCESS;
 }
 
 int32_t AudioManagerInterfaceImpl::UnloadAdapter(const std::string &adpName)
 {
-    DHLOGI("%s: Unload distributed audio adapter: %s.", AUDIO_LOG, GetAnonyString(adpName).c_str());
+    DHLOGI("Unload distributed audio adapter: %s.", GetAnonyString(adpName).c_str());
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
     auto adp = mapAudioAdapter_.find(adpName);
     if (adp == mapAudioAdapter_.end()) {
-        DHLOGE("%s: Unload audio adapter failed, can not find adapter.", AUDIO_LOG);
+        DHLOGE("Unload audio adapter failed, can not find adapter.");
         return HDF_FAILURE;
     }
 
     int32_t ret = adp->second->AdapterUnload();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Unload audio adapter failed, adapter return: %d.", AUDIO_LOG, ret);
+        DHLOGE("Unload audio adapter failed, adapter return: %d.", ret);
         return HDF_FAILURE;
     }
-    DHLOGI("%s: Unload adapter success.", AUDIO_LOG);
+    DHLOGI("Unload adapter success.");
     return HDF_SUCCESS;
 }
 
 int32_t AudioManagerInterfaceImpl::AddAudioDevice(const std::string &adpName, const uint32_t devId,
     const std::string &caps, const sptr<IDAudioCallback> &callback)
 {
-    DHLOGI("%s: Add audio device name: %s, device: %d.", AUDIO_LOG, GetAnonyString(adpName).c_str(), devId);
+    DHLOGI("Add audio device name: %s, device: %d.", GetAnonyString(adpName).c_str(), devId);
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
     auto adp = mapAudioAdapter_.find(adpName);
     if (adp == mapAudioAdapter_.end()) {
         int32_t ret = CreateAdapter(adpName, devId, callback);
         if (ret != DH_SUCCESS) {
-            DHLOGE("%s: Create audio adapter failed.", AUDIO_LOG);
+            DHLOGE("Create audio adapter failed.");
             return ERR_DH_AUDIO_HDF_FAIL;
         }
     }
 
     adp = mapAudioAdapter_.find(adpName);
     if (adp == mapAudioAdapter_.end()) {
-        DHLOGE("%s: Can not find adapter. device name: %s", AUDIO_LOG, GetAnonyString(adpName).c_str());
+        DHLOGE("Can not find adapter. device name: %s", GetAnonyString(adpName).c_str());
         return ERR_DH_AUDIO_HDF_FAIL;
     }
     switch (GetDevTypeByDHId(devId)) {
@@ -131,12 +134,12 @@ int32_t AudioManagerInterfaceImpl::AddAudioDevice(const std::string &adpName, co
             break;
         case AUDIO_DEVICE_TYPE_UNKNOWN:
         default:
-            DHLOGE("%s: DhId is illegal, devType is unknow.", AUDIO_LOG);
+            DHLOGE("DhId is illegal, devType is unknow.");
             return ERR_DH_AUDIO_HDF_FAIL;
     }
     int32_t ret = adp->second->AddAudioDevice(devId, caps);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Add audio device failed, adapter return: %d.", AUDIO_LOG, ret);
+        DHLOGE("Add audio device failed, adapter return: %d.", ret);
         return ERR_DH_AUDIO_HDF_FAIL;
     }
 
@@ -148,54 +151,54 @@ int32_t AudioManagerInterfaceImpl::AddAudioDevice(const std::string &adpName, co
                              adp->second->GetInterruptGroup(devId) };
     ret = NotifyFwk(event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Notify audio fwk failed, ret = %d.", AUDIO_LOG, ret);
+        DHLOGE("Notify audio fwk failed, ret = %d.", ret);
         return ret;
     }
-    DHLOGI("%s: Add audio device success.", AUDIO_LOG);
+    DHLOGI("Add audio device success.");
     return DH_SUCCESS;
 }
 
 int32_t AudioManagerInterfaceImpl::RemoveAudioDevice(const std::string &adpName, const uint32_t devId)
 {
-    DHLOGI("%s: Remove audio device name: %s, device: %d.", AUDIO_LOG, GetAnonyString(adpName).c_str(), devId);
+    DHLOGI("Remove audio device name: %s, device: %d.", GetAnonyString(adpName).c_str(), devId);
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
     auto adp = mapAudioAdapter_.find(adpName);
     if (adp == mapAudioAdapter_.end()) {
-        DHLOGE("%s: Audio device has not been created.", AUDIO_LOG);
+        DHLOGE("Audio device has not been created.");
         return ERR_DH_AUDIO_HDF_INVALID_OPERATION;
     }
 
     int32_t ret = adp->second->RemoveAudioDevice(devId);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Remove audio device failed, adapter return: %d.", AUDIO_LOG, ret);
+        DHLOGE("Remove audio device failed, adapter return: %d.", ret);
         return ERR_DH_AUDIO_HDF_FAIL;
     }
 
     DAudioDevEvent event = { adpName, devId, HDF_AUDIO_DEVICE_REMOVE, 0, 0, 0 };
     ret = NotifyFwk(event);
     if (ret != DH_SUCCESS) {
-        DHLOGD("%s: Notify audio fwk failed, ret = %d.", AUDIO_LOG, ret);
+        DHLOGD("Notify audio fwk failed, ret = %d.", ret);
     }
     if (adp->second->isPortsNoReg()) {
         mapAudioAdapter_.erase(adpName);
     }
-    DHLOGI("%s: Remove audio device success, mapAudioAdapter size() is : %d .", AUDIO_LOG, mapAudioAdapter_.size());
+    DHLOGI("Remove audio device success, mapAudioAdapter size() is : %d .", mapAudioAdapter_.size());
     return DH_SUCCESS;
 }
 
 int32_t AudioManagerInterfaceImpl::Notify(const std::string &adpName, const uint32_t devId, const AudioEvent &event)
 {
-    DHLOGI("%s: Notify event, adapter name: %s. event type: %d", AUDIO_LOG, GetAnonyString(adpName).c_str(),
+    DHLOGI("Notify event, adapter name: %s. event type: %d", GetAnonyString(adpName).c_str(),
         event.type);
     auto adp = mapAudioAdapter_.find(adpName);
     if (adp == mapAudioAdapter_.end()) {
-        DHLOGE("%s: Notify failed, can not find adapter.", AUDIO_LOG);
+        DHLOGE("Notify failed, can not find adapter.");
         return ERR_DH_AUDIO_HDF_INVALID_OPERATION;
     }
 
     int32_t ret = adp->second->Notify(devId, event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Notify failed, adapter return: %d.", AUDIO_LOG, ret);
+        DHLOGE("Notify failed, adapter return: %d.", ret);
         return ERR_DH_AUDIO_HDF_FAIL;
     }
     return DH_SUCCESS;
@@ -203,7 +206,7 @@ int32_t AudioManagerInterfaceImpl::Notify(const std::string &adpName, const uint
 
 int32_t AudioManagerInterfaceImpl::NotifyFwk(const DAudioDevEvent &event)
 {
-    DHLOGI("%s: Notify audio fwk event(type:%d, adapter:%s, pin:%d).", AUDIO_LOG, event.eventType,
+    DHLOGI("Notify audio fwk event(type:%d, adapter:%s, pin:%d).", event.eventType,
         GetAnonyString(event.adapterName).c_str(), event.devId);
     std::stringstream ss;
     ss << "EVENT_TYPE=" << event.eventType << ";NID=" << event.adapterName << ";PIN=" << event.devId << ";VID=" <<
@@ -211,16 +214,16 @@ int32_t AudioManagerInterfaceImpl::NotifyFwk(const DAudioDevEvent &event)
     std::string eventInfo = ss.str();
     int ret = HdfDeviceObjectSetServInfo(deviceObject_, eventInfo.c_str());
     if (ret != HDF_SUCCESS) {
-        DHLOGE("%s: Set service info failed, ret = %d.", AUDIO_LOG, ret);
+        DHLOGE("Set service info failed, ret = %d.", ret);
         return ERR_DH_AUDIO_HDF_FAIL;
     }
     ret = HdfDeviceObjectUpdate(deviceObject_);
     if (ret != HDF_SUCCESS) {
-        DHLOGE("%s: Update service info failed, ret = %d.", AUDIO_LOG, ret);
+        DHLOGE("Update service info failed, ret = %d.", ret);
         return ERR_DH_AUDIO_HDF_FAIL;
     }
 
-    DHLOGI("%s: Notify audio fwk success.", AUDIO_LOG);
+    DHLOGI("Notify audio fwk success.");
     return DH_SUCCESS;
 }
 
@@ -228,18 +231,18 @@ int32_t AudioManagerInterfaceImpl::CreateAdapter(const std::string &adpName, con
     const sptr<IDAudioCallback> &callback)
 {
     if (callback == nullptr) {
-        DHLOGE("%s: Adapter callback is null.", AUDIO_LOG);
+        DHLOGE("Adapter callback is null.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     if (devId != PIN_OUT_DAUDIO_DEFAULT && devId != PIN_IN_DAUDIO_DEFAULT) {
-        DHLOGE("%s: Pin is not default, can not create audio adapter.", AUDIO_LOG);
+        DHLOGE("Pin is not default, can not create audio adapter.");
         return ERR_DH_AUDIO_HDF_FAIL;
     }
 
     AudioAdapterDescriptorHAL desc = { adpName };
     sptr<AudioAdapterInterfaceImpl> adapter(new AudioAdapterInterfaceImpl(desc));
     if (adapter == nullptr) {
-        DHLOGE("%s: Create new audio adapter failed.", AUDIO_LOG);
+        DHLOGE("Create new audio adapter failed.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     mapAudioAdapter_.insert(std::make_pair(adpName, adapter));

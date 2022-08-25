@@ -21,12 +21,15 @@
 #include "daudio_log.h"
 #include "audio_decoder.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AudioDecoderProcessor"
+
 namespace OHOS {
 namespace DistributedHardware {
 AudioDecoderProcessor::~AudioDecoderProcessor()
 {
     if (audioDecoder_ != nullptr) {
-        DHLOGI("%s: ~AudioDecoderProcessor. Release audio processor.", LOG_TAG);
+        DHLOGI("~AudioDecoderProcessor. Release audio processor.");
         StopAudioProcessor();
         ReleaseAudioProcessor();
     }
@@ -35,9 +38,9 @@ AudioDecoderProcessor::~AudioDecoderProcessor()
 int32_t AudioDecoderProcessor::ConfigureAudioProcessor(const AudioCommonParam &localDevParam,
     const AudioCommonParam &remoteDevParam, const std::shared_ptr<IAudioProcessorCallback> &procCallback)
 {
-    DHLOGI("%s: Configure audio processor.", LOG_TAG);
+    DHLOGI("Configure audio processor.");
     if (procCallback == nullptr) {
-        DHLOGE("%s: Processor callback is null.", LOG_TAG);
+        DHLOGE("Processor callback is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
@@ -47,13 +50,13 @@ int32_t AudioDecoderProcessor::ConfigureAudioProcessor(const AudioCommonParam &l
 
     audioDecoder_ = std::make_shared<AudioDecoder>();
     if (audioDecoder_ == nullptr) {
-        DHLOGE("%s: Decoder is null.", LOG_TAG);
+        DHLOGE("Decoder is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
     int32_t ret = audioDecoder_->ConfigureAudioCodec(localDevParam, shared_from_this());
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Configure decoder fail. Error code: %d.", LOG_TAG, ret);
+        DHLOGE("Configure decoder fail. Error code: %d.", ret);
         audioDecoder_ = nullptr;
         return ret;
     }
@@ -62,16 +65,16 @@ int32_t AudioDecoderProcessor::ConfigureAudioProcessor(const AudioCommonParam &l
 
 int32_t AudioDecoderProcessor::ReleaseAudioProcessor()
 {
-    DHLOGI("%s: Release audio processor.", LOG_TAG);
+    DHLOGI("Release audio processor.");
     if (audioDecoder_ == nullptr) {
-        DHLOGE("%s: Decoder is null.", LOG_TAG);
+        DHLOGE("Decoder is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
     DAUDIO_SYNC_TRACE(DAUDIO_RELEASE_DECODER_PROCESSOR);
     int32_t ret = audioDecoder_->ReleaseAudioCodec();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Release decoder fail. Error code: %d.", LOG_TAG, ret);
+        DHLOGE("Release decoder fail. Error code: %d.", ret);
         return ret;
     }
 
@@ -81,9 +84,9 @@ int32_t AudioDecoderProcessor::ReleaseAudioProcessor()
 
 int32_t AudioDecoderProcessor::StartAudioProcessor()
 {
-    DHLOGI("%s: Start audio processor.", LOG_TAG);
+    DHLOGI("Start audio processor.");
     if (audioDecoder_ == nullptr) {
-        DHLOGE("%s: Decoder is null.", LOG_TAG);
+        DHLOGE("Decoder is null.");
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_BAD_VALUE,
             "daudio decoder is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
@@ -92,21 +95,21 @@ int32_t AudioDecoderProcessor::StartAudioProcessor()
     DAUDIO_SYNC_TRACE(DAUDIO_START_DECODER_PROCESSOR);
     int32_t ret = audioDecoder_->StartAudioCodec();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Start decoder fail. Error code: %d.", LOG_TAG, ret);
+        DHLOGE("Start decoder fail. Error code: %d.", ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
             "daudio start decoder fail.");
         return ret;
     }
 
-    DHLOGI("%s: Start audio processor success.", LOG_TAG);
+    DHLOGI("Start audio processor success.");
     return DH_SUCCESS;
 }
 
 int32_t AudioDecoderProcessor::StopAudioProcessor()
 {
-    DHLOGI("%s: Stop audio processor.", LOG_TAG);
+    DHLOGI("Stop audio processor.");
     if (audioDecoder_ == nullptr) {
-        DHLOGE("%s: Decoder is null.", LOG_TAG);
+        DHLOGE("Decoder is null.");
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_BAD_VALUE,
             "daudio decoder is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
@@ -115,7 +118,7 @@ int32_t AudioDecoderProcessor::StopAudioProcessor()
     DAUDIO_SYNC_TRACE(DAUDIO_STOP_DECODER_PROCESSOR);
     int32_t ret = audioDecoder_->StopAudioCodec();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Stop decoder fail. Error code: %d.", LOG_TAG, ret);
+        DHLOGE("Stop decoder fail. Error code: %d.", ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
             "daudio stop decoder fail.");
         return ret;
@@ -126,19 +129,19 @@ int32_t AudioDecoderProcessor::StopAudioProcessor()
 
 int32_t AudioDecoderProcessor::FeedAudioProcessor(const std::shared_ptr<AudioData> &inputData)
 {
-    DHLOGD("%s: Feed audio processor.", LOG_TAG);
+    DHLOGD("Feed audio processor.");
     if (inputData == nullptr) {
-        DHLOGE("%s: Input data is null.", LOG_TAG);
+        DHLOGE("Input data is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
     if (audioDecoder_ == nullptr) {
-        DHLOGE("%s: Decoder is null.", LOG_TAG);
+        DHLOGE("Decoder is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
     int32_t ret = audioDecoder_->FeedAudioData(inputData);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Feed data fail. Error code: %d.", LOG_TAG, ret);
+        DHLOGE("Feed data fail. Error code: %d.", ret);
         return ret;
     }
 
@@ -148,14 +151,14 @@ int32_t AudioDecoderProcessor::FeedAudioProcessor(const std::shared_ptr<AudioDat
 void AudioDecoderProcessor::OnCodecDataDone(const std::shared_ptr<AudioData> &outputData)
 {
     if (outputData == nullptr) {
-        DHLOGE("%s: Output data is null.", LOG_TAG);
+        DHLOGE("Output data is null.");
         return;
     }
-    DHLOGD("%s: Codec done. Output data size %zu.", LOG_TAG, outputData->Size());
+    DHLOGD("Codec done. Output data size %zu.", outputData->Size());
 
     std::shared_ptr<IAudioProcessorCallback> targetProcCallback_ = procCallback_.lock();
     if (targetProcCallback_ == nullptr) {
-        DHLOGE("%s: Processor callback is null.", LOG_TAG);
+        DHLOGE("Processor callback is null.");
         return;
     }
     targetProcCallback_->OnAudioDataDone(outputData);
@@ -163,10 +166,10 @@ void AudioDecoderProcessor::OnCodecDataDone(const std::shared_ptr<AudioData> &ou
 
 void AudioDecoderProcessor::OnCodecStateNotify(const AudioEvent &event)
 {
-    DHLOGI("%s: Codec state notify.", LOG_TAG);
+    DHLOGI("Codec state notify.");
     std::shared_ptr<IAudioProcessorCallback> targetProcCallback_ = procCallback_.lock();
     if (targetProcCallback_ == nullptr) {
-        DHLOGE("%s: Processor callback is null.", LOG_TAG);
+        DHLOGE("Processor callback is null.");
         return;
     }
     targetProcCallback_->OnStateNotify(event);

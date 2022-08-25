@@ -65,7 +65,6 @@ private:
     int32_t RegisterProcessorListener(const AudioParam &localParam, const AudioParam &remoteParam);
 
 private:
-    static const constexpr char *LOG_TAG = "AudioDecodeTransport";
     static constexpr size_t DATA_QUEUE_MAX_SIZE = 10;
     static constexpr size_t SLEEP_TIME = 20000;
     static constexpr size_t FRAME_SIZE = 4096;

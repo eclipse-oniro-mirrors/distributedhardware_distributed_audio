@@ -78,7 +78,6 @@ ohos_shared_library("distributed_audio_manager_sink") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daudioSinkManager\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

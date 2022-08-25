@@ -44,7 +44,6 @@ protected:
 
 private:
     bool Init();
-    static const constexpr char *LOG_TAG = "DAudioSinkService";
     bool isServiceStarted_ = false;
 };
 } // DistributedHardware

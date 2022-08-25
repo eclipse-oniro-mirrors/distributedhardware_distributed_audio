@@ -18,11 +18,14 @@
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioSinkProxy"
+
 namespace OHOS {
 namespace DistributedHardware {
 int32_t DAudioSinkProxy::InitSink(const std::string &params)
 {
-    DHLOGI("%s: InitSink.", LOG_TAG);
+    DHLOGI("InitSink.");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;

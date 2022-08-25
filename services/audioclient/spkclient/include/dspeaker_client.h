@@ -69,7 +69,6 @@ private:
     void StringSplit(const std::string &str, const uint8_t &splits, std::vector<std::string> &res);
 
 private:
-    constexpr static const char *LOG_TAG = "DSpeakerClient";
     constexpr static size_t DATA_QUEUE_MAX_SIZE = 5;
     constexpr static size_t REQUEST_DATA_WAIT = 10;
 

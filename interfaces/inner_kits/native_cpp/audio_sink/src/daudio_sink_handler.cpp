@@ -25,28 +25,31 @@
 #include "daudio_log.h"
 #include "daudio_sink_load_callback.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioSinkHandler"
+
 namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DAudioSinkHandler);
 
 DAudioSinkHandler::DAudioSinkHandler()
 {
-    DHLOGI("%s: DAudio sink handler constructed.", LOG_TAG);
+    DHLOGI("DAudio sink handler constructed.");
 }
 
 DAudioSinkHandler::~DAudioSinkHandler()
 {
-    DHLOGI("%s: DAudio sink handler destructed.", LOG_TAG);
+    DHLOGI("DAudio sink handler destructed.");
 }
 
 int32_t DAudioSinkHandler::InitSink(const std::string &params)
 {
-    DHLOGI("%s: InitSink.", LOG_TAG);
+    DHLOGI("InitSink.");
     DAUDIO_SYNC_TRACE(DAUDIO_SOURCE_LOAD_SYSTEM_ABILITY);
     if (dAudioSinkProxy_ == nullptr) {
         sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         if (samgr == nullptr) {
-            DHLOGE("%s: Failed to get system ability mgr.", LOG_TAG);
+            DHLOGE("Failed to get system ability mgr.");
             DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
                 ERR_DH_AUDIO_SA_GET_SAMGR_FAILED, "daudio sink get samgr failed.");
             return ERR_DH_AUDIO_SA_GET_SAMGR_FAILED;
@@ -54,8 +57,8 @@ int32_t DAudioSinkHandler::InitSink(const std::string &params)
         sptr<DAudioSinkLoadCallback> loadCallback = new DAudioSinkLoadCallback(params);
         int32_t ret = samgr->LoadSystemAbility(DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID, loadCallback);
         if (ret != ERR_OK) {
-            DHLOGE("%s: Failed to Load systemAbility, systemAbilityId:%d, ret code:%d.",
-                LOG_TAG, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID, ret);
+            DHLOGE("Failed to Load systemAbility, systemAbilityId:%d, ret code:%d.",
+                DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID, ret);
             DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
                 ERR_DH_AUDIO_SA_LOAD_FAILED, "daudio sink LoadSystemAbility call failed.");
             return ERR_DH_AUDIO_SA_LOAD_FAILED;
@@ -66,7 +69,7 @@ int32_t DAudioSinkHandler::InitSink(const std::string &params)
     auto waitStatus = sinkProxyConVar_.wait_for(lock, std::chrono::milliseconds(AUDIO_LOADSA_TIMEOUT_MS),
         [this]() { return dAudioSinkProxy_ != nullptr; });
     if (!waitStatus) {
-        DHLOGE("%s: Audio load sa timeout.", LOG_TAG);
+        DHLOGE("Audio load sa timeout.");
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
             ERR_DH_AUDIO_SA_LOAD_TIMEOUT, "daudio sink sa load timeout.");
         return ERR_DH_AUDIO_SA_LOAD_TIMEOUT;
@@ -76,10 +79,10 @@ int32_t DAudioSinkHandler::InitSink(const std::string &params)
 
 int32_t DAudioSinkHandler::ReleaseSink()
 {
-    DHLOGI("%s: ReleaseSink", LOG_TAG);
+    DHLOGI("ReleaseSink");
     std::lock_guard<std::mutex> lock(sinkProxyMutex_);
     if (dAudioSinkProxy_ == nullptr) {
-        DHLOGE("%s: Daudio sink proxy not init.", LOG_TAG);
+        DHLOGE("Daudio sink proxy not init.");
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
             ERR_DH_AUDIO_SA_PROXY_NOT_INIT, "daudio sink proxy not init.");
         return ERR_DH_AUDIO_SA_PROXY_NOT_INIT;
@@ -92,10 +95,10 @@ int32_t DAudioSinkHandler::ReleaseSink()
 
 int32_t DAudioSinkHandler::SubscribeLocalHardware(const std::string &dhId, const std::string &param)
 {
-    DHLOGI("%s: SubscribeLocalHardware.", LOG_TAG);
+    DHLOGI("SubscribeLocalHardware.");
     std::lock_guard<std::mutex> lock(sinkProxyMutex_);
     if (dAudioSinkProxy_ == nullptr) {
-        DHLOGE("%s: daudio sink proxy not init.", LOG_TAG);
+        DHLOGE("daudio sink proxy not init.");
         return ERR_DH_AUDIO_SA_PROXY_NOT_INIT;
     }
     int32_t ret = dAudioSinkProxy_->SubscribeLocalHardware(dhId, param);
@@ -104,10 +107,10 @@ int32_t DAudioSinkHandler::SubscribeLocalHardware(const std::string &dhId, const
 
 int32_t DAudioSinkHandler::UnsubscribeLocalHardware(const std::string &dhId)
 {
-    DHLOGI("%s: UnsubscribeLocalHardware.", LOG_TAG);
+    DHLOGI("UnsubscribeLocalHardware.");
     std::lock_guard<std::mutex> lock(sinkProxyMutex_);
     if (dAudioSinkProxy_ == nullptr) {
-        DHLOGE("%s: daudio sink proxy not init.", LOG_TAG);
+        DHLOGE("daudio sink proxy not init.");
         return ERR_DH_AUDIO_SA_PROXY_NOT_INIT;
     }
     int32_t ret = dAudioSinkProxy_->UnsubscribeLocalHardware(dhId);
@@ -116,10 +119,10 @@ int32_t DAudioSinkHandler::UnsubscribeLocalHardware(const std::string &dhId)
 
 void DAudioSinkHandler::OnRemoteSinkSvrDied(const wptr<IRemoteObject> &remote)
 {
-    DHLOGI("%s: OnRemoteSinkSvrDied.", LOG_TAG);
+    DHLOGI("OnRemoteSinkSvrDied.");
     sptr<IRemoteObject> remoteObject = remote.promote();
     if (remoteObject == nullptr) {
-        DHLOGE("%s: OnRemoteDied remote promoted failed.", LOG_TAG);
+        DHLOGE("OnRemoteDied remote promoted failed.");
         return;
     }
 
@@ -132,12 +135,12 @@ void DAudioSinkHandler::OnRemoteSinkSvrDied(const wptr<IRemoteObject> &remote)
 
 void DAudioSinkHandler::FinishStartSA(const std::string &param, const sptr<IRemoteObject> &remoteObject)
 {
-    DHLOGI("%s: FinishStartSA.", LOG_TAG);
+    DHLOGI("FinishStartSA.");
     std::lock_guard<std::mutex> lock(sinkProxyMutex_);
     remoteObject->AddDeathRecipient(sinkSvrRecipient_);
     dAudioSinkProxy_ = iface_cast<IDAudioSink>(remoteObject);
     if ((dAudioSinkProxy_ == nullptr) || (!dAudioSinkProxy_->AsObject())) {
-        DHLOGE("%s: Failed to get daudio sink proxy.", LOG_TAG);
+        DHLOGE("Failed to get daudio sink proxy.");
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
             ERR_DH_AUDIO_SA_PROXY_NOT_INIT, "daudio sink get proxy failed.");
         return;
@@ -149,7 +152,7 @@ void DAudioSinkHandler::FinishStartSA(const std::string &param, const sptr<IRemo
 
 void DAudioSinkHandler::DAudioSinkSvrRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
-    DHLOGI("%s: DAudioSinkSvrRecipient::OnRemoteDied.", LOG_TAG);
+    DHLOGI("DAudioSinkSvrRecipient::OnRemoteDied.");
     DAudioSinkHandler::GetInstance().OnRemoteSinkSvrDied(remote);
 }
 

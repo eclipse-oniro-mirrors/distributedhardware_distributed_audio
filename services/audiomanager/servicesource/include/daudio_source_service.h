@@ -54,7 +54,6 @@ protected:
 private:
     bool Init();
 
-    static const constexpr char *LOG_TAG = "DAudioSourceService";
     bool isServiceStarted_ = false;
 };
 } // DistributedHardware

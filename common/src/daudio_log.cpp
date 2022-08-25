@@ -15,15 +15,14 @@
 
 #include "daudio_log.h"
 
-#include <cstdio>
+#include "daudio_constants.h"
+#include "securec.h"
 
 #ifdef HI_LOG_ENABLE
 #include "hilog/log.h"
 #else
+#include <cstdio>
 #endif
-#include "securec.h"
-
-#include "daudio_constants.h"
 
 namespace OHOS {
 namespace DistributedHardware {

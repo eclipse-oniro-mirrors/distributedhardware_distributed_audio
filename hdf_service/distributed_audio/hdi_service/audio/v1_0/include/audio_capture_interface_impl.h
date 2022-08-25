@@ -76,7 +76,6 @@ public:
     const AudioDeviceDescriptorHAL &GetCaptureDesc();
 
 private:
-    const char *AUDIO_LOG = "AudioCaptureInterfaceImpl";
     std::string adapterName_;
     AudioDeviceDescriptorHAL devDesc_;
     AudioSampleAttributesHAL devAttrs_;

@@ -20,6 +20,9 @@
 #include "daudio_log.h"
 #include "daudio_utils.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioManagerInterfaceImpl"
+
 using namespace OHOS::DistributedHardware;
 using namespace OHOS::HDI::DistributedAudio::Audio::V1_0;
 
@@ -37,62 +40,62 @@ extern "C" IDAudioManager *DAudioManagerImplGetInstance(void)
 
 DAudioManagerInterfaceImpl::DAudioManagerInterfaceImpl()
 {
-    DHLOGD("%s: Distributed Audio Ext Manager constructed.", AUDIO_LOG);
+    DHLOGD("Distributed Audio Ext Manager constructed.");
     audiomgr_ = AudioManagerInterfaceImpl::GetAudioManager();
 }
 
 DAudioManagerInterfaceImpl::~DAudioManagerInterfaceImpl()
 {
-    DHLOGD("%s: Distributed Audio Ext Manager destructed.", AUDIO_LOG);
+    DHLOGD("Distributed Audio Ext Manager destructed.");
 }
 
 int32_t DAudioManagerInterfaceImpl::RegisterAudioDevice(const std::string &adpName, int32_t devId,
     const std::string &capability, const sptr<IDAudioCallback> &callbackObj)
 {
-    DHLOGI("%s: Register audio device, name: %s, device: %d.", AUDIO_LOG, GetAnonyString(adpName).c_str(), devId);
+    DHLOGI("Register audio device, name: %s, device: %d.", GetAnonyString(adpName).c_str(), devId);
     if (audiomgr_ == nullptr) {
-        DHLOGE("%s: Audio manager is null.", AUDIO_LOG);
+        DHLOGE("Audio manager is null.");
         return HDF_FAILURE;
     }
 
     int32_t ret = audiomgr_->AddAudioDevice(adpName, devId, capability, callbackObj);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Register audio device failed, ret = %d", AUDIO_LOG, ret);
+        DHLOGE("Register audio device failed, ret = %d", ret);
         return HDF_FAILURE;
     }
 
-    DHLOGI("%s: Register audio device success.", AUDIO_LOG);
+    DHLOGI("Register audio device success.");
     return HDF_SUCCESS;
 }
 
 int32_t DAudioManagerInterfaceImpl::UnRegisterAudioDevice(const std::string &adpName, int32_t devId)
 {
-    DHLOGI("%s: UnRegister audio device, name: %s, device: %d.", AUDIO_LOG, GetAnonyString(adpName).c_str(), devId);
+    DHLOGI("UnRegister audio device, name: %s, device: %d.", GetAnonyString(adpName).c_str(), devId);
     if (audiomgr_ == nullptr) {
-        DHLOGE("%s: Audio manager is null.", AUDIO_LOG);
+        DHLOGE("Audio manager is null.");
         return HDF_FAILURE;
     }
 
     int32_t ret = audiomgr_->RemoveAudioDevice(adpName, devId);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: UnRegister audio devcie failed. ret = %d", AUDIO_LOG, ret);
+        DHLOGE("UnRegister audio devcie failed. ret = %d", ret);
         return HDF_FAILURE;
     }
 
-    DHLOGI("%s: UnRegister audio device success.", AUDIO_LOG);
+    DHLOGI("UnRegister audio device success.");
     return HDF_SUCCESS;
 }
 
 int32_t DAudioManagerInterfaceImpl::NotifyEvent(const std::string &adpName, int32_t devId, const AudioEvent &event)
 {
     if (audiomgr_ == nullptr) {
-        DHLOGE("%s: Audio manager is null.", AUDIO_LOG);
+        DHLOGE("Audio manager is null.");
         return HDF_FAILURE;
     }
-    DHLOGI("%s: Notify event. event type = %d", AUDIO_LOG, event.type);
+    DHLOGI("Notify event. event type = %d", event.type);
     int32_t ret = audiomgr_->Notify(adpName, devId, event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Notify audio event failed. ret = %d", AUDIO_LOG, ret);
+        DHLOGE("Notify audio event failed. ret = %d", ret);
         return HDF_FAILURE;
     }
 

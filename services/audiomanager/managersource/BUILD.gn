@@ -81,7 +81,6 @@ ohos_shared_library("distributed_audio_manager_source") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daudioManagerSource\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

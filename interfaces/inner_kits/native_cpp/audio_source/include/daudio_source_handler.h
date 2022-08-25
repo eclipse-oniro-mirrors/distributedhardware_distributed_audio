@@ -47,7 +47,6 @@ private:
     DAudioSourceHandler();
     ~DAudioSourceHandler();
 
-    static const constexpr char *LOG_TAG = "DAudioSourceHandler";
     std::mutex sourceProxyMutex_;
     std::condition_variable sourceProxyConVar_;
     sptr<IDAudioSource> dAudioSourceProxy_ = nullptr;

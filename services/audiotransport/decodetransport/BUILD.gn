@@ -47,7 +47,7 @@ ohos_shared_library("distributed_audio_decode_transport") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daudio_decodetransport\"",
+
     "LOG_DOMAIN=0xD004100",
   ]
 

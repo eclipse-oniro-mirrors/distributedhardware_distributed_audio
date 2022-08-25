@@ -56,7 +56,6 @@ ohos_shared_library("distributed_audio_encoder_processor") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daudio_encode_proc\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

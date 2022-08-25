@@ -42,7 +42,6 @@ private:
     DAudioSinkHandler();
     ~DAudioSinkHandler();
 
-    static const constexpr char *LOG_TAG = "DAudioSinkHandler";
     std::mutex sinkProxyMutex_;
     std::condition_variable sinkProxyConVar_;
     sptr<IDAudioSink> dAudioSinkProxy_ = nullptr;

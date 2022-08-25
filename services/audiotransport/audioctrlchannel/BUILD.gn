@@ -49,7 +49,6 @@ ohos_shared_library("distributed_audio_ctrl_channel") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daudio_audioctrlchannel\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

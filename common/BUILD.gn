@@ -48,7 +48,6 @@ ohos_shared_library("distributed_audio_utils") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daudioUtils\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

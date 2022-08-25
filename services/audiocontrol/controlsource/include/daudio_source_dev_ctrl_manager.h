@@ -43,7 +43,6 @@ public:
     int32_t SendAudioEvent(const std::shared_ptr<AudioEvent> &event);
 
 private:
-    static const constexpr char *LOG_TAG = "DAudioSourceDevCtrlMgr";
     std::string devId_;
     std::shared_ptr<IAudioCtrlTransport> audioCtrlTrans_;
     std::shared_ptr<IAudioEventCallback> audioEventCallback_;

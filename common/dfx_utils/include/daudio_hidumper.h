@@ -60,7 +60,6 @@ private:
     int32_t g_deviceNum = 0;
     std::string spkDefault = "1";
     std::string micDefault = "134217729";
-    static const constexpr char *LOG_TAG = "DaudioHidumper";
 };
 } // namespace DistributedHardware
 } // namespace OHOS

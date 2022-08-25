@@ -39,7 +39,6 @@ public:
     void OnOutputFormatChanged(const Media::Format &format) override;
 
 private:
-    constexpr static const char *LOG_TAG = "AudioEncoderCallback";
     std::weak_ptr<AudioEncoder> audioEncoder_;
 };
 } // namespace DistributedHardware

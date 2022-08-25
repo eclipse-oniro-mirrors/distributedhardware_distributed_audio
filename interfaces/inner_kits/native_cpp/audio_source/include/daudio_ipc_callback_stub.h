@@ -33,7 +33,6 @@ private:
     int32_t OnNotifyRegResultInner(MessageParcel &data, MessageParcel &reply, MessageOption &option);
     int32_t OnNotifyUnregResultInner(MessageParcel &data, MessageParcel &reply, MessageOption &option);
 
-    static const constexpr char *LOG_TAG = "DAudioIpcCallbackStub";
     using DAudioCallbackFunc = int32_t (DAudioIpcCallbackStub::*)(MessageParcel &data, MessageParcel &reply,
         MessageOption &option);
     std::map<int32_t, DAudioCallbackFunc> memberFuncMap_;

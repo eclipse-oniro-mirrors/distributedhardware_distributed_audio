@@ -59,7 +59,6 @@ private:
     } AudioDevice;
 
 private:
-    static const constexpr char *LOG_TAG = "DAudioSourceManager";
     std::string localDevId_;
     std::mutex devMapMtx_;
     std::map<std::string, AudioDevice> audioDevMap_;

@@ -29,11 +29,14 @@
 #include "daudio_log.h"
 #include "daudio_util.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DSpeakerDev"
+
 namespace OHOS {
 namespace DistributedHardware {
 int32_t DSpeakerDev::EnableDSpeaker(const int32_t dhId, const std::string &capability)
 {
-    DHLOGI("%s: Enable speaker device dhId: %d.", LOG_TAG, dhId);
+    DHLOGI("Enable speaker device dhId: %d.", dhId);
     if (enabledPorts_.empty()) {
         if (EnableDevice(PIN_OUT_DAUDIO_DEFAULT, capability) != DH_SUCCESS) {
             return ERR_DH_AUDIO_FAILED;
@@ -51,7 +54,7 @@ int32_t DSpeakerDev::EnableDevice(const int32_t dhId, const std::string &capabil
 {
     int32_t ret = DAudioHdiHandler::GetInstance().RegisterAudioDevice(devId_, dhId, capability, shared_from_this());
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Register speaker device failed, ret: %d.", LOG_TAG, ret);
+        DHLOGE("Register speaker device failed, ret: %d.", ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_REGISTER_FAIL, devId_, std::to_string(dhId), ret,
             "daudio register speaker device failed.");
         return ret;
@@ -62,7 +65,7 @@ int32_t DSpeakerDev::EnableDevice(const int32_t dhId, const std::string &capabil
 
 int32_t DSpeakerDev::DisableDSpeaker(const int32_t dhId)
 {
-    DHLOGI("%s: DisableDSpeaker.", LOG_TAG);
+    DHLOGI("DisableDSpeaker.");
     if (dhId == curPort_) {
         isOpened_.store(false);
     }
@@ -87,7 +90,7 @@ int32_t DSpeakerDev::DisableDevice(const int32_t dhId)
 {
     int32_t ret = DAudioHdiHandler::GetInstance().UnRegisterAudioDevice(devId_, dhId);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: UnRegister speaker device failed, ret: %d.", LOG_TAG, ret);
+        DHLOGE("UnRegister speaker device failed, ret: %d.", ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_UNREGISTER_FAIL, devId_, std::to_string(dhId), ret,
             "daudio unregister speaker device failed.");
         return ret;
@@ -98,10 +101,10 @@ int32_t DSpeakerDev::DisableDevice(const int32_t dhId)
 
 int32_t DSpeakerDev::OpenDevice(const std::string &devId, const int32_t dhId)
 {
-    DHLOGI("%s: OpenDevice devId: %s, dhId: %d.", LOG_TAG, GetAnonyString(devId).c_str(), dhId);
+    DHLOGI("OpenDevice devId: %s, dhId: %d.", GetAnonyString(devId).c_str(), dhId);
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("%s: Event callback is null", LOG_TAG);
+        DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
 
@@ -115,10 +118,10 @@ int32_t DSpeakerDev::OpenDevice(const std::string &devId, const int32_t dhId)
 
 int32_t DSpeakerDev::CloseDevice(const std::string &devId, const int32_t dhId)
 {
-    DHLOGI("%s: CloseDevice devId: %s, dhId: %d.", LOG_TAG, GetAnonyString(devId).c_str(), dhId);
+    DHLOGI("CloseDevice devId: %s, dhId: %d.", GetAnonyString(devId).c_str(), dhId);
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("%s: Event, callback is null.", LOG_TAG);
+        DHLOGE("Event, callback is null.");
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
 
@@ -133,9 +136,9 @@ int32_t DSpeakerDev::CloseDevice(const std::string &devId, const int32_t dhId)
 
 int32_t DSpeakerDev::SetParameters(const std::string &devId, const int32_t dhId, const AudioParamHDF &param)
 {
-    DHLOGI("%s: Set speaker parameters {samplerate: %d, channelmask: %d, format: %d, streamusage: %d, period: %d, "
+    DHLOGI("Set speaker parameters {samplerate: %d, channelmask: %d, format: %d, streamusage: %d, period: %d, "
         "framesize: %d, ext{%s}}.",
-        LOG_TAG, param.sampleRate, param.channelMask, param.bitFormat, param.streamUsage, param.period, param.frameSize,
+        param.sampleRate, param.channelMask, param.bitFormat, param.streamUsage, param.period, param.frameSize,
         param.ext.c_str());
     curPort_ = dhId;
     paramHDF_ = param;
@@ -151,10 +154,10 @@ int32_t DSpeakerDev::SetParameters(const std::string &devId, const int32_t dhId,
 
 int32_t DSpeakerDev::NotifyEvent(const std::string &devId, int32_t dhId, const AudioEvent &event)
 {
-    DHLOGI("%s: Notify speaker event.", LOG_TAG);
+    DHLOGI("Notify speaker event.");
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("%s: Eventcallback is null.", LOG_TAG);
+        DHLOGE("Eventcallback is null.");
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
     auto audioEvent = std::make_shared<AudioEvent>(event.type, event.content);
@@ -164,14 +167,14 @@ int32_t DSpeakerDev::NotifyEvent(const std::string &devId, int32_t dhId, const A
 
 int32_t DSpeakerDev::SetUp()
 {
-    DHLOGI("%s: SetUp speaker device.", LOG_TAG);
+    DHLOGI("SetUp speaker device.");
     if (speakerTrans_ == nullptr) {
         speakerTrans_ = std::make_shared<AudioEncodeTransport>(devId_);
     }
 
     int32_t ret = speakerTrans_->SetUp(param_, param_, shared_from_this(), "speaker");
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Speaker trans set up failed. ret:%d", LOG_TAG, ret);
+        DHLOGE("Speaker trans set up failed. ret:%d", ret);
         return ret;
     }
     return DH_SUCCESS;
@@ -179,15 +182,15 @@ int32_t DSpeakerDev::SetUp()
 
 int32_t DSpeakerDev::Start()
 {
-    DHLOGI("%s: Start speaker device.", LOG_TAG);
+    DHLOGI("Start speaker device.");
     if (speakerTrans_ == nullptr) {
-        DHLOGE("%s: Speaker trans is null.", LOG_TAG);
+        DHLOGE("Speaker trans is null.");
         return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
     }
 
     int32_t ret = speakerTrans_->Start();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Speaker trans start failed, ret: %d.", LOG_TAG, ret);
+        DHLOGE("Speaker trans start failed, ret: %d.", ret);
         return ret;
     }
 
@@ -196,7 +199,7 @@ int32_t DSpeakerDev::Start()
         channelWaitCond_.wait_for(lck, std::chrono::seconds(CHANNEL_WAIT_SECONDS),
             [this]() { return isTransReady_.load(); });
     if (!status) {
-        DHLOGE("%s: Wait channel open timeout(%ds).", LOG_TAG, CHANNEL_WAIT_SECONDS);
+        DHLOGE("Wait channel open timeout(%ds).", CHANNEL_WAIT_SECONDS);
         return ERR_DH_AUDIO_SA_SPEAKER_CHANNEL_WAIT_TIMEOUT;
     }
     isOpened_.store(true);
@@ -205,9 +208,9 @@ int32_t DSpeakerDev::Start()
 
 int32_t DSpeakerDev::Stop()
 {
-    DHLOGI("%s: Stop speaker device.", LOG_TAG);
+    DHLOGI("Stop speaker device.");
     if (speakerTrans_ == nullptr) {
-        DHLOGE("%s: Speaker trans is null.", LOG_TAG);
+        DHLOGE("Speaker trans is null.");
         return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
     }
 
@@ -215,7 +218,7 @@ int32_t DSpeakerDev::Stop()
     isTransReady_.store(false);
     int32_t ret = speakerTrans_->Stop();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Stop speaker trans failed, ret: %d.", LOG_TAG, ret);
+        DHLOGE("Stop speaker trans failed, ret: %d.", ret);
         return ret;
     }
     return DH_SUCCESS;
@@ -223,15 +226,15 @@ int32_t DSpeakerDev::Stop()
 
 int32_t DSpeakerDev::Release()
 {
-    DHLOGI("%s: Release speaker device.", LOG_TAG);
+    DHLOGI("Release speaker device.");
     if (speakerTrans_ == nullptr) {
-        DHLOGE("%s: Speaker trans is null.", LOG_TAG);
+        DHLOGE("Speaker trans is null.");
         return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
     }
 
     int32_t ret = speakerTrans_->Release();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: release speaker trans failed, ret: %d.", LOG_TAG, ret);
+        DHLOGE("release speaker trans failed, ret: %d.", ret);
     }
     return DH_SUCCESS;
 }
@@ -251,14 +254,14 @@ int32_t DSpeakerDev::ReadStreamData(const std::string &devId, const int32_t dhId
 
 int32_t DSpeakerDev::WriteStreamData(const std::string &devId, const int32_t dhId, std::shared_ptr<AudioData> &data)
 {
-    DHLOGD("%s: WriteStreamData, dhId:%d", LOG_TAG, dhId);
+    DHLOGD("WriteStreamData, dhId:%d", dhId);
     if (speakerTrans_ == nullptr) {
-        DHLOGE("%s: ReadStreamData, speaker trans is null.", LOG_TAG);
+        DHLOGE("ReadStreamData, speaker trans is null.");
         return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
     }
     int32_t ret = speakerTrans_->FeedAudioData(data);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: WriteStreamData failed, ret: %d.", LOG_TAG, ret);
+        DHLOGE("WriteStreamData failed, ret: %d.", ret);
         return ret;
     }
     return DH_SUCCESS;
@@ -273,14 +276,14 @@ int32_t DSpeakerDev::NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &even
 {
     int32_t ret = DAudioHdiHandler::GetInstance().NotifyEvent(devId_, curPort_, event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Notify event: %d, result: %s.", LOG_TAG, event->type, event->content.c_str());
+        DHLOGE("Notify event: %d, result: %s.", event->type, event->content.c_str());
     }
     return DH_SUCCESS;
 }
 
 int32_t DSpeakerDev::OnStateChange(int32_t type)
 {
-    DHLOGI("%s: On speaker device state change, type: %d.", LOG_TAG, type);
+    DHLOGI("On speaker device state change, type: %d.", type);
     auto event = std::make_shared<AudioEvent>();
     switch (type) {
         case AudioEventType::DATA_OPENED:
@@ -298,7 +301,7 @@ int32_t DSpeakerDev::OnStateChange(int32_t type)
     }
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("%s: Callback is null.", LOG_TAG);
+        DHLOGE("Callback is null.");
         return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
     }
     cbObj->NotifyEvent(event);

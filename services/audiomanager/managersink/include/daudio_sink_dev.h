@@ -85,7 +85,6 @@ private:
     int32_t from_json(const json &j, AudioParam &audioParam);
     bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);
 
-    static const constexpr char *LOG_TAG = "DAudioSinkDev";
     std::shared_ptr<DSpeakerClient> speakerClient_;
     std::shared_ptr<DMicClient> micClient_;
     std::shared_ptr<DAudioSinkDevCtrlMgr> audioCtrlMgr_;

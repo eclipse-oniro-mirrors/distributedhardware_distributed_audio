@@ -18,6 +18,9 @@
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioIpcCallbackStub"
+
 namespace OHOS {
 namespace DistributedHardware {
 DAudioIpcCallbackStub::DAudioIpcCallbackStub()
@@ -29,17 +32,17 @@ DAudioIpcCallbackStub::DAudioIpcCallbackStub()
 int32_t DAudioIpcCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
     MessageOption &option)
 {
-    DHLOGI("%s: OnRemoteRequest, code: %u", LOG_TAG, code);
+    DHLOGI("OnRemoteRequest, code: %u", code);
     std::u16string desc = DAudioIpcCallbackStub::GetDescriptor();
     std::u16string remoteDesc = data.ReadInterfaceToken();
     if (desc != remoteDesc) {
-        DHLOGE("%s: RemoteDesc is invalid.", LOG_TAG);
+        DHLOGE("RemoteDesc is invalid.");
         return ERR_DH_AUDIO_SA_INVALID_INTERFACE_TOKEN;
     }
 
     std::map<int32_t, DAudioCallbackFunc>::iterator iter = memberFuncMap_.find(code);
     if (iter == memberFuncMap_.end()) {
-        DHLOGE("%s: Invalid request code.", LOG_TAG);
+        DHLOGE("Invalid request code.");
         return ERR_DH_AUDIO_SA_INVALID_REQUEST_CODE;
     }
     DAudioCallbackFunc &func = iter->second;
@@ -48,7 +51,7 @@ int32_t DAudioIpcCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &dat
 
 int32_t DAudioIpcCallbackStub::OnNotifyRegResultInner(MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    DHLOGI("%s: OnNotifyRegResultInner.", LOG_TAG);
+    DHLOGI("OnNotifyRegResultInner.");
     std::string networkId = data.ReadString();
     std::string dhId = data.ReadString();
     std::string reqId = data.ReadString();
@@ -61,7 +64,7 @@ int32_t DAudioIpcCallbackStub::OnNotifyRegResultInner(MessageParcel &data, Messa
 int32_t DAudioIpcCallbackStub::OnNotifyUnregResultInner(MessageParcel &data, MessageParcel &reply,
     MessageOption &option)
 {
-    DHLOGI("%s: OnNotifyUnregResultInner.", LOG_TAG);
+    DHLOGI("OnNotifyUnregResultInner.");
     std::string networkId = data.ReadString();
     std::string dhId = data.ReadString();
     std::string reqId = data.ReadString();

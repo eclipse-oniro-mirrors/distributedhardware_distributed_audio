@@ -44,7 +44,6 @@ private:
     ~DAudioSinkManager();
     void ClearAudioDev(const std::string &devId);
     int32_t CreateAudioDevice(const std::string &devId);
-    static const constexpr char *LOG_TAG = "DAudioSinkManager";
     std::mutex devMapMutex_;
     std::unordered_map<std::string, std::shared_ptr<DAudioSinkDev>> dAudioSinkDevMap_;
     std::mutex remoteSvrMutex_;

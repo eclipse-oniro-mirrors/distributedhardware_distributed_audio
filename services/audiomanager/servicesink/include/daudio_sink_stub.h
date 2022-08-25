@@ -37,7 +37,6 @@ private:
     int32_t UnsubscribeLocalHardwareInner(MessageParcel &data, MessageParcel &reply, MessageOption &option);
     int32_t DAudioNotifyInner(MessageParcel &data, MessageParcel &reply, MessageOption &option);
 
-    static const constexpr char *LOG_TAG = "DAudioSinkStub";
     using DAudioSinkServiceFunc = int32_t (DAudioSinkStub::*)(MessageParcel &data, MessageParcel &reply,
         MessageOption &option);
     std::unordered_map<int32_t, DAudioSinkServiceFunc> memberFuncMap_;

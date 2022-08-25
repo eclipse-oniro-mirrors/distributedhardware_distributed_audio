@@ -23,6 +23,9 @@
 #include "daudio_log.h"
 #include "daudio_util.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioSourceManager"
+
 namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DAudioSourceManager);
@@ -41,19 +44,19 @@ DAudioSourceManager::~DAudioSourceManager()
 
 int32_t DAudioSourceManager::Init(const sptr<IDAudioIpcCallback> &callback)
 {
-    DHLOGI("%s: Init audio source manager.", LOG_TAG);
+    DHLOGI("Init audio source manager.");
     if (callback == nullptr) {
-        DHLOGE("%s: Callback is nullptr.", LOG_TAG);
+        DHLOGE("Callback is nullptr.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     int32_t ret = DAudioHdiHandler::GetInstance().InitHdiHandler();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Init Hdi handler failed.", LOG_TAG);
+        DHLOGE("Init Hdi handler failed.");
         return ret;
     }
     ret = GetLocalDeviceNetworkId(localDevId_);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Get local network id failed.", LOG_TAG);
+        DHLOGE("Get local network id failed.");
         return ret;
     }
 
@@ -64,7 +67,7 @@ int32_t DAudioSourceManager::Init(const sptr<IDAudioIpcCallback> &callback)
 
 int32_t DAudioSourceManager::UnInit()
 {
-    DHLOGI("%s: Uninit audio source manager.", LOG_TAG);
+    DHLOGI("Uninit audio source manager.");
     {
         std::lock_guard<std::mutex> lock(devMapMtx_);
         for (auto iter = audioDevMap_.begin(); iter != audioDevMap_.end(); iter++) {
@@ -80,7 +83,7 @@ int32_t DAudioSourceManager::UnInit()
     daudioMgrCallback_ = nullptr;
     int32_t ret = DAudioHdiHandler::GetInstance().UninitHdiHandler();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Uninit Hdi handler failed.", LOG_TAG);
+        DHLOGE("Uninit Hdi handler failed.");
         return ret;
     }
     return DH_SUCCESS;
@@ -89,7 +92,7 @@ int32_t DAudioSourceManager::UnInit()
 int32_t DAudioSourceManager::EnableDAudio(const std::string &devId, const std::string &dhId,
     const std::string &version, const std::string &attrs, const std::string &reqId)
 {
-    DHLOGI("%s: EnableDAudio, devId: %s, dhId: %s, version: %s, reqId: %s.", LOG_TAG, GetAnonyString(devId).c_str(),
+    DHLOGI("EnableDAudio, devId: %s, dhId: %s, version: %s, reqId: %s.", GetAnonyString(devId).c_str(),
         dhId.c_str(), version.c_str(), reqId.c_str());
     std::lock_guard<std::mutex> lock(devMapMtx_);
     auto dev = audioDevMap_.find(devId);
@@ -104,16 +107,16 @@ int32_t DAudioSourceManager::EnableDAudio(const std::string &devId, const std::s
 
 int32_t DAudioSourceManager::DisableDAudio(const std::string &devId, const std::string &dhId, const std::string &reqId)
 {
-    DHLOGI("%s: DisableDAudio, devId: %s, dhId: %s, reqId: %s.", LOG_TAG, GetAnonyString(devId).c_str(), dhId.c_str(),
+    DHLOGI("DisableDAudio, devId: %s, dhId: %s, reqId: %s.", GetAnonyString(devId).c_str(), dhId.c_str(),
         reqId.c_str());
     std::lock_guard<std::mutex> lock(devMapMtx_);
     auto dev = audioDevMap_.find(devId);
     if (dev == audioDevMap_.end()) {
-        DHLOGE("%s: Audio device not exist.", LOG_TAG);
+        DHLOGE("Audio device not exist.");
         return ERR_DH_AUDIO_SA_DEVICE_NOT_EXIST;
     }
     if (audioDevMap_[devId].dev == nullptr) {
-        DHLOGE("%s, Audio device is null.", LOG_TAG);
+        DHLOGE("Audio device is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     audioDevMap_[devId].ports[dhId] = reqId;
@@ -123,12 +126,12 @@ int32_t DAudioSourceManager::DisableDAudio(const std::string &devId, const std::
 int32_t DAudioSourceManager::HandleDAudioNotify(const std::string &devId, const std::string &dhId,
     const int32_t eventType, const std::string &eventContent)
 {
-    DHLOGI("%s: HandleDAudioNotify, devId: %s, dhId: %s, eventType: %d.", LOG_TAG, GetAnonyString(devId).c_str(),
+    DHLOGI("HandleDAudioNotify, devId: %s, dhId: %s, eventType: %d.", GetAnonyString(devId).c_str(),
         dhId.c_str(), eventType);
     std::lock_guard<std::mutex> lock(devMapMtx_);
     auto dev = audioDevMap_.find(devId);
     if (dev == audioDevMap_.end()) {
-        DHLOGE("%s: Audio device not exist.", LOG_TAG);
+        DHLOGE("Audio device not exist.");
         return ERR_DH_AUDIO_SA_DEVICE_NOT_EXIST;
     }
 
@@ -140,7 +143,7 @@ int32_t DAudioSourceManager::HandleDAudioNotify(const std::string &devId, const 
 int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
     const std::string &eventContent)
 {
-    DHLOGI("%s: DAudioNotify, devId: %s, dhId: %s, eventType: %d.", LOG_TAG, GetAnonyString(devId).c_str(),
+    DHLOGI("DAudioNotify, devId: %s, dhId: %s, eventType: %d.", GetAnonyString(devId).c_str(),
         dhId.c_str(), eventType);
     {
         std::lock_guard<std::mutex> lck(remoteSvrMutex_);
@@ -155,17 +158,17 @@ int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::s
 
     auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgr == nullptr) {
-        DHLOGE("%s: Failed to get system ability mgr.", LOG_TAG);
+        DHLOGE("Failed to get system ability mgr.");
         return ERR_DH_AUDIO_SA_GET_SAMGR_FAILED;
     }
     auto remoteObject = samgr->GetSystemAbility(DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID, devId);
     if (remoteObject == nullptr) {
-        DHLOGE("%s: remoteObject is null.", LOG_TAG);
+        DHLOGE("remoteObject is null.");
         return ERR_DH_AUDIO_SA_GET_REMOTE_SINK_FAILED;
     }
     sptr<IDAudioSink> remoteSvrProxy = iface_cast<IDAudioSink>(remoteObject);
     if (remoteSvrProxy == nullptr) {
-        DHLOGE("%s: Failed to get remote daudio sink SA.", LOG_TAG);
+        DHLOGE("Failed to get remote daudio sink SA.");
         return ERR_DH_AUDIO_SA_GET_REMOTE_SINK_FAILED;
     }
     {
@@ -178,7 +181,7 @@ int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::s
 
 int32_t DAudioSourceManager::OnEnableDAudio(const std::string &devId, const std::string &dhId, const int32_t result)
 {
-    DHLOGI("%s: OnEnable devId: %s, dhId: %s, ret: %d.", LOG_TAG, GetAnonyString(devId).c_str(), dhId.c_str(), result);
+    DHLOGI("OnEnable devId: %s, dhId: %s, ret: %d.", GetAnonyString(devId).c_str(), dhId.c_str(), result);
     std::string reqId = GetRequestId(devId, dhId);
     if (reqId.empty()) {
         return ERR_DH_AUDIO_FAILED;
@@ -188,7 +191,7 @@ int32_t DAudioSourceManager::OnEnableDAudio(const std::string &devId, const std:
     }
 
     if (ipcCallback_ == nullptr) {
-        DHLOGE("%s: Audio Ipc callback is null.", LOG_TAG);
+        DHLOGE("Audio Ipc callback is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     return ipcCallback_->OnNotifyRegResult(devId, dhId, reqId, result, "");
@@ -196,7 +199,7 @@ int32_t DAudioSourceManager::OnEnableDAudio(const std::string &devId, const std:
 
 int32_t DAudioSourceManager::OnDisableDAudio(const std::string &devId, const std::string &dhId, const int32_t result)
 {
-    DHLOGI("%s: OnDisable devId: %s, dhId: %s, ret: %d.", LOG_TAG, GetAnonyString(devId).c_str(), dhId.c_str(), result);
+    DHLOGI("OnDisable devId: %s, dhId: %s, ret: %d.", GetAnonyString(devId).c_str(), dhId.c_str(), result);
     std::string reqId = GetRequestId(devId, dhId);
     if (reqId.empty()) {
         return ERR_DH_AUDIO_FAILED;
@@ -206,7 +209,7 @@ int32_t DAudioSourceManager::OnDisableDAudio(const std::string &devId, const std
     }
 
     if (ipcCallback_ == nullptr) {
-        DHLOGE("%s: Audio Ipc callback is null.", LOG_TAG);
+        DHLOGE("Audio Ipc callback is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     return ipcCallback_->OnNotifyUnregResult(devId, dhId, reqId, result, "");
@@ -214,10 +217,10 @@ int32_t DAudioSourceManager::OnDisableDAudio(const std::string &devId, const std
 
 int32_t DAudioSourceManager::CreateAudioDevice(const std::string &devId)
 {
-    DHLOGI("%s: Create audio device.", LOG_TAG);
+    DHLOGI("Create audio device.");
     auto sourceDev = std::make_shared<DAudioSourceDev>(devId, daudioMgrCallback_);
     if (sourceDev->AwakeAudioDev(localDevId_) != DH_SUCCESS) {
-        DHLOGE("%s: Create new audio device failed.", LOG_TAG);
+        DHLOGE("Create new audio device failed.");
         return ERR_DH_AUDIO_FAILED;
     }
     AudioDevice device = { devId, sourceDev };
@@ -227,7 +230,7 @@ int32_t DAudioSourceManager::CreateAudioDevice(const std::string &devId)
 
 void DAudioSourceManager::DeleteAudioDevice(const std::string &devId, const std::string &dhId)
 {
-    DHLOGI("%s: Delete audio device.", LOG_TAG);
+    DHLOGI("Delete audio device.");
     std::lock_guard<std::mutex> lock(devMapMtx_);
     audioDevMap_[devId].ports.erase(dhId);
     if (!audioDevMap_[devId].ports.empty()) {
@@ -244,12 +247,12 @@ std::string DAudioSourceManager::GetRequestId(const std::string &devId, const st
     std::lock_guard<std::mutex> lock(devMapMtx_);
     auto dev = audioDevMap_.find(devId);
     if (dev == audioDevMap_.end()) {
-        DHLOGE("%s: Audio device not exist.", LOG_TAG);
+        DHLOGE("Audio device not exist.");
         return "";
     }
     auto port = audioDevMap_[devId].ports.find(dhId);
     if (port == audioDevMap_[devId].ports.end()) {
-        DHLOGE("%s: Audio port not exist.", LOG_TAG);
+        DHLOGE("Audio port not exist.");
         return "";
     }
     return port->second;

@@ -18,14 +18,17 @@
 #include "daudio_log.h"
 #include "audio_event.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AudioDecoderCallback"
+
 namespace OHOS {
 namespace DistributedHardware {
 void AudioDecoderCallback::OnError(Media::AVCodecErrorType errorType, int32_t errorCode)
 {
-    DHLOGE("%s: OnError. Error type: %d, Error code: %d ", LOG_TAG, errorType, errorCode);
+    DHLOGE("OnError. Error type: %d, Error code: %d ", errorType, errorCode);
     std::shared_ptr<AudioDecoder> targetDecoderNode = audioDecoder_.lock();
     if (targetDecoderNode == nullptr) {
-        DHLOGE("%s: audioDecoder is nullptr.", LOG_TAG);
+        DHLOGE("audioDecoder is nullptr.");
         return;
     }
     AudioEvent decoderErr = {AUDIO_DECODER_ERR, ""};
@@ -34,10 +37,10 @@ void AudioDecoderCallback::OnError(Media::AVCodecErrorType errorType, int32_t er
 
 void AudioDecoderCallback::OnInputBufferAvailable(uint32_t index)
 {
-    DHLOGD("%s: OnInputBufferAvailable. index %u.", LOG_TAG, index);
+    DHLOGD("OnInputBufferAvailable. index %u.", index);
     std::shared_ptr<AudioDecoder> targetDecoderNode = audioDecoder_.lock();
     if (targetDecoderNode == nullptr) {
-        DHLOGE("%s: audioDecoder is nullptr.", LOG_TAG);
+        DHLOGE("audioDecoder is nullptr.");
         return;
     }
     targetDecoderNode->OnInputBufferAvailable(index);
@@ -45,10 +48,10 @@ void AudioDecoderCallback::OnInputBufferAvailable(uint32_t index)
 
 void AudioDecoderCallback::OnOutputFormatChanged(const Media::Format &format)
 {
-    DHLOGI("%s: OnOutputFormatChanged.", LOG_TAG);
+    DHLOGI("OnOutputFormatChanged.");
     std::shared_ptr<AudioDecoder> targetDecoderNode = audioDecoder_.lock();
     if (targetDecoderNode == nullptr) {
-        DHLOGE("%s: audioDecoder is nullptr.", LOG_TAG);
+        DHLOGE("audioDecoder is nullptr.");
         return;
     }
     targetDecoderNode->OnOutputFormatChanged(format);
@@ -57,10 +60,10 @@ void AudioDecoderCallback::OnOutputFormatChanged(const Media::Format &format)
 void AudioDecoderCallback::OnOutputBufferAvailable(uint32_t index, Media::AVCodecBufferInfo info,
     Media::AVCodecBufferFlag flag)
 {
-    DHLOGD("%s: OnOutputBufferAvailable. index %u.", LOG_TAG, index);
+    DHLOGD("OnOutputBufferAvailable. index %u.", index);
     std::shared_ptr<AudioDecoder> targetDecoderNode = audioDecoder_.lock();
     if (targetDecoderNode == nullptr) {
-        DHLOGE("%s: audioDecoder is nullptr.", LOG_TAG);
+        DHLOGE("audioDecoder is nullptr.");
         return;
     }
     targetDecoderNode->OnOutputBufferAvailable(index, info, flag);

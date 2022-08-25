@@ -102,7 +102,6 @@ private:
     bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);
 
 private:
-    static const constexpr char *LOG_TAG = "DAudioSourceDev";
     static constexpr uint8_t RPC_WAIT_SECONDS = 2;
     static constexpr uint8_t TASK_QUEUE_CAPACITY = 20;
 

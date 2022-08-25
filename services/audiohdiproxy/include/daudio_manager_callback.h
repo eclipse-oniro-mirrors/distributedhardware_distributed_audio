@@ -48,7 +48,6 @@ private:
         AudioParamHDF& paramHDF);
 
 private:
-    static const constexpr char *LOG_TAG = "HDI Proxy: DAudioManagerCallback";
     std::shared_ptr<IDAudioHdiCallback> callback_;
 };
 } // DistributedHardware

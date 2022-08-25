@@ -42,7 +42,6 @@ ohos_shared_library("distributed_audio_service_common") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"daudio_services_common\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

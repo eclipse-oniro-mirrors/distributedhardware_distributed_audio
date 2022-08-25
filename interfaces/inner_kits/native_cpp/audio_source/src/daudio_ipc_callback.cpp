@@ -19,12 +19,15 @@
 #include "daudio_log.h"
 #include "daudio_util.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioIpcCallback"
+
 namespace OHOS {
 namespace DistributedHardware {
 int32_t DAudioIpcCallback::OnNotifyRegResult(const std::string &devId, const std::string &dhId,
     const std::string &reqId, int32_t status, const std::string &resultData)
 {
-    DHLOGI("%s: OnNotifyRegResult, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s", LOG_TAG,
+    DHLOGI("OnNotifyRegResult, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s",
         GetAnonyString(devId).c_str(), dhId.c_str(), status, resultData.c_str(), reqId.c_str());
 
     auto iter = registerCallbackMap_.find(reqId);
@@ -40,7 +43,7 @@ int32_t DAudioIpcCallback::OnNotifyRegResult(const std::string &devId, const std
 int32_t DAudioIpcCallback::OnNotifyUnregResult(const std::string &devId, const std::string &dhId,
     const std::string &reqId, int32_t status, const std::string &resultData)
 {
-    DHLOGI("%s: OnNotifyUnregResult, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s", LOG_TAG,
+    DHLOGI("OnNotifyUnregResult, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s",
         GetAnonyString(devId).c_str(), dhId.c_str(), status, resultData.c_str(), reqId.c_str());
 
     auto iter = unregisterCallbackMap_.find(reqId);
@@ -55,26 +58,26 @@ int32_t DAudioIpcCallback::OnNotifyUnregResult(const std::string &devId, const s
 void DAudioIpcCallback::PushRegisterCallback(const std::string &reqId,
     const std::shared_ptr<RegisterCallback> &callback)
 {
-    DHLOGI("%s: PushRegisterCallback, reqId: %s", LOG_TAG, reqId.c_str());
+    DHLOGI("PushRegisterCallback, reqId: %s", reqId.c_str());
     registerCallbackMap_.emplace(reqId, callback);
 }
 
 void DAudioIpcCallback::PopRegisterCallback(const std::string &reqId)
 {
-    DHLOGI("%s: PopRegisterCallback, reqId: %s", LOG_TAG, reqId.c_str());
+    DHLOGI("PopRegisterCallback, reqId: %s", reqId.c_str());
     registerCallbackMap_.erase(reqId);
 }
 
 void DAudioIpcCallback::PushUnregisterCallback(const std::string &reqId,
     const std::shared_ptr<UnregisterCallback> &callback)
 {
-    DHLOGI("%s: PushUnregisterCallback, reqId: %s", LOG_TAG, reqId.c_str());
+    DHLOGI("PushUnregisterCallback, reqId: %s", reqId.c_str());
     unregisterCallbackMap_.emplace(reqId, callback);
 }
 
 void DAudioIpcCallback::PopUnregisterCallback(const std::string &reqId)
 {
-    DHLOGI("%s: PopUnregisterCallback, reqId: %s", LOG_TAG, reqId.c_str());
+    DHLOGI("PopUnregisterCallback, reqId: %s", reqId.c_str());
     unregisterCallbackMap_.erase(reqId);
 }
 } // DistributedHardware

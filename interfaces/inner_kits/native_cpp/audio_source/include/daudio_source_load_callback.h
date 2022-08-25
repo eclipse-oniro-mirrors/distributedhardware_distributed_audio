@@ -27,7 +27,6 @@ public:
     void OnLoadSystemAbilityFail(int32_t systemAbilityId) override;
 
 private:
-    static const constexpr char *LOG_TAG = "DAudioSourceLoadCallback";
     std::string params_;
 };
 } // namespace DistributedHardware

@@ -18,6 +18,9 @@
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioSourceProxy"
+
 namespace OHOS {
 namespace DistributedHardware {
 int32_t DAudioSourceProxy::InitSource(const std::string &params, const sptr<IDAudioIpcCallback> &callback)

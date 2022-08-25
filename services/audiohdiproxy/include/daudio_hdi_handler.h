@@ -50,7 +50,6 @@ private:
     DAudioHdiHandler();
     ~DAudioHdiHandler();
 
-    static const constexpr char *LOG_TAG = "DAudioHdiHandler";
     const std::string HDF_AUDIO_SERVICE_NAME = "daudio_ext_service";
     std::mutex devMapMtx_;
     sptr<IDAudioManager> audioSrvHdf_;

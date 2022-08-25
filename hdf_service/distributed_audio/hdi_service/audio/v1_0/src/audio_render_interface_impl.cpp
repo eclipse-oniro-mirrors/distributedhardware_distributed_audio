@@ -22,6 +22,9 @@
 #include "daudio_constants.h"
 #include "daudio_log.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AudioRenderInterfaceImpl"
+
 using namespace OHOS::DistributedHardware;
 namespace OHOS {
 namespace HDI {
@@ -32,17 +35,17 @@ AudioRenderInterfaceImpl::AudioRenderInterfaceImpl(const std::string adpName, co
     const AudioSampleAttributesHAL &attrs, const sptr<IDAudioCallback> &callback)
     : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
 {
-    DHLOGD("%s: Distributed Audio Render constructed, id(%d).", AUDIO_LOG, desc.pins);
+    DHLOGD("Distributed Audio Render constructed, id(%d).", desc.pins);
 }
 
 AudioRenderInterfaceImpl::~AudioRenderInterfaceImpl()
 {
-    DHLOGD("%s: Distributed Audio Render destructed, id(%d).", AUDIO_LOG, devDesc_.pins);
+    DHLOGD("Distributed Audio Render destructed, id(%d).", devDesc_.pins);
 }
 
 int32_t AudioRenderInterfaceImpl::GetLatency(uint32_t &ms)
 {
-    DHLOGI("%s: Get render device latency, not support yet.", AUDIO_LOG);
+    DHLOGI("Get render device latency, not support yet.");
     ms = 0;
     return HDF_SUCCESS;
 }
@@ -50,12 +53,12 @@ int32_t AudioRenderInterfaceImpl::GetLatency(uint32_t &ms)
 int32_t AudioRenderInterfaceImpl::RenderFrame(const std::vector<uint8_t> &frame, uint64_t requestBytes,
     uint64_t &replyBytes)
 {
-    DHLOGI("%s: Render frame[samplerate: %d, channelmask: %d, bitformat: %d].", AUDIO_LOG, devAttrs_.sampleRate,
+    DHLOGI("Render frame[samplerate: %d, channelmask: %d, bitformat: %d].", devAttrs_.sampleRate,
         devAttrs_.channelCount, devAttrs_.format);
 
     std::lock_guard<std::mutex> renderLck(renderMtx_);
     if (renderStatus_ != RENDER_STATUS_START) {
-        DHLOGE("%s: Render status wrong, return false.", AUDIO_LOG);
+        DHLOGE("Render status wrong, return false.");
         return HDF_FAILURE;
     }
 
@@ -63,17 +66,17 @@ int32_t AudioRenderInterfaceImpl::RenderFrame(const std::vector<uint8_t> &frame,
     AudioData data = { param, frame };
     int32_t ret = audioExtCallback_->WriteStreamData(adapterName_, devDesc_.pins, data);
     if (ret != HDF_SUCCESS) {
-        DHLOGE("%s: Write stream data failed.", AUDIO_LOG);
+        DHLOGE("Write stream data failed.");
         return HDF_FAILURE;
     }
 
-    DHLOGI("%s: Render audio frame success.", AUDIO_LOG);
+    DHLOGI("Render audio frame success.");
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::GetRenderPosition(uint64_t &frames, AudioTimeStampHAL &time)
 {
-    DHLOGI("%s: Get render position, not support yet.", AUDIO_LOG);
+    DHLOGI("Get render position, not support yet.");
     (void)frames;
     (void)time;
     return HDF_SUCCESS;
@@ -81,49 +84,49 @@ int32_t AudioRenderInterfaceImpl::GetRenderPosition(uint64_t &frames, AudioTimeS
 
 int32_t AudioRenderInterfaceImpl::SetRenderSpeed(float speed)
 {
-    DHLOGI("%s: Set render speed, control render speed is not support yet.", AUDIO_LOG);
+    DHLOGI("Set render speed, control render speed is not support yet.");
     renderSpeed_ = speed;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::GetRenderSpeed(float &speed)
 {
-    DHLOGI("%s: Get render speed, control render speed is not support yet.", AUDIO_LOG);
+    DHLOGI("Get render speed, control render speed is not support yet.");
     speed = renderSpeed_;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::SetChannelMode(AudioChannelModeHAL mode)
 {
-    DHLOGI("%s: Set channel mode, control channel mode is not support yet.", AUDIO_LOG);
+    DHLOGI("Set channel mode, control channel mode is not support yet.");
     channelMode_ = mode;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::GetChannelMode(AudioChannelModeHAL &mode)
 {
-    DHLOGI("%s: Get channel mode, control channel mode is not support yet.", AUDIO_LOG);
+    DHLOGI("Get channel mode, control channel mode is not support yet.");
     mode = channelMode_;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::RegCallback(const sptr<IAudioRenderCallback> &cbObj)
 {
-    DHLOGI("%s: Register render callback.", AUDIO_LOG);
+    DHLOGI("Register render callback.");
     renderCallback_ = cbObj;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::DrainBuffer(AudioDrainNotifyTypeHAL type)
 {
-    DHLOGI("%s: Drain audio buffer, not support yet.", AUDIO_LOG);
+    DHLOGI("Drain audio buffer, not support yet.");
     (void)type;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::Start()
 {
-    DHLOGI("%s: Start render.", AUDIO_LOG);
+    DHLOGI("Start render.");
     std::lock_guard<std::mutex> renderLck(renderMtx_);
     renderStatus_ = RENDER_STATUS_START;
     return HDF_SUCCESS;
@@ -131,7 +134,7 @@ int32_t AudioRenderInterfaceImpl::Start()
 
 int32_t AudioRenderInterfaceImpl::Stop()
 {
-    DHLOGI("%s: Stop render.", AUDIO_LOG);
+    DHLOGI("Stop render.");
     std::lock_guard<std::mutex> renderLck(renderMtx_);
     renderStatus_ = RENDER_STATUS_STOP;
     return HDF_SUCCESS;
@@ -139,7 +142,7 @@ int32_t AudioRenderInterfaceImpl::Stop()
 
 int32_t AudioRenderInterfaceImpl::Pause()
 {
-    DHLOGI("%s: Pause render.", AUDIO_LOG);
+    DHLOGI("Pause render.");
     std::lock_guard<std::mutex> renderLck(renderMtx_);
     renderStatus_ = RENDER_STATUS_PAUSE;
     return HDF_SUCCESS;
@@ -157,13 +160,13 @@ int32_t AudioRenderInterfaceImpl::Flush()
 
 int32_t AudioRenderInterfaceImpl::TurnStandbyMode()
 {
-    DHLOGI("%s: Turn stand by mode, not support yet.", AUDIO_LOG);
+    DHLOGI("Turn stand by mode, not support yet.");
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::AudioDevDump(int32_t range, int32_t fd)
 {
-    DHLOGI("%s: Dump audio info, not support yet.", AUDIO_LOG);
+    DHLOGI("Dump audio info, not support yet.");
     (void)range;
     (void)fd;
     return HDF_SUCCESS;
@@ -171,7 +174,7 @@ int32_t AudioRenderInterfaceImpl::AudioDevDump(int32_t range, int32_t fd)
 
 int32_t AudioRenderInterfaceImpl::CheckSceneCapability(const AudioSceneDescriptorHAL &scene, bool &support)
 {
-    DHLOGI("%s: Check scene capability.", AUDIO_LOG);
+    DHLOGI("Check scene capability.");
     (void)scene;
     (void)support;
     return HDF_SUCCESS;
@@ -179,42 +182,42 @@ int32_t AudioRenderInterfaceImpl::CheckSceneCapability(const AudioSceneDescripto
 
 int32_t AudioRenderInterfaceImpl::SelectScene(const AudioSceneDescriptorHAL &scene)
 {
-    DHLOGI("%s: Select audio scene, not support yet.", AUDIO_LOG);
+    DHLOGI("Select audio scene, not support yet.");
     (void)scene;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::SetMute(bool mute)
 {
-    DHLOGI("%s: Set mute, not support yet.", AUDIO_LOG);
+    DHLOGI("Set mute, not support yet.");
     (void)mute;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::GetMute(bool &mute)
 {
-    DHLOGI("%s: Get mute, not support yet.", AUDIO_LOG);
+    DHLOGI("Get mute, not support yet.");
     (void)mute;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::SetVolume(float volume)
 {
-    DHLOGI("%s: Can not set vol not by this interface.", AUDIO_LOG);
+    DHLOGI("Can not set vol not by this interface.");
     (void)volume;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::GetVolume(float &volume)
 {
-    DHLOGI("%s: Can not get vol not by this interface.", AUDIO_LOG);
+    DHLOGI("Can not get vol not by this interface.");
     (void)volume;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::GetGainThreshold(float &min, float &max)
 {
-    DHLOGI("%s: Get gain threshold, not support yet.", AUDIO_LOG);
+    DHLOGI("Get gain threshold, not support yet.");
     min = 0;
     max = 0;
     return HDF_SUCCESS;
@@ -222,14 +225,14 @@ int32_t AudioRenderInterfaceImpl::GetGainThreshold(float &min, float &max)
 
 int32_t AudioRenderInterfaceImpl::SetGain(float gain)
 {
-    DHLOGI("%s: Set gain, not support yet.", AUDIO_LOG);
+    DHLOGI("Set gain, not support yet.");
     (void)gain;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::GetGain(float &gain)
 {
-    DHLOGI("%s: Get gain, not support yet.", AUDIO_LOG);
+    DHLOGI("Get gain, not support yet.");
     gain = 1.0;
     return HDF_SUCCESS;
 }
@@ -248,42 +251,42 @@ int32_t AudioRenderInterfaceImpl::GetFrameCount(uint64_t &count)
 
 int32_t AudioRenderInterfaceImpl::SetSampleAttributes(const AudioSampleAttributesHAL &attrs)
 {
-    DHLOGI("%s: Set sample attributes.", AUDIO_LOG);
+    DHLOGI("Set sample attributes.");
     devAttrs_ = attrs;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::GetSampleAttributes(AudioSampleAttributesHAL &attrs)
 {
-    DHLOGI("%s: Get sample attributes.", AUDIO_LOG);
+    DHLOGI("Get sample attributes.");
     attrs = devAttrs_;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::GetCurrentChannelId(uint32_t &channelId)
 {
-    DHLOGI("%s: Get current channel id, not support yet.", AUDIO_LOG);
+    DHLOGI("Get current channel id, not support yet.");
     (void)channelId;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::SetExtraParams(const std::string &keyValueList)
 {
-    DHLOGI("%s: Set extra parameters, not support yet.", AUDIO_LOG);
+    DHLOGI("Set extra parameters, not support yet.");
     (void)keyValueList;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::GetExtraParams(std::string &keyValueList)
 {
-    DHLOGI("%s: Get extra parameters, not support yet.", AUDIO_LOG);
+    DHLOGI("Get extra parameters, not support yet.");
     (void)keyValueList;
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderInterfaceImpl::ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescripterHAL &desc)
 {
-    DHLOGI("%s: Request mmap buffer, not support yet.", AUDIO_LOG);
+    DHLOGI("Request mmap buffer, not support yet.");
     (void)reqSize;
     (void)desc;
     return HDF_SUCCESS;
@@ -291,7 +294,7 @@ int32_t AudioRenderInterfaceImpl::ReqMmapBuffer(int32_t reqSize, AudioMmapBuffer
 
 int32_t AudioRenderInterfaceImpl::GetMmapPosition(uint64_t &frames, AudioTimeStampHAL &time)
 {
-    DHLOGI("%s: Get mmap position, not support yet.", AUDIO_LOG);
+    DHLOGI("Get mmap position, not support yet.");
     (void)frames;
     (void)time;
     return HDF_SUCCESS;

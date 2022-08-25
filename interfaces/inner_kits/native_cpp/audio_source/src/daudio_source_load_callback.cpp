@@ -19,15 +19,18 @@
 #include "daudio_log.h"
 #include "daudio_source_handler.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioSourceLoadCallback"
+
 namespace OHOS {
 namespace DistributedHardware {
 void DAudioSourceLoadCallback::OnLoadSystemAbilitySuccess(int32_t systemAbilityId,
     const sptr<IRemoteObject> &remoteObject)
 {
-    DHLOGI("%s: Load audio SA success, systemAbilityId: %d, remoteObject result: %s", LOG_TAG, systemAbilityId,
+    DHLOGI("Load audio SA success, systemAbilityId: %d, remoteObject result: %s", systemAbilityId,
         (remoteObject != nullptr) ? "true" : "false");
     if (remoteObject == nullptr) {
-        DHLOGE("%s: remoteObject is nullptr", LOG_TAG);
+        DHLOGE("remoteObject is nullptr");
         return;
     }
     DAudioSourceHandler::GetInstance().FinishStartSA(params_, remoteObject);
@@ -35,7 +38,7 @@ void DAudioSourceLoadCallback::OnLoadSystemAbilitySuccess(int32_t systemAbilityI
 
 void DAudioSourceLoadCallback::OnLoadSystemAbilityFail(int32_t systemAbilityId)
 {
-    DHLOGE("%s: Load audio SA failed, systemAbilityId: %d", LOG_TAG, systemAbilityId);
+    DHLOGE("Load audio SA failed, systemAbilityId: %d", systemAbilityId);
     DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL,
         "daudio source LoadSystemAbility call failed.");
 }

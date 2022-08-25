@@ -86,8 +86,6 @@ private:
     static Deletor deletor;
 
 private:
-    const char *AUDIO_LOG = "AudioManagerInterfaceImpl";
-
     static AudioManagerInterfaceImpl *mgr;
     static std::mutex mutex_mgr;
     struct HdfDeviceObject *deviceObject_ = nullptr;

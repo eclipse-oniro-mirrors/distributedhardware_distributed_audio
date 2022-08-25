@@ -22,26 +22,27 @@
 #include "daudio_errcode.h"
 #include "daudio_log.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DAudioAudioClient"
+
 namespace OHOS {
 namespace DistributedHardware {
 using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioAdapter;
 using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioAdapterDescriptorHAL;
 
-static const char * const AUDIO_LOG = "DAudioAudioClient";
-
 static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
     std::vector<AudioAdapterDescriptorHAL> &descriptors)
 {
-    DHLOGI("%s: Init audio adapters descriptor, size is: %zd.", AUDIO_LOG, descriptors.size());
+    DHLOGI("Init audio adapters descriptor, size is: %zd.", descriptors.size());
     for (auto desc : descriptors) {
         AudioPort *audioPorts = (AudioPort *)malloc(desc.ports.size() * sizeof(AudioPort));
         if (audioPorts == nullptr) {
-            DHLOGE("%s: GetAllAdaptersInternal audioPorts is nullptr.", AUDIO_LOG);
+            DHLOGE("GetAllAdaptersInternal audioPorts is nullptr.");
             return ERR_DH_AUDIO_HDF_FAILURE;
         }
         char* adapterName = (char*)calloc(desc.adapterName.length() + 1, sizeof(char));
         if (strcpy_s(adapterName, desc.adapterName.length() + 1, desc.adapterName.c_str()) != EOK) {
-            DHLOGE("%s:strcpy_s adapterName failed.", AUDIO_LOG);
+            DHLOGE("strcpy_s adapterName failed.");
             continue;
         }
         AudioAdapterDescriptor descInternal = {
@@ -52,7 +53,7 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
         for (auto port : desc.ports) {
             char* portName = (char*)calloc(port.portName.length() + 1, sizeof(char));
             if (strcpy_s(portName, port.portName.length() + 1, port.portName.c_str()) != EOK) {
-                DHLOGE("%s:strcpy_s portName failed.", AUDIO_LOG);
+                DHLOGE("strcpy_s portName failed.");
                 continue;
             }
             audioPorts->dir = static_cast<AudioPortDirection>(port.dir);
@@ -68,9 +69,9 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
 static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct AudioAdapterDescriptor **descs,
     int32_t *size)
 {
-    DHLOGI("%s: GetAllAdaptersInternal enter.", AUDIO_LOG);
+    DHLOGI("GetAllAdaptersInternal enter.");
     if (manager == nullptr || descs == nullptr || size == nullptr) {
-        DHLOGE("%s: GetAllAdaptersInternal param is nullptr.", AUDIO_LOG);
+        DHLOGE("GetAllAdaptersInternal param is nullptr.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
@@ -79,14 +80,14 @@ static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct Audio
 
     std::vector<AudioAdapterDescriptorHAL> descriptors;
     if (context == nullptr || context->proxy_ == nullptr) {
-        DHLOGE("%s: GetAllAdaptersInternal context proxy is nullptr.", AUDIO_LOG);
+        DHLOGE("GetAllAdaptersInternal context proxy is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     int32_t ret = context->proxy_->GetAllAdapters(descriptors);
     if (ret != DH_SUCCESS) {
         *descs = nullptr;
         *size = 0;
-        DHLOGE("%s: GetAllAdaptersInternal getAllAdapters failed.", AUDIO_LOG);
+        DHLOGE("GetAllAdaptersInternal getAllAdapters failed.");
         return ret;
     }
     context->ClearDescriptors();
@@ -102,9 +103,9 @@ static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct Audio
 static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct AudioAdapterDescriptor *desc,
     struct AudioAdapter **adapter)
 {
-    DHLOGI("%s: LoadAdapterInternal enter.", AUDIO_LOG);
+    DHLOGI("LoadAdapterInternal enter.");
     if (manager == nullptr || desc == nullptr || desc->adapterName == nullptr || adapter == nullptr) {
-        DHLOGE("%s: LoadAdapterInternal param is nullptr.", AUDIO_LOG);
+        DHLOGE("LoadAdapterInternal param is nullptr.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
     AudioManagerContext *context = reinterpret_cast<AudioManagerContext *>(manager);
@@ -112,7 +113,7 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct Au
     {
         std::lock_guard<std::mutex> lock(context->mtx_);
         if (context->adapters_.find(adpName) != context->adapters_.end()) {
-            DHLOGI("%s: Adapter already has been load.", AUDIO_LOG);
+            DHLOGI("Adapter already has been load.");
             *adapter = &(context->adapters_[adpName]->instance_);
             return DH_SUCCESS;
         }
@@ -123,12 +124,12 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct Au
     };
     sptr<IAudioAdapter> adapterProxy = nullptr;
     if (context == nullptr || context->proxy_ == nullptr) {
-        DHLOGE("%s: LoadAdaptersInternal context proxy is nullptr.", AUDIO_LOG);
+        DHLOGE("LoadAdaptersInternal context proxy is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     int32_t ret = context->proxy_->LoadAdapter(descriptor, adapterProxy);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: LoadAdapterInternal loadAdapter failed.", AUDIO_LOG);
+        DHLOGE("LoadAdapterInternal loadAdapter failed.");
         *adapter = nullptr;
         return ret;
     }
@@ -146,16 +147,16 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct Au
 
 static void UnloadAdapterInternal(struct AudioManager *manager, struct AudioAdapter *adapter)
 {
-    DHLOGI("%s: UnloadAdapterInternal enter.", AUDIO_LOG);
+    DHLOGI("UnloadAdapterInternal enter.");
     if (manager == nullptr || adapter == nullptr) {
-        DHLOGE("%s: UnloadAdapterInternal param is nullptr.", AUDIO_LOG);
+        DHLOGE("UnloadAdapterInternal param is nullptr.");
         return;
     }
 
     AudioManagerContext *context = reinterpret_cast<AudioManagerContext *>(manager);
     AudioAdapterContext *adapterContext = reinterpret_cast<AudioAdapterContext *>(adapter);
     if (context == nullptr || context->proxy_ == nullptr) {
-        DHLOGE("%s: UnLoadAdaptersInternal context proxy is nullptr.", AUDIO_LOG);
+        DHLOGE("UnLoadAdaptersInternal context proxy is nullptr.");
         return;
     }
 
@@ -164,7 +165,7 @@ static void UnloadAdapterInternal(struct AudioManager *manager, struct AudioAdap
         if ((it->second).get() == adapterContext) {
             int32_t ret = context->proxy_->UnloadAdapter(adapterContext->adapterName_);
             if (ret != DH_SUCCESS) {
-                DHLOGE("%s: UnloadAdapterInternal unloadAdapter failed.", AUDIO_LOG);
+                DHLOGE("UnloadAdapterInternal unloadAdapter failed.");
                 return;
             }
             context->adapters_.erase(it);

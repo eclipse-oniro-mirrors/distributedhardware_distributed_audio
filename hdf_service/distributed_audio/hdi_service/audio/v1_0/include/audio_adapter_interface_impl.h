@@ -110,7 +110,6 @@ private:
     int32_t getEventTypeFromCondition(const std::string& condition);
 
 private:
-    const char *AUDIO_LOG = "AudioAdapterInterfaceImpl";
     static constexpr uint8_t WAIT_SECONDS = 10;
     AudioAdapterDescriptorHAL adpDescriptor_;
     AudioAdapterStatus status_ = STATUS_OFFLINE;

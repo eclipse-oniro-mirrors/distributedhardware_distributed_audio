@@ -52,8 +52,6 @@ private:
     int32_t RegisterChannelListener();
 
 private:
-    static const constexpr char *LOG_TAG = "AudioCtrlTrans";
-
     const std::string devId_;
     std::weak_ptr<IAudioCtrlTransCallback> ctrlTransCallback_;
     std::shared_ptr<IAudioChannel> audioChannel_;

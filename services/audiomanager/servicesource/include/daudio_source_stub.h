@@ -38,7 +38,6 @@ private:
     int32_t ConfigDistributedHardwareInner(MessageParcel &data, MessageParcel &reply, MessageOption &option);
     int32_t DAudioNotifyInner(MessageParcel &data, MessageParcel &reply, MessageOption &option);
 
-    static const constexpr char *LOG_TAG = "DAudioSourceStub";
     using DAudioSourceServiceFunc = int32_t (DAudioSourceStub::*)(MessageParcel &data, MessageParcel &reply,
         MessageOption &option);
     std::map<int32_t, DAudioSourceServiceFunc> memberFuncMap_;

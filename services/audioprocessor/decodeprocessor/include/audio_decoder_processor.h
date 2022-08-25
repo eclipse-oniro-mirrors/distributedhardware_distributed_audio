@@ -45,7 +45,6 @@ public:
     void OnCodecStateNotify(const AudioEvent &event) override;
 
 private:
-    constexpr static const char *LOG_TAG = "AudioDecoderProcessor";
     std::shared_ptr<IAudioCodec> audioDecoder_ = nullptr;
     AudioCommonParam localDevParam_;
     AudioCommonParam remoteDevParam_;

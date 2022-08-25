@@ -40,7 +40,6 @@ public:
     int32_t SendAudioEvent(const std::shared_ptr<AudioEvent> &event);
 
 private:
-    static const constexpr char *LOG_TAG = "DAudioSinkDevCtrlMgr";
     std::string devId_;
     bool isOpened_ = false;
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;

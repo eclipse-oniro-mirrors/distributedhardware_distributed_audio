@@ -72,7 +72,6 @@ private:
     void SendAudioData();
 
 private:
-    static const constexpr char *LOG_TAG = "AudioSoftbusAdapter";
     static constexpr uint8_t DATA_WAIT_TIME = 20;
     static constexpr size_t DATA_QUEUE_MAX_SIZE = 10;
 

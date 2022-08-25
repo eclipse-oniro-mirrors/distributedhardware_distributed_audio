@@ -16,110 +16,113 @@
 #include "audio_ctrl_channel.h"
 #include "audio_ctrl_transport.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AudioCtrlTransport"
+
 namespace OHOS {
 namespace DistributedHardware {
 int32_t AudioCtrlTransport::SetUp(const std::shared_ptr<IAudioCtrlTransCallback> &callback)
 {
-    DHLOGI("%s: SetUp.", LOG_TAG);
+    DHLOGI("SetUp.");
     if (!callback) {
-        DHLOGE("%s: callback is null.", LOG_TAG);
+        DHLOGE("callback is null.");
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
 
     ctrlTransCallback_ = callback;
     int32_t ret = InitAudioCtrlTrans(devId_);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: SetUp failed ret: %d.", LOG_TAG, ret);
+        DHLOGE("SetUp failed ret: %d.", ret);
         return ret;
     }
 
-    DHLOGI("%s: SetUp success.", LOG_TAG);
+    DHLOGI("SetUp success.");
     return DH_SUCCESS;
 }
 
 int32_t AudioCtrlTransport::Release()
 {
-    DHLOGI("%s: Release.", LOG_TAG);
+    DHLOGI("Release.");
     if (!audioChannel_) {
-        DHLOGE("%s: Channel is already release.", LOG_TAG);
+        DHLOGE("Channel is already release.");
         return DH_SUCCESS;
     }
 
     int32_t ret = audioChannel_->ReleaseSession();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Release channel session failed ret: %d.", LOG_TAG, ret);
+        DHLOGE("Release channel session failed ret: %d.", ret);
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
     audioChannel_ = nullptr;
 
-    DHLOGI("%s: Release success.", LOG_TAG);
+    DHLOGI("Release success.");
     return DH_SUCCESS;
 }
 
 int32_t AudioCtrlTransport::Start()
 {
-    DHLOGI("%s: Start.", LOG_TAG);
+    DHLOGI("Start.");
     if (!audioChannel_) {
-        DHLOGE("%s: Channel is null.", LOG_TAG);
+        DHLOGE("Channel is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
     int ret = audioChannel_->OpenSession();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Open channel session failed ret: %d.", LOG_TAG, ret);
+        DHLOGE("Open channel session failed ret: %d.", ret);
         return ret;
     }
 
-    DHLOGI("%s: Start success.", LOG_TAG);
+    DHLOGI("Start success.");
     return DH_SUCCESS;
 }
 
 int32_t AudioCtrlTransport::Stop()
 {
-    DHLOGI("%s: Stop.", LOG_TAG);
+    DHLOGI("Stop.");
     if (!audioChannel_) {
-        DHLOGE("%s: Channel is already release.", LOG_TAG);
+        DHLOGE("Channel is already release.");
         return DH_SUCCESS;
     }
 
     int32_t ret = audioChannel_->CloseSession();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Close Session failed ret: %d.", LOG_TAG, ret);
+        DHLOGE("Close Session failed ret: %d.", ret);
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
 
-    DHLOGI("%s: Stop success.", LOG_TAG);
+    DHLOGI("Stop success.");
     return DH_SUCCESS;
 }
 
 int32_t AudioCtrlTransport::SendAudioEvent(const std::shared_ptr<AudioEvent> &event)
 {
-    DHLOGI("%s: Send audio event.", LOG_TAG);
+    DHLOGI("Send audio event.");
     if (!event) {
-        DHLOGE("%s: Audio event is null.", LOG_TAG);
+        DHLOGE("Audio event is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
     if (!audioChannel_) {
-        DHLOGE("%s: Channel is null.", LOG_TAG);
+        DHLOGE("Channel is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
     int32_t ret = audioChannel_->SendEvent(event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s:Send data failed.", LOG_TAG);
+        DHLOGE("Send data failed.");
     }
 
-    DHLOGI("%s: Send Audio Event success.", LOG_TAG);
+    DHLOGI("Send Audio Event success.");
     return DH_SUCCESS;
 }
 
 void AudioCtrlTransport::OnSessionOpened()
 {
-    DHLOGI("%s: On Channel Session Opened.", LOG_TAG);
+    DHLOGI("On Channel Session Opened.");
     std::shared_ptr<IAudioCtrlTransCallback> callback = ctrlTransCallback_.lock();
     if (callback == nullptr) {
-        DHLOGE("%s: On Channel Session Opened. callback is nullptr.", LOG_TAG);
+        DHLOGE("On Channel Session Opened. callback is nullptr.");
         return;
     }
     callback->OnStateChange(AudioEventType::CTRL_OPENED);
@@ -127,10 +130,10 @@ void AudioCtrlTransport::OnSessionOpened()
 
 void AudioCtrlTransport::OnSessionClosed()
 {
-    DHLOGI("%s: On Channel Session Closed.", LOG_TAG);
+    DHLOGI("On Channel Session Closed.");
     std::shared_ptr<IAudioCtrlTransCallback> callback = ctrlTransCallback_.lock();
     if (callback == nullptr) {
-        DHLOGE("%s: On Channel Session Closed, callback is nullptr.", LOG_TAG);
+        DHLOGE("On Channel Session Closed, callback is nullptr.");
         return;
     }
     callback->OnStateChange(AudioEventType::CTRL_CLOSED);
@@ -143,10 +146,10 @@ void AudioCtrlTransport::OnDataReceived(const std::shared_ptr<AudioData> &data)
 
 void AudioCtrlTransport::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
 {
-    DHLOGI("%s: audio event received.", LOG_TAG);
+    DHLOGI("audio event received.");
     std::shared_ptr<IAudioCtrlTransCallback> callback = ctrlTransCallback_.lock();
     if (!callback) {
-        DHLOGE("%s: CtrlTrans callback is null.", LOG_TAG);
+        DHLOGE("CtrlTrans callback is null.");
         return;
     }
     callback->OnEventReceived(event);
@@ -160,7 +163,7 @@ int32_t AudioCtrlTransport::InitAudioCtrlTrans(const std::string &netWordId)
 
     int32_t ret = RegisterChannelListener();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Register channel listener failed ret: %d.", LOG_TAG, ret);
+        DHLOGE("Register channel listener failed ret: %d.", ret);
         audioChannel_ = nullptr;
         return ret;
     }
@@ -170,21 +173,21 @@ int32_t AudioCtrlTransport::InitAudioCtrlTrans(const std::string &netWordId)
 
 int32_t AudioCtrlTransport::RegisterChannelListener()
 {
-    DHLOGI("%s: RegisterChannelListener.", LOG_TAG);
+    DHLOGI("RegisterChannelListener.");
     std::shared_ptr<IAudioChannelListener> listener = shared_from_this();
     if (!listener) {
-        DHLOGE("%s: Channel listener is null.", LOG_TAG);
+        DHLOGE("Channel listener is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
     if (audioChannel_ == nullptr) {
-        DHLOGE("%s: Channel is null.", LOG_TAG);
+        DHLOGE("Channel is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
     int32_t ret = audioChannel_->CreateSession(listener, CTRL_SESSION_NAME);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Create session failed ret: %d.", LOG_TAG, ret);
+        DHLOGE("Create session failed ret: %d.", ret);
         return ret;
     }
     return DH_SUCCESS;

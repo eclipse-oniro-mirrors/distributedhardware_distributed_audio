@@ -56,7 +56,6 @@ private:
     void CaptureThreadRunning();
 
 private:
-    constexpr static const char *LOG_TAG = "DMicClient";
     constexpr static uint8_t CHANNEL_WAIT_SECONDS = 5;
 
     std::string devId_;

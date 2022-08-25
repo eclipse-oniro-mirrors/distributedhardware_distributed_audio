@@ -65,7 +65,6 @@ private:
     int32_t DisableDevice(const int32_t dhId);
 
 private:
-    static const constexpr char *LOG_TAG = "DSpeakerDev";
     std::string devId_;
     std::set<int32_t> enabledPorts_;
     int32_t curPort_ = 0;

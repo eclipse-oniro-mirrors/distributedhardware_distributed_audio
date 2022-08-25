@@ -27,7 +27,6 @@ public:
         const sptr<IRemoteObject> &remoteObject) override;
     void OnLoadSystemAbilityFail(int32_t systemAbilityId) override;
 private:
-    static const constexpr char *LOG_TAG = "DAudioSinkLoadCallback";
     std::string params_;
 };
 } // namespace DistributedHardware

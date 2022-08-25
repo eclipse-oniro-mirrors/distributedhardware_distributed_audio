@@ -34,7 +34,6 @@ public:
 
 private:
     static inline BrokerDelegator<DAudioIpcCallbackProxy> delegator_;
-    static const constexpr char *LOG_TAG = "DAudioIpcCallbackProxy";
 };
 } // DistributedHardware
 } // OHOS

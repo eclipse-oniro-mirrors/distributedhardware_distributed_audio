@@ -60,7 +60,6 @@ private:
     void GetSupportAudioInfo(AudioInfo &audioInfos, CoderInfo &encoderInfos, CoderInfo &decoderInfos);
 
 private:
-    static const constexpr char *LOG_TAG = "DAudioHandler";
     CoderInfo encoderInfos_;
     CoderInfo decoderInfos_;
     AudioInfo audioInfos_;

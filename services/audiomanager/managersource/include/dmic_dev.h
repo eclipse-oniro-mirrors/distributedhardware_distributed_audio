@@ -67,7 +67,6 @@ private:
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
     static constexpr size_t DATA_QUEUE_MAX_SIZE = 5;
     static constexpr size_t FRAME_SIZE = 4096;
-    static const constexpr char *LOG_TAG = "DMicDev";
     std::string devId_;
     std::set<int32_t> enabledPorts_;
     std::mutex dataQueueMtx_;

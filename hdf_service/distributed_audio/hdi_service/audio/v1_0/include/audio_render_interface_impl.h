@@ -89,7 +89,6 @@ public:
     uint32_t GetMinVolumeInner();
 
 private:
-    const char *AUDIO_LOG = "AudioRenderInterfaceImpl";
     std::string adapterName_;
     AudioDeviceDescriptorHAL devDesc_;
     AudioSampleAttributesHAL devAttrs_;

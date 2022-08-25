@@ -16,22 +16,26 @@
 #include "dmic_client.h"
 
 #include <chrono>
+
 #include "daudio_constants.h"
 #include "daudio_hisysevent.h"
+
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DMicClient"
 
 namespace OHOS {
 namespace DistributedHardware {
 DMicClient::~DMicClient()
 {
     if (micTrans_ != nullptr) {
-        DHLOGI("%s: Release mic client.", LOG_TAG);
+        DHLOGI("Release mic client.");
         StopCapture();
     }
 }
 
 int32_t DMicClient::OnStateChange(int32_t type)
 {
-    DHLOGI("%s: On state change type: %d.", LOG_TAG, type);
+    DHLOGI("On state change type: %d.", type);
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
     event->content = "";
     switch (type) {
@@ -50,13 +54,13 @@ int32_t DMicClient::OnStateChange(int32_t type)
             break;
         }
         default:
-            DHLOGE("%s: Invalid parameter type: %d.", LOG_TAG, type);
+            DHLOGE("Invalid parameter type: %d.", type);
             return ERR_DH_AUDIO_CLIENT_STATE_IS_INVALID;
     }
 
     std::shared_ptr<IAudioEventCallback> cbObj = eventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("%s: Event callback is nullptr.", LOG_TAG);
+        DHLOGE("Event callback is nullptr.");
         return ERR_DH_AUDIO_CLIENT_EVENT_CALLBACK_IS_NULL;
     }
     cbObj->NotifyEvent(event);
@@ -65,8 +69,8 @@ int32_t DMicClient::OnStateChange(int32_t type)
 
 int32_t DMicClient::SetUp(const AudioParam &param)
 {
-    DHLOGI("%s: SetUp mic client.", LOG_TAG);
-    DHLOGI("%s: Param: {sampleRate: %d, bitFormat: %d, channelMask: %d, sourceType: %d}.", LOG_TAG,
+    DHLOGI("SetUp mic client.");
+    DHLOGI("Param: {sampleRate: %d, bitFormat: %d, channelMask: %d, sourceType: %d}.",
         param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.CaptureOpts.sourceType);
     audioParam_ = param;
     AudioStandard::AudioCapturerOptions capturerOptions = {
@@ -84,14 +88,14 @@ int32_t DMicClient::SetUp(const AudioParam &param)
     std::lock_guard<std::mutex> lck(devMtx_);
     audioCapturer_ = AudioStandard::AudioCapturer::Create(capturerOptions);
     if (audioCapturer_ == nullptr) {
-        DHLOGE("%s: Audio capturer create failed.", LOG_TAG);
+        DHLOGE("Audio capturer create failed.");
         return ERR_DH_AUDIO_CLIENT_CREATE_CAPTURER_FAILED;
     }
 
     micTrans_ = std::make_shared<AudioEncodeTransport>(devId_);
     int32_t ret = micTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), "mic");
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Mic trans setup failed.", LOG_TAG);
+        DHLOGE("Mic trans setup failed.");
         return ret;
     }
     clientStatus_ = CLIENT_STATUS_READY;
@@ -100,20 +104,20 @@ int32_t DMicClient::SetUp(const AudioParam &param)
 
 int32_t DMicClient::Release()
 {
-    DHLOGI("%s: Release mic client.", LOG_TAG);
+    DHLOGI("Release mic client.");
     std::lock_guard<std::mutex> lck(devMtx_);
     if ((clientStatus_ != CLIENT_STATUS_READY && clientStatus_ != CLIENT_STATUS_STOP) || micTrans_ == nullptr) {
-        DHLOGE("%s: Mic status is wrong or spk is null, %d.", LOG_TAG, (int32_t)clientStatus_);
+        DHLOGE("Mic status is wrong or spk is null, %d.", (int32_t)clientStatus_);
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
     bool status = true;
     if (!audioCapturer_->Release()) {
-        DHLOGE("%s: Audio capturer release failed.", LOG_TAG);
+        DHLOGE("Audio capturer release failed.");
         status = false;
     }
     int32_t ret = micTrans_->Release();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Mic trans release failed.", LOG_TAG);
+        DHLOGE("Mic trans release failed.");
         status = false;
     }
     micTrans_ = nullptr;
@@ -126,17 +130,17 @@ int32_t DMicClient::Release()
 
 int32_t DMicClient::StartCapture()
 {
-    DHLOGI("%s: Start capturer.", LOG_TAG);
+    DHLOGI("Start capturer.");
     std::lock_guard<std::mutex> lck(devMtx_);
     if (audioCapturer_ == nullptr || micTrans_ == nullptr || clientStatus_ != CLIENT_STATUS_READY) {
-        DHLOGE("%s: Audio capturer init failed or mic status wrong, status: %d.", LOG_TAG, (int32_t)clientStatus_);
+        DHLOGE("Audio capturer init failed or mic status wrong, status: %d.", (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
             "daudio init failed or mic status wrong.");
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
 
     if (!audioCapturer_->Start()) {
-        DHLOGE("%s: Audio capturer start failed.", LOG_TAG);
+        DHLOGE("Audio capturer start failed.");
         audioCapturer_->Release();
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_CAPTURER_START_FAILED,
             "daudio capturer start failed.");
@@ -145,17 +149,17 @@ int32_t DMicClient::StartCapture()
 
     int32_t ret = micTrans_->Start();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Mic trans start failed.", LOG_TAG);
+        DHLOGE("Mic trans start failed.");
         micTrans_->Release();
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret, "daudio mic trans start failed.");
         return ret;
     }
-    DHLOGI("%s: Wait for channel session opened.", LOG_TAG);
+    DHLOGI("Wait for channel session opened.");
     std::unique_lock<std::mutex> chLck(channelWaitMutex_);
     auto status = channelWaitCond_.wait_for(chLck, std::chrono::seconds(CHANNEL_WAIT_SECONDS),
         [this]() { return isChannelReady_; });
     if (!status) {
-        DHLOGI("%s: Open channel session timeout(%ds).", LOG_TAG, CHANNEL_WAIT_SECONDS);
+        DHLOGI("Open channel session timeout(%ds).", CHANNEL_WAIT_SECONDS);
         micTrans_->Stop();
         micTrans_->Release();
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_TRANS_TIMEOUT,
@@ -168,14 +172,14 @@ int32_t DMicClient::StartCapture()
 
 void DMicClient::CaptureThreadRunning()
 {
-    DHLOGI("%s: Start the capturer thread.", LOG_TAG);
+    DHLOGI("Start the capturer thread.");
     size_t bufferLen = 0;
     int32_t ret = audioCapturer_->GetBufferSize(bufferLen);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Failed to get minimum buffer.", LOG_TAG);
+        DHLOGE("Failed to get minimum buffer.");
         return;
     }
-    DHLOGI("%s: Obtains the minimum buffer length, bufferlen: %d.", LOG_TAG, bufferLen);
+    DHLOGI("Obtains the minimum buffer length, bufferlen: %d.", bufferLen);
     while (isCaptureReady_.load()) {
         std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(bufferLen);
         size_t bytesRead = 0;
@@ -184,7 +188,7 @@ void DMicClient::CaptureThreadRunning()
             int32_t len = audioCapturer_->Read(*(audioData->Data() + bytesRead), bufferLen - bytesRead, isBlocking_);
             auto stop = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-            DHLOGI("%s: Audio Capturer Read in microseconds TimeTaken =(%ds).", LOG_TAG, (long long)duration.count());
+            DHLOGI("Audio Capturer Read in microseconds TimeTaken =(%ds).", (long long)duration.count());
             if (len >= 0) {
                 bytesRead += (size_t)len;
             } else {
@@ -193,7 +197,7 @@ void DMicClient::CaptureThreadRunning()
             }
         }
         if (bytesRead < 0) {
-            DHLOGI("%s: Bytes read failed, bytesRead: %d.", LOG_TAG, bytesRead);
+            DHLOGI("Bytes read failed, bytesRead: %d.", bytesRead);
             break;
         } else if (bytesRead == 0) {
             continue;
@@ -201,7 +205,7 @@ void DMicClient::CaptureThreadRunning()
 
         int32_t ret = micTrans_->FeedAudioData(audioData);
         if (ret != DH_SUCCESS) {
-            DHLOGE("%s: Failed to send data.", LOG_TAG);
+            DHLOGE("Failed to send data.");
         }
     }
 }
@@ -214,16 +218,16 @@ int32_t DMicClient::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audi
 
 int32_t DMicClient::StopCapture()
 {
-    DHLOGI("%s: Stop capturer.", LOG_TAG);
+    DHLOGI("Stop capturer.");
     std::lock_guard<std::mutex> lck(devMtx_);
     if (clientStatus_ != CLIENT_STATUS_START || !isCaptureReady_.load()) {
-        DHLOGE("%s: Renderer is not start or spk status wrong, status: %d.", LOG_TAG, (int32_t)clientStatus_);
+        DHLOGE("Renderer is not start or spk status wrong, status: %d.", (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
             "daudio renderer is not start or spk status wrong.");
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
     if (audioCapturer_ == nullptr || micTrans_ == nullptr) {
-        DHLOGE("%s: The capturer or mictrans is not instantiated.", LOG_TAG);
+        DHLOGE("The capturer or mictrans is not instantiated.");
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL,
             ERR_DH_AUDIO_CLIENT_CAPTURER_OR_MICTRANS_INSTANCE, "daudio capturer or mictrans is not instantiated.");
         return ERR_DH_AUDIO_CLIENT_CAPTURER_OR_MICTRANS_INSTANCE;
@@ -238,11 +242,11 @@ int32_t DMicClient::StopCapture()
     bool status = true;
     int32_t ret = micTrans_->Stop();
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Mic trans stop failed.", LOG_TAG);
+        DHLOGE("Mic trans stop failed.");
         status = false;
     }
     if (!audioCapturer_->Stop()) {
-        DHLOGE("%s: Audio capturer stop failed.", LOG_TAG);
+        DHLOGE("Audio capturer stop failed.");
         status = false;
     }
     clientStatus_ = CLIENT_STATUS_STOP;

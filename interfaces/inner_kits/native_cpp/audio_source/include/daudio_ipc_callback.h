@@ -39,7 +39,6 @@ public:
     void PopUnregisterCallback(const std::string &reqId);
 
 private:
-    static const constexpr char *LOG_TAG = "DAudioIpcCallback";
     std::map<std::string, std::shared_ptr<RegisterCallback>> registerCallbackMap_;
     std::map<std::string, std::shared_ptr<UnregisterCallback>> unregisterCallbackMap_;
 };

@@ -19,6 +19,9 @@
 #include "daudio_log.h"
 #include "daudio_util.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DaudioHidumper"
+
 namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DaudioHidumper);
@@ -39,21 +42,21 @@ const std::map<std::string, HidumpFlag> ARGS_MAP = {
 
 DaudioHidumper::DaudioHidumper()
 {
-    DHLOGI("%s: DaudioHidumper constructed.", LOG_TAG);
+    DHLOGI("DaudioHidumper constructed.");
 }
 
 DaudioHidumper::~DaudioHidumper()
 {
-    DHLOGI("%s: DaudioHidumper destructed.", LOG_TAG);
+    DHLOGI("DaudioHidumper destructed.");
 }
 
 bool DaudioHidumper::Dump(const std::vector<std::string> &args, std::string &result)
 {
-    DHLOGI("%s: DaudioHidumper Dump args.size():%d.", LOG_TAG, args.size());
+    DHLOGI("DaudioHidumper Dump args.size():%d.", args.size());
     result.clear();
     int32_t argsSize = static_cast<int32_t>(args.size());
     for (int32_t i = 0; i < argsSize; i++) {
-        DHLOGI("%s: DaudioHidumper Dump args[%d]: %s.", LOG_TAG, i, args.at(i).c_str());
+        DHLOGI("DaudioHidumper Dump args[%d]: %s.", i, args.at(i).c_str());
     }
 
     if (args.empty()) {
@@ -72,7 +75,7 @@ bool DaudioHidumper::Dump(const std::vector<std::string> &args, std::string &res
 
 int32_t DaudioHidumper::ProcessDump(const std::string &args, std::string &result)
 {
-    DHLOGI("%s: ProcessDump Dump.", LOG_TAG);
+    DHLOGI("ProcessDump Dump.");
     HidumpFlag hf = HidumpFlag::UNKNOWN;
     auto operatorIter = ARGS_MAP.find(args);
     if (operatorIter != ARGS_MAP.end()) {
@@ -108,10 +111,10 @@ int32_t DaudioHidumper::ProcessDump(const std::string &args, std::string &result
 
 int32_t DaudioHidumper::GetSourceDevId(std::string &result)
 {
-    DHLOGI("%s: Get source devId dump.", LOG_TAG);
+    DHLOGI("Get source devId dump.");
     int32_t ret = GetLocalDeviceNetworkId(g_sourceDevId_);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Get local network id failed.", LOG_TAG);
+        DHLOGE("Get local network id failed.");
         result.append("sourceDevId: ").append("");
         return ret;
     }
@@ -121,14 +124,14 @@ int32_t DaudioHidumper::GetSourceDevId(std::string &result)
 
 int32_t DaudioHidumper::GetSinkInfo(std::string &result)
 {
-    DHLOGI("%s: Get sink info dump.", LOG_TAG);
+    DHLOGI("Get sink info dump.");
     g_manager = GetAudioManagerFuncs();
     if (g_manager == nullptr) {
         return ERR_DH_AUDIO_NULLPTR;
     }
     int32_t ret = g_manager->GetAllAdapters(g_manager, &g_devices, &g_deviceNum);
     if (ret != DH_SUCCESS) {
-        DHLOGE("%s: Get all adapters failed.", LOG_TAG);
+        DHLOGE("Get all adapters failed.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     for (int32_t index = 0; index < g_deviceNum; index++) {
@@ -144,7 +147,7 @@ int32_t DaudioHidumper::GetSinkInfo(std::string &result)
 
 int32_t DaudioHidumper::GetAbilityInfo(std::string &result)
 {
-    DHLOGI("%s: GetAbilityInfo Dump.", LOG_TAG);
+    DHLOGI("GetAbilityInfo Dump.");
     std::vector<DHItem> abilityInfo = DAudioHandler::GetInstance().ablityForDump();
     for (DHItem dhItem : abilityInfo) {
         if (dhItem.dhId == spkDefault) {
@@ -160,7 +163,7 @@ int32_t DaudioHidumper::GetAbilityInfo(std::string &result)
 
 void DaudioHidumper::ShowHelp(std::string &result)
 {
-    DHLOGI("%s: ShowHelp Dump.", LOG_TAG);
+    DHLOGI("ShowHelp Dump.");
     result.append("Usage:dump  <command> [options]\n")
         .append("Description:\n")
         .append("-h            ")
@@ -175,7 +178,7 @@ void DaudioHidumper::ShowHelp(std::string &result)
 
 int32_t DaudioHidumper::ShowIllegalInfomation(std::string &result)
 {
-    DHLOGI("%s: ShowIllegalInfomation Dump.", LOG_TAG);
+    DHLOGI("ShowIllegalInfomation Dump.");
     result.append("unknown command, -h for help.");
     return DH_SUCCESS;
 }
