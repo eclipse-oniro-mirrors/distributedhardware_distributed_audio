@@ -23,11 +23,13 @@ ohos_shared_library("distributed_audio_sink") {
     "//utils/system/safwk/native/include",
     "//foundation/communication/dsoftbus/interfaces/kits/transport",
     "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy/include",
     "${fwk_common_path}/utils/include",
     "${mediastandardfwk_path}/audiocapturer/include",
     "${mediastandardfwk_path}/audiocommon/include",
     "${mediastandardfwk_path}/audiorenderer/include",
     "${mediastandardfwk_path}/audiomanager/include",
+    "${audio_framework_path}/audiopolicy/include",
   ]
 
   include_dirs += [
@@ -65,19 +67,14 @@ ohos_shared_library("distributed_audio_sink") {
   ]
 
   deps = [
-    "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
     "${common_path}:distributed_audio_utils",
-    "${mediastandardfwk_path}/audiorenderer:audio_renderer",
     "${services_path}/audiomanager/managersink:distributed_audio_manager_sink",
   ]
 
   external_deps = [
     "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimedia_audio_framework:audio_client",
     "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
 
   defines = [

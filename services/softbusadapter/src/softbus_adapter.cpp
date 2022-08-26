@@ -162,14 +162,7 @@ int32_t SoftbusAdapter::CloseSoftbusSession(int32_t sessionId)
 
     std::lock_guard<std::mutex> LisLock(listenerMtx_);
     mapSessListeners_.erase(sessionId);
-
-    if (mapSessListeners_.empty()) {
-        DHLOGI("Stop softbus send thread.");
-        isAudioDataReady_ = false;
-        if (sendDataThread_.joinable()) {
-            sendDataThread_.join();
-        }
-    }
+    StopSendDataThread();
     DHLOGI("CloseSoftbusSession success.");
     return DH_SUCCESS;
 }
@@ -193,7 +186,7 @@ int32_t SoftbusAdapter::SendSoftbusStream(int32_t sessionId, const std::shared_p
         DHLOGE("Audio data is null.");
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
-
+    constexpr size_t DATA_QUEUE_MAX_SIZE = 10;
     std::lock_guard<std::mutex> lck(dataQueueMtx_);
     while (audioDataQueue_.size() >= DATA_QUEUE_MAX_SIZE) {
         DHLOGE("Data queue overflow.");
@@ -275,14 +268,7 @@ void SoftbusAdapter::OnSoftbusSessionClosed(int32_t sessionId)
 
     std::lock_guard<std::mutex> lisLock(listenerMtx_);
     mapSessListeners_.erase(sessionId);
-
-    if (mapSessListeners_.empty()) {
-        DHLOGI("Stop softbus send thread.");
-        isAudioDataReady_ = false;
-        if (sendDataThread_.joinable()) {
-            sendDataThread_.join();
-        }
-    }
+    StopSendDataThread();
 }
 
 void SoftbusAdapter::OnBytesReceived(int32_t sessionId, const void *data, uint32_t dataLen)
@@ -378,6 +364,7 @@ std::shared_ptr<ISoftbusListener> &SoftbusAdapter::GetSoftbusListenerById(int32_
 
 void SoftbusAdapter::SendAudioData()
 {
+    constexpr uint8_t DATA_WAIT_TIME = 20;
     while (isAudioDataReady_) {
         std::shared_ptr<SoftbusStreamData> streamData;
         {
@@ -407,6 +394,17 @@ void SoftbusAdapter::SendAudioData()
             DHLOGE("Send data failed. ret: %d.", ret);
         } else {
             DHLOGI("SendAudioData successs.");
+        }
+    }
+}
+
+void SoftbusAdapter::StopSendDataThread()
+{
+    if (mapSessListeners_.empty()) {
+        DHLOGI("Stop softbus send thread.");
+        isAudioDataReady_ = false;
+        if (sendDataThread_.joinable()) {
+            sendDataThread_.join();
         }
     }
 }

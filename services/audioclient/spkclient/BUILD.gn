@@ -48,7 +48,6 @@ ohos_shared_library("dspeaker_client") {
   deps = [
     "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
     "${common_path}:distributed_audio_utils",
-    "${fwk_utils_path}:distributedhardwareutils",
     "${mediastandardfwk_path}/audiorenderer:audio_renderer",
     "${services_path}/common:distributed_audio_service_common",
   ]

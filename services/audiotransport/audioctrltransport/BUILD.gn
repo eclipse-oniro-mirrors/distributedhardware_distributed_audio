@@ -36,11 +36,9 @@ ohos_shared_library("distributed_audio_ctrl_transport") {
 
   sources = [ "src/audio_ctrl_transport.cpp" ]
 
-  external_deps = [ "c_utils:utils" ]
   deps = [
     "${audio_transport_path}/audioctrlchannel:distributed_audio_ctrl_channel",
     "${common_path}:distributed_audio_utils",
-    "${softbusadapter_path}:distributed_audio_softbus_adapter",
   ]
 
   defines = [

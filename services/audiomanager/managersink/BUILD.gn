@@ -26,6 +26,7 @@ ohos_shared_library("distributed_audio_manager_sink") {
     "${mediastandardfwk_path}/audiorenderer/include",
     "${mediastandardfwk_path}/audiocommon/include",
     "${mediastandardfwk_path}/audiomanager/include",
+    "${audio_framework_path}/audiopolicy/include",
   ]
 
   include_dirs += [
@@ -60,19 +61,13 @@ ohos_shared_library("distributed_audio_manager_sink") {
     "${audio_client_path}/micclient:dmic_client",
     "${audio_client_path}/spkclient:dspeaker_client",
     "${audio_control_path}/controlsink:distributed_audio_sink_ctrl",
-    "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
     "${common_path}:distributed_audio_utils",
-    "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
-    "${mediastandardfwk_path}/audiorenderer:audio_renderer",
     "${services_path}/common:distributed_audio_service_common",
   ]
 
   external_deps = [
     "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimedia_audio_framework:audio_client",
-    "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
 

@@ -43,9 +43,7 @@ ohos_shared_library("distributed_audio_source_sdk") {
   external_deps = [
     "c_utils:utils",
     "hitrace_native:hitrace_meter",
-    "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
 

@@ -24,6 +24,7 @@ ohos_shared_library("distributed_audio_source") {
     "//drivers/peripheral/audio/interfaces/include",
     "//foundation/communication/dsoftbus/interfaces/kits/transport",
     "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy/include",
     "${fwk_common_path}/utils/include",
     "${mediastandardfwk_path}/audiocapturer/include",
     "${mediastandardfwk_path}/audiomanager/include",
@@ -74,15 +75,12 @@ ohos_shared_library("distributed_audio_source") {
     "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
     "${hdf_service_path}/audio_client:daudio_client",
     "${services_path}/audiomanager/managersource:distributed_audio_manager_source",
-    "${services_path}/common:distributed_audio_service_common",
   ]
 
   external_deps = [
     "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
 
   defines = [

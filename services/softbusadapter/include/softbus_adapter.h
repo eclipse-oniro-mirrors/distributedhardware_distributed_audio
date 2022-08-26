@@ -70,11 +70,9 @@ private:
     std::shared_ptr<ISoftbusListener> &GetSoftbusListenerByName(int32_t sessionId);
     std::shared_ptr<ISoftbusListener> &GetSoftbusListenerById(int32_t sessionId);
     void SendAudioData();
+    void StopSendDataThread();
 
 private:
-    static constexpr uint8_t DATA_WAIT_TIME = 20;
-    static constexpr size_t DATA_QUEUE_MAX_SIZE = 10;
-
     std::mutex listenerMtx_;
     std::mutex sessSetMtx_;
     std::mutex dataQueueMtx_;

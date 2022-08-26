@@ -44,13 +44,11 @@ ohos_shared_library("distributed_audio_decoder_processor") {
 
   deps = [
     "${common_path}:distributed_audio_utils",
-    "${fwk_utils_path}:distributedhardwareutils",
   ]
 
   external_deps = [
     "c_utils:utils",
     "hitrace_native:hitrace_meter",
-    "hiviewdfx_hilog_native:libhilog",
     "multimedia_player_framework:media_client",
   ]
 

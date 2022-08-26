@@ -15,6 +15,7 @@ distributedaudio_path = "//foundation/distributedhardware/distributed_audio"
 distributedhardwarefwk_path = "//foundation/distributedhardware/distributed_hardware_fwk"
 mediastandard_path = "//foundation/multimedia/player_framework"
 mediastandardfwk_path = "//foundation/multimedia/audio_framework/interfaces/inner_api/native"
+audio_framework_path = "//foundation/multimedia/audio_framework/frameworks/native"
 
 common_path = "${distributedaudio_path}/common"
 services_path = "${distributedaudio_path}/services"

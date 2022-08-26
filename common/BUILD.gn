@@ -36,8 +36,6 @@ ohos_shared_library("distributed_audio_utils") {
     "src/daudio_util.cpp",
   ]
 
-  deps = [ "${fwk_utils_path}:distributedhardwareutils" ]
-
   external_deps = [
     "c_utils:utils",
     "dsoftbus:softbus_client",

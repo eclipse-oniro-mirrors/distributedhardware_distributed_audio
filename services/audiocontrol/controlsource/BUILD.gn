@@ -42,11 +42,7 @@ ohos_shared_library("distributed_audio_source_ctrl") {
   ]
 
   external_deps = [
-    "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
 
   defines = [

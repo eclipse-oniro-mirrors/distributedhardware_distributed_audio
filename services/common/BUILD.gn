@@ -34,12 +34,6 @@ ohos_shared_library("distributed_audio_service_common") {
 
   deps = [ "${common_path}:distributed_audio_utils" ]
 
-  external_deps = [
-    "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_single",
-  ]
-
   defines = [
     "HI_LOG_ENABLE",
     "LOG_DOMAIN=0xD004100",

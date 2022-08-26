@@ -37,17 +37,14 @@ ohos_shared_library("distributed_audio_decode_transport") {
 
   sources = [ "src/audio_decode_transport.cpp" ]
 
-  external_deps = [ "c_utils:utils" ]
   deps = [
     "${audio_processor_path}/decodeprocessor:distributed_audio_decoder_processor",
     "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
     "${common_path}:distributed_audio_utils",
-    "${services_path}/common:distributed_audio_service_common",
   ]
 
   defines = [
     "HI_LOG_ENABLE",
-
     "LOG_DOMAIN=0xD004100",
   ]
 
