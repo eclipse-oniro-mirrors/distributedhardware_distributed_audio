@@ -219,7 +219,7 @@ int32_t DAudioSourceManager::CreateAudioDevice(const std::string &devId)
 {
     DHLOGI("Create audio device.");
     auto sourceDev = std::make_shared<DAudioSourceDev>(devId, daudioMgrCallback_);
-    if (sourceDev->AwakeAudioDev(localDevId_) != DH_SUCCESS) {
+    if (sourceDev->AwakeAudioDev() != DH_SUCCESS) {
         DHLOGE("Create new audio device failed.");
         return ERR_DH_AUDIO_FAILED;
     }

@@ -41,7 +41,7 @@ public:
         : devId_(devId), mgrCallback_(callback) {};
     ~DAudioSourceDev() = default;
 
-    int32_t AwakeAudioDev(const std::string localDevId);
+    int32_t AwakeAudioDev();
     void SleepAudioDev();
 
     int32_t EnableDAudio(const std::string &dhId, const std::string &attrs);
@@ -113,7 +113,6 @@ private:
     static constexpr uint8_t EVENT_NOTIFY_CLOSE_CTRL = 0x20;
 
     std::string devId_;
-    std::string localDevId_;
     std::shared_ptr<DAudioSourceMgrCallback> mgrCallback_;
     std::shared_ptr<TaskQueue> taskQueue_;
     std::shared_ptr<DSpeakerDev> speaker_;

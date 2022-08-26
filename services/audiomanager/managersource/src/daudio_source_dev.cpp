@@ -28,12 +28,11 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-int32_t DAudioSourceDev::AwakeAudioDev(const std::string localDevId)
+int32_t DAudioSourceDev::AwakeAudioDev()
 {
     constexpr size_t capacity = 20;
     taskQueue_ = std::make_shared<TaskQueue>(capacity);
     taskQueue_->Start();
-    localDevId_ = localDevId;
     return DH_SUCCESS;
 }
 
@@ -775,8 +774,7 @@ void DAudioSourceDev::OnTaskResult(int32_t resultCode, const std::string &result
 int32_t DAudioSourceDev::NotifySinkDev(const AudioEventType type, const json Param, const std::string dhId)
 {
     constexpr uint32_t eventOffset = 4;
-    json jParam = { { KEY_DEV_ID, localDevId_ },
-                    { KEY_DH_ID, dhId },
+    json jParam = { { KEY_DH_ID, dhId },
                     { KEY_EVENT_TYPE, type },
                     { KEY_AUDIO_PARAM, Param } };
     DAudioSourceManager::GetInstance().DAudioNotify(devId_, dhId, type, jParam.dump());

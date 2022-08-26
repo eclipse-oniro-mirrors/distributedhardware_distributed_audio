@@ -40,12 +40,11 @@ DAudioSinkDev::~DAudioSinkDev()
     DHLOGI("Distributed audio sink device destructed, devId: %s.", GetAnonyString(devId_).c_str());
 }
 
-int32_t DAudioSinkDev::AwakeAudioDev(const std::string localDevId)
+int32_t DAudioSinkDev::AwakeAudioDev()
 {
     constexpr size_t capacity = 20;
     taskQueue_ = std::make_shared<TaskQueue>(capacity);
     taskQueue_->Start();
-    localDevId_ = localDevId;
     return DH_SUCCESS;
 }
 
@@ -635,7 +634,6 @@ void DAudioSinkDev::NotifySourceDev(const AudioEventType type, const std::string
     jEvent[KEY_DH_ID] = dhId;
     jEvent[KEY_RESULT] = result;
     jEvent[KEY_EVENT_TYPE] = type;
-    jEvent[KEY_DEV_ID] = localDevId_;
     DAudioSinkManager::GetInstance().DAudioNotify(devId_, dhId, type, jEvent.dump());
 }
 

@@ -37,7 +37,7 @@ public:
     DAudioSinkDev(const std::string &networkId);
     ~DAudioSinkDev();
 
-    int32_t AwakeAudioDev(const std::string localDevId);
+    int32_t AwakeAudioDev();
     void SleepAudioDev();
 
     void NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent) override;
@@ -89,7 +89,6 @@ private:
     std::shared_ptr<DMicClient> micClient_;
     std::shared_ptr<DAudioSinkDevCtrlMgr> audioCtrlMgr_;
     std::string devId_;
-    std::string localDevId_;
     std::string spkDhId_;
     std::string micDhId_;
 
