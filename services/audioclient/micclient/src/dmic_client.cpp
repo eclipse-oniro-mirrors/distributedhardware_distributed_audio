@@ -173,22 +173,12 @@ int32_t DMicClient::StartCapture()
 void DMicClient::CaptureThreadRunning()
 {
     DHLOGI("Start the capturer thread.");
-    size_t bufferLen = 0;
-    int32_t ret = audioCapturer_->GetBufferSize(bufferLen);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("Failed to get minimum buffer.");
-        return;
-    }
-    DHLOGI("Obtains the minimum buffer length, bufferlen: %d.", bufferLen);
+    size_t bufferLen = DEFAULT_AUDIO_DATA_SIZE;
     while (isCaptureReady_.load()) {
         std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(bufferLen);
         size_t bytesRead = 0;
         while (bytesRead < bufferLen) {
-            auto start = std::chrono::high_resolution_clock::now();
             int32_t len = audioCapturer_->Read(*(audioData->Data() + bytesRead), bufferLen - bytesRead, isBlocking_);
-            auto stop = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-            DHLOGI("Audio Capturer Read in microseconds TimeTaken =(%ds).", (long long)duration.count());
             if (len >= 0) {
                 bytesRead += (size_t)len;
             } else {

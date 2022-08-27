@@ -340,7 +340,7 @@ int32_t AudioAdapterInterfaceImpl::AddAudioDevice(const uint32_t devId, const st
     auto dev = mapAudioDevice_.find(devId);
     if (dev != mapAudioDevice_.end()) {
         DHLOGE("Device has been add, do not repeat add.");
-        return ERR_DH_AUDIO_HDF_INVALID_OPERATION;
+        return DH_SUCCESS;
     }
     mapAudioDevice_.insert(std::make_pair(devId, caps));
 

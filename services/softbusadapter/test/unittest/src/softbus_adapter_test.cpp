@@ -35,22 +35,6 @@ void SoftbusAdapterTest::TearDown(void) {}
  */
 HWTEST_F(SoftbusAdapterTest, RegisterSoftbusListener_001, TestSize.Level1)
 {
-    std::shared_ptr<ISoftbusListener> listener = nullptr;
-    std::string sessionName = CTRL_SESSION_NAME;
-    std::string peerDevId = "peerDevId";
-
-    EXPECT_NE(DH_SUCCESS, softbusAdapter.RegisterSoftbusListener(listener, sessionName, peerDevId));
-    EXPECT_EQ(DH_SUCCESS, softbusAdapter.UnRegisterSoftbusListener(sessionName, peerDevId));
-}
-
-/**
- * @tc.name: RegisterSoftbusListener_002
- * @tc.desc: Verify the RegisterSoftbusListener and UnRegisterSoftbusListener function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(SoftbusAdapterTest, RegisterSoftbusListener_002, TestSize.Level1)
-{
     std::string sessionName = CTRL_SESSION_NAME;
     std::string peerDevId = "peerDevId";
     std::shared_ptr<ISoftbusListener> listener = std::make_shared<MockISoftbusListener>();
@@ -131,20 +115,6 @@ HWTEST_F(SoftbusAdapterTest, SendSoftbusBytes_001, TestSize.Level1)
  * @tc.require: AR000H0E5U
  */
 HWTEST_F(SoftbusAdapterTest, SendSoftbusStream_001, TestSize.Level1)
-{
-    int32_t sessionId = 0;
-    std::shared_ptr<AudioData> audioData = nullptr;
-
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, softbusAdapter.SendSoftbusStream(sessionId, audioData));
-}
-
-/**
- * @tc.name: SendSoftbusStream_002
- * @tc.desc: Verify the SendSoftbusStream function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(SoftbusAdapterTest, SendSoftbusStream_002, TestSize.Level1)
 {
     int32_t sessionId = 0;
     std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(DEFAULT_AUDIO_DATA_SIZE);

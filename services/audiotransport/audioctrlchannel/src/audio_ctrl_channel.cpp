@@ -47,8 +47,7 @@ int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListe
         return ret;
     }
 
-    std::shared_ptr<ISoftbusListener> softbusListener = shared_from_this();
-    ret = SoftbusAdapter::GetInstance().RegisterSoftbusListener(softbusListener, sessionName, peerDevId_);
+    ret = SoftbusAdapter::GetInstance().RegisterSoftbusListener(shared_from_this(), sessionName, peerDevId_);
     if (ret != DH_SUCCESS) {
         DHLOGE("Register softbus adapter listener failed ret: %d.", ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
@@ -182,7 +181,7 @@ void AudioCtrlChannel::OnSessionOpened(int32_t sessionId, int32_t result)
         return;
     }
 
-    std::shared_ptr<IAudioChannelListener> listener = channelListener_.lock();
+    auto listener = channelListener_.lock();
     if (!listener) {
         DHLOGE("Channel listener is null.");
         return;
@@ -199,7 +198,7 @@ void AudioCtrlChannel::OnSessionClosed(int32_t sessionId)
         DHLOGI("Session already closed.");
         return;
     }
-    std::shared_ptr<IAudioChannelListener> listener = channelListener_.lock();
+    auto listener = channelListener_.lock();
     if (!listener) {
         DHLOGE("Channel listener is null.");
         return;
@@ -215,7 +214,7 @@ void AudioCtrlChannel::OnBytesReceived(int32_t sessionId, const void *data, uint
         DHLOGE("OnBytesReceived param check failed");
         return;
     }
-    std::shared_ptr<IAudioChannelListener> listener = channelListener_.lock();
+    auto listener = channelListener_.lock();
     if (!listener) {
         DHLOGE("Channel listener is null.");
         return;

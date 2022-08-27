@@ -34,7 +34,7 @@ int32_t AudioDecodeTransport::SetUp(const AudioParam &localParam, const AudioPar
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
     dataTransCallback_ = callback;
-    auto ret = InitAudioDecodeTransport(localParam, remoteParam, role);
+    int32_t ret = InitAudioDecodeTransport(localParam, remoteParam, role);
     if (ret != DH_SUCCESS) {
         DHLOGE("Init audio encode transport, ret: %d.", ret);
         return ret;
@@ -64,24 +64,15 @@ int32_t AudioDecodeTransport::Start()
 int32_t AudioDecodeTransport::Stop()
 {
     DHLOGI("Stop.");
-    bool stopStatus = true;
-    int32_t ret;
+    if (audioChannel_ != nullptr) {
+        audioChannel_->CloseSession();
+    }
     if (processor_ != nullptr) {
-        ret = processor_->StopAudioProcessor();
+        int32_t ret = processor_->StopAudioProcessor();
         if (ret != DH_SUCCESS) {
             DHLOGE("Stop audio processor failed, ret: %d.", ret);
-            stopStatus = false;
+            return ERR_DH_AUDIO_TRANS_ERROR;
         }
-    }
-    if (audioChannel_ != nullptr) {
-        ret = audioChannel_->CloseSession();
-        if (ret != DH_SUCCESS) {
-            DHLOGE("Close session failed, ret: %d.", ret);
-            stopStatus = false;
-        }
-    }
-    if (!stopStatus) {
-        return ERR_DH_AUDIO_TRANS_ERROR;
     }
     DHLOGI("Stop success.");
     return DH_SUCCESS;
@@ -91,23 +82,22 @@ int32_t AudioDecodeTransport::Release()
 {
     DHLOGI("Release.");
     bool releaseStatus = true;
-    int32_t ret;
     if (processor_ != nullptr) {
-        ret = processor_->ReleaseAudioProcessor();
+        int32_t ret = processor_->ReleaseAudioProcessor();
         if (ret != DH_SUCCESS) {
             DHLOGE("Release audio processor failed, ret: %d.", ret);
             releaseStatus = false;
         }
     }
     if (audioChannel_ != nullptr) {
-        ret = audioChannel_->ReleaseSession();
+        int32_t ret = audioChannel_->ReleaseSession();
         if (ret != DH_SUCCESS) {
             DHLOGE("Release session failed, ret: %d.", ret);
             releaseStatus = false;
         }
     }
     if (!releaseStatus) {
-        DHLOGE("The releaseStatus is false, ret: %d.", ret);
+        DHLOGE("The releaseStatus is false.");
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
     DHLOGI("Release success.");
@@ -195,17 +185,10 @@ int32_t AudioDecodeTransport::RegisterChannelListener(const std::string &role)
 {
     DHLOGI("Register Channel Listener.");
     audioChannel_ = std::make_shared<AudioDataChannel>(peerDevId_);
-    if (audioChannel_ == nullptr) {
-        DHLOGE("Create audio channel failed.");
-        return ERR_DH_AUDIO_TRANS_ERROR;
-    }
 
-    int32_t result;
-    if (role == "speaker") {
-        result = audioChannel_->CreateSession(shared_from_this(), DATA_SPEAKER_SESSION_NAME);
-    } else {
-        result = audioChannel_->CreateSession(shared_from_this(), DATA_MIC_SESSION_NAME);
-    }
+    int32_t result = (role == "speaker") ?
+        audioChannel_->CreateSession(shared_from_this(), DATA_SPEAKER_SESSION_NAME) :
+        audioChannel_->CreateSession(shared_from_this(), DATA_MIC_SESSION_NAME);
     if (result != DH_SUCCESS) {
         DHLOGE("CreateSession failed.");
         return ERR_DH_AUDIO_TRANS_ERROR;
@@ -217,11 +200,7 @@ int32_t AudioDecodeTransport::RegisterProcessorListener(const AudioParam &localP
 {
     DHLOGI("Register processor listener.");
     processor_ = std::make_shared<AudioDecoderProcessor>();
-    if (audioChannel_ == nullptr) {
-        DHLOGE("Create audio processor failed.");
-        return ERR_DH_AUDIO_TRANS_ERROR;
-    }
-    auto ret = processor_->ConfigureAudioProcessor(localParam.comParam, remoteParam.comParam, shared_from_this());
+    int32_t ret = processor_->ConfigureAudioProcessor(localParam.comParam, remoteParam.comParam, shared_from_this());
     if (ret != DH_SUCCESS) {
         DHLOGE("Configure audio processor failed.");
         return ret;

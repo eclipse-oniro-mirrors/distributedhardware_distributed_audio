@@ -50,7 +50,7 @@ int32_t AudioEncodeTransport::Start()
         DHLOGE("Processor or channel is null, setup first.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
-    auto ret = audioChannel_->OpenSession();
+    int32_t ret = audioChannel_->OpenSession();
     if (ret != DH_SUCCESS) {
         DHLOGE("Open channel session failed ret: %d.", ret);
         audioChannel_ = nullptr;
@@ -70,16 +70,15 @@ int32_t AudioEncodeTransport::Stop()
 {
     DHLOGI("Stop.");
     bool stopStatus = true;
-    int32_t ret;
     if (processor_ != nullptr) {
-        ret = processor_->StopAudioProcessor();
+        int32_t ret = processor_->StopAudioProcessor();
         if (ret != DH_SUCCESS) {
             DHLOGE("Stop audio processor failed, ret: %d.", ret);
             stopStatus = false;
         }
     }
     if (audioChannel_ != nullptr) {
-        ret = audioChannel_->CloseSession();
+        int32_t ret = audioChannel_->CloseSession();
         if (ret != DH_SUCCESS) {
             DHLOGE("Close session failed, ret: %d.", ret);
             stopStatus = false;
@@ -159,17 +158,10 @@ int32_t AudioEncodeTransport::RegisterChannelListener(const std::string &role)
 {
     DHLOGI("Register channel listener.");
     audioChannel_ = std::make_shared<AudioDataChannel>(peerDevId_);
-    if (audioChannel_ == nullptr) {
-        DHLOGE("Create audio channel failed.");
-        return ERR_DH_AUDIO_TRANS_ERROR;
-    }
 
-    int32_t result;
-    if (role == "speaker") {
-        result = audioChannel_->CreateSession(shared_from_this(), DATA_SPEAKER_SESSION_NAME);
-    } else {
-        result = audioChannel_->CreateSession(shared_from_this(), DATA_MIC_SESSION_NAME);
-    }
+    int32_t result = (role == "speaker") ?
+        audioChannel_->CreateSession(shared_from_this(), DATA_SPEAKER_SESSION_NAME) :
+        audioChannel_->CreateSession(shared_from_this(), DATA_MIC_SESSION_NAME);
     if (result != DH_SUCCESS) {
         DHLOGE("CreateSession failed.");
         return ERR_DH_AUDIO_TRANS_ERROR;

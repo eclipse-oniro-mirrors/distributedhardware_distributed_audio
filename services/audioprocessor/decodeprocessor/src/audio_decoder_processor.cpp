@@ -49,10 +49,6 @@ int32_t AudioDecoderProcessor::ConfigureAudioProcessor(const AudioCommonParam &l
     procCallback_ = procCallback;
 
     audioDecoder_ = std::make_shared<AudioDecoder>();
-    if (audioDecoder_ == nullptr) {
-        DHLOGE("Decoder is null.");
-        return ERR_DH_AUDIO_BAD_VALUE;
-    }
 
     int32_t ret = audioDecoder_->ConfigureAudioCodec(localDevParam, shared_from_this());
     if (ret != DH_SUCCESS) {
@@ -68,7 +64,7 @@ int32_t AudioDecoderProcessor::ReleaseAudioProcessor()
     DHLOGI("Release audio processor.");
     if (audioDecoder_ == nullptr) {
         DHLOGE("Decoder is null.");
-        return ERR_DH_AUDIO_BAD_VALUE;
+        return DH_SUCCESS;
     }
 
     DAUDIO_SYNC_TRACE(DAUDIO_RELEASE_DECODER_PROCESSOR);

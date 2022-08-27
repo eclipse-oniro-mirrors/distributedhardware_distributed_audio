@@ -41,8 +41,7 @@ int32_t AudioDataChannel::CreateSession(const std::shared_ptr<IAudioChannelListe
         return ret;
     }
 
-    std::shared_ptr<ISoftbusListener> softbusListener = shared_from_this();
-    ret = SoftbusAdapter::GetInstance().RegisterSoftbusListener(softbusListener, sessionName, peerDevId_);
+    ret = SoftbusAdapter::GetInstance().RegisterSoftbusListener(shared_from_this(), sessionName, peerDevId_);
     if (ret != DH_SUCCESS) {
         DHLOGE("Register softbus adapter listener failed ret: %d.", ret);
         return ret;
@@ -64,11 +63,7 @@ int32_t AudioDataChannel::ReleaseSession()
         return ret;
     }
 
-    ret = SoftbusAdapter::GetInstance().UnRegisterSoftbusListener(sessionName_, peerDevId_);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("UnRegister softbus adapter listener failed ret: %d.", ret);
-        return ret;
-    }
+    SoftbusAdapter::GetInstance().UnRegisterSoftbusListener(sessionName_, peerDevId_);
     channelListener_.reset();
 
     DHLOGI("Release softbus session success.");
@@ -100,11 +95,7 @@ int32_t AudioDataChannel::CloseSession()
     }
 
     DAUDIO_SYNC_TRACE(DAUDIO_CLOSE_DATA_SESSION);
-    int32_t ret = SoftbusAdapter::GetInstance().CloseSoftbusSession(sessionId_);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("Close audio session failed ret: %d.", ret);
-        return ret;
-    }
+    SoftbusAdapter::GetInstance().CloseSoftbusSession(sessionId_);
     sessionId_ = 0;
 
     DHLOGI("Close audio session success.");
@@ -125,13 +116,7 @@ int32_t AudioDataChannel::SendData(const std::shared_ptr<AudioData> &audioData)
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
-    int32_t ret = SoftbusAdapter::GetInstance().SendSoftbusStream(sessionId_, audioData);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("Send audio data failed ret: %d.", ret);
-        return ret;
-    }
-
-    return DH_SUCCESS;
+    return SoftbusAdapter::GetInstance().SendSoftbusStream(sessionId_, audioData);
 }
 
 void AudioDataChannel::OnSessionOpened(int32_t sessionId, int32_t result)
@@ -142,7 +127,7 @@ void AudioDataChannel::OnSessionOpened(int32_t sessionId, int32_t result)
         return;
     }
 
-    std::shared_ptr<IAudioChannelListener> listener = channelListener_.lock();
+    auto listener = channelListener_.lock();
     if (!listener) {
         DHLOGE("Channel listener is null.");
         return;
@@ -160,7 +145,7 @@ void AudioDataChannel::OnSessionClosed(int32_t sessionId)
         DHLOGI("Session already closed.");
         return;
     }
-    std::shared_ptr<IAudioChannelListener> listener = channelListener_.lock();
+    auto listener = channelListener_.lock();
     if (!listener) {
         DHLOGE("Channel listener is null.");
         return;
@@ -184,12 +169,7 @@ void AudioDataChannel::OnStreamReceived(int32_t sessionId, const StreamData *dat
     (void) ext;
     (void) streamFrameInfo;
 
-    if (data == nullptr) {
-        DHLOGE("Stream data is null.");
-        return;
-    }
-
-    std::shared_ptr<IAudioChannelListener> listener = channelListener_.lock();
+    auto listener = channelListener_.lock();
     if (!listener) {
         DHLOGE("Channel listener is null.");
         return;
@@ -197,10 +177,6 @@ void AudioDataChannel::OnStreamReceived(int32_t sessionId, const StreamData *dat
 
     DHLOGI("OnAudioStreamReceived, sessionId: %d dataSize: %zu.", sessionId, data->bufLen);
     auto audioData = std::make_shared<AudioData>(data->bufLen);
-    if (!audioData) {
-        DHLOGE("audioData is null.");
-        return;
-    }
 
     int32_t ret = memcpy_s(audioData->Data(), audioData->Capacity(), (uint8_t *)data->buf, data->bufLen);
     if (ret != EOK) {

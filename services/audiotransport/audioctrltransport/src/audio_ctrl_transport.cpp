@@ -174,18 +174,12 @@ int32_t AudioCtrlTransport::InitAudioCtrlTrans(const std::string &netWordId)
 int32_t AudioCtrlTransport::RegisterChannelListener()
 {
     DHLOGI("RegisterChannelListener.");
-    std::shared_ptr<IAudioChannelListener> listener = shared_from_this();
-    if (!listener) {
-        DHLOGE("Channel listener is null.");
-        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
-    }
-
     if (audioChannel_ == nullptr) {
         DHLOGE("Channel is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
-    int32_t ret = audioChannel_->CreateSession(listener, CTRL_SESSION_NAME);
+    int32_t ret = audioChannel_->CreateSession(shared_from_this(), CTRL_SESSION_NAME);
     if (ret != DH_SUCCESS) {
         DHLOGE("Create session failed ret: %d.", ret);
         return ret;

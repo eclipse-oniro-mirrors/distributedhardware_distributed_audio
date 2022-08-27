@@ -48,10 +48,6 @@ int32_t AudioEncoderProcessor::ConfigureAudioProcessor(const AudioCommonParam &l
     procCallback_ = procCallback;
 
     audioEncoder_ = std::make_shared<AudioEncoder>();
-    if (audioEncoder_ == nullptr) {
-        DHLOGE("Encoder is null.");
-        return ERR_DH_AUDIO_BAD_VALUE;
-    }
 
     int32_t ret = audioEncoder_->ConfigureAudioCodec(localDevParam, shared_from_this());
     if (ret != DH_SUCCESS) {

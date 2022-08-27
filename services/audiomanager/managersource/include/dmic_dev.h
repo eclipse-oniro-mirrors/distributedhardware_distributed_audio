@@ -65,7 +65,7 @@ private:
 
 private:
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
-    static constexpr size_t DATA_QUEUE_MAX_SIZE = 5;
+    static constexpr size_t DATA_QUEUE_MAX_SIZE = 1;
     static constexpr size_t FRAME_SIZE = 4096;
     std::string devId_;
     std::set<int32_t> enabledPorts_;
