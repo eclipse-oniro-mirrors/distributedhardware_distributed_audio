@@ -17,6 +17,7 @@
 #define IAUDIO_DATATRANS_CALLBACK_H
 
 #include "audio_data.h"
+#include "audio_event.h"
 #include "audio_param.h"
 
 namespace OHOS {
@@ -25,7 +26,7 @@ class IAudioDataTransCallback {
 public:
     IAudioDataTransCallback() = default;
     virtual ~IAudioDataTransCallback() = default;
-    virtual int32_t OnStateChange(int32_t type) = 0;
+    virtual int32_t OnStateChange(const AudioEventType type) = 0;
     virtual int32_t OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData) = 0;
 };
 } // namespace DistributedHardware

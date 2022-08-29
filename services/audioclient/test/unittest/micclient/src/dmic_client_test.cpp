@@ -15,6 +15,8 @@
 
 #include "dmic_client_test.h"
 
+#include "audio_event.h"
+
 using namespace testing::ext;
 
 namespace OHOS {
@@ -51,8 +53,7 @@ void DMicClientTest::TearDown()
  */
 HWTEST_F(DMicClientTest, OnStateChange_001, TestSize.Level1)
 {
-    int32_t type = 15;
-    EXPECT_NE(DH_SUCCESS, micClient_->OnStateChange(type));
+    EXPECT_NE(DH_SUCCESS, micClient_->OnStateChange(AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT));
 }
 
 /**

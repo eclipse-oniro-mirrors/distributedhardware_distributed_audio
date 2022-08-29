@@ -158,7 +158,6 @@ int32_t AudioEncodeTransport::RegisterChannelListener(const std::string &role)
 {
     DHLOGI("Register channel listener.");
     audioChannel_ = std::make_shared<AudioDataChannel>(peerDevId_);
-
     int32_t result = (role == "speaker") ?
         audioChannel_->CreateSession(shared_from_this(), DATA_SPEAKER_SESSION_NAME) :
         audioChannel_->CreateSession(shared_from_this(), DATA_MIC_SESSION_NAME);

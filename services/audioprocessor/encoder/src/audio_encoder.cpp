@@ -15,8 +15,6 @@
 
 #include "audio_encoder.h"
 
-#include <fstream>
-
 #include "audio_info.h"
 #include "avsharedmemory.h"
 #include "media_errors.h"
@@ -47,13 +45,8 @@ int32_t AudioEncoder::ConfigureAudioCodec(const AudioCommonParam &codecParam,
     const std::shared_ptr<IAudioCodecCallback> &codecCallback)
 {
     DHLOGI("Configure audio codec.");
-    if (codecCallback == nullptr) {
-        DHLOGE("Codec callback is null.");
-        return ERR_DH_AUDIO_BAD_VALUE;
-    }
-    if (!IsInEncodeRange(codecParam)) {
-        DHLOGE("Param error, codec type %d, channel count %d, sample rate %d, sample format %d.",
-            codecParam.codecType, codecParam.channelMask, codecParam.sampleRate, codecParam.bitFormat);
+    if (!IsInEncodeRange(codecParam) || codecCallback == nullptr) {
+        DHLOGE("Codec param error or callback is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
     codecParam_ = codecParam;
@@ -70,36 +63,38 @@ int32_t AudioEncoder::ConfigureAudioCodec(const AudioCommonParam &codecParam,
         DHLOGE("Set encoder format fail. Error code %d.", ret);
         return ret;
     }
-
     return DH_SUCCESS;
 }
 
 bool AudioEncoder::IsInEncodeRange(const AudioCommonParam &codecParam)
 {
-    return codecParam.channelMask >= CHANNEL_MASK_MIN && codecParam.channelMask <= CHANNEL_MASK_MAX &&
+    if (codecParam.channelMask >= CHANNEL_MASK_MIN && codecParam.channelMask <= CHANNEL_MASK_MAX &&
         codecParam.sampleRate >= SAMPLE_RATE_MIN && codecParam.sampleRate <= SAMPLE_RATE_MAX &&
-        codecParam.bitFormat == SAMPLE_S16LE;
+        codecParam.bitFormat == SAMPLE_S16LE && codecParam.codecType == AUDIO_CODEC_AAC) {
+        return true;
+    }
+
+    DHLOGE("Param error, codec type %d, channel count %d, sample rate %d, sample format %d.",
+        codecParam.codecType, codecParam.channelMask, codecParam.sampleRate, codecParam.bitFormat);
+    return false;
 }
 
 int32_t AudioEncoder::InitAudioEncoder(const AudioCommonParam &codecParam)
 {
     DHLOGI("Init audio encoder.");
-    switch (codecParam.codecType) {
-        case AUDIO_CODEC_AAC:
-            audioEncoder_ = Media::AudioEncoderFactory::CreateByMime(ENCODE_MIME_AAC);
-            break;
-        default:
-            DHLOGE("Create encoder fail. Invalid codec type %d.", codecParam.codecType);
-            return ERR_DH_AUDIO_BAD_VALUE;
-    }
-
-    audioEncoderCallback_ = std::make_shared<AudioEncoderCallback>(shared_from_this());
-    int32_t ret = audioEncoder_->SetCallback(audioEncoderCallback_);
-    if (ret != Media::MediaServiceErrCode::MSERR_OK) {
-        DHLOGE("Set encoder callback fail. Error code %d.", ret);
+    audioEncoder_ = Media::AudioEncoderFactory::CreateByMime(ENCODE_MIME_AAC);
+    if (audioEncoder_ == nullptr) {
+        DHLOGE("Create audio encoder fail.");
         return ERR_DH_AUDIO_CODEC_CONFIG;
     }
 
+    encoderCallback_ = std::make_shared<AudioEncoderCallback>(shared_from_this());
+    int32_t ret = audioEncoder_->SetCallback(encoderCallback_);
+    if (ret != Media::MediaServiceErrCode::MSERR_OK) {
+        DHLOGE("Set encoder callback fail. Error code %d.", ret);
+        encoderCallback_ = nullptr;
+        return ERR_DH_AUDIO_CODEC_CONFIG;
+    }
     return DH_SUCCESS;
 }
 
@@ -114,7 +109,8 @@ int32_t AudioEncoder::SetEncoderFormat(const AudioCommonParam &codecParam)
         codecParam.codecType, codecParam.channelMask, codecParam.sampleRate, codecParam.bitFormat);
     cfgFormat_.PutIntValue("channel_count", codecParam.channelMask);
     cfgFormat_.PutIntValue("sample_rate", codecParam.sampleRate);
-    cfgFormat_.PutIntValue("audio_sample_format", AudioStandard::SAMPLE_S16LE);
+    cfgFormat_.PutIntValue("audio_sample_format",
+        static_cast<AudioStandard::AudioSampleFormat>(codecParam.bitFormat));
 
     int32_t ret = audioEncoder_->Configure(cfgFormat_);
     if (ret != Media::MSERR_OK) {
@@ -143,9 +139,8 @@ int32_t AudioEncoder::ReleaseAudioCodec()
         DHLOGE("Encoder release fail. Error type: %d.", ret);
         return ERR_DH_AUDIO_CODEC_RELEASE;
     }
-    audioEncoderCallback_ = nullptr;
+    encoderCallback_ = nullptr;
     audioEncoder_ = nullptr;
-
     DHLOGI("Release audio codec end.");
     return DH_SUCCESS;
 }
@@ -163,10 +158,7 @@ int32_t AudioEncoder::StartAudioCodec()
         DHLOGE("Encoder start fail. Error code %d.", ret);
         return ERR_DH_AUDIO_CODEC_START;
     }
-
     StartInputThread();
-    isEncoderRunning_.store(true);
-
     return DH_SUCCESS;
 }
 
@@ -174,15 +166,13 @@ void AudioEncoder::StartInputThread()
 {
     DHLOGI("Start input thread.");
     encodeThread_ = std::thread(&AudioEncoder::InputEncodeAudioData, this);
+    isEncoderRunning_.store(true);
 }
 
 int32_t AudioEncoder::StopAudioCodec()
 {
     DHLOGI("Stop audio codec.");
-    isEncoderRunning_.store(false);
-    encodeCond_.notify_all();
     StopInputThread();
-
     if (audioEncoder_ == nullptr) {
         DHLOGE("Encoder is null.");
         return DH_SUCCESS;
@@ -199,7 +189,6 @@ int32_t AudioEncoder::StopAudioCodec()
         DHLOGE("Encoder stop fail. Error type: %d.", ret);
         isSuccess = isSuccess && false;
     }
-
     if (!isSuccess) {
         return ERR_DH_AUDIO_CODEC_STOP;
     }
@@ -214,6 +203,8 @@ int32_t AudioEncoder::StopAudioCodec()
 
 void AudioEncoder::StopInputThread()
 {
+    isEncoderRunning_.store(false);
+    encodeCond_.notify_all();
     if (encodeThread_.joinable()) {
         encodeThread_.join();
     }
@@ -231,7 +222,6 @@ int32_t AudioEncoder::FeedAudioData(const std::shared_ptr<AudioData> &inputData)
         DHLOGE("Encoder is stopped.");
         return ERR_DH_AUDIO_CODEC_INPUT;
     }
-
     if (inputData == nullptr) {
         DHLOGE("Input data is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
@@ -292,10 +282,10 @@ int32_t AudioEncoder::ProcessData(const std::shared_ptr<AudioData> &audioData, c
         DHLOGE("Get input buffer fail.");
         return ERR_DH_AUDIO_CODEC_INPUT;
     }
-
     if (inMem->GetSize() == INVALID_MEMORY_SIZE || static_cast<size_t>(inMem->GetSize()) < audioData->Size()) {
         DHLOGE("Input buffer size error. Memory size %d, data size %zu.",
             inMem->GetSize(), audioData->Size());
+        return ERR_DH_AUDIO_CODEC_INPUT;
     }
 
     errno_t err = memcpy_s(inMem->GetBase(), inMem->GetSize(), audioData->Data(), audioData->Size());
@@ -309,7 +299,6 @@ int32_t AudioEncoder::ProcessData(const std::shared_ptr<AudioData> &audioData, c
     Media::AVCodecBufferInfo bufferInfo = {inputTimeStampUs_, static_cast<int32_t>(audioData->Size()), 0};
     DHLOGD("Queue input buffer. AVCodec info: input time stamp %lld, data size %zu.",
         (long long)bufferInfo.presentationTimeUs, audioData->Size());
-
     int32_t ret = audioEncoder_->QueueInputBuffer(bufferIndex, bufferInfo, Media::AVCODEC_BUFFER_FLAG_NONE);
     if (ret != Media::MSERR_OK) {
         DHLOGE("Queue input buffer fail. Error code %d.", ret);
@@ -375,7 +364,6 @@ void AudioEncoder::OnOutputBufferAvailable(uint32_t index, Media::AVCodecBufferI
         DHLOGE("Get output buffer fail. index %u.", index);
         return;
     }
-
     if (info.size <= 0 || info.size > outMem->GetSize()) {
         DHLOGE("Codec output info error. AVCodec info: size %d, memory size %d.",
             info.size, outMem->GetSize());
@@ -419,13 +407,12 @@ void AudioEncoder::OnOutputFormatChanged(const Media::Format &format)
 void AudioEncoder::OnError(const AudioEvent &event)
 {
     DHLOGE("Encoder error.");
-    std::shared_ptr<IAudioCodecCallback> targetCodecCallback = codecCallback_.lock();
-    if (targetCodecCallback == nullptr) {
+    std::shared_ptr<IAudioCodecCallback> cbObj = codecCallback_.lock();
+    if (cbObj == nullptr) {
         DHLOGE("Codec callback is null.");
         return;
     }
-
-    targetCodecCallback->OnCodecStateNotify(event);
+    cbObj->OnCodecStateNotify(event);
 }
 
 int32_t AudioEncoder::EncodeDone(const std::shared_ptr<AudioData> &outputData)
@@ -436,13 +423,12 @@ int32_t AudioEncoder::EncodeDone(const std::shared_ptr<AudioData> &outputData)
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 
-    std::shared_ptr<IAudioCodecCallback> targetCodecCallback = codecCallback_.lock();
-    if (targetCodecCallback == nullptr) {
+    std::shared_ptr<IAudioCodecCallback> cbObj = codecCallback_.lock();
+    if (cbObj == nullptr) {
         DHLOGE("Codec callback is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
-
-    targetCodecCallback->OnCodecDataDone(outputData);
+    cbObj->OnCodecDataDone(outputData);
     return DH_SUCCESS;
 }
 } // namespace DistributedHardware

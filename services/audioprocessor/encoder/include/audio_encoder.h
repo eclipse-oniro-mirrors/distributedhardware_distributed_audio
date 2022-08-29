@@ -89,7 +89,7 @@ private:
     AudioCommonParam codecParam_;
     std::weak_ptr<IAudioCodecCallback> codecCallback_;
     std::shared_ptr<Media::AVCodecAudioEncoder> audioEncoder_ = nullptr;
-    std::shared_ptr<Media::AVCodecCallback> audioEncoderCallback_ = nullptr;
+    std::shared_ptr<Media::AVCodecCallback> encoderCallback_ = nullptr;
     std::queue<std::shared_ptr<AudioData>> inputBufQueue_;
     std::queue<uint32_t> bufIndexQueue_;
 };

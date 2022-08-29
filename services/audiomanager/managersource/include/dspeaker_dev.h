@@ -48,7 +48,7 @@ public:
     int32_t ReadStreamData(const std::string &devId, const int32_t dhId, std::shared_ptr<AudioData> &data) override;
     int32_t NotifyEvent(const std::string &devId, const int32_t dhId, const AudioEvent &event) override;
 
-    int32_t OnStateChange(int32_t type) override;
+    int32_t OnStateChange(const AudioEventType type) override;
     int32_t OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData) override;
 
     int32_t SetUp();

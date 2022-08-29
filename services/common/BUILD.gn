@@ -17,7 +17,9 @@ import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ohos_shared_library("distributed_audio_service_common") {
-  include_dirs = [ "//third_party/json/include" ]
+  include_dirs = [
+    "//third_party/json/include",
+  ]
 
   include_dirs += [
     "audiodata/include",

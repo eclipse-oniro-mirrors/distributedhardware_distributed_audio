@@ -281,7 +281,7 @@ int32_t DSpeakerDev::NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &even
     return DH_SUCCESS;
 }
 
-int32_t DSpeakerDev::OnStateChange(int32_t type)
+int32_t DSpeakerDev::OnStateChange(const AudioEventType type)
 {
     DHLOGI("On speaker device state change, type: %d.", type);
     auto event = std::make_shared<AudioEvent>();

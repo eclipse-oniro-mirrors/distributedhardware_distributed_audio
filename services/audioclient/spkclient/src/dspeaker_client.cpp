@@ -210,7 +210,7 @@ int32_t DSpeakerClient::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &
     return DH_SUCCESS;
 }
 
-int32_t DSpeakerClient::OnStateChange(int32_t type)
+int32_t DSpeakerClient::OnStateChange(const AudioEventType type)
 {
     DHLOGI("On state change. type: %d", type);
     auto event = std::make_shared<AudioEvent>();

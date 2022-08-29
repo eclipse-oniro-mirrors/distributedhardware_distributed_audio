@@ -33,7 +33,7 @@ DMicClient::~DMicClient()
     }
 }
 
-int32_t DMicClient::OnStateChange(int32_t type)
+int32_t DMicClient::OnStateChange(const AudioEventType type)
 {
     DHLOGI("On state change type: %d.", type);
     std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();

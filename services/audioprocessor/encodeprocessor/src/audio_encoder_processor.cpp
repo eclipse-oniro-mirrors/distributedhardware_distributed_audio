@@ -48,11 +48,10 @@ int32_t AudioEncoderProcessor::ConfigureAudioProcessor(const AudioCommonParam &l
     procCallback_ = procCallback;
 
     audioEncoder_ = std::make_shared<AudioEncoder>();
-
     int32_t ret = audioEncoder_->ConfigureAudioCodec(localDevParam, shared_from_this());
     if (ret != DH_SUCCESS) {
         DHLOGE("Configure encoder fail. Error code: %d.", ret);
-        audioEncoder_ = nullptr;
+        ReleaseAudioProcessor();
         return ret;
     }
     return DH_SUCCESS;
@@ -70,7 +69,6 @@ int32_t AudioEncoderProcessor::ReleaseAudioProcessor()
     int32_t ret = audioEncoder_->ReleaseAudioCodec();
     if (ret != DH_SUCCESS) {
         DHLOGE("Release encoder fail. Error code: %d.", ret);
-        return ret;
     }
 
     audioEncoder_ = nullptr;
@@ -128,18 +126,12 @@ int32_t AudioEncoderProcessor::FeedAudioProcessor(const std::shared_ptr<AudioDat
         DHLOGE("Input data is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
+
     if (audioEncoder_ == nullptr) {
         DHLOGE("Encoder is null.");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
-
-    int32_t ret = audioEncoder_->FeedAudioData(inputData);
-    if (ret != DH_SUCCESS) {
-        DHLOGE("Feed data fail. Error code: %d.", ret);
-        return ret;
-    }
-
-    return DH_SUCCESS;
+    return audioEncoder_->FeedAudioData(inputData);
 }
 
 void AudioEncoderProcessor::OnCodecDataDone(const std::shared_ptr<AudioData> &outputData)
@@ -150,23 +142,23 @@ void AudioEncoderProcessor::OnCodecDataDone(const std::shared_ptr<AudioData> &ou
     }
     DHLOGD("Codec done. Output data size %zu.", outputData->Size());
 
-    std::shared_ptr<IAudioProcessorCallback> targetProcCallback_ = procCallback_.lock();
-    if (targetProcCallback_ == nullptr) {
+    auto cbObj = procCallback_.lock();
+    if (cbObj == nullptr) {
         DHLOGE("Processor callback is null.");
         return;
     }
-    targetProcCallback_->OnAudioDataDone(outputData);
+    cbObj->OnAudioDataDone(outputData);
 }
 
 void AudioEncoderProcessor::OnCodecStateNotify(const AudioEvent &event)
 {
     DHLOGI("Codec state notify.");
-    std::shared_ptr<IAudioProcessorCallback> targetProcCallback_ = procCallback_.lock();
-    if (targetProcCallback_ == nullptr) {
+    auto cbObj = procCallback_.lock();
+    if (cbObj == nullptr) {
         DHLOGE("Processor callback is null.");
         return;
     }
-    targetProcCallback_->OnStateNotify(event);
+    cbObj->OnStateNotify(event);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

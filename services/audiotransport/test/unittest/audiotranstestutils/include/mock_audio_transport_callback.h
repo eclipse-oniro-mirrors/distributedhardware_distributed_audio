@@ -28,13 +28,13 @@ public:
     MockAudioTransportCallback() = default;
     ~MockAudioTransportCallback() = default;
 
-    int32_t OnStateChange(int32_t state) override;
+    int32_t OnStateChange(const AudioEventType type) override;
     int32_t OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData) override;
 };
 
-int32_t MockAudioTransportCallback::OnStateChange(int32_t state)
+int32_t MockAudioTransportCallback::OnStateChange(const AudioEventType type)
 {
-    DHLOGE("Test : MockAudioTransportCallback OnStateChange, state: %d.", state);
+    DHLOGD("Test : MockAudioTransportCallback OnStateChange, state: %d.", type);
     return DH_SUCCESS;
 }
 
