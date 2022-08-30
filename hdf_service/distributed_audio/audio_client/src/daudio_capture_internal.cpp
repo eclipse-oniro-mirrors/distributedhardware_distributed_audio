@@ -38,13 +38,13 @@ static int32_t GetCapturePositionInternal(struct AudioCapture *capture, uint64_t
     }
     AudioCaptureContext *context = reinterpret_cast<AudioCaptureContext *>(capture);
     if (context == nullptr || context->proxy_ == nullptr) {
-        DHLOGE("GetCapturePositionInternal context proxy is nullptr.");
+        DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     AudioTimeStampHAL timeHal;
     int32_t ret = context->proxy_->GetCapturePosition(*frames, timeHal);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Get capture position failed.");
+        DHLOGE("Failed to getr the capture position.");
         return ret;
     }
     time->tvSec = (int64_t)timeHal.tvSec;
@@ -62,20 +62,20 @@ static int32_t CaptureFrameInternal(struct AudioCapture *capture, void *frame, u
 
     AudioCaptureContext *context = reinterpret_cast<AudioCaptureContext *>(capture);
     if (context == nullptr || context->proxy_ == nullptr) {
-        DHLOGE("CaptureFrameInternal context proxy is nullptr.");
+        DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     uint8_t *uframe = reinterpret_cast<uint8_t *>(frame);
     std::vector<uint8_t> frameHal;
     int32_t ret = context->proxy_->CaptureFrame(frameHal, requestBytes, *replyBytes);
     if (ret != DH_SUCCESS) {
-        DHLOGE("The CaptureFrame is failed.");
+        DHLOGE("Failed to capture frames.");
         return ret;
     }
 
     ret = memcpy_s(uframe, requestBytes, frameHal.data(), requestBytes);
     if (ret != EOK) {
-        DHLOGE("DaudioCaptureInternal captureFrameInternal memcpy_s failed ret: %d.", ret);
+        DHLOGE("Memcpy_s failed ret: %d.", ret);
         return ERR_DH_AUDIO_HDF_FAILURE;
     }
     return DH_SUCCESS;

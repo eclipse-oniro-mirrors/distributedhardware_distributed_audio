@@ -107,7 +107,7 @@ int32_t DMicClient::Release()
     DHLOGI("Release mic client.");
     std::lock_guard<std::mutex> lck(devMtx_);
     if ((clientStatus_ != CLIENT_STATUS_READY && clientStatus_ != CLIENT_STATUS_STOP) || micTrans_ == nullptr) {
-        DHLOGE("Mic status is wrong or spk is null, %d.", (int32_t)clientStatus_);
+        DHLOGE("Mic status is wrong or mic trans is null, %d.", (int32_t)clientStatus_);
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
     bool status = true;
@@ -173,24 +173,23 @@ int32_t DMicClient::StartCapture()
 void DMicClient::CaptureThreadRunning()
 {
     DHLOGI("Start the capturer thread.");
-    size_t bufferLen = DEFAULT_AUDIO_DATA_SIZE;
     while (isCaptureReady_.load()) {
-        std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(bufferLen);
+        std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(DEFAULT_AUDIO_DATA_SIZE);
         size_t bytesRead = 0;
-        while (bytesRead < bufferLen) {
-            int32_t len = audioCapturer_->Read(*(audioData->Data() + bytesRead), bufferLen - bytesRead, isBlocking_);
+        bool errorFlag = false;
+        while (bytesRead < DEFAULT_AUDIO_DATA_SIZE) {
+            int32_t len = audioCapturer_->Read(*(audioData->Data() + bytesRead),
+                DEFAULT_AUDIO_DATA_SIZE - bytesRead, isBlocking_);
             if (len >= 0) {
                 bytesRead += (size_t)len;
             } else {
-                bytesRead = (size_t)len;
+                errorFlag = true;
                 break;
             }
         }
-        if (bytesRead < 0) {
-            DHLOGI("Bytes read failed, bytesRead: %d.", bytesRead);
+        if (errorFlag) {
+            DHLOGI("Bytes read failed.");
             break;
-        } else if (bytesRead == 0) {
-            continue;
         }
 
         int32_t ret = micTrans_->FeedAudioData(audioData);
@@ -211,9 +210,9 @@ int32_t DMicClient::StopCapture()
     DHLOGI("Stop capturer.");
     std::lock_guard<std::mutex> lck(devMtx_);
     if (clientStatus_ != CLIENT_STATUS_START || !isCaptureReady_.load()) {
-        DHLOGE("Renderer is not start or spk status wrong, status: %d.", (int32_t)clientStatus_);
+        DHLOGE("Capturee is not start or mic status wrong, status: %d.", (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
-            "daudio renderer is not start or spk status wrong.");
+            "daudio capturer is not start or mic status wrong.");
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
     if (audioCapturer_ == nullptr || micTrans_ == nullptr) {

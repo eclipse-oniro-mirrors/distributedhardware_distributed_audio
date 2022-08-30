@@ -742,7 +742,7 @@ int32_t AudioAdapterInterfaceImpl::WaitForSANotify(const AudioDeviceEvent &event
         auto status =
             micWaitCond_.wait_for(lck, std::chrono::seconds(WAIT_SECONDS), [this]() { return micNotifyFlag_; });
         if (!status) {
-            DHLOGE("Wait mic event: %d timeout(%d)s.", WAIT_SECONDS);
+            DHLOGE("Wait mic event: %d timeout(%d)s.", event, WAIT_SECONDS);
             return ERR_DH_AUDIO_HDF_FAIL;
         }
         if (event == EVENT_OPEN_MIC && isMicOpened_ != true) {

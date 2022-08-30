@@ -111,11 +111,6 @@ int32_t AudioDataChannel::SendEvent(const std::shared_ptr<AudioEvent> &audioEven
 int32_t AudioDataChannel::SendData(const std::shared_ptr<AudioData> &audioData)
 {
     DHLOGI("SendData, sessionId: %d.", sessionId_);
-    if (!audioData) {
-        DHLOGE("Audio data is null.");
-        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
-    }
-
     return SoftbusAdapter::GetInstance().SendSoftbusStream(sessionId_, audioData);
 }
 

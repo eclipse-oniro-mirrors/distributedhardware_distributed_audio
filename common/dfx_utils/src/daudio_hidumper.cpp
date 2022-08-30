@@ -42,21 +42,21 @@ const std::map<std::string, HidumpFlag> ARGS_MAP = {
 
 DaudioHidumper::DaudioHidumper()
 {
-    DHLOGI("DaudioHidumper constructed.");
+    DHLOGI("Distributed audio hidumper constructed.");
 }
 
 DaudioHidumper::~DaudioHidumper()
 {
-    DHLOGI("DaudioHidumper destructed.");
+    DHLOGI("Distributed audio hidumper deconstructed.");
 }
 
 bool DaudioHidumper::Dump(const std::vector<std::string> &args, std::string &result)
 {
-    DHLOGI("DaudioHidumper Dump args.size():%d.", args.size());
+    DHLOGI("Distributed audio hidumper dump args.size():%d.", args.size());
     result.clear();
     int32_t argsSize = static_cast<int32_t>(args.size());
     for (int32_t i = 0; i < argsSize; i++) {
-        DHLOGI("DaudioHidumper Dump args[%d]: %s.", i, args.at(i).c_str());
+        DHLOGI("Distributed audio hidumper dump args[%d]: %s.", i, args.at(i).c_str());
     }
 
     if (args.empty()) {
@@ -75,7 +75,7 @@ bool DaudioHidumper::Dump(const std::vector<std::string> &args, std::string &res
 
 int32_t DaudioHidumper::ProcessDump(const std::string &args, std::string &result)
 {
-    DHLOGI("ProcessDump Dump.");
+    DHLOGI("Process dump.");
     HidumpFlag hf = HidumpFlag::UNKNOWN;
     auto operatorIter = ARGS_MAP.find(args);
     if (operatorIter != ARGS_MAP.end()) {
@@ -147,7 +147,7 @@ int32_t DaudioHidumper::GetSinkInfo(std::string &result)
 
 int32_t DaudioHidumper::GetAbilityInfo(std::string &result)
 {
-    DHLOGI("GetAbilityInfo Dump.");
+    DHLOGI("Obtaining capability information.");
     std::vector<DHItem> abilityInfo = DAudioHandler::GetInstance().ablityForDump();
     for (DHItem dhItem : abilityInfo) {
         if (dhItem.dhId == spkDefault) {
@@ -163,7 +163,7 @@ int32_t DaudioHidumper::GetAbilityInfo(std::string &result)
 
 void DaudioHidumper::ShowHelp(std::string &result)
 {
-    DHLOGI("ShowHelp Dump.");
+    DHLOGI("Show help.");
     result.append("Usage:dump  <command> [options]\n")
         .append("Description:\n")
         .append("-h            ")
@@ -178,7 +178,7 @@ void DaudioHidumper::ShowHelp(std::string &result)
 
 int32_t DaudioHidumper::ShowIllegalInfomation(std::string &result)
 {
-    DHLOGI("ShowIllegalInfomation Dump.");
+    DHLOGI("Show illegal information.");
     result.append("unknown command, -h for help.");
     return DH_SUCCESS;
 }

@@ -176,6 +176,10 @@ int32_t SoftbusAdapter::SendSoftbusBytes(int32_t sessionId, const void *data, in
 int32_t SoftbusAdapter::SendSoftbusStream(int32_t sessionId, const std::shared_ptr<AudioData> &audioData)
 {
     DHLOGI("SendAudioData, sessionId: %d.", sessionId);
+    if (audioData == nullptr) {
+        DHLOGE("Audio data is null.");
+        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
+    }
     constexpr size_t DATA_QUEUE_MAX_SIZE = 10;
     std::lock_guard<std::mutex> lck(dataQueueMtx_);
     while (audioDataQueue_.size() >= DATA_QUEUE_MAX_SIZE) {

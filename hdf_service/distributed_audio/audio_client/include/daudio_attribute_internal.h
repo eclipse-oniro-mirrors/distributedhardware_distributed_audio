@@ -98,19 +98,17 @@ int32_t AudioAttributeInternal<T>::GetSampleAttributes(AudioHandle handle, struc
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
-    DHLOGD("Enter to  GetSampleAttributes.");
+    DHLOGD("Get sample attributes.");
     T *context = reinterpret_cast<T *>(handle);
     if (context == nullptr || context->proxy_ == nullptr) {
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
     AudioSampleAttributesHAL attrsHal;
-    DHLOGD("GetSampleAttributes call.");
     int32_t ret = context->proxy_->GetSampleAttributes(attrsHal);
     if (ret != DH_SUCCESS) {
         return ret;
     }
-    DHLOGD("GetSampleAttributes call sucess.");
 
     attrs->type = static_cast<AudioCategory>(attrsHal.type);
     attrs->interleaved = static_cast<bool>(attrsHal.interleaved);
@@ -200,13 +198,13 @@ int32_t AudioAttributeInternal<T>::ReqMmapBuffer(AudioHandle handle, int32_t req
     AudioMmapBufferDescripterHAL descHal;
     int32_t ret = context->proxy_->ReqMmapBuffer(reqSize, descHal);
     if (ret != DH_SUCCESS) {
-        DHLOGE("The ReqMmapBuffer is failed.");
+        DHLOGE("Failed to request the mmap buffer.");
         return ret;
     }
 
     desc->memoryAddress = mmap(0, descHal.totalBufferFrames, PROT_READ | PROT_WRITE, MAP_SHARED, descHal.memoryFd, 0);
     if (desc->memoryAddress == MAP_FAILED) {
-        DHLOGD("ReqMmapBuffer mmap error!");
+        DHLOGE("Request mmap buffer mmap error!");
         return ERR_DH_AUDIO_HDF_FAILURE;
     }
     desc->memoryFd = descHal.memoryFd;
@@ -223,22 +221,20 @@ int32_t AudioAttributeInternal<T>::GetMmapPosition(AudioHandle handle, uint64_t 
         DHLOGE("The parameter is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
-    DHLOGD("Enter to getMmapPosition.");
+    DHLOGD("Get mmap position.");
 
     T *context = reinterpret_cast<T *>(handle);
     if (context == nullptr || context->proxy_ == nullptr) {
         DHLOGE("The context is empty.");
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
-    DHLOGD("Call to getMmapPosition.");
 
     AudioTimeStampHAL timeHal;
     int32_t ret = context->proxy_->GetMmapPosition(*frames, timeHal);
     if (ret != DH_SUCCESS) {
-        DHLOGE("The GetMmapPosition is failed.");
+        DHLOGE("Failed to get the mmap position.");
         return ret;
     }
-    DHLOGD("Call to getMmapPosition sucess.");
 
     time->tvSec = (int64_t)timeHal.tvSec;
     time->tvNSec = (int64_t)timeHal.tvNSec;
