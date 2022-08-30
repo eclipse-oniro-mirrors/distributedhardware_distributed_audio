@@ -132,7 +132,7 @@ int32_t AudioDecoder::ReleaseAudioCodec()
     DHLOGI("Release audio codec.");
     if (audioDecoder_ == nullptr) {
         DHLOGE("Decoder is null.");
-        return ERR_DH_AUDIO_BAD_VALUE;
+        return DH_SUCCESS;
     }
 
     int32_t ret = audioDecoder_->Release();

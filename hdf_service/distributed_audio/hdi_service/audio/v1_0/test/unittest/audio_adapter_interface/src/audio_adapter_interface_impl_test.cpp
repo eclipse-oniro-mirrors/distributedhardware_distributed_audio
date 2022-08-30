@@ -245,7 +245,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, AddAudioDevice_001, TestSize.Level1)
     uint32_t devId = 64;
     std::string caps;
     AdapterTest_->mapAudioDevice_.insert(std::make_pair(64, "hello"));
-    EXPECT_NE(HDF_SUCCESS, AdapterTest_->AddAudioDevice(devId, caps));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->AddAudioDevice(devId, caps));
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->RemoveAudioDevice(devId));
 }
 
