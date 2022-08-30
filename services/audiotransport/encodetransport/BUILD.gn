@@ -27,8 +27,8 @@ ohos_shared_library("distributed_audio_encode_transport") {
     "${common_path}/include",
     "${services_path}/common/audioparam",
     "${services_path}/common/audiodata/include",
-    "${audio_transport_path}/audio_channel/include",
-    "${audio_transport_path}/audiodatachannel/include",
+    "${audio_transport_path}/audiochannel/interface",
+    "${audio_transport_path}/audiochannel/audiodatachannel/include",
     "${audio_transport_path}/interface",
     "${audio_processor_path}/encodeprocessor/include",
     "${audio_processor_path}/interface",
@@ -39,7 +39,7 @@ ohos_shared_library("distributed_audio_encode_transport") {
 
   deps = [
     "${audio_processor_path}/encodeprocessor:distributed_audio_encoder_processor",
-    "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
+    "${audio_transport_path}/audiochannel/audiodatachannel:distributed_audio_data_channel",
     "${common_path}:distributed_audio_utils",
   ]
 

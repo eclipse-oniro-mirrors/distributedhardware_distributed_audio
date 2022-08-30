@@ -16,10 +16,12 @@ import("//build/ohos_var.gni")
 import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-ohos_shared_library("distributed_audio_data_channel") {
+ohos_shared_library("distributed_audio_ctrl_channel") {
   include_dirs = [
-    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+    "//third_party/json/include",
     "//foundation/communication/dsoftbus/interfaces/kits/transport",
+    "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
     "${fwk_common_path}/utils/include",
   ]
 
@@ -29,11 +31,11 @@ ohos_shared_library("distributed_audio_data_channel") {
     "${common_path}/dfx_utils/include",
     "${services_path}/common/audioparam",
     "${services_path}/common/audiodata/include",
-    "${audio_transport_path}/audio_channel/include",
+    "${audio_transport_path}/audiochannel/interface",
     "${softbusadapter_path}/include",
   ]
 
-  sources = [ "src/audio_data_channel.cpp" ]
+  sources = [ "src/audio_ctrl_channel.cpp" ]
 
   deps = [
     "${common_path}:distributed_audio_utils",
@@ -47,7 +49,6 @@ ohos_shared_library("distributed_audio_data_channel") {
 
   defines = [
     "HI_LOG_ENABLE",
-
     "LOG_DOMAIN=0xD004100",
   ]
 

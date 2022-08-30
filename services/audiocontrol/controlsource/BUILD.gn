@@ -29,7 +29,7 @@ ohos_shared_library("distributed_audio_source_ctrl") {
     "${services_path}/common/audioeventcallback",
     "${services_path}/common/audiodata/include",
     "${audio_transport_path}/interface",
-    "${audio_transport_path}/audio_channel/include",
+    "${audio_transport_path}/audiochannel/interface",
     "${audio_transport_path}/audioctrltransport/include",
     "${audio_transport_path}/audioctrltransport/interface",
   ]

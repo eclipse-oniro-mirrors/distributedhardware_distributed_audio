@@ -70,9 +70,9 @@
                 "//foundation/distributedhardware/distributed_audio/services/audiohdiproxy:distributed_audio_hdi_proxy",
                 "//foundation/distributedhardware/distributed_audio/services/softbusadapter:distributed_audio_softbus_adapter",
 
-                "//foundation/distributedhardware/distributed_audio/services/audiotransport/audioctrlchannel:distributed_audio_ctrl_channel",
+                "//foundation/distributedhardware/distributed_audio/services/audiotransport/audiochannel/audioctrlchannel:distributed_audio_ctrl_channel",
                 "//foundation/distributedhardware/distributed_audio/services/audiotransport/audioctrltransport:distributed_audio_ctrl_transport",
-                "//foundation/distributedhardware/distributed_audio/services/audiotransport/audiodatachannel:distributed_audio_data_channel",
+                "//foundation/distributedhardware/distributed_audio/services/audiotransport/audiochannel/audiodatachannel:distributed_audio_data_channel",
                 "//foundation/distributedhardware/distributed_audio/services/audioprocessor/decodeprocessor:distributed_audio_decoder_processor",
                 "//foundation/distributedhardware/distributed_audio/services/audiotransport/decodetransport:distributed_audio_decode_transport",
                 "//foundation/distributedhardware/distributed_audio/services/audioprocessor/encodeprocessor:distributed_audio_encoder_processor",

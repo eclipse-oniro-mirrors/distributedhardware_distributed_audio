@@ -37,8 +37,8 @@ config("module_private_config") {
     "${audio_processor_path}/interface",
     "${audio_processor_path}/decodeprocessor/include",
     "${audio_transport_path}/interface",
-    "${audio_transport_path}/audio_channel/include",
-    "${audio_transport_path}/audiodatachannel/include",
+    "${audio_transport_path}/audiochannel/interface",
+    "${audio_transport_path}/audiochannel/audiodatachannel/include",
     "${audio_transport_path}/decodetransport/include",
     "${audio_transport_path}/test/unittest/audiotranstestutils/include",
   ]
@@ -53,7 +53,7 @@ ohos_unittest("DecodeTransportTest") {
 
   deps = [
     "${audio_processor_path}/decodeprocessor:distributed_audio_decoder_processor",
-    "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
+    "${audio_transport_path}/audiochannel/audiodatachannel:distributed_audio_data_channel",
     "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
     "${common_path}:distributed_audio_utils",
     "//third_party/googletest:gtest_main",

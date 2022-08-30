@@ -28,16 +28,16 @@ ohos_shared_library("distributed_audio_ctrl_transport") {
     "${common_path}/include",
     "${services_path}/common/audioparam",
     "${services_path}/common/audiodata/include",
-    "${audio_transport_path}/audio_channel/include",
+    "${audio_transport_path}/audiochannel/interface",
     "${audio_transport_path}/audioctrltransport/interface",
-    "${audio_transport_path}/audioctrlchannel/include",
+    "${audio_transport_path}/audiochannel/audioctrlchannel/include",
     "${softbusadapter_path}/include",
   ]
 
   sources = [ "src/audio_ctrl_transport.cpp" ]
 
   deps = [
-    "${audio_transport_path}/audioctrlchannel:distributed_audio_ctrl_channel",
+    "${audio_transport_path}/audiochannel/audioctrlchannel:distributed_audio_ctrl_channel",
     "${common_path}:distributed_audio_utils",
   ]
 

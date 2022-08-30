@@ -32,7 +32,7 @@ ohos_shared_library("distributed_audio_sink_ctrl") {
     "${services_path}/common/audioparam",
     "${services_path}/common/audioeventcallback",
     "${audio_transport_path}/interface",
-    "${audio_transport_path}/audio_channel/include",
+    "${audio_transport_path}/audiochannel/interface",
     "${audio_transport_path}/audioctrltransport/include",
     "${audio_transport_path}/audioctrltransport/interface",
   ]

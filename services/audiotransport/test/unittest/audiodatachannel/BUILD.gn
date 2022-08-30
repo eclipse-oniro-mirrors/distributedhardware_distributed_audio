@@ -34,8 +34,8 @@ config("module_private_config") {
     "${services_path}/common/audioparam",
     "${services_path}/common/audiodata/include",
     "${softbusadapter_path}/include",
-    "${audio_transport_path}/audio_channel/include",
-    "${audio_transport_path}/audiodatachannel/include",
+    "${audio_transport_path}/audiochannel/interface",
+    "${audio_transport_path}/audiochannel/audiodatachannel/include",
     "${audio_transport_path}/audioctrltransport/interface",
     "${audio_transport_path}/test/unittest/audiotranstestutils/include",
   ]
@@ -50,7 +50,7 @@ ohos_unittest("AudioDataChannelTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${audio_transport_path}/audiodatachannel:distributed_audio_data_channel",
+    "${audio_transport_path}/audiochannel/audiodatachannel:distributed_audio_data_channel",
     "${softbusadapter_path}:distributed_audio_softbus_adapter",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",

@@ -34,8 +34,8 @@ config("module_private_config") {
     "${services_path}/common/audioparam",
     "${services_path}/common/audiodata/include",
     "${services_path}/softbusadapter/include",
-    "${audio_transport_path}/audio_channel/include",
-    "${audio_transport_path}/audioctrlchannel/include",
+    "${audio_transport_path}/audiochannel/interface",
+    "${audio_transport_path}/audiochannel/audioctrlchannel/include",
     "${audio_transport_path}/audioctrltransport/include",
     "${audio_transport_path}/audioctrltransport/interface",
     "${audio_transport_path}/test/unittest/audiotranstestutils/include",
@@ -51,7 +51,7 @@ ohos_unittest("AudioCtrlTransportTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${audio_transport_path}/audioctrlchannel:distributed_audio_ctrl_channel",
+    "${audio_transport_path}/audiochannel/audioctrlchannel:distributed_audio_ctrl_channel",
     "${audio_transport_path}/audioctrltransport:distributed_audio_ctrl_transport",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
