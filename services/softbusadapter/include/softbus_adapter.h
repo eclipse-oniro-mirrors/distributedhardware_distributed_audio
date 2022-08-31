@@ -35,10 +35,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-typedef struct {
-    std::shared_ptr<AudioData> data;
-    int32_t sessionId;
-} SoftbusStreamData;
 class SoftbusAdapter {
 public:
     DECLARE_SINGLE_INSTANCE_BASE(SoftbusAdapter);
@@ -72,6 +68,14 @@ private:
     void SendAudioData();
     void StopSendDataThread();
 
+    struct SoftbusStreamData {
+        SoftbusStreamData() = default;
+        SoftbusStreamData(const std::shared_ptr<AudioData> &data, const int32_t id) : data_(data), sessionId_(id) {};
+        ~SoftbusStreamData() = default;
+        std::shared_ptr<AudioData> data_;
+        int32_t sessionId_;
+    };
+
 private:
     std::mutex listenerMtx_;
     std::mutex sessSetMtx_;
@@ -79,7 +83,7 @@ private:
     std::condition_variable sendDataCond_;
     std::thread sendDataThread_;
 
-    bool isAudioDataReady_ = false;
+    bool isSessionOpened_ = false;
     ISessionListener sessListener_;
     std::shared_ptr<ISoftbusListener> nullListener_;
     std::unordered_map<std::string, std::set<std::string>> mapSessionSet_;

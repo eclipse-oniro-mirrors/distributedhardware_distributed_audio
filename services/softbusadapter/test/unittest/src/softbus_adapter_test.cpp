@@ -44,19 +44,19 @@ HWTEST_F(SoftbusAdapterTest, RegisterSoftbusListener_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: CreateSoftbusSessionServer_002
+ * @tc.name: CreateSoftbusSessionServer_001
  * @tc.desc: Verify the CreateSoftbusSessionServer and RemoveSoftbusSessionServer function.
  * @tc.type: FUNC
  * @tc.require: AR000H0E5U
  */
-HWTEST_F(SoftbusAdapterTest, CreateSoftbusSessionServer_002, TestSize.Level1)
+HWTEST_F(SoftbusAdapterTest, CreateSoftbusSessionServer_001, TestSize.Level1)
 {
     std::string pkgname;
     std::string sessionName = CTRL_SESSION_NAME;
     std::string peerDevId = "peerDevId";
 
     EXPECT_NE(DH_SUCCESS, softbusAdapter.CreateSoftbusSessionServer(pkgname, sessionName, peerDevId));
-    EXPECT_NE(DH_SUCCESS, softbusAdapter.RemoveSoftbusSessionServer(pkgname, sessionName, peerDevId));
+    EXPECT_EQ(DH_SUCCESS, softbusAdapter.RemoveSoftbusSessionServer(pkgname, sessionName, peerDevId));
 }
 
 /**

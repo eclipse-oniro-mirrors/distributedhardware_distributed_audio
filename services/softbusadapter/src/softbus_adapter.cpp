@@ -56,7 +56,7 @@ static void AudioOnQosEvent(int sessionId, int eventId, int tvCount, const QosTv
 
 SoftbusAdapter::SoftbusAdapter()
 {
-    DHLOGI("SoftbusAdapter");
+    DHLOGI("Softbus adapter constructed.");
     sessListener_.OnSessionOpened = AudioOnSoftbusSessionOpened;
     sessListener_.OnSessionClosed = AudioOnSoftbusSessionClosed;
     sessListener_.OnBytesReceived = AudioOnBytesReceived;
@@ -67,14 +67,13 @@ SoftbusAdapter::SoftbusAdapter()
 
 SoftbusAdapter::~SoftbusAdapter()
 {
-    DHLOGI("~SoftbusAdapter");
+    DHLOGI("Softbus adapter destructed.");
 }
 
 int32_t SoftbusAdapter::CreateSoftbusSessionServer(const std::string &pkgName, const std::string &sessionName,
     const std::string &peerDevId)
 {
-    DHLOGI("CreateSessionServer sess: %s peerDevId: %s.", sessionName.c_str(), GetAnonyString(peerDevId).c_str());
-
+    DHLOGI("Create server, sessName: %s peerDevId: %s.", sessionName.c_str(), GetAnonyString(peerDevId).c_str());
     std::lock_guard<std::mutex> setLock(sessSetMtx_);
     if (mapSessionSet_.find(sessionName) == mapSessionSet_.end()) {
         int32_t ret = CreateSessionServer(pkgName.c_str(), sessionName.c_str(), &sessListener_);
@@ -83,41 +82,35 @@ int32_t SoftbusAdapter::CreateSoftbusSessionServer(const std::string &pkgName, c
             return ret;
         }
     } else {
-        DHLOGI("Session already create, sessionName: %s.", sessionName.c_str());
+        DHLOGI("Session already create.");
     }
 
     mapSessionSet_[sessionName].insert(peerDevId);
-    DHLOGI("CreateSessionServer success.");
+    DHLOGI("Create session server success.");
     return DH_SUCCESS;
 }
 
 int32_t SoftbusAdapter::RemoveSoftbusSessionServer(const std::string &pkgName, const std::string &sessionName,
     const std::string &peerDevId)
 {
-    DHLOGI("RemoveSessionServer sess: %s peerDevId: %s.", sessionName.c_str(),
-        GetAnonyString(peerDevId).c_str());
+    DHLOGI("Remove server, sessName: %s peerDevId: %s.", sessionName.c_str(), GetAnonyString(peerDevId).c_str());
     std::lock_guard<std::mutex> setLock(sessSetMtx_);
     if (mapSessionSet_.find(sessionName) == mapSessionSet_.end()) {
-        DHLOGE("SessionName not find.");
-        return ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION;
+        DHLOGE("Session server already removed.");
+        return DH_SUCCESS;
     }
-    if (mapSessionSet_[sessionName].find(peerDevId) == mapSessionSet_[sessionName].end()) {
-        DHLOGE("PerrDevId not find.");
-        return ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION;
-    }
-
-    if (mapSessionSet_[sessionName].size() == SINGLE_ITEM) {
-        mapSessionSet_[sessionName].erase(peerDevId);
+    mapSessionSet_[sessionName].erase(peerDevId);
+    if (mapSessionSet_[sessionName].empty()) {
         mapSessionSet_.erase(sessionName);
     }
-    DHLOGI("RemoveSessionServer success.");
+    DHLOGI("Remove session server success.");
     return DH_SUCCESS;
 }
 
 int32_t SoftbusAdapter::OpenSoftbusSession(const std::string &localSessionName, const std::string &peerSessionName,
     const std::string &peerDevId)
 {
-    DHLOGI("OpenSoftbusSession localsess: %s peersess: %s peerDevId: %s.", localSessionName.c_str(),
+    DHLOGI("Open softbus session, localSess: %s peerSess: %s peerDevId: %s.", localSessionName.c_str(),
         peerSessionName.c_str(), GetAnonyString(peerDevId).c_str());
     int dataType = TYPE_BYTES;
     int streamType = -1;
@@ -143,28 +136,27 @@ int32_t SoftbusAdapter::OpenSoftbusSession(const std::string &localSessionName, 
     attr.attr.streamAttr.streamType = streamType;
     int32_t sessionId = OpenSession(localSessionName.c_str(), peerSessionName.c_str(), peerDevId.c_str(), "0", &attr);
     if (sessionId < 0) {
-        DHLOGE("OpenSession failed sessionId: %d.", sessionId);
+        DHLOGE("Open softbus session failed sessionId: %d.", sessionId);
         return ERR_DH_AUDIO_ADAPTER_OPEN_SESSION_FAIL;
     }
-
-    DHLOGI("OpenSoftbusSession success sessionId: %d.", sessionId);
+    DHLOGI("Open softbus session success.");
     return sessionId;
 }
 
 int32_t SoftbusAdapter::CloseSoftbusSession(int32_t sessionId)
 {
-    DHLOGI("CloseSoftbusSession, sessionId: %d.", sessionId);
+    DHLOGI("Close softbus session: %d.", sessionId);
     CloseSession(sessionId);
     std::lock_guard<std::mutex> LisLock(listenerMtx_);
     mapSessListeners_.erase(sessionId);
     StopSendDataThread();
-    DHLOGI("CloseSoftbusSession success.");
+    DHLOGI("Close softbus session success.");
     return DH_SUCCESS;
 }
 
 int32_t SoftbusAdapter::SendSoftbusBytes(int32_t sessionId, const void *data, int32_t dataLen)
 {
-    DHLOGI("SendAudioEvent, sessionId: %d.", sessionId);
+    DHLOGI("Send audio event, sessionId: %d.", sessionId);
     int32_t ret = SendBytes(sessionId, data, dataLen);
     if (ret != DH_SUCCESS) {
         DHLOGE("SendBytes failed ret:%d.", ret);
@@ -175,21 +167,19 @@ int32_t SoftbusAdapter::SendSoftbusBytes(int32_t sessionId, const void *data, in
 
 int32_t SoftbusAdapter::SendSoftbusStream(int32_t sessionId, const std::shared_ptr<AudioData> &audioData)
 {
-    DHLOGI("SendAudioData, sessionId: %d.", sessionId);
+    DHLOGI("Send audio data, sessionId: %d.", sessionId);
     if (audioData == nullptr) {
         DHLOGE("Audio data is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
-    constexpr size_t DATA_QUEUE_MAX_SIZE = 10;
+    constexpr size_t DATA_QUEUE_MAX_SIZE = 50;
     std::lock_guard<std::mutex> lck(dataQueueMtx_);
     while (audioDataQueue_.size() >= DATA_QUEUE_MAX_SIZE) {
         DHLOGE("Data queue overflow.");
         audioDataQueue_.pop();
     }
-    std::shared_ptr<SoftbusStreamData> streamData = std::make_shared<SoftbusStreamData>();
-    streamData->data = audioData;
-    streamData->sessionId = sessionId;
-    audioDataQueue_.push(streamData);
+    auto data = std::make_shared<SoftbusStreamData>(audioData, sessionId);
+    audioDataQueue_.push(data);
     sendDataCond_.notify_all();
     return DH_SUCCESS;
 }
@@ -197,11 +187,11 @@ int32_t SoftbusAdapter::SendSoftbusStream(int32_t sessionId, const std::shared_p
 int32_t SoftbusAdapter::RegisterSoftbusListener(const std::shared_ptr<ISoftbusListener> &listener,
     const std::string &sessionName, const std::string &peerDevId)
 {
-    DHLOGI("RegisterListener sess: %s peerDevId: %s.", sessionName.c_str(), GetAnonyString(peerDevId).c_str());
+    DHLOGI("Register listener sess: %s peerDevId: %s.", sessionName.c_str(), GetAnonyString(peerDevId).c_str());
     std::string strListenerKey = sessionName + "_" + peerDevId;
     std::lock_guard<std::mutex> lisLock(listenerMtx_);
     if (mapListeners_.find(strListenerKey) != mapListeners_.end()) {
-        DHLOGE("Session listener already register.");
+        DHLOGD("Session listener already register.");
     }
     mapListeners_.insert(std::make_pair(strListenerKey, listener));
     return DH_SUCCESS;
@@ -209,8 +199,7 @@ int32_t SoftbusAdapter::RegisterSoftbusListener(const std::shared_ptr<ISoftbusLi
 
 int32_t SoftbusAdapter::UnRegisterSoftbusListener(const std::string &sessionName, const std::string &peerDevId)
 {
-    DHLOGI("UnRegisterListener sess: %s peerDevId: %s.", sessionName.c_str(),
-        GetAnonyString(peerDevId).c_str());
+    DHLOGI("Unregister listener sess: %s peerDevId: %s.", sessionName.c_str(), GetAnonyString(peerDevId).c_str());
     std::string strListenerKey = sessionName + "_" + peerDevId;
     std::lock_guard<std::mutex> lisLock(listenerMtx_);
     mapListeners_.erase(strListenerKey);
@@ -219,13 +208,12 @@ int32_t SoftbusAdapter::UnRegisterSoftbusListener(const std::string &sessionName
 
 int32_t SoftbusAdapter::OnSoftbusSessionOpened(int32_t sessionId, int32_t result)
 {
-    DHLOGI("OnSessionOpened sessionId: %d, result: %d.", sessionId, result);
+    DHLOGI("On session opened sessionId: %d, result: %d.", sessionId, result);
     if (result != DH_SUCCESS) {
-        DHLOGE("OnSessionOpened failed.");
+        DHLOGE("Session open failed.");
         return ERR_DH_AUDIO_ADAPTER_OPEN_SESSION_FAIL;
     }
-
-    std::shared_ptr<ISoftbusListener> &listener = GetSoftbusListenerByName(sessionId);
+    auto &listener = GetSoftbusListenerByName(sessionId);
     if (!listener) {
         DHLOGE("Get softbus listener failed.");
         return ERR_DH_AUDIO_TRANS_ERROR;
@@ -234,7 +222,7 @@ int32_t SoftbusAdapter::OnSoftbusSessionOpened(int32_t sessionId, int32_t result
     std::lock_guard<std::mutex> lisLock(listenerMtx_);
     if (mapSessListeners_.empty()) {
         DHLOGI("Start softbus send thread.");
-        isAudioDataReady_ = true;
+        isSessionOpened_ = true;
         sendDataThread_ = std::thread(&SoftbusAdapter::SendAudioData, this);
     }
     mapSessListeners_.insert(std::make_pair(sessionId, listener));
@@ -244,7 +232,7 @@ int32_t SoftbusAdapter::OnSoftbusSessionOpened(int32_t sessionId, int32_t result
 
 void SoftbusAdapter::OnSoftbusSessionClosed(int32_t sessionId)
 {
-    DHLOGI("OnSessionClosed sessionId:%d.", sessionId);
+    DHLOGI("On session closed, sessionId: %d.", sessionId);
     auto &listener = GetSoftbusListenerById(sessionId);
     if (!listener) {
         DHLOGE("Get softbus listener failed.");
@@ -259,18 +247,17 @@ void SoftbusAdapter::OnSoftbusSessionClosed(int32_t sessionId)
 
 void SoftbusAdapter::OnBytesReceived(int32_t sessionId, const void *data, uint32_t dataLen)
 {
-    DHLOGI("OnBytesReceicved sessionId: %d.", sessionId);
+    DHLOGI("On audio event received from session: %d.", sessionId);
     if (data == nullptr) {
         DHLOGE("BytesData is null.");
         return;
-    }
-    if (dataLen == 0 || dataLen > DAUDIO_MAX_RECV_DATA_LEN) {
-        DHLOGE ("BytesData length is 0 or too large");
+    } else if (dataLen <= 0 || dataLen > DAUDIO_MAX_RECV_DATA_LEN) {
+        DHLOGE("StreamData length is illegal, dataLen: %d.", dataLen);
         return;
     }
 
     auto &listener = GetSoftbusListenerById(sessionId);
-    if (!listener) {
+    if (listener == nullptr) {
         DHLOGE("Get softbus listener failed.");
         return;
     }
@@ -280,13 +267,12 @@ void SoftbusAdapter::OnBytesReceived(int32_t sessionId, const void *data, uint32
 void SoftbusAdapter::OnStreamReceived(int32_t sessionId, const StreamData *data, const StreamData *ext,
     const StreamFrameInfo *streamFrameInfo)
 {
-    DHLOGI("OnStreamReceived, sessionId: %d.", sessionId);
+    DHLOGI("On audio data received from session: %d.", sessionId);
     if (data == nullptr) {
         DHLOGE("StreamData is null.");
         return;
-    }
-    if (data->bufLen <= 0 || (uint32_t)(data->bufLen) > DAUDIO_MAX_RECV_DATA_LEN) {
-        DHLOGE("StreamData length is illegal or too large, dataLen: %d.", data->bufLen);
+    } else if (data->bufLen <= 0 || (uint32_t)(data->bufLen) > DAUDIO_MAX_RECV_DATA_LEN) {
+        DHLOGE("StreamData length is illegal, dataLen: %d.", data->bufLen);
         return;
     }
 
@@ -300,12 +286,12 @@ void SoftbusAdapter::OnStreamReceived(int32_t sessionId, const StreamData *data,
 
 void SoftbusAdapter::OnMessageReceived(int sessionId, const void *data, unsigned int dataLen)
 {
-    DHLOGI("OnMessageReceived, sessionId: %d.", sessionId);
+    DHLOGI("On message received, sessionId: %d.", sessionId);
 }
 
 void SoftbusAdapter::OnQosEvent(int sessionId, int eventId, int tvCount, const QosTv *tvList)
 {
-    DHLOGI("OnQosEvent, sessionId: %d.", sessionId);
+    DHLOGI("On qos event received, sessionId: %d.", sessionId);
 }
 
 std::shared_ptr<ISoftbusListener> &SoftbusAdapter::GetSoftbusListenerByName(int32_t sessionId)
@@ -322,14 +308,11 @@ std::shared_ptr<ISoftbusListener> &SoftbusAdapter::GetSoftbusListenerByName(int3
         DHLOGE("GetPeerDeviceId failed ret: %d.", ret);
         return nullListener_;
     }
-
     std::string sessionNameStr(sessionName);
     std::string peerDevIdStr(peerDevId);
-
-    DHLOGI("GetSoftbusListenerByName sessionName: %s, peerDevId: %s.", sessionNameStr.c_str(),
-        GetAnonyString(peerDevIdStr).c_str());
     std::string strListenerKey = sessionNameStr + "_" + peerDevIdStr;
 
+    DHLOGI("Get listener sess: %s, peerDevId: %s.", sessionNameStr.c_str(), GetAnonyString(peerDevIdStr).c_str());
     std::lock_guard<std::mutex> lisLock(listenerMtx_);
     if (mapListeners_.find(strListenerKey) == mapListeners_.end()) {
         DHLOGE("Find listener failed.");
@@ -351,8 +334,8 @@ std::shared_ptr<ISoftbusListener> &SoftbusAdapter::GetSoftbusListenerById(int32_
 void SoftbusAdapter::SendAudioData()
 {
     constexpr uint8_t DATA_WAIT_TIME = 20;
-    while (isAudioDataReady_) {
-        std::shared_ptr<SoftbusStreamData> streamData;
+    while (isSessionOpened_) {
+        std::shared_ptr<SoftbusStreamData> audioData;
         {
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
             sendDataCond_.wait_for(lock, std::chrono::milliseconds(DATA_WAIT_TIME),
@@ -360,26 +343,23 @@ void SoftbusAdapter::SendAudioData()
             if (audioDataQueue_.empty()) {
                 continue;
             }
-            streamData = audioDataQueue_.front();
-            DHLOGI("streamData pop.");
+            audioData = audioDataQueue_.front();
             audioDataQueue_.pop();
         }
-
-        if (streamData->data == nullptr) {
+        if (audioData == nullptr || audioData->data_ == nullptr) {
             DHLOGE("Audio data is null.");
             continue;
         }
 
-        StreamData data = { (char *)(streamData->data->Data()), streamData->data->Capacity() };
+        StreamData data = { (char *)(audioData->data_->Data()), audioData->data_->Capacity() };
         StreamData ext = { 0 };
         StreamFrameInfo frameInfo = { 0 };
-
-        DHLOGI("SendAudioData. sessionId: %d.", streamData->sessionId);
-        int32_t ret = SendStream(streamData->sessionId, &data, &ext, &frameInfo);
+        DHLOGI("Send audio data, sessionId: %d.", audioData->sessionId_);
+        int32_t ret = SendStream(audioData->sessionId_, &data, &ext, &frameInfo);
         if (ret != DH_SUCCESS) {
             DHLOGE("Send data failed. ret: %d.", ret);
         } else {
-            DHLOGI("SendAudioData successs.");
+            DHLOGI("Send audio data successs.");
         }
     }
 }
@@ -388,7 +368,7 @@ void SoftbusAdapter::StopSendDataThread()
 {
     if (mapSessListeners_.empty()) {
         DHLOGI("Stop softbus send thread.");
-        isAudioDataReady_ = false;
+        isSessionOpened_ = false;
         if (sendDataThread_.joinable()) {
             sendDataThread_.join();
         }
