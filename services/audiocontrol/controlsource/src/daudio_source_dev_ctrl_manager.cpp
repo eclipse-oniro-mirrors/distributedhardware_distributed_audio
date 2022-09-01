@@ -30,19 +30,19 @@ namespace DistributedHardware {
 DAudioSourceDevCtrlMgr::DAudioSourceDevCtrlMgr(const std::string &devId,
     std::shared_ptr<IAudioEventCallback> audioEventCallback)
 {
-    DHLOGI("Distributed audio source ctrl constructed.");
+    DHLOGI("Control manager constructed.");
     devId_ = devId;
     audioEventCallback_ = audioEventCallback;
 }
 
 DAudioSourceDevCtrlMgr::~DAudioSourceDevCtrlMgr()
 {
-    DHLOGI("Distributed audio source ctrl destructed.");
+    DHLOGI("Control manager deconstructed.");
 }
 
 int32_t DAudioSourceDevCtrlMgr::SetUp()
 {
-    DHLOGI("SetUp.");
+    DHLOGI("Set up source development control manager.");
     if (audioCtrlTrans_ == nullptr) {
         audioCtrlTrans_ = std::make_shared<AudioCtrlTransport>(devId_);
     }
@@ -52,7 +52,7 @@ int32_t DAudioSourceDevCtrlMgr::SetUp()
 
 int32_t DAudioSourceDevCtrlMgr::Start()
 {
-    DHLOGI("Start.");
+    DHLOGI("Start source development control manager.");
     if (audioCtrlTrans_ == nullptr) {
         DHLOGE("Audio ctrl trans is null, start failed");
         return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
@@ -109,7 +109,7 @@ bool DAudioSourceDevCtrlMgr::IsOpened()
 
 int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent> &event)
 {
-    DHLOGI("SendAudioEvent.");
+    DHLOGI("Send audio event.");
     if (audioCtrlTrans_ == nullptr) {
         DHLOGE("Send audio event, Audio ctrl trans is null");
         return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
@@ -136,7 +136,7 @@ void DAudioSourceDevCtrlMgr::OnStateChange(int32_t type)
 
 void DAudioSourceDevCtrlMgr::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
 {
-    DHLOGI("OnEventReceived");
+    DHLOGI("Received event");
     audioEventCallback_->NotifyEvent(event);
 }
 } // namespace DistributedHardware

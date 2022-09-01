@@ -34,14 +34,14 @@ namespace OHOS {
 namespace DistributedHardware {
 int32_t DAudioManagerCallback::OpenDevice(const std::string& adpName, int32_t devId)
 {
-    DHLOGI("OpenDevice enter");
+    DHLOGI("Open device.");
     if (callback_ == nullptr) {
-        DHLOGE("Register hdi callback is nullptr");
+        DHLOGE("Register hdi callback is nullptr.");
         return HDF_FAILURE;
     }
     int32_t ret = callback_->OpenDevice(adpName, devId);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Call hdi callback failed");
+        DHLOGE("Call hdi callback failed.");
         return HDF_FAILURE;
     }
     return HDF_SUCCESS;
@@ -49,14 +49,14 @@ int32_t DAudioManagerCallback::OpenDevice(const std::string& adpName, int32_t de
 
 int32_t DAudioManagerCallback::CloseDevice(const std::string& adpName, int32_t devId)
 {
-    DHLOGI("CloseDevice enter");
+    DHLOGI("Close device.");
     if (callback_ == nullptr) {
-        DHLOGE("Register hdi callback is nullptr");
+        DHLOGE("Register hdi callback is nullptr.");
         return HDF_FAILURE;
     }
     int32_t ret = callback_->CloseDevice(adpName, devId);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Rall hdi callback failed");
+        DHLOGE("Rall hdi callback failed.");
         return HDF_FAILURE;
     }
     return HDF_SUCCESS;
@@ -105,9 +105,9 @@ int32_t DAudioManagerCallback::GetAudioParamHDF(const AudioParameter& param, Aud
 
 int32_t DAudioManagerCallback::SetParameters(const std::string& adpName, int32_t devId, const AudioParameter& param)
 {
-    DHLOGI("SetParameters enter");
+    DHLOGI("Set Parameters.");
     if (callback_ == nullptr) {
-        DHLOGE("Register hdi callback is nullptr");
+        DHLOGE("Register hdi callback is nullptr.");
         return HDF_FAILURE;
     }
 
@@ -119,7 +119,7 @@ int32_t DAudioManagerCallback::SetParameters(const std::string& adpName, int32_t
     }
     ret = callback_->SetParameters(adpName, devId, paramHDF);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Call hdi callback failed");
+        DHLOGE("Call hdi callback failed.");
         return HDF_FAILURE;
     }
     return HDF_SUCCESS;
@@ -128,9 +128,9 @@ int32_t DAudioManagerCallback::SetParameters(const std::string& adpName, int32_t
 int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t devId,
     const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent& event)
 {
-    DHLOGI("NotifyEvent");
+    DHLOGI("Notify event.");
     if (callback_ == nullptr) {
-        DHLOGE("Register hdi callback is nullptr");
+        DHLOGE("Register hdi callback is nullptr.");
         return HDF_FAILURE;
     }
     AudioEvent newEvent(AudioEventType::EVENT_UNKNOWN, event.content);
@@ -148,7 +148,7 @@ int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t d
 
     int32_t ret = callback_->NotifyEvent(adpName, devId, newEvent);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Call hdi callback failed");
+        DHLOGE("Call hdi callback failed.");
         return HDF_FAILURE;
     }
     return HDF_SUCCESS;
@@ -184,20 +184,20 @@ int32_t DAudioManagerCallback::WriteStreamData(const std::string &adpName, int32
 int32_t DAudioManagerCallback::ReadStreamData(const std::string &adpName, int32_t devId,
     OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData &data)
 {
-    DHLOGI("Read Stream Data");
+    DHLOGI("Read stream data.");
     if (callback_ == nullptr) {
-        DHLOGE("Register hdi callback is nullptr");
+        DHLOGE("Register hdi callback is nullptr.");
         return HDF_FAILURE;
     }
 
     std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(DEFAULT_AUDIO_DATA_SIZE);
     int32_t ret = callback_->ReadStreamData(adpName, devId, audioData);
     if (ret != DH_SUCCESS) {
-        DHLOGE("ReadStreamData failed.");
+        DHLOGE("Read stream data failed.");
         return HDF_FAILURE;
     }
     data.data.assign(audioData->Data(), audioData->Data()+audioData->Capacity());
-    DHLOGI("Read Stream Data success.");
+    DHLOGI("Read stream data success.");
     return HDF_SUCCESS;
 }
 } // DistributedHardware

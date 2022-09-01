@@ -34,14 +34,14 @@ public:
 
 int32_t MockAudioTransportCallback::OnStateChange(const AudioEventType type)
 {
-    DHLOGD("Test : MockAudioTransportCallback OnStateChange, state: %d.", type);
+    DHLOGD("Test : On state change, state: %d.", type);
     return DH_SUCCESS;
 }
 
 int32_t MockAudioTransportCallback::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData)
 {
     (void) audioData;
-    DHLOGE("Test : MockAudioTransportCallback OnDecodeTransDataDone.");
+    DHLOGE("Test : On decode trans data done.");
     return DH_SUCCESS;
 }
 } // namespace DistributedHardware

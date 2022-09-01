@@ -44,7 +44,7 @@ DAudioSinkHandler::~DAudioSinkHandler()
 
 int32_t DAudioSinkHandler::InitSink(const std::string &params)
 {
-    DHLOGI("InitSink.");
+    DHLOGI("Init sink handler.");
     DAUDIO_SYNC_TRACE(DAUDIO_SOURCE_LOAD_SYSTEM_ABILITY);
     if (dAudioSinkProxy_ == nullptr) {
         sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -79,7 +79,7 @@ int32_t DAudioSinkHandler::InitSink(const std::string &params)
 
 int32_t DAudioSinkHandler::ReleaseSink()
 {
-    DHLOGI("ReleaseSink");
+    DHLOGI("Release sink handler");
     std::lock_guard<std::mutex> lock(sinkProxyMutex_);
     if (dAudioSinkProxy_ == nullptr) {
         DHLOGE("Daudio sink proxy not init.");
@@ -95,7 +95,7 @@ int32_t DAudioSinkHandler::ReleaseSink()
 
 int32_t DAudioSinkHandler::SubscribeLocalHardware(const std::string &dhId, const std::string &param)
 {
-    DHLOGI("SubscribeLocalHardware.");
+    DHLOGI("Subscribe to local hardware.");
     std::lock_guard<std::mutex> lock(sinkProxyMutex_);
     if (dAudioSinkProxy_ == nullptr) {
         DHLOGE("daudio sink proxy not init.");
@@ -107,7 +107,7 @@ int32_t DAudioSinkHandler::SubscribeLocalHardware(const std::string &dhId, const
 
 int32_t DAudioSinkHandler::UnsubscribeLocalHardware(const std::string &dhId)
 {
-    DHLOGI("UnsubscribeLocalHardware.");
+    DHLOGI("Unsubscribe from local hardware.");
     std::lock_guard<std::mutex> lock(sinkProxyMutex_);
     if (dAudioSinkProxy_ == nullptr) {
         DHLOGE("daudio sink proxy not init.");
@@ -119,7 +119,7 @@ int32_t DAudioSinkHandler::UnsubscribeLocalHardware(const std::string &dhId)
 
 void DAudioSinkHandler::OnRemoteSinkSvrDied(const wptr<IRemoteObject> &remote)
 {
-    DHLOGI("OnRemoteSinkSvrDied.");
+    DHLOGI("The remote sink server died.");
     sptr<IRemoteObject> remoteObject = remote.promote();
     if (remoteObject == nullptr) {
         DHLOGE("OnRemoteDied remote promoted failed.");
@@ -135,7 +135,7 @@ void DAudioSinkHandler::OnRemoteSinkSvrDied(const wptr<IRemoteObject> &remote)
 
 void DAudioSinkHandler::FinishStartSA(const std::string &param, const sptr<IRemoteObject> &remoteObject)
 {
-    DHLOGI("FinishStartSA.");
+    DHLOGI("Finish start SA.");
     std::lock_guard<std::mutex> lock(sinkProxyMutex_);
     remoteObject->AddDeathRecipient(sinkSvrRecipient_);
     dAudioSinkProxy_ = iface_cast<IDAudioSink>(remoteObject);
@@ -152,13 +152,13 @@ void DAudioSinkHandler::FinishStartSA(const std::string &param, const sptr<IRemo
 
 void DAudioSinkHandler::DAudioSinkSvrRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
-    DHLOGI("DAudioSinkSvrRecipient::OnRemoteDied.");
+    DHLOGI("On remote died.");
     DAudioSinkHandler::GetInstance().OnRemoteSinkSvrDied(remote);
 }
 
 IDistributedHardwareSink *GetSinkHardwareHandler()
 {
-    DHLOGD("GetSinkHardwareHandler.");
+    DHLOGD("Get sink hardware handler.");
     return &DAudioSinkHandler::GetInstance();
 }
 } // namespace DistributedHardware

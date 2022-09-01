@@ -35,12 +35,12 @@ AudioRenderInterfaceImpl::AudioRenderInterfaceImpl(const std::string adpName, co
     const AudioSampleAttributesHAL &attrs, const sptr<IDAudioCallback> &callback)
     : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
 {
-    DHLOGD("Distributed Audio Render constructed, id(%d).", desc.pins);
+    DHLOGD("Distributed audio render constructed, id(%d).", desc.pins);
 }
 
 AudioRenderInterfaceImpl::~AudioRenderInterfaceImpl()
 {
-    DHLOGD("Distributed Audio Render destructed, id(%d).", devDesc_.pins);
+    DHLOGD("Distributed audio render destructed, id(%d).", devDesc_.pins);
 }
 
 int32_t AudioRenderInterfaceImpl::GetLatency(uint32_t &ms)

@@ -57,7 +57,7 @@ void DAudioSinkDev::SleepAudioDev()
 void DAudioSinkDev::NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     if (audioEvent == nullptr) {
-        DHLOGE("AudioEvent is null.");
+        DHLOGE("Audio event is null.");
         return;
     }
     DHLOGI("Notify event, eventType: %d.", (int32_t)audioEvent->type);
@@ -261,7 +261,7 @@ int32_t DAudioSinkDev::NotifySpeakerOpened(const std::shared_ptr<AudioEvent> &au
     }
     int32_t ret = speakerClient_->StartRender();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Start Render failed. ret: %d.", ret);
+        DHLOGE("Start render failed. ret: %d.", ret);
         return ret;
     }
     DHLOGI("Notify primary volume.");
@@ -321,7 +321,7 @@ int32_t DAudioSinkDev::NotifySetParam(const std::shared_ptr<AudioEvent> &audioEv
 {
     DHLOGI("Notify set param.");
     if (audioEvent == nullptr) {
-        DHLOGE("audioEvent is null.");
+        DHLOGE("audio event is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     auto task = GenerateTask(this, &DAudioSinkDev::TaskSetParameter, audioEvent->content, "Sink Set Param",
@@ -625,7 +625,7 @@ void DAudioSinkDev::OnTaskResult(int32_t resultCode, const std::string &result, 
     (void)resultCode;
     (void)result;
     (void)funcName;
-    DHLOGI("OnTaskResult. resultCode: %d, funcName: %s", resultCode, funcName.c_str());
+    DHLOGI("On rask result. resultCode: %d, funcName: %s", resultCode, funcName.c_str());
 }
 
 void DAudioSinkDev::NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result)

@@ -27,7 +27,7 @@ namespace DistributedHardware {
 int32_t DAudioIpcCallback::OnNotifyRegResult(const std::string &devId, const std::string &dhId,
     const std::string &reqId, int32_t status, const std::string &resultData)
 {
-    DHLOGI("OnNotifyRegResult, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s",
+    DHLOGI("On notify the registration result, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s",
         GetAnonyString(devId).c_str(), dhId.c_str(), status, resultData.c_str(), reqId.c_str());
 
     auto iter = registerCallbackMap_.find(reqId);
@@ -43,7 +43,7 @@ int32_t DAudioIpcCallback::OnNotifyRegResult(const std::string &devId, const std
 int32_t DAudioIpcCallback::OnNotifyUnregResult(const std::string &devId, const std::string &dhId,
     const std::string &reqId, int32_t status, const std::string &resultData)
 {
-    DHLOGI("OnNotifyUnregResult, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s",
+    DHLOGI("On notify the unregistration result, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s",
         GetAnonyString(devId).c_str(), dhId.c_str(), status, resultData.c_str(), reqId.c_str());
 
     auto iter = unregisterCallbackMap_.find(reqId);
@@ -58,26 +58,26 @@ int32_t DAudioIpcCallback::OnNotifyUnregResult(const std::string &devId, const s
 void DAudioIpcCallback::PushRegisterCallback(const std::string &reqId,
     const std::shared_ptr<RegisterCallback> &callback)
 {
-    DHLOGI("PushRegisterCallback, reqId: %s", reqId.c_str());
+    DHLOGI("Push register callback, reqId: %s", reqId.c_str());
     registerCallbackMap_.emplace(reqId, callback);
 }
 
 void DAudioIpcCallback::PopRegisterCallback(const std::string &reqId)
 {
-    DHLOGI("PopRegisterCallback, reqId: %s", reqId.c_str());
+    DHLOGI("Pop register callback, reqId: %s", reqId.c_str());
     registerCallbackMap_.erase(reqId);
 }
 
 void DAudioIpcCallback::PushUnregisterCallback(const std::string &reqId,
     const std::shared_ptr<UnregisterCallback> &callback)
 {
-    DHLOGI("PushUnregisterCallback, reqId: %s", reqId.c_str());
+    DHLOGI("Push unregister callback, reqId: %s", reqId.c_str());
     unregisterCallbackMap_.emplace(reqId, callback);
 }
 
 void DAudioIpcCallback::PopUnregisterCallback(const std::string &reqId)
 {
-    DHLOGI("PopUnregisterCallback, reqId: %s", reqId.c_str());
+    DHLOGI("Pop unregister callback, reqId: %s", reqId.c_str());
     unregisterCallbackMap_.erase(reqId);
 }
 } // DistributedHardware

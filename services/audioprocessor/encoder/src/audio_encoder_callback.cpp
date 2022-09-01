@@ -25,10 +25,10 @@ namespace OHOS {
 namespace DistributedHardware {
 void AudioEncoderCallback::OnError(Media::AVCodecErrorType errorType, int32_t errorCode)
 {
-    DHLOGE("OnError. Error type: %d, Error code: %d.", errorType, errorCode);
+    DHLOGE("On error. Error type: %d, Error code: %d.", errorType, errorCode);
     std::shared_ptr<AudioEncoder> encObj = audioEncoder_.lock();
     if (encObj == nullptr) {
-        DHLOGE("audioEncoder is nullptr.");
+        DHLOGE("Encoder is nullptr.");
         return;
     }
     AudioEvent encoderErr = {AUDIO_ENCODER_ERR, ""};
@@ -37,10 +37,10 @@ void AudioEncoderCallback::OnError(Media::AVCodecErrorType errorType, int32_t er
 
 void AudioEncoderCallback::OnInputBufferAvailable(uint32_t index)
 {
-    DHLOGD("OnInputBufferAvailable. index %u.", index);
+    DHLOGD("On input buffer available. index %u.", index);
     std::shared_ptr<AudioEncoder> encObj = audioEncoder_.lock();
     if (encObj == nullptr) {
-        DHLOGE("audioEncoder is nullptr.");
+        DHLOGE("Encoder is nullptr.");
         return;
     }
     encObj->OnInputBufferAvailable(index);
@@ -48,10 +48,10 @@ void AudioEncoderCallback::OnInputBufferAvailable(uint32_t index)
 
 void AudioEncoderCallback::OnOutputFormatChanged(const Media::Format &format)
 {
-    DHLOGI("OnOutputFormatChanged.");
+    DHLOGI("On output format changed.");
     std::shared_ptr<AudioEncoder> encObj = audioEncoder_.lock();
     if (encObj == nullptr) {
-        DHLOGE("audioEncoder is nullptr.");
+        DHLOGE("Encoder is nullptr.");
         return;
     }
     encObj->OnOutputFormatChanged(format);
@@ -60,10 +60,10 @@ void AudioEncoderCallback::OnOutputFormatChanged(const Media::Format &format)
 void AudioEncoderCallback::OnOutputBufferAvailable(uint32_t index, Media::AVCodecBufferInfo info,
     Media::AVCodecBufferFlag flag)
 {
-    DHLOGD("OnOutputBufferAvailable. index %u.", index);
+    DHLOGD("On output buffer available. index %u.", index);
     std::shared_ptr<AudioEncoder> encObj = audioEncoder_.lock();
     if (encObj == nullptr) {
-        DHLOGE("audioEncoder is nullptr.");
+        DHLOGE("Encoder is nullptr.");
         return;
     }
     encObj->OnOutputBufferAvailable(index, info, flag);

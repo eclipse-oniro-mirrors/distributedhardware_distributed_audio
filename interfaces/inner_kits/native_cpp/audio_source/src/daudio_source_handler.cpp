@@ -51,7 +51,7 @@ DAudioSourceHandler::~DAudioSourceHandler()
 
 int32_t DAudioSourceHandler::InitSource(const std::string &params)
 {
-    DHLOGI("InitSource.");
+    DHLOGI("Init source handler.");
     DAUDIO_SYNC_TRACE(DAUDIO_SOURCE_LOAD_SYSTEM_ABILITY);
     if (dAudioSourceProxy_ == nullptr) {
         sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -88,7 +88,7 @@ int32_t DAudioSourceHandler::InitSource(const std::string &params)
 
 int32_t DAudioSourceHandler::ReleaseSource()
 {
-    DHLOGI("ReleaseSource.");
+    DHLOGI("Release source handler.");
     std::lock_guard<std::mutex> lock(sourceProxyMutex_);
     if (dAudioSourceProxy_ == nullptr) {
         DHLOGE("Daudio source proxy not init.");
@@ -105,7 +105,7 @@ int32_t DAudioSourceHandler::ReleaseSource()
 int32_t DAudioSourceHandler::RegisterDistributedHardware(const std::string &devId, const std::string &dhId,
     const EnableParam &param, std::shared_ptr<RegisterCallback> callback)
 {
-    DHLOGI("RegisterDistributedHardware.");
+    DHLOGI("Register distributed hardware.");
     std::lock_guard<std::mutex> lock(sourceProxyMutex_);
     if (dAudioSourceProxy_ == nullptr) {
         DHLOGE("Daudio source proxy not init.");
@@ -125,7 +125,7 @@ int32_t DAudioSourceHandler::RegisterDistributedHardware(const std::string &devI
 int32_t DAudioSourceHandler::UnregisterDistributedHardware(const std::string &devId, const std::string &dhId,
     std::shared_ptr<UnregisterCallback> callback)
 {
-    DHLOGI("UnregisterDistributedHardware.");
+    DHLOGI("Unregister distributed hardware.");
     std::lock_guard<std::mutex> lock(sourceProxyMutex_);
     if (dAudioSourceProxy_ == nullptr) {
         DHLOGE("Daudio source proxy not init.");
@@ -145,7 +145,7 @@ int32_t DAudioSourceHandler::UnregisterDistributedHardware(const std::string &de
 int32_t DAudioSourceHandler::ConfigDistributedHardware(const std::string &devId, const std::string &dhId,
     const std::string &key, const std::string &value)
 {
-    DHLOGI("ConfigDistributedHardware.");
+    DHLOGI("Config distributed hardware.");
     std::lock_guard<std::mutex> lock(sourceProxyMutex_);
     if (dAudioSourceProxy_ == nullptr) {
         DHLOGE("Daudio source proxy not init.");
@@ -156,7 +156,7 @@ int32_t DAudioSourceHandler::ConfigDistributedHardware(const std::string &devId,
 
 void DAudioSourceHandler::OnRemoteSourceSvrDied(const wptr<IRemoteObject> &remote)
 {
-    DHLOGI("OnRemoteSourceSvrDied.");
+    DHLOGI("The remote source server died.");
     sptr<IRemoteObject> remoteObject = remote.promote();
     if (!remoteObject) {
         DHLOGE("OnRemoteDied remote promoted failed");
@@ -171,7 +171,7 @@ void DAudioSourceHandler::OnRemoteSourceSvrDied(const wptr<IRemoteObject> &remot
 
 void DAudioSourceHandler::FinishStartSA(const std::string &param, const sptr<IRemoteObject> &remoteObject)
 {
-    DHLOGI("FinishStartSA.");
+    DHLOGI("Finish start SA.");
     std::lock_guard<std::mutex> lock(sourceProxyMutex_);
     remoteObject->AddDeathRecipient(sourceSvrRecipient_);
     dAudioSourceProxy_ = iface_cast<IDAudioSource>(remoteObject);
@@ -188,13 +188,13 @@ void DAudioSourceHandler::FinishStartSA(const std::string &param, const sptr<IRe
 
 void DAudioSourceHandler::DAudioSourceSvrRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
-    DHLOGI("OnRemoteDied.");
+    DHLOGI("On remote died.");
     DAudioSourceHandler::GetInstance().OnRemoteSourceSvrDied(remote);
 }
 
 IDistributedHardwareSource *GetSourceHardwareHandler()
 {
-    DHLOGI("GetSourceHardwareHandler");
+    DHLOGI("Get source hardware handler");
     return &DAudioSourceHandler::GetInstance();
 }
 } // namespace DistributedHardware

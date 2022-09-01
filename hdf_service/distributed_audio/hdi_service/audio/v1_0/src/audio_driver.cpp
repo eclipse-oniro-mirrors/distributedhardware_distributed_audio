@@ -50,7 +50,7 @@ static int32_t AudioManagerDriverDispatch(struct HdfDeviceIoClient *client, int 
 
 int HdfAudioManagerDriverInit(struct HdfDeviceObject *deviceObject)
 {
-    HDF_LOGI("HdfAudioManagerDriverInit enter");
+    HDF_LOGI("Hdf audio manager driver init.");
     AudioManagerInterfaceImpl::GetAudioManager()->SetDeviceObject(deviceObject);
     HdfDeviceSetClass(deviceObject, DEVICE_CLASS_AUDIO);
     return HDF_SUCCESS;
@@ -58,7 +58,7 @@ int HdfAudioManagerDriverInit(struct HdfDeviceObject *deviceObject)
 
 int HdfAudioManagerDriverBind(struct HdfDeviceObject *deviceObject)
 {
-    HDF_LOGI("HdfAudioManagerDriverBind enter");
+    HDF_LOGI("Hdf audio manager driver bind.");
 
     auto *hdfAudioManagerHost = new (std::nothrow) HdfAudioManagerHost;
     if (hdfAudioManagerHost == nullptr) {
@@ -73,6 +73,7 @@ int HdfAudioManagerDriverBind(struct HdfDeviceObject *deviceObject)
     auto serviceImpl = IAudioManager::Get("daudio_primary_service", true);
     if (serviceImpl == nullptr) {
         HDF_LOGE("%{public}s: failed to get of implement service", __func__);
+        delete hdfAudioManagerHost;
         return HDF_FAILURE;
     }
 
@@ -80,6 +81,7 @@ int HdfAudioManagerDriverBind(struct HdfDeviceObject *deviceObject)
         IAudioManager::GetDescriptor());
     if (hdfAudioManagerHost->stub == nullptr) {
         HDF_LOGE("%{public}s: failed to get stub object", __func__);
+        delete hdfAudioManagerHost;
         return HDF_FAILURE;
     }
 
@@ -89,7 +91,7 @@ int HdfAudioManagerDriverBind(struct HdfDeviceObject *deviceObject)
 
 void HdfAudioManagerDriverRelease(struct HdfDeviceObject *deviceObject)
 {
-    HDF_LOGI("HdfAudioManagerDriverRelease enter");
+    HDF_LOGI("Hdf audio manager driver release.");
     auto *hdfAudioManagerHost = CONTAINER_OF(deviceObject->service, struct HdfAudioManagerHost, ioService);
     delete hdfAudioManagerHost;
 }

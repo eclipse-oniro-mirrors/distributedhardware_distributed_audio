@@ -38,7 +38,7 @@ void DAudioSourceLoadCallback::OnLoadSystemAbilitySuccess(int32_t systemAbilityI
 
 void DAudioSourceLoadCallback::OnLoadSystemAbilityFail(int32_t systemAbilityId)
 {
-    DHLOGE("Load audio SA failed, systemAbilityId: %d", systemAbilityId);
+    DHLOGI("Load audio SA failed, systemAbilityId: %d", systemAbilityId);
     DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL,
         "daudio source LoadSystemAbility call failed.");
 }

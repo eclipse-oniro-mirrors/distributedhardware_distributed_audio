@@ -45,7 +45,7 @@ int32_t AudioDecodeTransport::SetUp(const AudioParam &localParam, const AudioPar
 
 int32_t AudioDecodeTransport::Start()
 {
-    DHLOGI("Start.");
+    DHLOGI("Start audio decode transport.");
     if (processor_ == nullptr) {
         DHLOGE("Processor  is null, Setup first.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
@@ -63,7 +63,7 @@ int32_t AudioDecodeTransport::Start()
 
 int32_t AudioDecodeTransport::Stop()
 {
-    DHLOGI("Stop.");
+    DHLOGI("Stop audio decode transport.");
     if (audioChannel_ != nullptr) {
         audioChannel_->CloseSession();
     }
@@ -80,7 +80,7 @@ int32_t AudioDecodeTransport::Stop()
 
 int32_t AudioDecodeTransport::Release()
 {
-    DHLOGI("Release.");
+    DHLOGI("Release audio decode transport.");
     bool releaseStatus = true;
     if (processor_ != nullptr) {
         int32_t ret = processor_->ReleaseAudioProcessor();
@@ -114,7 +114,7 @@ void AudioDecodeTransport::OnSessionOpened()
 {
     DHLOGI("On channel session opened.");
     if (dataTransCallback_ == nullptr) {
-        DHLOGE("On channel session opened. callback is nullptr.");
+        DHLOGE("Callback is nullptr.");
         return;
     }
     dataTransCallback_->OnStateChange(AudioEventType::DATA_OPENED);
@@ -122,9 +122,9 @@ void AudioDecodeTransport::OnSessionOpened()
 
 void AudioDecodeTransport::OnSessionClosed()
 {
-    DHLOGI("On channel session close.");
+    DHLOGI("On channel session closed.");
     if (dataTransCallback_ == nullptr) {
-        DHLOGE("On channel session close, callback is nullptr.");
+        DHLOGE("Callback is nullptr.");
         return;
     }
     dataTransCallback_->OnStateChange(AudioEventType::DATA_CLOSED);
@@ -134,7 +134,7 @@ void AudioDecodeTransport::OnDataReceived(const std::shared_ptr<AudioData> &data
 {
     DHLOGI("On audio data received.");
     if (processor_ == nullptr) {
-        DHLOGE("Processor null, setup first.");
+        DHLOGE("Processor is null, setup first.");
         return;
     }
 
@@ -189,7 +189,7 @@ int32_t AudioDecodeTransport::RegisterChannelListener(const std::string &role)
         audioChannel_->CreateSession(shared_from_this(), DATA_SPEAKER_SESSION_NAME) :
         audioChannel_->CreateSession(shared_from_this(), DATA_MIC_SESSION_NAME);
     if (result != DH_SUCCESS) {
-        DHLOGE("CreateSession failed.");
+        DHLOGE("Create session failed.");
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
     return DH_SUCCESS;

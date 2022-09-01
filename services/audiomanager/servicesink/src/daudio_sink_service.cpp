@@ -43,23 +43,23 @@ DAudioSinkService::DAudioSinkService(int32_t saId, bool runOnCreate) : SystemAbi
 
 void DAudioSinkService::OnStart()
 {
-    DHLOGI("OnStart.");
+    DHLOGI("Distributed audio service on start.");
     if (!Init()) {
-        DHLOGE("Init failed.");
+        DHLOGE("Init service failed.");
         return;
     }
-    DHLOGI("Start success.");
+    DHLOGI("Start distributed audio service success.");
 }
 
 void DAudioSinkService::OnStop()
 {
-    DHLOGI("OnStop.");
+    DHLOGI("Distributed audio service on stop.");
     isServiceStarted_ = false;
 }
 
 bool DAudioSinkService::Init()
 {
-    DHLOGI("Start init.");
+    DHLOGI("Start init distributed audio service.");
     if (!isServiceStarted_) {
         bool ret = Publish(this);
         if (!ret) {
@@ -68,7 +68,7 @@ bool DAudioSinkService::Init()
         }
         isServiceStarted_ = true;
     }
-    DHLOGI("Init success.");
+    DHLOGI("Init distributed audio service success.");
     return true;
 }
 

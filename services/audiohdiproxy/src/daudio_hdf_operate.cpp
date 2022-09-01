@@ -51,7 +51,7 @@ int32_t DaudioHdfOperate::LoadDaudioHDFImpl()
 
     ::OHOS::sptr<IServStatListener> listener =
         new DAudioHdfServStatListener(DAudioHdfServStatListener::StatusCallback([&](const ServiceStatus& status) {
-            DHLOGI("LoadAudioService service status callback, serviceName: %s, status: %d",
+            DHLOGI("Load audio service status callback, serviceName: %s, status: %d",
                 status.serviceName.c_str(), status.status);
             std::unique_lock<std::mutex> lock(hdfOperateMutex_);
             if (status.serviceName == AUDIO_SERVICE_NAME) {
@@ -63,7 +63,7 @@ int32_t DaudioHdfOperate::LoadDaudioHDFImpl()
             }
         }));
     if (servMgr_->RegisterServiceStatusListener(listener, DEVICE_CLASS_AUDIO) != HDF_SUCCESS) {
-        DHLOGE("RegisterServiceStatusListener failed!");
+        DHLOGE("Failed to register the service status listener.");
         return ERR_DH_AUDIO_NULLPTR;
     }
 
@@ -86,7 +86,7 @@ int32_t DaudioHdfOperate::LoadDaudioHDFImpl()
     }
 
     if (servMgr_->UnregisterServiceStatusListener(listener) != HDF_SUCCESS) {
-        DHLOGE("UnregisterServiceStatusListener failed!");
+        DHLOGE("Failed to unregister the service status listener.");
     }
     return DH_SUCCESS;
 }
@@ -108,7 +108,7 @@ int32_t DaudioHdfOperate::WaitLoadService(const uint16_t& servStatus, const std:
 
 int32_t DaudioHdfOperate::UnLoadDaudioHDFImpl()
 {
-    DHLOGI("UnLoadDaudioHDFImpl begin!");
+    DHLOGI("UnLoad daudio hdf impl begin!");
     devmgr_ = IDeviceManager::Get();
     if (devmgr_ == nullptr) {
         DHLOGE("Get hdi device manager failed!");
@@ -125,7 +125,7 @@ int32_t DaudioHdfOperate::UnLoadDaudioHDFImpl()
     }
     audioServStatus_ = INVALID_VALUE;
     audioextServStatus_ = INVALID_VALUE;
-    DHLOGI("UnLoadDaudioHDFImpl end!");
+    DHLOGI("UnLoad daudio hdf impl end!");
     return DH_SUCCESS;
 }
 } // namespace DistributedHardware

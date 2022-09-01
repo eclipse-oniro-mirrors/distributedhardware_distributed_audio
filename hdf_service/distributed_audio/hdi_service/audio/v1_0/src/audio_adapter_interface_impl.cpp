@@ -49,12 +49,12 @@ AudioAdapterInterfaceImpl::AudioAdapterInterfaceImpl(const AudioAdapterDescripto
     captureParam_.period = 0;
     captureParam_.frameSize = 0;
     captureParam_.streamUsage = 0;
-    DHLOGD("Distributed Audio Adapter constructed, name(%s).", GetAnonyString(desc.adapterName).c_str());
+    DHLOGD("Distributed audio adapter constructed, name(%s).", GetAnonyString(desc.adapterName).c_str());
 }
 
 AudioAdapterInterfaceImpl::~AudioAdapterInterfaceImpl()
 {
-    DHLOGD("Distributed Audio Adapter destructed, name(%s).",
+    DHLOGD("Distributed audio adapter destructed, name(%s).",
         GetAnonyString(adpDescriptor_.adapterName).c_str());
 }
 
@@ -113,7 +113,7 @@ int32_t AudioAdapterInterfaceImpl::DestoryRender(const AudioDeviceDescriptorHAL 
         return HDF_SUCCESS;
     }
     if (desc.pins != audioRender_->GetRenderDesc().pins) {
-        DHLOGD("Render pin is wrong, destory render failed.");
+        DHLOGE("Render pin is wrong, destory render failed.");
         return HDF_FAILURE;
     }
 
@@ -164,7 +164,7 @@ int32_t AudioAdapterInterfaceImpl::DestoryCapture(const AudioDeviceDescriptorHAL
         return HDF_SUCCESS;
     }
     if (desc.pins != audioCapture_->GetCaptureDesc().pins) {
-        DHLOGD("Capture pin is wrong, destory capture failed.");
+        DHLOGE("Capture pin is wrong, destory capture failed.");
         return HDF_FAILURE;
     }
 
@@ -339,7 +339,7 @@ int32_t AudioAdapterInterfaceImpl::AddAudioDevice(const uint32_t devId, const st
     std::lock_guard<std::mutex> devLck(devMapMtx_);
     auto dev = mapAudioDevice_.find(devId);
     if (dev != mapAudioDevice_.end()) {
-        DHLOGE("Device has been add, do not repeat add.");
+        DHLOGI("Device has been add, do not repeat add.");
         return DH_SUCCESS;
     }
     mapAudioDevice_.insert(std::make_pair(devId, caps));
@@ -533,7 +533,7 @@ int32_t AudioAdapterInterfaceImpl::SetAudioVolume(const std::string& condition, 
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     if (audioRender_ == nullptr) {
-        DHLOGD("Render has not been created.");
+        DHLOGE("Render has not been created.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     std::string content = condition;
@@ -569,7 +569,7 @@ int32_t AudioAdapterInterfaceImpl::SetAudioVolume(const std::string& condition, 
 int32_t AudioAdapterInterfaceImpl::GetAudioVolume(const std::string& condition, std::string &param)
 {
     if (audioRender_ == nullptr) {
-        DHLOGD("Render has not been created.");
+        DHLOGE("Render has not been created.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     int32_t type = getEventTypeFromCondition(condition);
@@ -606,7 +606,7 @@ int32_t AudioAdapterInterfaceImpl::HandleVolumeChangeEvent(const AudioEvent &eve
 {
     DHLOGI("Vol change (%s).", event.content.c_str());
     if (audioRender_ == nullptr) {
-        DHLOGD("Render has not been created.");
+        DHLOGE("Render has not been created.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     int32_t vol = AUDIO_DEFAULT_MIN_VOLUME_LEVEL;
@@ -663,7 +663,7 @@ int32_t AudioAdapterInterfaceImpl::HandleFocusChangeEvent(const AudioEvent &even
 
 int32_t AudioAdapterInterfaceImpl::HandleRenderStateChangeEvent(const AudioEvent &event)
 {
-    DHLOGI("RenderState change (%s).", event.content.c_str());
+    DHLOGI("Render state change (%s).", event.content.c_str());
     if (paramCallback_ == nullptr) {
         DHLOGE("Audio param observer is null.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
@@ -767,7 +767,7 @@ int32_t AudioAdapterInterfaceImpl::HandleDeviceClosed(const AudioEvent &event)
         int32_t ret = paramCallback_->OnAudioParamNotify(AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_STATUS, ss.str(),
             std::to_string(EVENT_DEV_CLOSED));
         if (ret != DH_SUCCESS) {
-            DHLOGD("Notify fwk failed.");
+            DHLOGI("Notify fwk failed.");
         }
     }
 

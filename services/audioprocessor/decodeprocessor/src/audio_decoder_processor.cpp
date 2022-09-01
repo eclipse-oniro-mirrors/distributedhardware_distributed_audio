@@ -29,7 +29,7 @@ namespace DistributedHardware {
 AudioDecoderProcessor::~AudioDecoderProcessor()
 {
     if (audioDecoder_ != nullptr) {
-        DHLOGI("~AudioDecoderProcessor. Release audio processor.");
+        DHLOGI("Release audio processor.");
         StopAudioProcessor();
         ReleaseAudioProcessor();
     }

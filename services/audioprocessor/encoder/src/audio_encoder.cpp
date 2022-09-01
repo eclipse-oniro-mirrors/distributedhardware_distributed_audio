@@ -35,7 +35,7 @@ const std::string AudioEncoder::ENCODE_MIME_AAC = "audio/mp4a-latm";
 AudioEncoder::~AudioEncoder()
 {
     if (audioEncoder_ != nullptr) {
-        DHLOGI("~AudioEncoder. Release audio codec.");
+        DHLOGI("Release audio codec.");
         StopAudioCodec();
         ReleaseAudioCodec();
     }

@@ -41,7 +41,7 @@ int32_t DAudioSourceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Me
     std::u16string desc = DAudioSourceStub::GetDescriptor();
     std::u16string remoteDesc = data.ReadInterfaceToken();
     if (desc != remoteDesc) {
-        DHLOGE("RemoteDesc is invalid.");
+        DHLOGE("Remote desc is invalid.");
         return ERR_DH_AUDIO_SA_INVALID_INTERFACE_TOKEN;
     }
 

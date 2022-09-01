@@ -69,8 +69,7 @@ int32_t DMicClient::OnStateChange(const AudioEventType type)
 
 int32_t DMicClient::SetUp(const AudioParam &param)
 {
-    DHLOGI("SetUp mic client.");
-    DHLOGI("Param: {sampleRate: %d, bitFormat: %d, channelMask: %d, sourceType: %d}.",
+    DHLOGI("Set up mic client, param: {sampleRate: %d, bitFormat: %d, channelMask: %d, sourceType: %d}.",
         param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.CaptureOpts.sourceType);
     audioParam_ = param;
     AudioStandard::AudioCapturerOptions capturerOptions = {

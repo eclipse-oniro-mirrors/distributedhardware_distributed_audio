@@ -36,12 +36,12 @@ AudioCaptureInterfaceImpl::AudioCaptureInterfaceImpl(const std::string adpName, 
     const AudioSampleAttributesHAL &attrs, const sptr<IDAudioCallback> &callback)
     : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
 {
-    DHLOGD("Distributed Audio Capture constructed, id(%d).", desc.pins);
+    DHLOGD("Distributed audio capture constructed, id(%d).", desc.pins);
 }
 
 AudioCaptureInterfaceImpl::~AudioCaptureInterfaceImpl()
 {
-    DHLOGD("Distributed Audio Capture destructed, id(%d).", devDesc_.pins);
+    DHLOGD("Distributed audio capture destructed, id(%d).", devDesc_.pins);
 }
 
 int32_t AudioCaptureInterfaceImpl::GetCapturePosition(uint64_t &frames, AudioTimeStampHAL &time)

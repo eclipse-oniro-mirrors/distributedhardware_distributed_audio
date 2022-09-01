@@ -35,7 +35,7 @@ namespace OHOS {
 namespace DistributedHardware {
 int32_t DMicDev::EnableDMic(const int32_t dhId, const std::string &capability)
 {
-    DHLOGI("EnableDMic dhId: %d.", dhId);
+    DHLOGI("Enable distributed mic dhId: %d.", dhId);
     if (enabledPorts_.empty()) {
         if (EnableDevice(PIN_IN_DAUDIO_DEFAULT, capability) != DH_SUCCESS) {
             return ERR_DH_AUDIO_FAILED;
@@ -68,7 +68,7 @@ int32_t DMicDev::EnableDevice(const int32_t dhId, const std::string &capability)
 
 int32_t DMicDev::DisableDMic(const int32_t dhId)
 {
-    DHLOGI("DisableDMic.");
+    DHLOGI("Disable distributed mic.");
     if (dhId == curPort_) {
         isOpened_.store(false);
     }
@@ -103,10 +103,10 @@ int32_t DMicDev::DisableDevice(const int32_t dhId)
 
 int32_t DMicDev::OpenDevice(const std::string &devId, const int32_t dhId)
 {
-    DHLOGI("OpenDevice devId: %s, dhId: %d.", GetAnonyString(devId).c_str(), dhId);
+    DHLOGI("Open mic device devId: %s, dhId: %d.", GetAnonyString(devId).c_str(), dhId);
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("OpenDevice, callback is null.");
+        DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
     }
     json jParam = { { KEY_DH_ID, std::to_string(dhId) } };
@@ -119,10 +119,10 @@ int32_t DMicDev::OpenDevice(const std::string &devId, const int32_t dhId)
 
 int32_t DMicDev::CloseDevice(const std::string &devId, const int32_t dhId)
 {
-    DHLOGI("CloseDevice devId: %s, dhId: %d.", GetAnonyString(devId).c_str(), dhId);
+    DHLOGI("Close mic device devId: %s, dhId: %d.", GetAnonyString(devId).c_str(), dhId);
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("CloseDevice, callback is null");
+        DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
     }
     json jParam = { { KEY_DH_ID, std::to_string(dhId) } };
@@ -157,7 +157,7 @@ int32_t DMicDev::NotifyEvent(const std::string &devId, int32_t dhId, const Audio
     DHLOGI("Notify mic event.");
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("Eventcallback is null");
+        DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
     auto audioEvent = std::make_shared<AudioEvent>(event.type, event.content);
@@ -167,7 +167,7 @@ int32_t DMicDev::NotifyEvent(const std::string &devId, int32_t dhId, const Audio
 
 int32_t DMicDev::SetUp()
 {
-    DHLOGI("SetUp mic device.");
+    DHLOGI("Set up mic device.");
     if (micTrans_ == nullptr) {
         micTrans_ = std::make_shared<AudioDecodeTransport>(devId_);
     }
@@ -244,7 +244,7 @@ int32_t DMicDev::ReadStreamData(const std::string &devId, const int32_t dhId, st
 {
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     if (dataQueue_.empty()) {
-        DHLOGE("data queue is empty.");
+        DHLOGI("Data queue is empty.");
         data = std::make_shared<AudioData>(FRAME_SIZE);
     } else {
         data = dataQueue_.front();
@@ -269,7 +269,7 @@ int32_t DMicDev::NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event)
 
 int32_t DMicDev::OnStateChange(const AudioEventType type)
 {
-    DHLOGI("On speaker device state change, type: %d", type);
+    DHLOGI("On mic device state change, type: %d", type);
     auto event = std::make_shared<AudioEvent>();
     switch (type) {
         case AudioEventType::DATA_OPENED:
@@ -285,7 +285,7 @@ int32_t DMicDev::OnStateChange(const AudioEventType type)
     }
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("Callback is null.");
+        DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
     }
     cbObj->NotifyEvent(event);
@@ -296,7 +296,7 @@ int32_t DMicDev::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioDa
 {
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     while (dataQueue_.size() > DATA_QUEUE_MAX_SIZE) {
-        DHLOGE("Data queue overflow.");
+        DHLOGD("Data queue overflow.");
         dataQueue_.pop();
     }
     dataQueue_.push(audioData);

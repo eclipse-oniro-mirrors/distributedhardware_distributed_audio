@@ -23,8 +23,8 @@ namespace OHOS {
 namespace DistributedHardware {
 int32_t AudioCtrlTransport::SetUp(const std::shared_ptr<IAudioCtrlTransCallback> &callback)
 {
-    DHLOGI("SetUp.");
-    if (!callback) {
+    DHLOGI("Set up audio control transport.");
+    if (callback == nullptr) {
         DHLOGE("callback is null.");
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
@@ -32,18 +32,18 @@ int32_t AudioCtrlTransport::SetUp(const std::shared_ptr<IAudioCtrlTransCallback>
     ctrlTransCallback_ = callback;
     int32_t ret = InitAudioCtrlTrans(devId_);
     if (ret != DH_SUCCESS) {
-        DHLOGE("SetUp failed ret: %d.", ret);
+        DHLOGE("Set up failed ret: %d.", ret);
         return ret;
     }
 
-    DHLOGI("SetUp success.");
+    DHLOGI("Set up  audio control transport success.");
     return DH_SUCCESS;
 }
 
 int32_t AudioCtrlTransport::Release()
 {
-    DHLOGI("Release.");
-    if (!audioChannel_) {
+    DHLOGI("Release audio control transport.");
+    if (audioChannel_ == nullptr) {
         DHLOGE("Channel is already release.");
         return DH_SUCCESS;
     }
@@ -61,8 +61,8 @@ int32_t AudioCtrlTransport::Release()
 
 int32_t AudioCtrlTransport::Start()
 {
-    DHLOGI("Start.");
-    if (!audioChannel_) {
+    DHLOGI("Start audio control transport.");
+    if (audioChannel_ == nullptr) {
         DHLOGE("Channel is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
@@ -79,8 +79,8 @@ int32_t AudioCtrlTransport::Start()
 
 int32_t AudioCtrlTransport::Stop()
 {
-    DHLOGI("Stop.");
-    if (!audioChannel_) {
+    DHLOGI("Stop audio control transport.");
+    if (audioChannel_ == nullptr) {
         DHLOGE("Channel is already release.");
         return DH_SUCCESS;
     }
@@ -98,12 +98,12 @@ int32_t AudioCtrlTransport::Stop()
 int32_t AudioCtrlTransport::SendAudioEvent(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("Send audio event.");
-    if (!event) {
+    if (event == nullptr) {
         DHLOGE("Audio event is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
-    if (!audioChannel_) {
+    if (audioChannel_ == nullptr) {
         DHLOGE("Channel is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
@@ -119,10 +119,10 @@ int32_t AudioCtrlTransport::SendAudioEvent(const std::shared_ptr<AudioEvent> &ev
 
 void AudioCtrlTransport::OnSessionOpened()
 {
-    DHLOGI("On Channel Session Opened.");
+    DHLOGI("On channel session opened.");
     std::shared_ptr<IAudioCtrlTransCallback> callback = ctrlTransCallback_.lock();
     if (callback == nullptr) {
-        DHLOGE("On Channel Session Opened. callback is nullptr.");
+        DHLOGE("Callback is nullptr.");
         return;
     }
     callback->OnStateChange(AudioEventType::CTRL_OPENED);
@@ -130,10 +130,10 @@ void AudioCtrlTransport::OnSessionOpened()
 
 void AudioCtrlTransport::OnSessionClosed()
 {
-    DHLOGI("On Channel Session Closed.");
+    DHLOGI("On channel session closed.");
     std::shared_ptr<IAudioCtrlTransCallback> callback = ctrlTransCallback_.lock();
     if (callback == nullptr) {
-        DHLOGE("On Channel Session Closed, callback is nullptr.");
+        DHLOGE("Callback is nullptr.");
         return;
     }
     callback->OnStateChange(AudioEventType::CTRL_CLOSED);
@@ -146,10 +146,10 @@ void AudioCtrlTransport::OnDataReceived(const std::shared_ptr<AudioData> &data)
 
 void AudioCtrlTransport::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
 {
-    DHLOGI("audio event received.");
+    DHLOGI("Audio event received.");
     std::shared_ptr<IAudioCtrlTransCallback> callback = ctrlTransCallback_.lock();
-    if (!callback) {
-        DHLOGE("CtrlTrans callback is null.");
+    if (callback == nullptr) {
+        DHLOGE("Callback is null.");
         return;
     }
     callback->OnEventReceived(event);
@@ -173,7 +173,7 @@ int32_t AudioCtrlTransport::InitAudioCtrlTrans(const std::string &netWordId)
 
 int32_t AudioCtrlTransport::RegisterChannelListener()
 {
-    DHLOGI("RegisterChannelListener.");
+    DHLOGI("Register channel listener.");
     if (audioChannel_ == nullptr) {
         DHLOGE("Channel is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;

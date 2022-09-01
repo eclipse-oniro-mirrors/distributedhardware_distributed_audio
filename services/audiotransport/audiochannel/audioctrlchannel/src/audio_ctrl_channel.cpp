@@ -29,8 +29,8 @@ namespace DistributedHardware {
 int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListener> &listener,
     const std::string &sessionName)
 {
-    DHLOGI("CreateSession, peerDevId: %s.", GetAnonyString(peerDevId_).c_str());
-    if (!listener) {
+    DHLOGI("Create session, peerDevId: %s.", GetAnonyString(peerDevId_).c_str());
+    if (listener == nullptr) {
         DHLOGE("Channel listener is null.");
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_TRANS_NULL_VALUE,
             "daudio channel listener is null.");
@@ -63,7 +63,7 @@ int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListe
 
 int32_t AudioCtrlChannel::ReleaseSession()
 {
-    DHLOGI("ReleaseSession, peerDevId: %s", GetAnonyString(peerDevId_).c_str());
+    DHLOGI("Release session, peerDevId: %s", GetAnonyString(peerDevId_).c_str());
     DAUDIO_SYNC_TRACE(DAUDIO_RELEASE_CTRL_SESSION);
     int32_t ret = SoftbusAdapter::GetInstance().RemoveSoftbusSessionServer(PKG_NAME, sessionName_, peerDevId_);
     if (ret != DH_SUCCESS) {
@@ -88,7 +88,7 @@ int32_t AudioCtrlChannel::ReleaseSession()
 
 int32_t AudioCtrlChannel::OpenSession()
 {
-    DHLOGI("OpenSession, peerDevId: %s.", GetAnonyString(peerDevId_).c_str());
+    DHLOGI("Open session, peerDevId: %s.", GetAnonyString(peerDevId_).c_str());
     DaudioStartAsyncTrace(DAUDIO_OPEN_CTRL_SESSION, DAUDIO_OPEN_CTRL_SESSION_TASKID);
     int32_t sessionId =
         SoftbusAdapter::GetInstance().OpenSoftbusSession(sessionName_, sessionName_, peerDevId_);
@@ -106,7 +106,7 @@ int32_t AudioCtrlChannel::OpenSession()
 
 int32_t AudioCtrlChannel::CloseSession()
 {
-    DHLOGI("CloseSession, sessionId: %d.", sessionId_);
+    DHLOGI("Close session, sessionId: %d.", sessionId_);
     if (sessionId_ == 0) {
         DHLOGI("Session is already closed.");
         return DH_SUCCESS;
@@ -155,15 +155,15 @@ int32_t AudioCtrlChannel::SendEvent(const std::shared_ptr<AudioEvent> &audioEven
 
 int32_t AudioCtrlChannel::SendMsg(string &message)
 {
-    DHLOGI("Start SendMsg.");
+    DHLOGI("Start send messages.");
     uint8_t *buf = (uint8_t *)calloc((MSG_MAX_SIZE), sizeof(uint8_t));
     if (buf == nullptr) {
-        DHLOGE("SendMsg: malloc memory failed");
+        DHLOGE("Malloc memory failed.");
         return ERR_DH_AUDIO_CTRL_CHANNEL_SEND_MSG_FAIL;
     }
     int32_t outLen = 0;
     if (memcpy_s(buf, MSG_MAX_SIZE, (const uint8_t *)message.c_str(), message.size()) != DH_SUCCESS) {
-        DHLOGE("SendMsg: memcpy memory failed");
+        DHLOGE("Memcpy memory failed.");
         free(buf);
         return ERR_DH_AUDIO_CTRL_CHANNEL_SEND_MSG_FAIL;
     }
@@ -175,14 +175,14 @@ int32_t AudioCtrlChannel::SendMsg(string &message)
 
 void AudioCtrlChannel::OnSessionOpened(int32_t sessionId, int32_t result)
 {
-    DHLOGI("OnCtrlSessionOpened, sessionId: %d, result: %d.", sessionId, result);
+    DHLOGI("On control session opened, sessionId: %d, result: %d.", sessionId, result);
     if (result != 0) {
         DHLOGE("Session open failed.");
         return;
     }
 
     auto listener = channelListener_.lock();
-    if (!listener) {
+    if (listener == nullptr) {
         DHLOGE("Channel listener is null.");
         return;
     }
@@ -193,13 +193,13 @@ void AudioCtrlChannel::OnSessionOpened(int32_t sessionId, int32_t result)
 
 void AudioCtrlChannel::OnSessionClosed(int32_t sessionId)
 {
-    DHLOGI("OnCtrlSessionClosed, sessionId: %d.", sessionId);
+    DHLOGI("On control session closed, sessionId: %d.", sessionId);
     if (sessionId_ == 0) {
         DHLOGI("Session already closed.");
         return;
     }
     auto listener = channelListener_.lock();
-    if (!listener) {
+    if (listener == nullptr) {
         DHLOGE("Channel listener is null.");
         return;
     }
@@ -209,39 +209,39 @@ void AudioCtrlChannel::OnSessionClosed(int32_t sessionId)
 
 void AudioCtrlChannel::OnBytesReceived(int32_t sessionId, const void *data, uint32_t dataLen)
 {
-    DHLOGI("OnBytesReceived, sessionId: %d, dataLen: %d.", sessionId, dataLen);
+    DHLOGI("On bytes received, sessionId: %d, dataLen: %d.", sessionId, dataLen);
     if (sessionId < 0 || data == nullptr || dataLen <= 0) {
-        DHLOGE("OnBytesReceived param check failed");
+        DHLOGE("Param check failed");
         return;
     }
     auto listener = channelListener_.lock();
-    if (!listener) {
+    if (listener == nullptr) {
         DHLOGE("Channel listener is null.");
         return;
     }
 
     uint8_t *buf = (uint8_t *)calloc(dataLen + 1, sizeof(uint8_t));
     if (buf == nullptr) {
-        DHLOGE("OnBytesReceived: malloc memory failed.");
+        DHLOGE("Malloc memory failed.");
         return;
     }
 
     if (memcpy_s(buf, dataLen + 1, (const uint8_t *)data, dataLen) != DH_SUCCESS) {
-        DHLOGE("OnBytesReceived: memcpy memory failed.");
+        DHLOGE("Memcpy memory failed.");
         free(buf);
         return;
     }
 
     std::string message(buf, buf + dataLen);
-    DHLOGI("OnBytesReceived message: %s.", message.c_str());
+    DHLOGI("On bytes received message: %s.", message.c_str());
     std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
     json jParam = json::parse(message, nullptr, false);
     if (from_audioEventJson(jParam, audioEvent) != DH_SUCCESS) {
-        DHLOGE("OnBytesReceived, Get audioEvent from json failed.");
+        DHLOGE("Get audioEvent from json failed.");
         return;
     }
     free(buf);
-    DHLOGI("OnBytesReceived end");
+    DHLOGI("On bytes received end");
 
     listener->OnEventReceived(audioEvent);
 }
@@ -254,18 +254,18 @@ void AudioCtrlChannel::OnStreamReceived(int32_t sessionId, const StreamData *dat
     (void) ext;
     (void) streamFrameInfo;
 
-    DHLOGI("OnAudioStreamReceived ctrl channel not support yet.");
+    DHLOGI("Ctrl channel not support yet.");
 }
 
 int from_audioEventJson(const json &j, std::shared_ptr<AudioEvent> &audioEvent)
 {
     if (j.is_discarded()) {
-        DHLOGE("AudioCtrlChannel: Json data is discarded.");
+        DHLOGE("Json data is discarded.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
     if (!j.contains(KEY_TYPE) || !j.contains(KEY_CONTENT)) {
-        DHLOGE("AudioCtrlChannel: Some key values do not exist in json data.");
+        DHLOGE("Some key values do not exist in json data.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
     j.at(KEY_TYPE).get_to(audioEvent->type);

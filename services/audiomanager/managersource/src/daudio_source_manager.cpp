@@ -92,7 +92,7 @@ int32_t DAudioSourceManager::UnInit()
 int32_t DAudioSourceManager::EnableDAudio(const std::string &devId, const std::string &dhId,
     const std::string &version, const std::string &attrs, const std::string &reqId)
 {
-    DHLOGI("EnableDAudio, devId: %s, dhId: %s, version: %s, reqId: %s.", GetAnonyString(devId).c_str(),
+    DHLOGI("Enable distributed audio, devId: %s, dhId: %s, version: %s, reqId: %s.", GetAnonyString(devId).c_str(),
         dhId.c_str(), version.c_str(), reqId.c_str());
     std::lock_guard<std::mutex> lock(devMapMtx_);
     auto dev = audioDevMap_.find(devId);
@@ -107,7 +107,7 @@ int32_t DAudioSourceManager::EnableDAudio(const std::string &devId, const std::s
 
 int32_t DAudioSourceManager::DisableDAudio(const std::string &devId, const std::string &dhId, const std::string &reqId)
 {
-    DHLOGI("DisableDAudio, devId: %s, dhId: %s, reqId: %s.", GetAnonyString(devId).c_str(), dhId.c_str(),
+    DHLOGI("Disable distributed audio, devId: %s, dhId: %s, reqId: %s.", GetAnonyString(devId).c_str(), dhId.c_str(),
         reqId.c_str());
     std::lock_guard<std::mutex> lock(devMapMtx_);
     auto dev = audioDevMap_.find(devId);
@@ -126,7 +126,7 @@ int32_t DAudioSourceManager::DisableDAudio(const std::string &devId, const std::
 int32_t DAudioSourceManager::HandleDAudioNotify(const std::string &devId, const std::string &dhId,
     const int32_t eventType, const std::string &eventContent)
 {
-    DHLOGI("HandleDAudioNotify, devId: %s, dhId: %s, eventType: %d.", GetAnonyString(devId).c_str(),
+    DHLOGI("Handle distributed audio notify, devId: %s, dhId: %s, eventType: %d.", GetAnonyString(devId).c_str(),
         dhId.c_str(), eventType);
     std::lock_guard<std::mutex> lock(devMapMtx_);
     auto dev = audioDevMap_.find(devId);
@@ -143,7 +143,7 @@ int32_t DAudioSourceManager::HandleDAudioNotify(const std::string &devId, const 
 int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
     const std::string &eventContent)
 {
-    DHLOGI("DAudioNotify, devId: %s, dhId: %s, eventType: %d.", GetAnonyString(devId).c_str(),
+    DHLOGI("Distributed audio notify, devId: %s, dhId: %s, eventType: %d.", GetAnonyString(devId).c_str(),
         dhId.c_str(), eventType);
     {
         std::lock_guard<std::mutex> lck(remoteSvrMutex_);
@@ -163,7 +163,7 @@ int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::s
     }
     auto remoteObject = samgr->GetSystemAbility(DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID, devId);
     if (remoteObject == nullptr) {
-        DHLOGE("remoteObject is null.");
+        DHLOGE("Object is null.");
         return ERR_DH_AUDIO_SA_GET_REMOTE_SINK_FAILED;
     }
     sptr<IDAudioSink> remoteSvrProxy = iface_cast<IDAudioSink>(remoteObject);
@@ -181,7 +181,8 @@ int32_t DAudioSourceManager::DAudioNotify(const std::string &devId, const std::s
 
 int32_t DAudioSourceManager::OnEnableDAudio(const std::string &devId, const std::string &dhId, const int32_t result)
 {
-    DHLOGI("OnEnable devId: %s, dhId: %s, ret: %d.", GetAnonyString(devId).c_str(), dhId.c_str(), result);
+    DHLOGI("On enable distributed audio devId: %s, dhId: %s, ret: %d.", GetAnonyString(devId).c_str(), dhId.c_str(),
+        result);
     std::string reqId = GetRequestId(devId, dhId);
     if (reqId.empty()) {
         return ERR_DH_AUDIO_FAILED;
@@ -199,7 +200,8 @@ int32_t DAudioSourceManager::OnEnableDAudio(const std::string &devId, const std:
 
 int32_t DAudioSourceManager::OnDisableDAudio(const std::string &devId, const std::string &dhId, const int32_t result)
 {
-    DHLOGI("OnDisable devId: %s, dhId: %s, ret: %d.", GetAnonyString(devId).c_str(), dhId.c_str(), result);
+    DHLOGI("On disable distributed audio devId: %s, dhId: %s, ret: %d.", GetAnonyString(devId).c_str(), dhId.c_str(),
+        result);
     std::string reqId = GetRequestId(devId, dhId);
     if (reqId.empty()) {
         return ERR_DH_AUDIO_FAILED;

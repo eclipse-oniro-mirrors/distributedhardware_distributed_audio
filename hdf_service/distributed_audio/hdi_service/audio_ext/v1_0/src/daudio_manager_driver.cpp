@@ -49,14 +49,14 @@ static int32_t DAudioManagerDriverDispatch(struct HdfDeviceIoClient *client, int
 
 int HdfDAudioManagerDriverInit(struct HdfDeviceObject *deviceObject)
 {
-    HDF_LOGI("HdfDAudioManagerDriverInit enter");
+    HDF_LOGI("Hdf daudio manager driver init.");
     HdfDeviceSetClass(deviceObject, DEVICE_CLASS_AUDIO);
     return HDF_SUCCESS;
 }
 
 int HdfDAudioManagerDriverBind(struct HdfDeviceObject *deviceObject)
 {
-    HDF_LOGI("HdfDAudioManagerDriverBind enter");
+    HDF_LOGI("Hdf daudio manager driver bind.");
 
     auto *hdfDAudioManagerHost = new (std::nothrow) HdfDAudioManagerHost;
     if (hdfDAudioManagerHost == nullptr) {
@@ -89,7 +89,7 @@ int HdfDAudioManagerDriverBind(struct HdfDeviceObject *deviceObject)
 
 void HdfDAudioManagerDriverRelease(struct HdfDeviceObject *deviceObject)
 {
-    HDF_LOGI("HdfDAudioManagerDriverRelease enter");
+    HDF_LOGI("Hdf daudio manager driver release.");
     if (deviceObject->service == nullptr) {
         HDF_LOGE("HdfDAudioManagerDriverRelease not initted");
         return;

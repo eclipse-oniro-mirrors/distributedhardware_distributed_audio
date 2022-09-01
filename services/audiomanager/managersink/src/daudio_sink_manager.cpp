@@ -112,7 +112,8 @@ int32_t DAudioSinkManager::CreateAudioDevice(const std::string &devId)
 int32_t DAudioSinkManager::DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
     const std::string &eventContent)
 {
-    DHLOGI("DAudioNotify, devId: %s, dhId: %s, eventType: %d.", GetAnonyString(devId).c_str(), dhId.c_str(), eventType);
+    DHLOGI("Distributed audio notify, devId: %s, dhId: %s, eventType: %d.",
+        GetAnonyString(devId).c_str(), dhId.c_str(), eventType);
 
     {
         std::lock_guard<std::mutex> lck(remoteSvrMutex_);

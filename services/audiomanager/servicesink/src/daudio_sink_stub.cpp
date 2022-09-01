@@ -41,17 +41,17 @@ DAudioSinkStub::~DAudioSinkStub()
 
 int32_t DAudioSinkStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    DHLOGI("OnRemoteRequest, code: %d.", code);
+    DHLOGI("On remote request, code: %d.", code);
     std::u16string desc = DAudioSinkStub::GetDescriptor();
     std::u16string remoteDesc = data.ReadInterfaceToken();
     if (desc != remoteDesc) {
-        DHLOGE("remoteDesc is invalid.");
+        DHLOGE("RemoteDesc is invalid.");
         return ERR_DH_AUDIO_SA_INVALID_INTERFACE_TOKEN;
     }
 
     const auto &iter = memberFuncMap_.find(code);
     if (iter == memberFuncMap_.end()) {
-        DHLOGE("invalid request code.");
+        DHLOGE("Invalid request code.");
         return ERR_DH_AUDIO_SA_INVALID_REQUEST_CODE;
     }
     DAudioSinkServiceFunc &func = iter->second;
@@ -60,7 +60,7 @@ int32_t DAudioSinkStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Mess
 
 int32_t DAudioSinkStub::InitSinkInner(MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    DHLOGI("InitSinkInner.");
+    DHLOGI("Init sink inner.");
     std::string param = data.ReadString();
     int32_t ret = InitSink(param);
     reply.WriteInt32(ret);
@@ -69,7 +69,7 @@ int32_t DAudioSinkStub::InitSinkInner(MessageParcel &data, MessageParcel &reply,
 
 int32_t DAudioSinkStub::ReleaseSinkInner(MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    DHLOGI("ReleaseSinkInner.");
+    DHLOGI("Release sink inner.");
     int32_t ret = ReleaseSink();
     reply.WriteInt32(ret);
     return DH_SUCCESS;
@@ -77,7 +77,7 @@ int32_t DAudioSinkStub::ReleaseSinkInner(MessageParcel &data, MessageParcel &rep
 
 int32_t DAudioSinkStub::SubscribeLocalHardwareInner(MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    DHLOGI("SubscribeLocalHardwareInner.");
+    DHLOGI("Subscribe local hardware inner.");
     std::string dhId = data.ReadString();
     std::string param = data.ReadString();
     int32_t ret = SubscribeLocalHardware(dhId, param);
@@ -87,7 +87,7 @@ int32_t DAudioSinkStub::SubscribeLocalHardwareInner(MessageParcel &data, Message
 
 int32_t DAudioSinkStub::UnsubscribeLocalHardwareInner(MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    DHLOGI("UnsubscribeLocalHardwareInner.");
+    DHLOGI("Unsubscribe local hardware inner.");
     std::string dhId = data.ReadString();
     int32_t ret = UnsubscribeLocalHardware(dhId);
     reply.WriteInt32(ret);
@@ -96,7 +96,7 @@ int32_t DAudioSinkStub::UnsubscribeLocalHardwareInner(MessageParcel &data, Messa
 
 int32_t DAudioSinkStub::DAudioNotifyInner(MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    DHLOGI("DAudioNotifyInner.");
+    DHLOGI("Distributed audio notify inner.");
     std::string networkId = data.ReadString();
     std::string dhId = data.ReadString();
     int32_t eventType = data.ReadInt32();

@@ -43,12 +43,12 @@ extern "C" IAudioManager *AudioManagerImplGetInstance(void)
 
 AudioManagerInterfaceImpl::AudioManagerInterfaceImpl()
 {
-    DHLOGD("Distributed Audio Manager constructed.");
+    DHLOGI("Distributed audio manager constructed.");
 }
 
 AudioManagerInterfaceImpl::~AudioManagerInterfaceImpl()
 {
-    DHLOGD("Distributed Audio Manager destructed.");
+    DHLOGI("Distributed audio manager destructed.");
 }
 
 int32_t AudioManagerInterfaceImpl::GetAllAdapters(std::vector<AudioAdapterDescriptorHAL> &descriptors)
@@ -177,7 +177,7 @@ int32_t AudioManagerInterfaceImpl::RemoveAudioDevice(const std::string &adpName,
     DAudioDevEvent event = { adpName, devId, HDF_AUDIO_DEVICE_REMOVE, 0, 0, 0 };
     ret = NotifyFwk(event);
     if (ret != DH_SUCCESS) {
-        DHLOGD("Notify audio fwk failed, ret = %d.", ret);
+        DHLOGI("Notify audio fwk failed, ret = %d.", ret);
     }
     if (adp->second->isPortsNoReg()) {
         mapAudioAdapter_.erase(adpName);

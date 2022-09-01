@@ -45,7 +45,7 @@ int32_t AudioEncodeTransport::SetUp(const AudioParam &localParam, const AudioPar
 
 int32_t AudioEncodeTransport::Start()
 {
-    DHLOGI("Start.");
+    DHLOGI("Start audio encode transport.");
     if (processor_ == nullptr || audioChannel_ == nullptr) {
         DHLOGE("Processor or channel is null, setup first.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
@@ -68,7 +68,7 @@ int32_t AudioEncodeTransport::Start()
 
 int32_t AudioEncodeTransport::Stop()
 {
-    DHLOGI("Stop.");
+    DHLOGI("Stop audio encode transport.");
     bool stopStatus = true;
     if (processor_ != nullptr) {
         int32_t ret = processor_->StopAudioProcessor();
@@ -94,7 +94,7 @@ int32_t AudioEncodeTransport::Stop()
 
 int32_t AudioEncodeTransport::Release()
 {
-    DHLOGI("Release.");
+    DHLOGI("Release audio encode transport.");
     bool releaseStatus = true;
     int32_t ret;
     if (processor_ != nullptr) {
@@ -123,7 +123,7 @@ int32_t AudioEncodeTransport::FeedAudioData(std::shared_ptr<AudioData> &audioDat
 {
     DHLOGI("Feed audio data.");
     if (!processor_) {
-        DHLOGE("Processor null, setup first.");
+        DHLOGE("Processor is null, setup first.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 

@@ -37,14 +37,14 @@ private:
 
 void AudioProcessorCallbackTest::OnAudioDataDone(const std::shared_ptr<AudioData> &outputData)
 {
-    DHLOGD("Test : OnAudioDataDone.");
+    DHLOGD("Test : On audio data done.");
     outputCnt_++;
     DHLOGD("Test : output the [%d]th processed audiodata, size %d sucessfuly.", outputCnt_, outputData->Size());
 }
 
 void AudioProcessorCallbackTest::OnStateNotify(const AudioEvent &event)
 {
-    DHLOGE("Test : OnStateNotify, event: %d.", event.type);
+    DHLOGE("Test : On state notify, event: %d.", event.type);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

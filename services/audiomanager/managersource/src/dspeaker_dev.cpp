@@ -65,7 +65,7 @@ int32_t DSpeakerDev::EnableDevice(const int32_t dhId, const std::string &capabil
 
 int32_t DSpeakerDev::DisableDSpeaker(const int32_t dhId)
 {
-    DHLOGI("DisableDSpeaker.");
+    DHLOGI("Disable distributed speaker.");
     if (dhId == curPort_) {
         isOpened_.store(false);
     }
@@ -101,7 +101,7 @@ int32_t DSpeakerDev::DisableDevice(const int32_t dhId)
 
 int32_t DSpeakerDev::OpenDevice(const std::string &devId, const int32_t dhId)
 {
-    DHLOGI("OpenDevice devId: %s, dhId: %d.", GetAnonyString(devId).c_str(), dhId);
+    DHLOGI("Open speaker device devId: %s, dhId: %d.", GetAnonyString(devId).c_str(), dhId);
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
         DHLOGE("Event callback is null");
@@ -118,10 +118,10 @@ int32_t DSpeakerDev::OpenDevice(const std::string &devId, const int32_t dhId)
 
 int32_t DSpeakerDev::CloseDevice(const std::string &devId, const int32_t dhId)
 {
-    DHLOGI("CloseDevice devId: %s, dhId: %d.", GetAnonyString(devId).c_str(), dhId);
+    DHLOGI("Close speaker device devId: %s, dhId: %d.", GetAnonyString(devId).c_str(), dhId);
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("Event, callback is null.");
+        DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
 
@@ -157,7 +157,7 @@ int32_t DSpeakerDev::NotifyEvent(const std::string &devId, int32_t dhId, const A
     DHLOGI("Notify speaker event.");
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("Eventcallback is null.");
+        DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
     auto audioEvent = std::make_shared<AudioEvent>(event.type, event.content);
@@ -167,7 +167,7 @@ int32_t DSpeakerDev::NotifyEvent(const std::string &devId, int32_t dhId, const A
 
 int32_t DSpeakerDev::SetUp()
 {
-    DHLOGI("SetUp speaker device.");
+    DHLOGI("Set up speaker device.");
     if (speakerTrans_ == nullptr) {
         speakerTrans_ = std::make_shared<AudioEncodeTransport>(devId_);
     }
@@ -234,7 +234,7 @@ int32_t DSpeakerDev::Release()
 
     int32_t ret = speakerTrans_->Release();
     if (ret != DH_SUCCESS) {
-        DHLOGE("release speaker trans failed, ret: %d.", ret);
+        DHLOGE("Release speaker trans failed, ret: %d.", ret);
     }
     return DH_SUCCESS;
 }
@@ -254,14 +254,14 @@ int32_t DSpeakerDev::ReadStreamData(const std::string &devId, const int32_t dhId
 
 int32_t DSpeakerDev::WriteStreamData(const std::string &devId, const int32_t dhId, std::shared_ptr<AudioData> &data)
 {
-    DHLOGD("WriteStreamData, dhId:%d", dhId);
+    DHLOGD("Write stream data, dhId:%d", dhId);
     if (speakerTrans_ == nullptr) {
-        DHLOGE("ReadStreamData, speaker trans is null.");
+        DHLOGE("Read stream data, speaker trans is null.");
         return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
     }
     int32_t ret = speakerTrans_->FeedAudioData(data);
     if (ret != DH_SUCCESS) {
-        DHLOGE("WriteStreamData failed, ret: %d.", ret);
+        DHLOGE("Write stream data failed, ret: %d.", ret);
         return ret;
     }
     return DH_SUCCESS;
@@ -301,7 +301,7 @@ int32_t DSpeakerDev::OnStateChange(const AudioEventType type)
     }
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
-        DHLOGE("Callback is null.");
+        DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
     }
     cbObj->NotifyEvent(event);

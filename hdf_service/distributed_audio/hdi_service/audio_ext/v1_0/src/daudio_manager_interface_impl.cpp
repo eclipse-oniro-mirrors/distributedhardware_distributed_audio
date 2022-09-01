@@ -40,13 +40,13 @@ extern "C" IDAudioManager *DAudioManagerImplGetInstance(void)
 
 DAudioManagerInterfaceImpl::DAudioManagerInterfaceImpl()
 {
-    DHLOGD("Distributed Audio Ext Manager constructed.");
+    DHLOGI("Distributed audio ext manager constructed.");
     audiomgr_ = AudioManagerInterfaceImpl::GetAudioManager();
 }
 
 DAudioManagerInterfaceImpl::~DAudioManagerInterfaceImpl()
 {
-    DHLOGD("Distributed Audio Ext Manager destructed.");
+    DHLOGI("Distributed audio ext manager destructed.");
 }
 
 int32_t DAudioManagerInterfaceImpl::RegisterAudioDevice(const std::string &adpName, int32_t devId,

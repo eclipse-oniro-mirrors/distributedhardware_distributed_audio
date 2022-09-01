@@ -25,10 +25,10 @@ namespace OHOS {
 namespace DistributedHardware {
 void AudioDecoderCallback::OnError(Media::AVCodecErrorType errorType, int32_t errorCode)
 {
-    DHLOGE("OnError. Error type: %d, Error code: %d ", errorType, errorCode);
+    DHLOGE("On error. Error type: %d, Error code: %d ", errorType, errorCode);
     std::shared_ptr<AudioDecoder> decObj = audioDecoder_.lock();
     if (decObj == nullptr) {
-        DHLOGE("audioDecoder is nullptr.");
+        DHLOGE("Decoder is nullptr.");
         return;
     }
     AudioEvent decoderErr = {AUDIO_DECODER_ERR, ""};
@@ -37,10 +37,10 @@ void AudioDecoderCallback::OnError(Media::AVCodecErrorType errorType, int32_t er
 
 void AudioDecoderCallback::OnInputBufferAvailable(uint32_t index)
 {
-    DHLOGD("OnInputBufferAvailable. index %u.", index);
+    DHLOGD("On input buffer available. index %u.", index);
     std::shared_ptr<AudioDecoder> decObj = audioDecoder_.lock();
     if (decObj == nullptr) {
-        DHLOGE("audioDecoder is nullptr.");
+        DHLOGE("Decoder is nullptr.");
         return;
     }
     decObj->OnInputBufferAvailable(index);
@@ -48,10 +48,10 @@ void AudioDecoderCallback::OnInputBufferAvailable(uint32_t index)
 
 void AudioDecoderCallback::OnOutputFormatChanged(const Media::Format &format)
 {
-    DHLOGI("OnOutputFormatChanged.");
+    DHLOGI("On output format changed.");
     std::shared_ptr<AudioDecoder> decObj = audioDecoder_.lock();
     if (decObj == nullptr) {
-        DHLOGE("audioDecoder is nullptr.");
+        DHLOGE("Decoder is nullptr.");
         return;
     }
     decObj->OnOutputFormatChanged(format);
@@ -60,10 +60,10 @@ void AudioDecoderCallback::OnOutputFormatChanged(const Media::Format &format)
 void AudioDecoderCallback::OnOutputBufferAvailable(uint32_t index, Media::AVCodecBufferInfo info,
     Media::AVCodecBufferFlag flag)
 {
-    DHLOGD("OnOutputBufferAvailable. index %u.", index);
+    DHLOGD("On output buffer available. index %u.", index);
     std::shared_ptr<AudioDecoder> decObj = audioDecoder_.lock();
     if (decObj == nullptr) {
-        DHLOGE("audioDecoder is nullptr.");
+        DHLOGE("Decoder is nullptr.");
         return;
     }
     decObj->OnOutputBufferAvailable(index, info, flag);

@@ -35,12 +35,12 @@ IMPLEMENT_SINGLE_INSTANCE(DAudioHdiHandler);
 
 DAudioHdiHandler::DAudioHdiHandler()
 {
-    DHLOGI("DAudioHdiHandler construct");
+    DHLOGI("Distributed audio hdi handler construct.");
 }
 
 DAudioHdiHandler::~DAudioHdiHandler()
 {
-    DHLOGI("~DAudioHdiHandler");
+    DHLOGI("Distributed audio hdi handler deconstructed.");
 }
 
 int32_t DAudioHdiHandler::InitHdiHandler()
@@ -84,7 +84,7 @@ int32_t DAudioHdiHandler::UninitHdiHandler()
 int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, const int32_t dhId,
     const std::string &capability, const std::shared_ptr<IDAudioHdiCallback> &callbackObjParam)
 {
-    DHLOGI("RegisterAudioDevice, adpname: %s, dhId: %d", GetAnonyString(devId).c_str(), dhId);
+    DHLOGI("Register audio device, adpname: %s, dhId: %d", GetAnonyString(devId).c_str(), dhId);
     if (audioSrvHdf_ == nullptr) {
         DHLOGE("Audio hdi proxy not init.");
         return ERR_DH_AUDIO_HDI_PROXY_NOT_INIT;
@@ -134,7 +134,7 @@ int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, const in
 
 int32_t DAudioHdiHandler::UnRegisterAudioDevice(const std::string &devId, const int32_t dhId)
 {
-    DHLOGI("UnRegisterAudioDevice, adpname: %s, dhId: %d", GetAnonyString(devId).c_str(), dhId);
+    DHLOGI("Unregister audio device, adpname: %s, dhId: %d", GetAnonyString(devId).c_str(), dhId);
     if (audioSrvHdf_ == nullptr) {
         DHLOGE("Audio hdi proxy not init");
         return ERR_DH_AUDIO_HDI_PROXY_NOT_INIT;
@@ -165,7 +165,7 @@ int32_t DAudioHdiHandler::UnRegisterAudioDevice(const std::string &devId, const 
 int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, const int32_t dhId,
     const std::shared_ptr<AudioEvent> &audioEvent)
 {
-    DHLOGI("NotifyEvent adpname: %s, dhId: %d, event type: %d, event content: %s.",
+    DHLOGI("Notify event adpname: %s, dhId: %d, event type: %d, event content: %s.",
         GetAnonyString(devId).c_str(), dhId, audioEvent->type, audioEvent->content.c_str());
     if (audioSrvHdf_ == nullptr) {
         DHLOGE("Audio hdi proxy not init");

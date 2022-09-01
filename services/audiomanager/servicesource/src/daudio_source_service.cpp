@@ -71,7 +71,7 @@ int32_t DAudioSourceService::InitSource(const std::string &params, const sptr<ID
     (void)params;
     int32_t ret = DAudioSourceManager::GetInstance().Init(callback);
     if (ret != DH_SUCCESS) {
-        DHLOGE("DAudioSourceManager init failed.");
+        DHLOGE("Distributed audio source manager init failed.");
         return ret;
     }
     return DH_SUCCESS;
@@ -123,7 +123,7 @@ void DAudioSourceService::DAudioNotify(const std::string &devId, const std::stri
 
 int DAudioSourceService::Dump(int32_t fd, const std::vector<std::u16string>& args)
 {
-    DHLOGI("DAudioSourceService Dump.");
+    DHLOGI("Distributed audio source service dump.");
     std::string result;
     std::vector<std::string> argsStr;
     for (auto item : args) {
@@ -137,7 +137,7 @@ int DAudioSourceService::Dump(int32_t fd, const std::vector<std::u16string>& arg
 
     int ret = dprintf(fd, "%s\n", result.c_str());
     if (ret < 0) {
-        DHLOGE("dprintf error");
+        DHLOGE("Dprintf error");
         return ERR_DH_AUDIO_BAD_VALUE;
     }
 

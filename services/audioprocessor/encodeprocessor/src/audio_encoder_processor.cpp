@@ -29,7 +29,7 @@ namespace DistributedHardware {
 AudioEncoderProcessor::~AudioEncoderProcessor()
 {
     if (audioEncoder_ != nullptr) {
-        DHLOGI("~AudioEncoderProcessor. Release audio processor.");
+        DHLOGI("Release audio processor.");
         StopAudioProcessor();
         ReleaseAudioProcessor();
     }

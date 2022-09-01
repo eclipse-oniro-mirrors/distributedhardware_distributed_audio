@@ -623,7 +623,7 @@ int32_t DAudioSourceDev::TaskOpenDMic(const std::string &args)
 
     ret = mic_->Start();
     if (ret != DH_SUCCESS) {
-        DHLOGE("speaker start failed.");
+        DHLOGE("Speaker start failed.");
         mic_->Stop();
         mic_->Release();
         return ret;
@@ -690,7 +690,7 @@ int32_t DAudioSourceDev::TaskOpenCtrlChannel(const std::string &args)
 
     ret = audioCtrlMgr_->SetUp();
     if (ret != DH_SUCCESS) {
-        DHLOGE("SetUp audio ctrl failed.");
+        DHLOGE("Set up audio ctrl failed.");
         return ret;
     }
     ret = audioCtrlMgr_->Start();
@@ -835,7 +835,7 @@ bool DAudioSourceDev::JsonParamCheck(const json &jParam, const std::initializer_
     }
     for (auto it = key.begin(); it != key.end(); it++) {
         if (!jParam.contains(*it)) {
-            DHLOGE("son parameter not contain param(%s).", (*it).c_str());
+            DHLOGE("Json parameter not contain param(%s).", (*it).c_str());
             return false;
         }
     }
