@@ -15,6 +15,7 @@
 
 #include "daudio_ipc_callback.h"
 
+#include "daudio_constants.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 #include "daudio_util.h"
@@ -30,6 +31,10 @@ int32_t DAudioIpcCallback::OnNotifyRegResult(const std::string &devId, const std
     DHLOGI("On notify the registration result, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s",
         GetAnonyString(devId).c_str(), dhId.c_str(), status, resultData.c_str(), reqId.c_str());
 
+    if (devId.length() > DAUDIO_MAX_DEVICE_ID_LEN || dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN ||
+        reqId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
+    }
     auto iter = registerCallbackMap_.find(reqId);
     if (iter != registerCallbackMap_.end()) {
         iter->second->OnRegisterResult(devId, dhId, status, resultData);
@@ -46,6 +51,10 @@ int32_t DAudioIpcCallback::OnNotifyUnregResult(const std::string &devId, const s
     DHLOGI("On notify the unregistration result, devId: %s, dhId: %s, status: %d, resultData: %s, reqId: %s",
         GetAnonyString(devId).c_str(), dhId.c_str(), status, resultData.c_str(), reqId.c_str());
 
+    if (devId.length() > DAUDIO_MAX_DEVICE_ID_LEN || dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN ||
+        reqId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
+    }
     auto iter = unregisterCallbackMap_.find(reqId);
     if (iter != unregisterCallbackMap_.end()) {
         iter->second->OnUnregisterResult(devId, dhId, status, resultData);

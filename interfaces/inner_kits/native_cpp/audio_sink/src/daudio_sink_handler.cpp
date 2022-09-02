@@ -101,6 +101,9 @@ int32_t DAudioSinkHandler::SubscribeLocalHardware(const std::string &dhId, const
         DHLOGE("daudio sink proxy not init.");
         return ERR_DH_AUDIO_SA_PROXY_NOT_INIT;
     }
+    if (dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
+    }
     int32_t ret = dAudioSinkProxy_->SubscribeLocalHardware(dhId, param);
     return ret;
 }
@@ -112,6 +115,9 @@ int32_t DAudioSinkHandler::UnsubscribeLocalHardware(const std::string &dhId)
     if (dAudioSinkProxy_ == nullptr) {
         DHLOGE("daudio sink proxy not init.");
         return ERR_DH_AUDIO_SA_PROXY_NOT_INIT;
+    }
+    if (dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
     }
     int32_t ret = dAudioSinkProxy_->UnsubscribeLocalHardware(dhId);
     return ret;

@@ -60,6 +60,7 @@ constexpr uint32_t DAUDIO_MAX_SESSION_NAME_LEN = 50;
 constexpr uint32_t DAUDIO_MAX_DEVICE_ID_LEN = 100;
 constexpr uint32_t DAUDIO_MAX_TASKQUEUE_LEN = 100;
 constexpr uint32_t DAUDIO_MAX_RECV_DATA_LEN = 104857600;
+constexpr uint32_t DAUDIO_MAX_JSON_LEN = 1024;
 
 const std::string DAUDIO_LOG_TITLE_TAG = "DAUDIO";
 const std::string DAUDIO_PREFIX = "DISTRIBUTED_AUDIO";

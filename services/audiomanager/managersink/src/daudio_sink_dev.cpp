@@ -408,6 +408,9 @@ int32_t DAudioSinkDev::NotifyRenderStateChange(const std::shared_ptr<AudioEvent>
 int32_t DAudioSinkDev::TaskOpenCtrlChannel(const std::string &args)
 {
     DHLOGI("Open ctrl channel.");
+    if (args.length() > DAUDIO_MAX_JSON_LEN || args.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
+    }
     json jParam = json::parse(args, nullptr, false);
     if (!JsonParamCheck(jParam, { KEY_DH_ID })) {
         return ERR_DH_AUDIO_FAILED;
@@ -458,6 +461,9 @@ int32_t DAudioSinkDev::TaskCloseCtrlChannel(const std::string &args)
 int32_t DAudioSinkDev::TaskOpenDSpeaker(const std::string &args)
 {
     DHLOGI("Open speaker device.");
+    if (args.length() > DAUDIO_MAX_JSON_LEN || args.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
+    }
     json jParam = json::parse(args, nullptr, false);
     if (!JsonParamCheck(jParam, { KEY_DH_ID, KEY_AUDIO_PARAM })) {
         return ERR_DH_AUDIO_FAILED;
@@ -518,6 +524,9 @@ int32_t DAudioSinkDev::TaskCloseDSpeaker(const std::string &args)
 int32_t DAudioSinkDev::TaskOpenDMic(const std::string &args)
 {
     DHLOGI("Open mic device.");
+    if (args.length() > DAUDIO_MAX_JSON_LEN || args.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
+    }
     json jParam = json::parse(args, nullptr, false);
     if (!JsonParamCheck(jParam, { KEY_DH_ID, KEY_AUDIO_PARAM })) {
         return ERR_DH_AUDIO_FAILED;

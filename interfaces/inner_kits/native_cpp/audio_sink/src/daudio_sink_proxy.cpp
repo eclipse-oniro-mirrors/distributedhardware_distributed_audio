@@ -15,6 +15,7 @@
 
 #include "daudio_sink_proxy.h"
 
+#include "daudio_constants.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 
@@ -65,7 +66,9 @@ int32_t DAudioSinkProxy::SubscribeLocalHardware(const std::string &dhId, const s
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return ERR_DH_AUDIO_SA_WRITE_INTERFACE_TOKEN_FAILED;
     }
-
+    if (dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
+    }
     if (!data.WriteString(dhId) || !data.WriteString(param)) {
         return ERR_DH_AUDIO_SA_WRITE_PARAM_FAIED;
     }
@@ -83,7 +86,9 @@ int32_t DAudioSinkProxy::UnsubscribeLocalHardware(const std::string &dhId)
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return ERR_DH_AUDIO_SA_WRITE_INTERFACE_TOKEN_FAILED;
     }
-
+    if (dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
+    }
     if (!data.WriteString(dhId)) {
         return ERR_DH_AUDIO_SA_WRITE_PARAM_FAIED;
     }
@@ -102,7 +107,9 @@ void DAudioSinkProxy::DAudioNotify(const std::string &devId, const std::string &
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return;
     }
-
+    if (devId.length() > DAUDIO_MAX_DEVICE_ID_LEN || dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return;
+    }
     if (!data.WriteString(devId) || !data.WriteString(dhId) || !data.WriteInt32(eventType) ||
         !data.WriteString(eventContent)) {
         return;

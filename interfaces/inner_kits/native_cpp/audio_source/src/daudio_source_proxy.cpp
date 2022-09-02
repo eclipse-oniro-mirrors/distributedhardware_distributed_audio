@@ -15,6 +15,7 @@
 
 #include "daudio_source_proxy.h"
 
+#include "daudio_constants.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 
@@ -64,7 +65,10 @@ int32_t DAudioSourceProxy::RegisterDistributedHardware(const std::string &devId,
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return ERR_DH_AUDIO_SA_WRITE_INTERFACE_TOKEN_FAILED;
     }
-
+    if (devId.length() > DAUDIO_MAX_DEVICE_ID_LEN || dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN ||
+        reqId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
+    }
     if (!data.WriteString(devId) || !data.WriteString(dhId) || !data.WriteString(param.version) ||
         !data.WriteString(param.attrs) || !data.WriteString(reqId)) {
         return ERR_DH_AUDIO_SA_WRITE_PARAM_FAIED;
@@ -84,7 +88,10 @@ int32_t DAudioSourceProxy::UnregisterDistributedHardware(const std::string &devI
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return ERR_DH_AUDIO_SA_WRITE_INTERFACE_TOKEN_FAILED;
     }
-
+    if (devId.length() > DAUDIO_MAX_DEVICE_ID_LEN || dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN ||
+        reqId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
+    }
     if (!data.WriteString(devId) || !data.WriteString(dhId) || !data.WriteString(reqId)) {
         return ERR_DH_AUDIO_SA_WRITE_PARAM_FAIED;
     }
@@ -103,7 +110,9 @@ int32_t DAudioSourceProxy::ConfigDistributedHardware(const std::string &devId, c
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return ERR_DH_AUDIO_SA_WRITE_INTERFACE_TOKEN_FAILED;
     }
-
+    if (devId.length() > DAUDIO_MAX_DEVICE_ID_LEN || dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
+    }
     if (!data.WriteString(devId) || !data.WriteString(dhId) || !data.WriteString(key) || !data.WriteString(value)) {
         return ERR_DH_AUDIO_SA_WRITE_PARAM_FAIED;
     }
@@ -122,7 +131,9 @@ void DAudioSourceProxy::DAudioNotify(const std::string &devId, const std::string
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return;
     }
-
+    if (devId.length() > DAUDIO_MAX_DEVICE_ID_LEN || dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return;
+    }
     if (!data.WriteString(devId) || !data.WriteString(dhId) || !data.WriteInt32(eventType) ||
         !data.WriteString(eventContent)) {
         return;

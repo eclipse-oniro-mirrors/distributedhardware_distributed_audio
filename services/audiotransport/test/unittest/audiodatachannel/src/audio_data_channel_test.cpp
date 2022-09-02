@@ -44,7 +44,7 @@ HWTEST_F(AudioDataChannelTest, CreateSession_001, TestSize.Level1)
 {
     std::shared_ptr<IAudioChannelListener> listener = nullptr;
     EXPECT_NE(DH_SUCCESS, dataChannel_->CreateSession(listener, DATA_SPEAKER_SESSION_NAME));
-    EXPECT_NE(DH_SUCCESS, dataChannel_->ReleaseSession());
+    EXPECT_EQ(DH_SUCCESS, dataChannel_->ReleaseSession());
 }
 
 /**

@@ -115,6 +115,9 @@ int32_t DAudioSourceHandler::RegisterDistributedHardware(const std::string &devI
         DHLOGE("Daudio ipc callback is null.");
         return ERR_DH_AUDIO_SA_IPCCALLBACK_NOT_INIT;
     }
+    if (devId.length() > DAUDIO_MAX_DEVICE_ID_LEN || dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
+    }
 
     DaudioStartAsyncTrace(DAUDIO_REGISTER_AUDIO, DAUDIO_REGISTER_AUDIO_TASKID);
     std::string reqId = GetRandomID();
@@ -135,6 +138,9 @@ int32_t DAudioSourceHandler::UnregisterDistributedHardware(const std::string &de
         DHLOGE("Daudio ipc callback is null.");
         return ERR_DH_AUDIO_SA_IPCCALLBACK_NOT_INIT;
     }
+    if (devId.length() > DAUDIO_MAX_DEVICE_ID_LEN || dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
+    }
 
     DaudioStartAsyncTrace(DAUDIO_UNREGISTER_AUDIO, DAUDIO_UNREGISTER_AUDIO_TASKID);
     std::string reqId = GetRandomID();
@@ -150,6 +156,9 @@ int32_t DAudioSourceHandler::ConfigDistributedHardware(const std::string &devId,
     if (dAudioSourceProxy_ == nullptr) {
         DHLOGE("Daudio source proxy not init.");
         return ERR_DH_AUDIO_SA_PROXY_NOT_INIT;
+    }
+    if (devId.length() > DAUDIO_MAX_DEVICE_ID_LEN || dhId.length() > DAUDIO_MAX_DEVICE_ID_LEN) {
+        return ERR_DH_AUDIO_SA_DEVID_ILLEGAL;
     }
     return dAudioSourceProxy_->ConfigDistributedHardware(devId, dhId, key, value);
 }

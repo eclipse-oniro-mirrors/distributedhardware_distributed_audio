@@ -376,6 +376,9 @@ int32_t DAudioSourceDev::HandleNotifyRPC(const std::shared_ptr<AudioEvent> &even
         return ERR_DH_AUDIO_NULLPTR;
     }
     std::lock_guard<std::mutex> dataLock(rpcWaitMutex_);
+    if (event->content.length() > DAUDIO_MAX_JSON_LEN || event->content.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
+    }
     json jParam = json::parse(event->content, nullptr, false);
     if (!JsonParamCheck(jParam, { KEY_RESULT })) {
         return ERR_DH_AUDIO_FAILED;
@@ -495,6 +498,9 @@ int32_t DAudioSourceDev::WaitForRPC(const AudioEventType type)
 int32_t DAudioSourceDev::TaskEnableDAudio(const std::string &args)
 {
     DHLOGI("Enable audio device.");
+    if (args.length() > DAUDIO_MAX_JSON_LEN || args.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
+    }
     json jParam = json::parse(args, nullptr, false);
     int32_t dhId = std::stoi((std::string)jParam[KEY_DH_ID]);
 
@@ -534,6 +540,9 @@ void DAudioSourceDev::OnEnableTaskResult(int32_t resultCode, const std::string &
 {
     (void)funcName;
     DHLOGI("On enable task result.");
+    if (result.length() > DAUDIO_MAX_JSON_LEN || result.empty()) {
+        return;
+    }
     json jParam = json::parse(result, nullptr, false);
     mgrCallback_->OnEnableAudioResult(jParam[KEY_DEV_ID], jParam[KEY_DH_ID], resultCode);
 }
@@ -541,6 +550,9 @@ void DAudioSourceDev::OnEnableTaskResult(int32_t resultCode, const std::string &
 int32_t DAudioSourceDev::TaskDisableDAudio(const std::string &args)
 {
     DHLOGI("Task disable daudio.");
+    if (args.length() > DAUDIO_MAX_JSON_LEN || args.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
+    }
     json jParam = json::parse(args, nullptr, false);
     int32_t dhId = std::stoi((std::string)jParam[KEY_DH_ID]);
     switch (GetDevTypeByDHId(dhId)) {
@@ -579,6 +591,9 @@ void DAudioSourceDev::OnDisableTaskResult(int32_t resultCode, const std::string 
 {
     (void)funcName;
     DHLOGI("On disable task result.");
+    if (result.length() > DAUDIO_MAX_JSON_LEN || result.empty()) {
+        return;
+    }
     json jParam = json::parse(result, nullptr, false);
     mgrCallback_->OnDisableAudioResult(jParam[KEY_DEV_ID], jParam[KEY_DH_ID], resultCode);
 }
@@ -589,6 +604,9 @@ int32_t DAudioSourceDev::TaskOpenDSpeaker(const std::string &args)
     if (speaker_ == nullptr) {
         DHLOGE("Speaker device not init");
         return ERR_DH_AUDIO_SA_SPEAKER_DEVICE_NOT_INIT;
+    }
+    if (args.length() > DAUDIO_MAX_JSON_LEN || args.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
     json jParam = json::parse(args, nullptr, false);
     if (!JsonParamCheck(jParam, { KEY_DH_ID })) {
@@ -626,6 +644,9 @@ int32_t DAudioSourceDev::TaskCloseDSpeaker(const std::string &args)
         NotifyHDF(NOTIFY_CLOSE_SPEAKER_RESULT, HDF_EVENT_RESULT_SUCCESS);
         return DH_SUCCESS;
     }
+    if (args.length() > DAUDIO_MAX_JSON_LEN || args.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
+    }
 
     bool closeStatus = true;
     int32_t ret = speaker_->Stop();
@@ -660,6 +681,9 @@ int32_t DAudioSourceDev::TaskOpenDMic(const std::string &args)
     if (mic_ == nullptr) {
         DHLOGE("Mic device not init");
         return ERR_DH_AUDIO_SA_MIC_DEVICE_NOT_INIT;
+    }
+    if (args.length() > DAUDIO_MAX_JSON_LEN || args.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
     int32_t ret = mic_->SetUp();
     if (ret != DH_SUCCESS) {
@@ -701,6 +725,9 @@ int32_t DAudioSourceDev::TaskCloseDMic(const std::string &args)
         NotifyHDF(NOTIFY_CLOSE_MIC_RESULT, HDF_EVENT_RESULT_SUCCESS);
         return DH_SUCCESS;
     }
+    if (args.length() > DAUDIO_MAX_JSON_LEN || args.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
+    }
 
     bool closeStatus = true;
     int32_t ret = mic_->Stop();
@@ -735,6 +762,9 @@ int32_t DAudioSourceDev::TaskOpenCtrlChannel(const std::string &args)
     if (audioCtrlMgr_ == nullptr) {
         DHLOGE("Audio source ctrl mgr not init.");
         return ERR_DH_AUDIO_NULLPTR;
+    }
+    if (args.length() > DAUDIO_MAX_JSON_LEN || args.empty()) {
+        return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
 
     json jAudioParam;
