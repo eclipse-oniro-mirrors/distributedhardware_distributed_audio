@@ -114,7 +114,10 @@ int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent>
         DHLOGE("Send audio event, Audio ctrl trans is null");
         return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
     }
-
+    if (event == nullptr) {
+        DHLOGE("The parameter is empty.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     return audioCtrlTrans_->SendAudioEvent(event);
 }
 
@@ -131,12 +134,24 @@ void DAudioSourceDevCtrlMgr::OnStateChange(int32_t type)
         DHLOGI("Audio ctrl trans on closed.");
         isOpened_ = false;
     }
+    if (audioEventCallback_ == nullptr) {
+        DHLOGE("Callback is nullptr.");
+        return;
+    }
     audioEventCallback_->NotifyEvent(event);
 }
 
 void DAudioSourceDevCtrlMgr::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("Received event");
+    if (event == nullptr) {
+        DHLOGE("The parameter is empty.");
+        return;
+    }
+    if (audioEventCallback_ == nullptr) {
+        DHLOGE("Callback is nullptr.");
+        return;
+    }
     audioEventCallback_->NotifyEvent(event);
 }
 } // namespace DistributedHardware

@@ -54,12 +54,17 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
             char* portName = (char*)calloc(port.portName.length() + 1, sizeof(char));
             if (strcpy_s(portName, port.portName.length() + 1, port.portName.c_str()) != EOK) {
                 DHLOGI("Strcpy_s port name failed.");
+                free(audioPorts);
                 continue;
             }
             audioPorts->dir = static_cast<AudioPortDirection>(port.dir);
             audioPorts->portId = port.portId;
             audioPorts->portName = portName;
             audioPorts++;
+        }
+        if (context == nullptr) {
+            DHLOGE("The parameter is empty.");
+            return ERR_DH_AUDIO_HDF_INVALID_PARAM;
         }
         context->descriptors_.push_back(descInternal);
     }

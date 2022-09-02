@@ -108,6 +108,10 @@ void DAudioSourceDev::NotifyEvent(const std::shared_ptr<AudioEvent> &event)
 
 bool DAudioSourceDev::IsSpeakerEvent(const std::shared_ptr<AudioEvent> &event)
 {
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return false;
+    }
     const int32_t formatNum = 10;
     const int32_t spkEventBegin = 1;
     return ((int32_t)((int32_t)event->type / formatNum) == spkEventBegin);
@@ -115,6 +119,10 @@ bool DAudioSourceDev::IsSpeakerEvent(const std::shared_ptr<AudioEvent> &event)
 
 bool DAudioSourceDev::IsMicEvent(const std::shared_ptr<AudioEvent> &event)
 {
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return false;
+    }
     const int32_t formatNum = 10;
     const int32_t micEventBegin = 2;
     return ((int32_t)((int32_t)event->type / formatNum) == micEventBegin);
@@ -122,6 +130,10 @@ bool DAudioSourceDev::IsMicEvent(const std::shared_ptr<AudioEvent> &event)
 
 void DAudioSourceDev::NotifySpeakerEvent(const std::shared_ptr<AudioEvent> &event)
 {
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return;
+    }
     DHLOGI("Notify speaker event, eventType: %d.", event->type);
     switch (event->type) {
         case AudioEventType::OPEN_SPEAKER:
@@ -149,6 +161,10 @@ void DAudioSourceDev::NotifySpeakerEvent(const std::shared_ptr<AudioEvent> &even
 
 void DAudioSourceDev::NotifyMicEvent(const std::shared_ptr<AudioEvent> &event)
 {
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return;
+    }
     DHLOGI("Notify mic event, eventType: %d.", event->type);
     switch (event->type) {
         case AudioEventType::OPEN_MIC:
@@ -215,6 +231,10 @@ int32_t DAudioSourceDev::HandleDSpeakerOpened(const std::shared_ptr<AudioEvent> 
 int32_t DAudioSourceDev::HandleDSpeakerClosed(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("Speaker device closed.");
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     if (speaker_ == nullptr) {
         DHLOGE("Speaker already closed.");
         return DH_SUCCESS;
@@ -267,6 +287,10 @@ int32_t DAudioSourceDev::HandleDMicClosed(const std::shared_ptr<AudioEvent> &eve
         DHLOGE("Mic already closed.");
         return DH_SUCCESS;
     }
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     return mic_->NotifyHdfAudioEvent(event);
 }
 
@@ -274,6 +298,10 @@ int32_t DAudioSourceDev::OpenCtrlTrans(const std::shared_ptr<AudioEvent> &event)
 {
     if (audioCtrlMgr_ == nullptr) {
         audioCtrlMgr_ = std::make_shared<DAudioSourceDevCtrlMgr>(devId_, shared_from_this());
+    }
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
     }
     if (!audioCtrlMgr_->IsOpened() && (HandleOpenCtrlTrans(event) != DH_SUCCESS)) {
         DHLOGE("Open ctrl failed.");
@@ -288,6 +316,10 @@ int32_t DAudioSourceDev::CloseCtrlTrans(const std::shared_ptr<AudioEvent> &event
         DHLOGD("Ctrl already closed.");
         return DH_SUCCESS;
     }
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     if ((!isSpk && !speaker_->IsOpened()) || (isSpk && !mic_->IsOpened())) {
         DHLOGI("No distributed audio device used, close ctrl trans.");
         auto task = GenerateTask(this, &DAudioSourceDev::TaskCloseCtrlChannel, event->content, "Close Ctrl Trans",
@@ -300,6 +332,10 @@ int32_t DAudioSourceDev::CloseCtrlTrans(const std::shared_ptr<AudioEvent> &event
 int32_t DAudioSourceDev::HandleOpenCtrlTrans(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("Open control trans.");
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskOpenCtrlChannel, event->content, "Open Ctrl Trans",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -317,6 +353,10 @@ int32_t DAudioSourceDev::HandleCloseCtrlTrans(const std::shared_ptr<AudioEvent> 
 int32_t DAudioSourceDev::HandleCtrlTransClosed(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("Control trans closed.");
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     HandleCloseCtrlTrans(event);
     if (speaker_->IsOpened()) {
         event->type = SPEAKER_CLOSED;
@@ -331,6 +371,10 @@ int32_t DAudioSourceDev::HandleCtrlTransClosed(const std::shared_ptr<AudioEvent>
 
 int32_t DAudioSourceDev::HandleNotifyRPC(const std::shared_ptr<AudioEvent> &event)
 {
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     std::lock_guard<std::mutex> dataLock(rpcWaitMutex_);
     json jParam = json::parse(event->content, nullptr, false);
     if (!JsonParamCheck(jParam, { KEY_RESULT })) {
@@ -369,6 +413,10 @@ int32_t DAudioSourceDev::HandleNotifyRPC(const std::shared_ptr<AudioEvent> &even
 int32_t DAudioSourceDev::HandleVolumeSet(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("Start handle volume set.");
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskSetVolume, event->content, "set volume",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -377,6 +425,10 @@ int32_t DAudioSourceDev::HandleVolumeSet(const std::shared_ptr<AudioEvent> &even
 int32_t DAudioSourceDev::HandleVolumeChange(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("Start handle volume change.");
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeVolume, event->content, "volume change",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -385,6 +437,10 @@ int32_t DAudioSourceDev::HandleVolumeChange(const std::shared_ptr<AudioEvent> &e
 int32_t DAudioSourceDev::HandleFocusChange(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("Start handle focus change.");
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeFocus, event->content, "focus change",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -393,6 +449,10 @@ int32_t DAudioSourceDev::HandleFocusChange(const std::shared_ptr<AudioEvent> &ev
 int32_t DAudioSourceDev::HandleRenderStateChange(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("Start handle render state change.");
+    if (event == nullptr) {
+        DHLOGE("Event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeRenderState, event->content, "render state change",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);

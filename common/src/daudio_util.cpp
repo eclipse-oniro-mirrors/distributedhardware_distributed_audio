@@ -34,6 +34,9 @@ namespace OHOS {
 namespace DistributedHardware {
 constexpr int32_t WORD_WIDTH_8 = 8;
 constexpr int32_t WORD_WIDTH_4 = 4;
+constexpr size_t INT32_SHORT_ID_LENGTH = 20;
+constexpr size_t INT32_MIN_ID_LENGTH = 3;
+constexpr size_t INT32_PLAINTEXT_LENGTH = 4;
 
 int32_t GetLocalDeviceNetworkId(std::string &networkId)
 {
@@ -75,8 +78,6 @@ std::string GetRandomID()
 
 std::string GetAnonyString(const std::string &value)
 {
-    constexpr size_t INT32_SHORT_ID_LENGTH = 20;
-    constexpr size_t INT32_MIN_ID_LENGTH = 3;
     std::string res;
     std::string tmpStr("******");
     size_t strLen = value.length();
@@ -89,7 +90,6 @@ std::string GetAnonyString(const std::string &value)
         res += tmpStr;
         res += value[strLen - 1];
     } else {
-        constexpr size_t INT32_PLAINTEXT_LENGTH = 4;
         res.append(value, 0, INT32_PLAINTEXT_LENGTH);
         res += tmpStr;
         res.append(value, strLen - INT32_PLAINTEXT_LENGTH, INT32_PLAINTEXT_LENGTH);
@@ -100,9 +100,9 @@ std::string GetAnonyString(const std::string &value)
 
 int32_t GetDevTypeByDHId(int32_t dhId)
 {
-    if ((uint32_t)dhId & 0x8000000) {
+    if (static_cast<uint32_t>(dhId) & 0x8000000) {
         return AUDIO_DEVICE_TYPE_MIC;
-    } else if ((uint32_t)dhId & 0x7ffffff) {
+    } else if (static_cast<uint32_t>(dhId) & 0x7ffffff) {
         return AUDIO_DEVICE_TYPE_SPEAKER;
     }
     return AUDIO_DEVICE_TYPE_UNKNOWN;

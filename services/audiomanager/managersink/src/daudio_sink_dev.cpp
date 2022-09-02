@@ -100,6 +100,10 @@ void DAudioSinkDev::NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent)
 
 void DAudioSinkDev::NotifySpeakerEvent(const std::shared_ptr<AudioEvent> &audioEvent)
 {
+    if (audioEvent == nullptr) {
+        DHLOGE("Audio event is null.");
+        return;
+    }
     DHLOGI("Notify speaker event, eventType: %d.", audioEvent->type);
     switch (audioEvent->type) {
         case OPEN_SPEAKER:
@@ -121,6 +125,10 @@ void DAudioSinkDev::NotifySpeakerEvent(const std::shared_ptr<AudioEvent> &audioE
 
 void DAudioSinkDev::NotifyMicEvent(const std::shared_ptr<AudioEvent> &audioEvent)
 {
+    if (audioEvent == nullptr) {
+        DHLOGE("Audio event is null.");
+        return;
+    }
     DHLOGI("Notify mic event, eventType: %d.", audioEvent->type);
     switch (audioEvent->type) {
         case OPEN_MIC:
@@ -142,6 +150,10 @@ void DAudioSinkDev::NotifyMicEvent(const std::shared_ptr<AudioEvent> &audioEvent
 
 void DAudioSinkDev::NotifyVolumeEvent(const std::shared_ptr<AudioEvent> &audioEvent)
 {
+    if (audioEvent == nullptr) {
+        DHLOGE("Audio event is null.");
+        return;
+    }
     DHLOGI("Notify volume event, eventType: %d.", audioEvent->type);
     switch (audioEvent->type) {
         case VOLUME_SET:
@@ -312,6 +324,10 @@ int32_t DAudioSinkDev::NotifyOpenMic(const std::shared_ptr<AudioEvent> &audioEve
 int32_t DAudioSinkDev::NotifyCloseMic(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("Notify close dMic.");
+    if (audioEvent == nullptr) {
+        DHLOGE("Audio event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSinkDev::TaskCloseDMic, audioEvent->content, "Sink Close Mic",
         &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -321,7 +337,7 @@ int32_t DAudioSinkDev::NotifySetParam(const std::shared_ptr<AudioEvent> &audioEv
 {
     DHLOGI("Notify set param.");
     if (audioEvent == nullptr) {
-        DHLOGE("audio event is null.");
+        DHLOGE("Audio event is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     auto task = GenerateTask(this, &DAudioSinkDev::TaskSetParameter, audioEvent->content, "Sink Set Param",
@@ -332,6 +348,10 @@ int32_t DAudioSinkDev::NotifySetParam(const std::shared_ptr<AudioEvent> &audioEv
 int32_t DAudioSinkDev::NotifySetVolume(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("Notify set volume.");
+    if (audioEvent == nullptr) {
+        DHLOGE("Audio event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskSetVolume, audioEvent->content,
         "Sink Notify SetVolume", &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -340,6 +360,10 @@ int32_t DAudioSinkDev::NotifySetVolume(const std::shared_ptr<AudioEvent> &audioE
 int32_t DAudioSinkDev::NotifySetMute(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("Notify set mute.");
+    if (audioEvent == nullptr) {
+        DHLOGE("Audio event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskSetMute, audioEvent->content,
         "Sink NotifySetMute", &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -348,6 +372,10 @@ int32_t DAudioSinkDev::NotifySetMute(const std::shared_ptr<AudioEvent> &audioEve
 int32_t DAudioSinkDev::NotifyVolumeChange(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("Notify volume change.");
+    if (audioEvent == nullptr) {
+        DHLOGE("Audio event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskVolumeChange, audioEvent->content,
         "Sink Notify Volume Change", &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -356,6 +384,10 @@ int32_t DAudioSinkDev::NotifyVolumeChange(const std::shared_ptr<AudioEvent> &aud
 int32_t DAudioSinkDev::NotifyFocusChange(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("Notify focus change.");
+    if (audioEvent == nullptr) {
+        DHLOGE("Audio event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskFocusChange, audioEvent->content,
         "Sink Notify Focus Change", &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -364,6 +396,10 @@ int32_t DAudioSinkDev::NotifyFocusChange(const std::shared_ptr<AudioEvent> &audi
 int32_t DAudioSinkDev::NotifyRenderStateChange(const std::shared_ptr<AudioEvent> &audioEvent)
 {
     DHLOGI("Notify render state change.");
+    if (audioEvent == nullptr) {
+        DHLOGE("Audio event is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskRenderStateChange,
         audioEvent->content, "Sink Notify Render State Change", &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -518,7 +554,7 @@ int32_t DAudioSinkDev::TaskCloseDMic(const std::string &args)
     (void)args;
     DHLOGI("Close mic device.");
     if (micClient_ == nullptr) {
-        DHLOGI("mic client is null or already closed.");
+        DHLOGI("Mic client is null or already closed.");
         NotifySourceDev(NOTIFY_CLOSE_MIC_RESULT, micDhId_, DH_SUCCESS);
         return DH_SUCCESS;
     }

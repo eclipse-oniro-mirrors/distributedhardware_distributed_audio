@@ -64,6 +64,10 @@ int32_t AudioRenderInterfaceImpl::RenderFrame(const std::vector<uint8_t> &frame,
 
     AudioParameter param = { devAttrs_.format, devAttrs_.channelCount, devAttrs_.sampleRate };
     AudioData data = { param, frame };
+    if (audioExtCallback_ == nullptr) {
+        DHLOGE("Callback is nullptr.");
+        return HDF_FAILURE;
+    }
     int32_t ret = audioExtCallback_->WriteStreamData(adapterName_, devDesc_.pins, data);
     if (ret != HDF_SUCCESS) {
         DHLOGE("Write stream data failed.");

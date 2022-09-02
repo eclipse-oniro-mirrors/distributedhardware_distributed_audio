@@ -76,7 +76,7 @@ int32_t DMicClient::SetUp(const AudioParam &param)
         {
             static_cast<AudioStandard::AudioSamplingRate>(audioParam_.comParam.sampleRate),
             AudioStandard::AudioEncodingType::ENCODING_PCM,
-            static_cast<AudioStandard::AudioSampleFormat>(SAMPLE_S16LE),
+            static_cast<AudioStandard::AudioSampleFormat>(audioParam_.comParam.bitFormat),
             static_cast<AudioStandard::AudioChannel>(audioParam_.comParam.channelMask),
         },
         {

@@ -61,11 +61,19 @@ AudioAdapterInterfaceImpl::~AudioAdapterInterfaceImpl()
 
 void AudioAdapterInterfaceImpl::SetSpeakerCallback(const sptr<IDAudioCallback> &speakerCallback)
 {
+    if (speakerCallback == nullptr) {
+        DHLOGE("Callback is nullptr.");
+        return;
+    }
     extSpeakerCallback_ = speakerCallback;
 }
 
 void AudioAdapterInterfaceImpl::SetMicCallback(const sptr<IDAudioCallback> &micCallback)
 {
+    if (micCallback == nullptr) {
+        DHLOGE("Callback is nullptr.");
+        return;
+    }
     extMicCallback_ = micCallback;
 }
 
