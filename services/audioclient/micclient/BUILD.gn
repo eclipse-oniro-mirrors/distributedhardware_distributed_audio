@@ -46,9 +46,10 @@ ohos_shared_library("dmic_client") {
   deps = [
     "${audio_transport_path}/encodetransport:distributed_audio_encode_transport",
     "${common_path}:distributed_audio_utils",
-    "${mediastandardfwk_path}/audiocapturer:audio_capturer",
     "${services_path}/common:distributed_audio_service_common",
   ]
+
+  external_deps = [ "multimedia_audio_framework:audio_capturer" ]
 
   defines = [
     "HI_LOG_ENABLE",

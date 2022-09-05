@@ -48,11 +48,13 @@ ohos_shared_library("dspeaker_client") {
   deps = [
     "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
     "${common_path}:distributed_audio_utils",
-    "${mediastandardfwk_path}/audiorenderer:audio_renderer",
     "${services_path}/common:distributed_audio_service_common",
   ]
 
-  external_deps = [ "multimedia_audio_framework:audio_client" ]
+  external_deps = [
+    "multimedia_audio_framework:audio_client",
+    "multimedia_audio_framework:audio_renderer",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",
