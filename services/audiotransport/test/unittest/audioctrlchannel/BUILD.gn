@@ -50,7 +50,7 @@ ohos_unittest("AudioCtrlChannelTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${audio_transport_path}/audiochannel/audioctrlchannel:distributed_audio_ctrl_channel",
+    "${audio_transport_path}/audioctrltransport:distributed_audio_control",
     "${softbusadapter_path}:distributed_audio_softbus_adapter",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",

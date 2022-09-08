@@ -59,9 +59,9 @@ ohos_unittest("SpeakerClientTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${audio_client_path}/spkclient:dspeaker_client",
     "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
-    "${common_path}:distributed_audio_utils",
+    "${services_path}/audiomanager/servicesink:distributed_audio_sink",
+    "${services_path}/common:distributed_audio_utils",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
   ]

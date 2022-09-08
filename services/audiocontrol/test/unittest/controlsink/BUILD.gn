@@ -49,9 +49,9 @@ ohos_unittest("ControlSinkTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${audio_control_path}/controlsink:distributed_audio_sink_ctrl",
-    "${audio_transport_path}/audioctrltransport:distributed_audio_ctrl_transport",
-    "${common_path}:distributed_audio_utils",
+    "${audio_transport_path}/audioctrltransport:distributed_audio_control",
+    "${services_path}/audiomanager/servicesink:distributed_audio_sink",
+    "${services_path}/common:distributed_audio_utils",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
   ]

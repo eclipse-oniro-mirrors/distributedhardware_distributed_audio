@@ -51,8 +51,8 @@ ohos_unittest("DecodeProcessTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${audio_processor_path}/decodeprocessor:distributed_audio_decoder_processor",
-    "${common_path}:distributed_audio_utils",
+    "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
+    "${services_path}/common:distributed_audio_utils",
     "//third_party/googletest:gtest_main",
   ]
 

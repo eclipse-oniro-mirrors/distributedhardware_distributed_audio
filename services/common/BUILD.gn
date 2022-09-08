@@ -16,8 +16,11 @@ import("//build/ohos_var.gni")
 import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-ohos_shared_library("distributed_audio_service_common") {
+ohos_shared_library("distributed_audio_utils") {
   include_dirs = [
+    "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+    "//commonlibrary/c_utils/base/include",
     "//third_party/json/include",
   ]
 
@@ -26,15 +29,26 @@ ohos_shared_library("distributed_audio_service_common") {
     "audioparam",
     "taskProcessor/include",
     "${common_path}/include",
+    "${common_path}/dfx_utils/include",
   ]
 
   sources = [
     "audiodata/src/audio_data.cpp",
     "taskProcessor/src/task_impl.cpp",
     "taskProcessor/src/task_queue.cpp",
+    "${common_path}/dfx_utils/src/daudio_hisysevent.cpp",
+    "${common_path}/dfx_utils/src/daudio_hitrace.cpp",
+    "${common_path}/src/daudio_log.cpp",
+    "${common_path}/src/daudio_util.cpp",
   ]
 
-  deps = [ "${common_path}:distributed_audio_utils" ]
+  external_deps = [
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "hisysevent_native:libhisysevent",
+    "hitrace_native:hitrace_meter",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",

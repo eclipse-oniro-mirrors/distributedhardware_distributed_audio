@@ -49,7 +49,7 @@ ohos_unittest("AudioHandlerTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${common_path}:distributed_audio_utils",
+    "${services_path}/common:distributed_audio_utils",
     "${distributedaudio_path}/audiohandler:distributed_audio_handler",
     "${mediastandard_path}/interfaces/inner_api/native:media_client",
     "${mediastandard_path}/services/utils:media_service_utils",

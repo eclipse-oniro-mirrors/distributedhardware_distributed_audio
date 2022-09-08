@@ -45,37 +45,24 @@
         },
         "build":{
             "sub_component":[
-                "//foundation/distributedhardware/distributed_audio/services/audioclient/spkclient:dspeaker_client",
-                "//foundation/distributedhardware/distributed_audio/services/audioclient/micclient:dmic_client",
-
                 "//foundation/distributedhardware/distributed_audio/sa_profile:daudio_sa_profile",
                 "//foundation/distributedhardware/distributed_audio/sa_profile:daudio.cfg",
 
                 "//foundation/distributedhardware/distributed_audio/audiohandler:distributed_audio_handler",
-                "//foundation/distributedhardware/distributed_audio/common:distributed_audio_utils",
 
                 "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/audio_sink:distributed_audio_sink_sdk",
                 "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/audio_source:distributed_audio_source_sdk",
 
-                "//foundation/distributedhardware/distributed_audio/services/common:distributed_audio_service_common",
-                "//foundation/distributedhardware/distributed_audio/services/audiocontrol/controlsource:distributed_audio_source_ctrl",
-                "//foundation/distributedhardware/distributed_audio/services/audiocontrol/controlsink:distributed_audio_sink_ctrl",
-
-                "//foundation/distributedhardware/distributed_audio/services/audiomanager/managersink:distributed_audio_manager_sink",
-                "//foundation/distributedhardware/distributed_audio/services/audiomanager/managersource:distributed_audio_manager_source",
+                "//foundation/distributedhardware/distributed_audio/services/common:distributed_audio_utils",
 
                 "//foundation/distributedhardware/distributed_audio/services/audiomanager/servicesource:distributed_audio_source",
                 "//foundation/distributedhardware/distributed_audio/services/audiomanager/servicesink:distributed_audio_sink",
 
-                "//foundation/distributedhardware/distributed_audio/services/audiohdiproxy:distributed_audio_hdi_proxy",
                 "//foundation/distributedhardware/distributed_audio/services/softbusadapter:distributed_audio_softbus_adapter",
 
-                "//foundation/distributedhardware/distributed_audio/services/audiotransport/audiochannel/audioctrlchannel:distributed_audio_ctrl_channel",
-                "//foundation/distributedhardware/distributed_audio/services/audiotransport/audioctrltransport:distributed_audio_ctrl_transport",
+                "//foundation/distributedhardware/distributed_audio/services/audiotransport/audioctrltransport:distributed_audio_control",
                 "//foundation/distributedhardware/distributed_audio/services/audiotransport/audiochannel/audiodatachannel:distributed_audio_data_channel",
-                "//foundation/distributedhardware/distributed_audio/services/audioprocessor/decodeprocessor:distributed_audio_decoder_processor",
                 "//foundation/distributedhardware/distributed_audio/services/audiotransport/decodetransport:distributed_audio_decode_transport",
-                "//foundation/distributedhardware/distributed_audio/services/audioprocessor/encodeprocessor:distributed_audio_encoder_processor",
                 "//foundation/distributedhardware/distributed_audio/services/audiotransport/encodetransport:distributed_audio_encode_transport"
             ],
             "inner_kits":[

@@ -43,7 +43,7 @@ ohos_unittest("AudioSinkTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${common_path}:distributed_audio_utils",
+    "${services_path}/common:distributed_audio_utils",
     "${distributedaudio_path}/interfaces/inner_kits/native_cpp/audio_sink:distributed_audio_sink_sdk",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
     "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",

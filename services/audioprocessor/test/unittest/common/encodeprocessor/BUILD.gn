@@ -51,8 +51,8 @@ ohos_unittest("EncodeProcessTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${audio_processor_path}/encodeprocessor:distributed_audio_encoder_processor",
-    "${common_path}:distributed_audio_utils",
+    "${audio_transport_path}/encodetransport:distributed_audio_encode_transport",
+    "${services_path}/common:distributed_audio_utils",
     "//third_party/googletest:gtest_main",
   ]
 

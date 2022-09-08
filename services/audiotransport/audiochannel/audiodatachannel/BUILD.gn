@@ -36,7 +36,7 @@ ohos_shared_library("distributed_audio_data_channel") {
   sources = [ "src/audio_data_channel.cpp" ]
 
   deps = [
-    "${common_path}:distributed_audio_utils",
+    "${services_path}/common:distributed_audio_utils",
     "${softbusadapter_path}:distributed_audio_softbus_adapter",
   ]
 

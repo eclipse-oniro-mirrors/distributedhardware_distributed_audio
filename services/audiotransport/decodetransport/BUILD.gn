@@ -18,29 +18,46 @@ import(
 
 ohos_shared_library("distributed_audio_decode_transport") {
   include_dirs = [
+    "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
     "//foundation/communication/dsoftbus/interfaces/kits/transport",
     "${fwk_common_path}/utils/include",
+    "${mediastandard_path}/interfaces/innerkits/native/media/include",
+    "${mediastandardfwk_path}/audiocommon/include",
   ]
 
   include_dirs += [
     "include",
     "${common_path}/include",
-    "${services_path}/common/audioparam",
-    "${services_path}/common/audiodata/include",
+    "${common_path}/dfx_utils/include",
+    "${audio_processor_path}/decoder/include",
+    "${audio_processor_path}/decodeprocessor/include",
+    "${audio_processor_path}/interface",
     "${audio_transport_path}/audiochannel/interface",
     "${audio_transport_path}/audiochannel/audiodatachannel/include",
     "${audio_transport_path}/interface",
-    "${audio_processor_path}/decodeprocessor/include",
-    "${audio_processor_path}/interface",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/audiodata/include",
     "${softbusadapter_path}/include",
   ]
 
-  sources = [ "src/audio_decode_transport.cpp" ]
+  sources = [
+    "src/audio_decode_transport.cpp",
+    "${audio_processor_path}/decoder/src/audio_decoder.cpp",
+    "${audio_processor_path}/decoder/src/audio_decoder_callback.cpp",
+    "${audio_processor_path}/decodeprocessor/src/audio_decoder_processor.cpp",
+    "${services_path}/common/audiodata/src/audio_data.cpp",
+  ]
 
   deps = [
-    "${audio_processor_path}/decodeprocessor:distributed_audio_decoder_processor",
     "${audio_transport_path}/audiochannel/audiodatachannel:distributed_audio_data_channel",
-    "${common_path}:distributed_audio_utils",
+    "${services_path}/common:distributed_audio_utils",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hitrace_native:hitrace_meter",
+    "multimedia_player_framework:media_client",
   ]
 
   defines = [
