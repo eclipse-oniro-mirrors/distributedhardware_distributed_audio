@@ -38,6 +38,7 @@ ohos_fuzztest("AudioSourceHandlerUnregisterDistributedHardwareFuzzTest") {
     "${fwk_utils_path}/include",
     "${fwk_common_path}/log/include",
     "${fwk_common_path}/utils/include",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 
   include_dirs += [
@@ -50,7 +51,6 @@ ohos_fuzztest("AudioSourceHandlerUnregisterDistributedHardwareFuzzTest") {
 
   deps = [
     "${fwk_services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "${fwk_utils_path}:distributedhardwareutils",
     "${innerkits_path}/native_cpp/audio_source:distributed_audio_source_sdk",
   ]
 
@@ -58,15 +58,6 @@ ohos_fuzztest("AudioSourceHandlerUnregisterDistributedHardwareFuzzTest") {
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"AudioSourceHandlerUnregisterDistributedHardwareFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
-  ]
-
-  external_deps = [
-    "c_utils:utils",
-    "eventhandler:libeventhandler",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
 }
 

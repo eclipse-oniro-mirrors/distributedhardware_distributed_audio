@@ -37,6 +37,7 @@ ohos_fuzztest("AudioSinkHandlerSubscribeLocalHardwareFuzzTest") {
     "${fwk_utils_path}/include",
     "${fwk_common_path}/log/include",
     "${fwk_common_path}/utils/include",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 
   include_dirs += [
@@ -46,7 +47,6 @@ ohos_fuzztest("AudioSinkHandlerSubscribeLocalHardwareFuzzTest") {
   ]
 
   deps = [
-    "${fwk_utils_path}:distributedhardwareutils",
     "${innerkits_path}/native_cpp/audio_sink:distributed_audio_sink_sdk",
   ]
 
@@ -54,15 +54,6 @@ ohos_fuzztest("AudioSinkHandlerSubscribeLocalHardwareFuzzTest") {
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"AudioSinkHandlerSubscribeLocalHardwareFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
-  ]
-
-  external_deps = [
-    "c_utils:utils",
-    "eventhandler:libeventhandler",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
 }
 
