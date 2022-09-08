@@ -11,6 +11,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build/ohos.gni")
+import("//build/ohos_var.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+
 group("fuzztest") {
   testonly = true
 
@@ -41,5 +46,19 @@ group("fuzztest") {
     "sourceproxyinitsource_fuzzer:fuzztest",
     "sourceproxyregisterdistributedhardware_fuzzer:fuzztest",
     "sourceproxyunregisterdistributedhardware_fuzzer:fuzztest",
+    "${hdf_ser_aud_ext_path}/test/fuzztest/notifyevent_fuzzer:fuzztest",
+    "${hdf_ser_aud_ext_path}/test/fuzztest/unregisteraudiodevice_fuzzer:fuzztest",
+    "${hdf_ser_aud_ext_path}/test/fuzztest/registeraudiodevice_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/captureframe_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/getalladapters_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/loadadapter_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/unloadadapter_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/renderframe_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/createrender_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/destoryrender_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/destorycapture_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/createcapture_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/setaudioparameters_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/getaudioparameters_fuzzer:fuzztest",
   ]
 }
