@@ -24,6 +24,7 @@ config("module_private_config") {
     "//third_party/json/include",
     "${fwk_common_path}/utils/include",
     "${fwk_utils_path}/include",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 
   include_dirs += [
@@ -43,22 +44,9 @@ ohos_unittest("AudioSinkTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${services_path}/common:distributed_audio_utils",
     "${distributedaudio_path}/interfaces/inner_kits/native_cpp/audio_sink:distributed_audio_sink_sdk",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
-    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
-  ]
-
-  external_deps = [
-    "c_utils:utils",
-    "dsoftbus:softbus_client",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "multimedia_player_framework:media_client",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
 }
 

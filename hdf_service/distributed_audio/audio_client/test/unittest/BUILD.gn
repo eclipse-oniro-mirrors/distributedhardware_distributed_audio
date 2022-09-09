@@ -26,6 +26,7 @@ config("module_private_config") {
     "${hdf_service_path}/hdi_service/common/log/include",
     "${hdf_service_path}/hdi_service/common/include/",
     "${hdf_service_path}/audio_client/include",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 }
 
@@ -40,19 +41,6 @@ ohos_unittest("AudioAdapterHdiTest") {
     "${hdf_service_path}/audio_client:daudio_client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//third_party/libxml2:xml2",
-  ]
-
-  public_deps = [
-    "${hdf_interfaces_path}/audio/v1_0:libdaudio_proxy_1.0",
-    "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils",
-  ]
-
-  external_deps = [
-    "c_utils:utils",
-    "hdf_core:libhdf_utils",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_single",
   ]
 
   defines = [

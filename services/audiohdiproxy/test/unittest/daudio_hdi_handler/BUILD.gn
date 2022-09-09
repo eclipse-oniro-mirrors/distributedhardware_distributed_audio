@@ -31,6 +31,7 @@ config("module_private_config") {
     "${services_path}/common/audioparam",
     "${services_path}/common/audiodata/include",
     "${services_path}/audiohdiproxy/include",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 }
 
@@ -44,7 +45,6 @@ ohos_unittest("DAudioHdiHandlerTest") {
 
   deps = [
     "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
-    "${services_path}/common:distributed_audio_utils",
     "${services_path}/audiomanager/servicesource:distributed_audio_source",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
@@ -52,8 +52,6 @@ ohos_unittest("DAudioHdiHandlerTest") {
 
   external_deps = [
     "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_single",
   ]
 }
 

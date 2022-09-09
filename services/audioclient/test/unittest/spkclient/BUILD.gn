@@ -24,6 +24,7 @@ config("module_private_config") {
 
   include_dirs = [
     "//foundation/multimedia/audio_framework/frameworks/native/common/include",
+    "//foundation/multimedia/audio_framework/frameworks/native/audiopolicy/include",
     "${mediastandardfwk_path}/audiocommon/include",
     "${mediastandardfwk_path}/audiomanager/include",
     "${mediastandardfwk_path}/audiorenderer/include",
@@ -59,16 +60,9 @@ ohos_unittest("SpeakerClientTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
     "${services_path}/audiomanager/servicesink:distributed_audio_sink",
-    "${services_path}/common:distributed_audio_utils",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
-  ]
-
-  external_deps = [
-    "multimedia_audio_framework:audio_client",
-    "multimedia_audio_framework:audio_renderer",
   ]
 }
 

@@ -49,17 +49,9 @@ ohos_unittest("ControlSourceTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${audio_transport_path}/audioctrltransport:distributed_audio_control",
     "${services_path}/audiomanager/servicesource:distributed_audio_source",
-    "${services_path}/common:distributed_audio_utils",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
-  ]
-
-  external_deps = [
-    "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
-    "multimedia_player_framework:media_client",
   ]
 }
 

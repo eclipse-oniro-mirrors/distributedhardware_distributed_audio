@@ -55,12 +55,6 @@ ohos_unittest("AudioCtrlTransportTest") {
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
   ]
-
-  external_deps = [
-    "dsoftbus:softbus_client",
-    "hiviewdfx_hilog_native:libhilog",
-    "multimedia_player_framework:media_client",
-  ]
 }
 
 group("audio_ctrl_transport_test") {

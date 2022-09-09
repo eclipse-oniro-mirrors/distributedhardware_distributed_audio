@@ -24,7 +24,7 @@ config("module_private_config") {
 
   include_dirs = [
     "//foundation/multimedia/audio_framework/frameworks/native/common/include",
-    "//foundation/multinedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
+    "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
     "${mediastandardfwk_path}/audiocommon/include",
   ]
 
@@ -58,14 +58,10 @@ ohos_unittest("MicClientTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${audio_transport_path}/encodetransport:distributed_audio_encode_transport",
     "${services_path}/audiomanager/servicesink:distributed_audio_sink",
-    "${services_path}/common:distributed_audio_utils",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
   ]
-
-  external_deps = [ "multimedia_audio_framework:audio_capturer" ]
 }
 
 group("mic_client_test") {

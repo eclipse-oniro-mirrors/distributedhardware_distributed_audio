@@ -51,15 +51,8 @@ ohos_unittest("AudioCtrlChannelTest") {
 
   deps = [
     "${audio_transport_path}/audioctrltransport:distributed_audio_control",
-    "${softbusadapter_path}:distributed_audio_softbus_adapter",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
-  ]
-
-  external_deps = [
-    "dsoftbus:softbus_client",
-    "hiviewdfx_hilog_native:libhilog",
-    "multimedia_player_framework:media_client",
   ]
 }
 
