@@ -113,21 +113,23 @@ int32_t AudioDecodeTransport::FeedAudioData(std::shared_ptr<AudioData> &audioDat
 void AudioDecodeTransport::OnSessionOpened()
 {
     DHLOGI("On channel session opened.");
-    if (dataTransCallback_ == nullptr) {
-        DHLOGE("Callback is nullptr.");
+    auto cbObj = dataTransCallback_.lock();
+    if (cbObj == nullptr) {
+        DHLOGE("On channel session opened. Callback is nullptr.");
         return;
     }
-    dataTransCallback_->OnStateChange(AudioEventType::DATA_OPENED);
+    cbObj->OnStateChange(AudioEventType::DATA_OPENED);
 }
 
 void AudioDecodeTransport::OnSessionClosed()
 {
     DHLOGI("On channel session closed.");
-    if (dataTransCallback_ == nullptr) {
-        DHLOGE("Callback is nullptr.");
+    auto cbObj = dataTransCallback_.lock();
+    if (cbObj == nullptr) {
+        DHLOGE("On channel session closed. Callback is nullptr.");
         return;
     }
-    dataTransCallback_->OnStateChange(AudioEventType::DATA_CLOSED);
+    cbObj->OnStateChange(AudioEventType::DATA_CLOSED);
 }
 
 void AudioDecodeTransport::OnDataReceived(const std::shared_ptr<AudioData> &data)
@@ -153,7 +155,12 @@ void AudioDecodeTransport::OnAudioDataDone(const std::shared_ptr<AudioData> &out
 {
     DHLOGI("On audio data done.");
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
-    dataTransCallback_->OnDecodeTransDataDone(outputData);
+    auto cbObj = dataTransCallback_.lock();
+    if (cbObj == nullptr) {
+        DHLOGE("On audio data done. Callback is nullptr.");
+        return;
+    }
+    cbObj->OnDecodeTransDataDone(outputData);
 }
 
 void AudioDecodeTransport::OnStateNotify(const AudioEvent &event)

@@ -69,7 +69,7 @@ private:
     static constexpr size_t SLEEP_TIME = 20000;
     static constexpr size_t FRAME_SIZE = 4096;
 
-    std::shared_ptr<IAudioDataTransCallback> dataTransCallback_ = nullptr;
+    std::weak_ptr<IAudioDataTransCallback> dataTransCallback_;
     std::shared_ptr<IAudioChannel> audioChannel_ = nullptr;
     std::shared_ptr<IAudioProcessor> processor_ = nullptr;
 

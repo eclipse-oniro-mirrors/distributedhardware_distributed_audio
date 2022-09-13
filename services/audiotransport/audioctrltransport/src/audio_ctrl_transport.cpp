@@ -120,7 +120,7 @@ int32_t AudioCtrlTransport::SendAudioEvent(const std::shared_ptr<AudioEvent> &ev
 void AudioCtrlTransport::OnSessionOpened()
 {
     DHLOGI("On channel session opened.");
-    std::shared_ptr<IAudioCtrlTransCallback> callback = ctrlTransCallback_.lock();
+    auto callback = ctrlTransCallback_.lock();
     if (callback == nullptr) {
         DHLOGE("Callback is nullptr.");
         return;
@@ -131,7 +131,7 @@ void AudioCtrlTransport::OnSessionOpened()
 void AudioCtrlTransport::OnSessionClosed()
 {
     DHLOGI("On channel session closed.");
-    std::shared_ptr<IAudioCtrlTransCallback> callback = ctrlTransCallback_.lock();
+    auto callback = ctrlTransCallback_.lock();
     if (callback == nullptr) {
         DHLOGE("Callback is nullptr.");
         return;
@@ -147,7 +147,7 @@ void AudioCtrlTransport::OnDataReceived(const std::shared_ptr<AudioData> &data)
 void AudioCtrlTransport::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
 {
     DHLOGI("Audio event received.");
-    std::shared_ptr<IAudioCtrlTransCallback> callback = ctrlTransCallback_.lock();
+    auto callback = ctrlTransCallback_.lock();
     if (callback == nullptr) {
         DHLOGE("Callback is null.");
         return;
@@ -167,7 +167,6 @@ int32_t AudioCtrlTransport::InitAudioCtrlTrans(const std::string &netWordId)
         audioChannel_ = nullptr;
         return ret;
     }
-
     return DH_SUCCESS;
 }
 

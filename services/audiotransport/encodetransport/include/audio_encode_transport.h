@@ -61,7 +61,7 @@ private:
 private:
     static const constexpr uint8_t SESSION_WAIT_SECONDS = 5;
 
-    std::shared_ptr<IAudioDataTransCallback> dataTransCallback_ = nullptr;
+    std::weak_ptr<IAudioDataTransCallback> dataTransCallback_;
     std::shared_ptr<IAudioChannel> audioChannel_ = nullptr;
     std::shared_ptr<IAudioProcessor> processor_ = nullptr;
     std::string peerDevId_;

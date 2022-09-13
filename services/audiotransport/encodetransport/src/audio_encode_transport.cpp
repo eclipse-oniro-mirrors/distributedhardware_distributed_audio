@@ -188,21 +188,23 @@ int32_t AudioEncodeTransport::RegisterProcessorListener(const AudioParam &localP
 void AudioEncodeTransport::OnSessionOpened()
 {
     DHLOGI("On channel session opened.");
-    if (dataTransCallback_ == nullptr) {
+    auto cbObj = dataTransCallback_.lock();
+    if (cbObj == nullptr) {
         DHLOGE("On channel session opened. callback is nullptr.");
         return;
     }
-    dataTransCallback_->OnStateChange(AudioEventType::DATA_OPENED);
+    cbObj->OnStateChange(AudioEventType::DATA_OPENED);
 }
 
 void AudioEncodeTransport::OnSessionClosed()
 {
     DHLOGI("On channel session close.");
-    if (dataTransCallback_ == nullptr) {
+    auto cbObj = dataTransCallback_.lock();
+    if (cbObj == nullptr) {
         DHLOGE("On channel session closed. callback is nullptr.");
         return;
     }
-    dataTransCallback_->OnStateChange(AudioEventType::DATA_CLOSED);
+    cbObj->OnStateChange(AudioEventType::DATA_CLOSED);
 }
 
 void AudioEncodeTransport::OnDataReceived(const std::shared_ptr<AudioData> &data)

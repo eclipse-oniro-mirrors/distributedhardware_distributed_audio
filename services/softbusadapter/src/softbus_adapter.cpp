@@ -94,6 +94,11 @@ int32_t SoftbusAdapter::RemoveSoftbusSessionServer(const std::string &pkgName, c
     const std::string &peerDevId)
 {
     DHLOGI("Remove server, sessName: %s peerDevId: %s.", sessionName.c_str(), GetAnonyString(peerDevId).c_str());
+    int32_t ret = RemoveSessionServer(pkgName.c_str(), sessionName.c_str());
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Remove session server failed. Error code %d.", ret);
+    }
+
     std::lock_guard<std::mutex> setLock(sessSetMtx_);
     if (mapSessionSet_.find(sessionName) == mapSessionSet_.end()) {
         DHLOGE("Session server already removed.");
