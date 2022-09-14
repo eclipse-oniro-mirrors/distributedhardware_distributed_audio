@@ -94,13 +94,13 @@ int32_t AudioManagerInterfaceImpl::UnloadAdapter(const std::string &adpName)
     auto adp = mapAudioAdapter_.find(adpName);
     if (adp == mapAudioAdapter_.end()) {
         DHLOGE("Unload audio adapter failed, can not find adapter.");
-        return HDF_FAILURE;
+        return HDF_SUCCESS;
     }
 
     int32_t ret = adp->second->AdapterUnload();
     if (ret != DH_SUCCESS) {
         DHLOGE("Unload audio adapter failed, adapter return: %d.", ret);
-        return HDF_FAILURE;
+        return HDF_SUCCESS;
     }
     DHLOGI("Unload adapter success.");
     return HDF_SUCCESS;

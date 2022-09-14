@@ -74,7 +74,7 @@ HWTEST_F(AudioManagerInterfaceImplTest, LoadAdapter_001, TestSize.Level1)
     descriptor.ports.push_back(audioPortHal_);
     sptr<IAudioAdapter> adapter = nullptr;
     EXPECT_EQ(HDF_FAILURE, audioManagerInterfaceImpl_->LoadAdapter(descriptor, adapter));
-    EXPECT_EQ(HDF_FAILURE, audioManagerInterfaceImpl_->UnloadAdapter(adpName));
+    EXPECT_EQ(HDF_SUCCESS, audioManagerInterfaceImpl_->UnloadAdapter(adpName));
 }
 
 /**
