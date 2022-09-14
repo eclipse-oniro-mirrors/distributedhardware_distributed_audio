@@ -16,6 +16,7 @@
 #ifndef OHOS_DAUDIO_SINK_DEV_CTRL_MANAGER_H
 #define OHOS_DAUDIO_SINK_DEV_CTRL_MANAGER_H
 
+#include <atomic>
 #include <map>
 #include <mutex>
 
@@ -41,7 +42,7 @@ public:
 
 private:
     std::string devId_;
-    bool isOpened_ = false;
+    std::atomic<bool> isOpened_ = false;
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
     std::shared_ptr<AudioEvent> audioEvent_;
     std::shared_ptr<IAudioCtrlTransport> audioCtrlTrans_ = nullptr;

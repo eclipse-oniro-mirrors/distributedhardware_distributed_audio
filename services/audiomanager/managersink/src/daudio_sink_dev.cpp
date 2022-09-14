@@ -425,7 +425,7 @@ int32_t DAudioSinkDev::TaskOpenCtrlChannel(const std::string &args)
     audioCtrlMgr_ = std::make_shared<DAudioSinkDevCtrlMgr>(devId_, shared_from_this());
     int32_t ret = audioCtrlMgr_->SetUp();
     if (ret != DH_SUCCESS) {
-        DHLOGE("SetUp ctrl mgr failed.");
+        DHLOGE("SetUp ctrl mgr failed, ret: %d.", ret);
         NotifySourceDev(NOTIFY_OPEN_CTRL_RESULT, jParam[KEY_DH_ID], ERR_DH_AUDIO_FAILED);
         return ret;
     }
@@ -447,11 +447,11 @@ int32_t DAudioSinkDev::TaskCloseCtrlChannel(const std::string &args)
 
     int32_t ret = audioCtrlMgr_->Stop();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Stop ctrl mgr failed.");
+        DHLOGE("Stop ctrl mgr failed, ret: %d.", ret);
     }
     ret = audioCtrlMgr_->Release();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Release ctrl mgr failed.");
+        DHLOGE("Release ctrl mgr failed, ret: %d.", ret);
     }
     audioCtrlMgr_ = nullptr;
     DHLOGI("Close ctrl channel success.");
@@ -479,7 +479,7 @@ int32_t DAudioSinkDev::TaskOpenDSpeaker(const std::string &args)
     speakerClient_ = std::make_shared<DSpeakerClient>(devId_, shared_from_this());
     ret = speakerClient_->SetUp(audioParam);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Setup speaker failed.");
+        DHLOGE("Setup speaker failed, ret: %d.", ret);
         NotifySourceDev(NOTIFY_OPEN_SPEAKER_RESULT, spkDhId_, ERR_DH_AUDIO_FAILED);
         return ERR_DH_AUDIO_FAILED;
     }
@@ -502,12 +502,12 @@ int32_t DAudioSinkDev::TaskCloseDSpeaker(const std::string &args)
     bool closeStatus = true;
     int32_t ret = speakerClient_->StopRender();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Stop speaker client failed.");
+        DHLOGE("Stop speaker client failed, ret: %d.", ret);
         closeStatus = false;
     }
     ret = speakerClient_->Release();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Release speaker client failed.");
+        DHLOGE("Release speaker client failed: %d.", ret);
         closeStatus = false;
     }
     speakerClient_ = nullptr;
@@ -542,13 +542,13 @@ int32_t DAudioSinkDev::TaskOpenDMic(const std::string &args)
     micClient_ = std::make_shared<DMicClient>(devId_, shared_from_this());
     ret = micClient_->SetUp(audioParam);
     if (ret != DH_SUCCESS) {
-        DHLOGE("SetUp mic failed.");
+        DHLOGE("SetUp mic failed, ret: %d.", ret);
         NotifySourceDev(NOTIFY_OPEN_MIC_RESULT, micDhId_, ERR_DH_AUDIO_FAILED);
         return ERR_DH_AUDIO_FAILED;
     }
     ret = micClient_->StartCapture();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Start capture failed.");
+        DHLOGE("Start capture failed, ret: %d.", ret);
         NotifySourceDev(NOTIFY_OPEN_MIC_RESULT, micDhId_, ERR_DH_AUDIO_FAILED);
         return ret;
     }
@@ -571,12 +571,12 @@ int32_t DAudioSinkDev::TaskCloseDMic(const std::string &args)
     bool closeStatus = true;
     int32_t ret = micClient_->StopCapture();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Stop mic client failed.");
+        DHLOGE("Stop mic client failed, ret: %d.", ret);
         closeStatus = false;
     }
     ret = micClient_->Release();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Release mic client failed.");
+        DHLOGE("Release mic client failed, ret: %d.", ret);
         closeStatus = false;
     }
     micClient_ = nullptr;
@@ -611,7 +611,7 @@ int32_t DAudioSinkDev::TaskSetVolume(const std::string &args)
     auto event = std::make_shared<AudioEvent>(AudioEventType::VOLUME_SET, args);
     int32_t ret = speakerClient_->SetAudioParameters(event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Volume set failed.");
+        DHLOGE("Volume set failed, ret: %d.", ret);
         return ret;
     }
     DHLOGI("Set audio volume success.");
@@ -628,7 +628,7 @@ int32_t DAudioSinkDev::TaskSetMute(const std::string &args)
     auto event = std::make_shared<AudioEvent>(AudioEventType::VOLUME_MUTE_SET, args);
     int32_t ret = speakerClient_->SetMute(event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Set mute failed.");
+        DHLOGE("Set mute failed, ret: %d.", ret);
         return ret;
     }
     DHLOGI("Set mute success.");
@@ -658,7 +658,7 @@ int32_t DAudioSinkDev::TaskFocusChange(const std::string &args)
 int32_t DAudioSinkDev::TaskRenderStateChange(const std::string &args)
 {
     DHLOGI("Audio render state changed.");
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>(AudioEventType::AUDIO_RENDER_STATE_CHANGE, args);
+    auto event = std::make_shared<AudioEvent>(AudioEventType::AUDIO_RENDER_STATE_CHANGE, args);
     if (audioCtrlMgr_ == nullptr) {
         return ERR_DH_AUDIO_SA_SINKCTRLMGR_NOT_INIT;
     }
@@ -670,7 +670,7 @@ void DAudioSinkDev::OnTaskResult(int32_t resultCode, const std::string &result, 
     (void)resultCode;
     (void)result;
     (void)funcName;
-    DHLOGI("On rask result. resultCode: %d, funcName: %s", resultCode, funcName.c_str());
+    DHLOGI("On task result. resultCode: %d, funcName: %s", resultCode, funcName.c_str());
 }
 
 void DAudioSinkDev::NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result)

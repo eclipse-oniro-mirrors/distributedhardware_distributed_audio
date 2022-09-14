@@ -606,7 +606,7 @@ int32_t AudioAdapterInterfaceImpl::GetAudioVolume(const std::string& condition, 
 int32_t AudioAdapterInterfaceImpl::getEventTypeFromCondition(const std::string &condition)
 {
     std::string::size_type position = condition.find_first_of(";");
-    int32_t type = std::stoi(condition.substr(11, position - 11));
+    int32_t type = std::stoi(condition.substr(TYPE_CONDITION, position - TYPE_CONDITION));
     return (VolumeEventType)type;
 }
 

@@ -216,16 +216,11 @@ static bool AudioManagerInit()
 {
     std::lock_guard<std::mutex> lock(g_AudioManagerContext.mtx_);
 
-    if (g_AudioManagerContext.initFlag_ == true) {
-        return true;
-    }
-
     sptr<IAudioManager> audioMgr = IAudioManager::Get("daudio_primary_service", false);
     if (audioMgr == nullptr) {
         return false;
     }
     g_AudioManagerContext.proxy_ = audioMgr;
-    g_AudioManagerContext.initFlag_ = true;
     return true;
 }
 } // DistributedHardware

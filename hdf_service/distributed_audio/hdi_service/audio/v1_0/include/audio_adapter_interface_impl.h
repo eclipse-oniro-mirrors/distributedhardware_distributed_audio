@@ -111,6 +111,7 @@ private:
 
 private:
     static constexpr uint8_t WAIT_SECONDS = 10;
+    static constexpr int32_t TYPE_CONDITION = 11;
     AudioAdapterDescriptorHAL adpDescriptor_;
     AudioAdapterStatus status_ = STATUS_OFFLINE;
 

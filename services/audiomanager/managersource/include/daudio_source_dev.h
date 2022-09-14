@@ -100,6 +100,7 @@ private:
     AudioEventType getEventTypeFromArgs (const std::string &args);
     void to_json(json &j, const AudioParam &param);
     bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);
+    bool CheckIsNum (const std::string &jsonString);
 
 private:
     static constexpr uint8_t RPC_WAIT_SECONDS = 2;

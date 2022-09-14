@@ -38,7 +38,6 @@ struct AudioManagerContext {
     struct AudioManager instance_;
     sptr<IAudioManager> proxy_ = nullptr;
 
-    bool initFlag_ = false;
     std::mutex mtx_;
 
     std::map<std::string, std::unique_ptr<AudioAdapterContext>> adapters_;

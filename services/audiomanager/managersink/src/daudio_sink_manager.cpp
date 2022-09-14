@@ -47,7 +47,7 @@ int32_t DAudioSinkManager::Init()
     DHLOGI("Init audio sink manager.");
     int32_t ret = GetLocalDeviceNetworkId(localNetworkId_);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Get local network id failed.");
+        DHLOGE("Get local network id failed, ret: %d.", ret);
         return ret;
     }
     return DH_SUCCESS;
@@ -56,8 +56,10 @@ int32_t DAudioSinkManager::Init()
 int32_t DAudioSinkManager::UnInit()
 {
     DHLOGI("UnInit audio sink manager.");
-    std::lock_guard<std::mutex> lock(remoteSvrMutex_);
-    sourceServiceMap_.clear();
+    {
+        std::lock_guard<std::mutex> lock(remoteSvrMutex_);
+        sourceServiceMap_.clear();
+    }
     {
         std::lock_guard<std::mutex> lock(devMapMutex_);
         for (auto iter = audioDevMap_.begin(); iter != audioDevMap_.end(); iter++) {
@@ -85,13 +87,11 @@ void DAudioSinkManager::OnSinkDevReleased(const std::string &devId)
 int32_t DAudioSinkManager::HandleDAudioNotify(const std::string &devId, const std::string &dhId,
     const int32_t eventType, const std::string &eventContent)
 {
-    DHLOGI("Recive audio event from devId: %s, event type: %d.", GetAnonyString(devId).c_str(), eventType);
+    DHLOGI("Receive audio event from devId: %s, event type: %d.", GetAnonyString(devId).c_str(), eventType);
     std::lock_guard<std::mutex> lock(devMapMutex_);
     auto iter = audioDevMap_.find(devId);
-    if (iter == audioDevMap_.end()) {
-        if (CreateAudioDevice(devId) != DH_SUCCESS) {
-            return ERR_DH_AUDIO_FAILED;
-        }
+    if (iter == audioDevMap_.end() && CreateAudioDevice(devId) != DH_SUCCESS) {
+        return ERR_DH_AUDIO_FAILED;
     }
     NotifyEvent(devId, eventType, eventContent);
     return DH_SUCCESS;

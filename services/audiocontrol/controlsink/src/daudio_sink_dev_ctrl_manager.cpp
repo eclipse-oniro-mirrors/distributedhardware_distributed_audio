@@ -55,7 +55,7 @@ void DAudioSinkDevCtrlMgr::OnStateChange(int32_t type)
     audioEventCallback_->NotifyEvent(event);
     switch (type) {
         case AudioEventType::CTRL_OPENED:
-            isOpened_ = true;
+            isOpened_.store(true);
             return;
         case AudioEventType::CTRL_CLOSED:
             return;
@@ -74,7 +74,7 @@ int32_t DAudioSinkDevCtrlMgr::SetUp()
 
     int32_t ret = audioCtrlTrans_->SetUp(shared_from_this());
     if (ret != DH_SUCCESS) {
-        DHLOGE("Ctrl trans setup failed.");
+        DHLOGE("Ctrl trans setup failed, ret: %d.", ret);
         return ret;
     }
     return DH_SUCCESS;
@@ -89,7 +89,7 @@ int32_t DAudioSinkDevCtrlMgr::Start()
 int32_t DAudioSinkDevCtrlMgr::Stop()
 {
     DHLOGI("Stop sink development control manager.");
-    isOpened_ = false;
+    isOpened_.store(false);
     if (audioCtrlTrans_ == nullptr) {
         DHLOGI("Ctrl trans already stop.");
         return DH_SUCCESS;
@@ -97,7 +97,7 @@ int32_t DAudioSinkDevCtrlMgr::Stop()
 
     int32_t ret = audioCtrlTrans_->Stop();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Ctrl trans stop failed.");
+        DHLOGE("Ctrl trans stop failed, ret: %d.", ret);
         return ret;
     }
     return DH_SUCCESS;
@@ -112,7 +112,7 @@ int32_t DAudioSinkDevCtrlMgr::Release()
     }
     int32_t ret = audioCtrlTrans_->Release();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Ctrl trans release failed.");
+        DHLOGE("Ctrl trans release failed, ret: %d.", ret);
         return ret;
     }
     audioCtrlTrans_ = nullptr;
@@ -121,7 +121,7 @@ int32_t DAudioSinkDevCtrlMgr::Release()
 
 bool DAudioSinkDevCtrlMgr::IsOpened()
 {
-    return isOpened_;
+    return isOpened_.load();
 }
 
 void DAudioSinkDevCtrlMgr::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
@@ -150,7 +150,7 @@ int32_t DAudioSinkDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent> &
     }
     int32_t ret = audioCtrlTrans_->SendAudioEvent(event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Audio control transfer sending audio event error.");
+        DHLOGE("Audio control transfer sending audio event error,ret: %d.", ret);
         return ret;
     }
     return DH_SUCCESS;
