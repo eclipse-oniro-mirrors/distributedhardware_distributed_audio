@@ -130,8 +130,7 @@ int32_t DAudioHandler::QueryCodecInfo()
 
     bool queryFlag = false;
     for (auto codec : avCodecList->GetAudioEncoderCaps()) {
-        DHLOGI("Check encoder.");
-        if (codec->GetCodecInfo()->GetName() != AVENC_AAC || codec == nullptr || codec->GetCodecInfo() == nullptr) {
+        if (codec == nullptr || codec->GetCodecInfo() == nullptr || codec->GetCodecInfo()->GetName() != AVENC_AAC) {
             continue;
         }
         encoderInfos_.sampleRates = codec->GetSupportedSampleRates();
@@ -142,8 +141,7 @@ int32_t DAudioHandler::QueryCodecInfo()
     }
 
     for (auto codec : avCodecList->GetAudioDecoderCaps()) {
-        DHLOGI("Check decoder.");
-        if (codec->GetCodecInfo()->GetName() != AVENC_AAC || codec == nullptr || codec->GetCodecInfo() == nullptr) {
+        if (codec == nullptr || codec->GetCodecInfo() == nullptr || codec->GetCodecInfo()->GetName() != AVENC_AAC) {
             continue;
         }
         decoderInfos_.sampleRates = codec->GetSupportedSampleRates();

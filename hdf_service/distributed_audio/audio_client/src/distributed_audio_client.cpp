@@ -43,6 +43,7 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
         char* adapterName = (char*)calloc(desc.adapterName.length() + 1, sizeof(char));
         if (strcpy_s(adapterName, desc.adapterName.length() + 1, desc.adapterName.c_str()) != EOK) {
             DHLOGI("Strcpy_s adapter name failed.");
+            free(audioPorts);
             continue;
         }
         AudioAdapterDescriptor descInternal = {
@@ -54,7 +55,6 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
             char* portName = (char*)calloc(port.portName.length() + 1, sizeof(char));
             if (strcpy_s(portName, port.portName.length() + 1, port.portName.c_str()) != EOK) {
                 DHLOGI("Strcpy_s port name failed.");
-                free(audioPorts);
                 continue;
             }
             audioPorts->dir = static_cast<AudioPortDirection>(port.dir);
