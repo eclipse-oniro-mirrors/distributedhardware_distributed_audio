@@ -146,7 +146,7 @@ void AudioDecodeTransport::OnDataReceived(const std::shared_ptr<AudioData> &data
     }
 }
 
-void AudioDecodeTransport::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
+void AudioDecodeTransport::OnEventReceived(const AudioEvent &event)
 {
     (void)event;
 }

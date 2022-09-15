@@ -34,13 +34,13 @@ public:
     ~DAudioSourceDevCtrlMgr();
 
     void OnStateChange(int32_t type) override;
-    void OnEventReceived(const std::shared_ptr<AudioEvent> &event) override;
+    void OnEventReceived(const AudioEvent &event) override;
     int32_t SetUp();
     int32_t Start();
     int32_t Stop();
     int32_t Release();
     bool IsOpened();
-    int32_t SendAudioEvent(const std::shared_ptr<AudioEvent> &event);
+    int32_t SendAudioEvent(const AudioEvent &event);
 
 private:
     std::string devId_;

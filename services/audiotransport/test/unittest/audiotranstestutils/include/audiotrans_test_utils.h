@@ -31,7 +31,7 @@ public:
     void OnSessionOpened() override {};
     void OnSessionClosed() override {};
     void OnDataReceived(const std::shared_ptr<AudioData> &data) override {};
-    void OnEventReceived(const std::shared_ptr<AudioEvent> &event) override {};
+    void OnEventReceived(const AudioEvent &event) override {};
 };
 
 class MockIAudioCtrlTransCallback : public IAudioCtrlTransCallback {
@@ -39,7 +39,7 @@ public:
     MockIAudioCtrlTransCallback() {}
     ~MockIAudioCtrlTransCallback() {}
     void OnStateChange(int32_t state) override {};
-    void OnEventReceived(const std::shared_ptr<AudioEvent> &event) override {};
+    void OnEventReceived(const AudioEvent &event) override {};
 };
 
 class MockAudioCtrlChannel : public IAudioChannel {
@@ -68,7 +68,7 @@ public:
     {
         return 0;
     }
-    int32_t SendEvent(const std::shared_ptr<AudioEvent> &audioEvent) override
+    int32_t SendEvent(const AudioEvent &audioEvent) override
     {
         return 0;
     }

@@ -38,7 +38,7 @@ public:
     int32_t OpenSession() override;
     int32_t CloseSession() override;
     int32_t SendData(const std::shared_ptr<AudioData> &audioData) override;
-    int32_t SendEvent(const std::shared_ptr<AudioEvent> &audioEvent) override;
+    int32_t SendEvent(const AudioEvent &audioEvent) override;
 
     void OnSessionOpened(int32_t sessionId, int32_t result) override;
     void OnSessionClosed(int32_t sessionId) override;

@@ -46,7 +46,7 @@ public:
 
     int32_t EnableDAudio(const std::string &dhId, const std::string &attrs);
     int32_t DisableDAudio(const std::string &dhId);
-    void NotifyEvent(const std::shared_ptr<AudioEvent> &event) override;
+    void NotifyEvent(const AudioEvent &event) override;
 
 private:
     int32_t EnableDSpeaker(const int32_t dhId, const std::string &attrs);
@@ -71,32 +71,32 @@ private:
     void OnEnableTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
     void OnTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
 
-    int32_t HandleOpenDSpeaker(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleCloseDSpeaker(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleDSpeakerOpened(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleDSpeakerClosed(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleOpenDMic(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleCloseDMic(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleDMicOpened(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleDMicClosed(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleOpenCtrlTrans(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleCloseCtrlTrans(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleCtrlTransClosed(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleNotifyRPC(const std::shared_ptr<AudioEvent> &event);
+    int32_t HandleOpenDSpeaker(const AudioEvent &event);
+    int32_t HandleCloseDSpeaker(const AudioEvent &event);
+    int32_t HandleDSpeakerOpened(const AudioEvent &event);
+    int32_t HandleDSpeakerClosed(const AudioEvent &event);
+    int32_t HandleOpenDMic(const AudioEvent &event);
+    int32_t HandleCloseDMic(const AudioEvent &event);
+    int32_t HandleDMicOpened(const AudioEvent &event);
+    int32_t HandleDMicClosed(const AudioEvent &event);
+    int32_t HandleOpenCtrlTrans(const AudioEvent &event);
+    int32_t HandleCloseCtrlTrans(const AudioEvent &event);
+    int32_t HandleCtrlTransClosed(const AudioEvent &event);
+    int32_t HandleNotifyRPC(const AudioEvent &event);
     int32_t WaitForRPC(const AudioEventType type);
-    int32_t HandleVolumeSet(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleVolumeChange(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleFocusChange(const std::shared_ptr<AudioEvent> &event);
-    int32_t HandleRenderStateChange(const std::shared_ptr<AudioEvent> &event);
+    int32_t HandleVolumeSet(const AudioEvent &event);
+    int32_t HandleVolumeChange(const AudioEvent &event);
+    int32_t HandleFocusChange(const AudioEvent &event);
+    int32_t HandleRenderStateChange(const AudioEvent &event);
 
     int32_t NotifySinkDev(const AudioEventType type, const json Param, const std::string dhId);
     int32_t NotifyHDF(const AudioEventType type, const std::string result);
-    void NotifySpeakerEvent(const std::shared_ptr<AudioEvent> &event);
-    void NotifyMicEvent(const std::shared_ptr<AudioEvent> &event);
-    bool IsSpeakerEvent(const std::shared_ptr<AudioEvent> &event);
-    bool IsMicEvent(const std::shared_ptr<AudioEvent> &event);
-    int32_t OpenCtrlTrans(const std::shared_ptr<AudioEvent> &event);
-    int32_t CloseCtrlTrans(const std::shared_ptr<AudioEvent> &event, bool isSpk);
+    void NotifySpeakerEvent(const AudioEvent &event);
+    void NotifyMicEvent(const AudioEvent &event);
+    bool IsSpeakerEvent(const AudioEvent &event);
+    bool IsMicEvent(const AudioEvent &event);
+    int32_t OpenCtrlTrans(const AudioEvent &event);
+    int32_t CloseCtrlTrans(const AudioEvent &event, bool isSpk);
     AudioEventType getEventTypeFromArgs (const std::string &args);
     void to_json(json &j, const AudioParam &param);
     bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);

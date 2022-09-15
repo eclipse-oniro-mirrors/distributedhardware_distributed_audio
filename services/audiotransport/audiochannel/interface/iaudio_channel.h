@@ -32,7 +32,7 @@ public:
     virtual int32_t OpenSession() = 0;
     virtual int32_t CloseSession() = 0;
     virtual int32_t SendData(const std::shared_ptr<AudioData> &data) = 0;
-    virtual int32_t SendEvent(const std::shared_ptr<AudioEvent> &event) = 0;
+    virtual int32_t SendEvent(const AudioEvent &event) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

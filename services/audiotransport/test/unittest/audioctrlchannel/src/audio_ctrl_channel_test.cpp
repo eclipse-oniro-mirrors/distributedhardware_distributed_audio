@@ -68,19 +68,7 @@ HWTEST_F(AudioCtrlChannelTest, OpenSession_002, TestSize.Level1)
  */
 HWTEST_F(AudioCtrlChannelTest, SendEvent_001, TestSize.Level1)
 {
-    std::shared_ptr<AudioEvent> event = nullptr;
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_NULL_VALUE, ctrlChannel_->SendEvent(event));
-}
-
-/**
- * @tc.name: SendEvent_002
- * @tc.desc: Verify the SendEvent function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5U
- */
-HWTEST_F(AudioCtrlChannelTest, SendEvent_002, TestSize.Level1)
-{
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    AudioEvent event;
     EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, ctrlChannel_->SendEvent(event));
 }
 

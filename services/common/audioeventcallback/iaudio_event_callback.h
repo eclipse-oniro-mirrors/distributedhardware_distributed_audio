@@ -22,7 +22,7 @@ namespace DistributedHardware {
 class IAudioEventCallback {
 public:
     virtual ~IAudioEventCallback() = default;
-    virtual void NotifyEvent(const std::shared_ptr<AudioEvent> &event) = 0;
+    virtual void NotifyEvent(const AudioEvent &event) = 0;
 };
 } // DistributedHardware
 } // OHOS

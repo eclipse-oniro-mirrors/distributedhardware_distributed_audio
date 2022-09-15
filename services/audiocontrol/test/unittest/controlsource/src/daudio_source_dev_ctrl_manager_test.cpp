@@ -144,7 +144,7 @@ HWTEST_F(DAudioSourceDevCtrlMgrTest, IsOpened_001, TestSize.Level1)
  */
 HWTEST_F(DAudioSourceDevCtrlMgrTest, SendAudioEvent_001, TestSize.Level1)
 {
-    std::shared_ptr<AudioEvent> event = nullptr;
+    AudioEvent event;
     sourceDevCtrl_->audioCtrlTrans_ = nullptr;
     EXPECT_EQ(ERR_DH_AUDIO_SA_CTRL_TRANS_NULL, sourceDevCtrl_->SendAudioEvent(event));
 }
@@ -158,7 +158,7 @@ HWTEST_F(DAudioSourceDevCtrlMgrTest, SendAudioEvent_001, TestSize.Level1)
 HWTEST_F(DAudioSourceDevCtrlMgrTest, SendAudioEvent_002, TestSize.Level1)
 {
     std::string devId = "devId";
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    AudioEvent event ;
     sourceDevCtrl_->audioCtrlTrans_ = std::make_shared<MockIAudioCtrlTransport>(devId);
     EXPECT_EQ(DH_SUCCESS, sourceDevCtrl_->SendAudioEvent(event));
 }
@@ -184,7 +184,7 @@ HWTEST_F(DAudioSourceDevCtrlMgrTest, OnStateChange_001, TestSize.Level1)
  */
 HWTEST_F(DAudioSourceDevCtrlMgrTest, OnEventReceived_001, TestSize.Level1)
 {
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    AudioEvent event ;
     sourceDevCtrl_->audioEventCallback_ = std::make_shared<MockIAudioEventCallback>();
     sourceDevCtrl_->OnEventReceived(event);
 }

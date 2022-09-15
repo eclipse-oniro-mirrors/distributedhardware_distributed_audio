@@ -28,7 +28,7 @@ public:
     virtual void OnSessionOpened() = 0;
     virtual void OnSessionClosed() = 0;
     virtual void OnDataReceived(const std::shared_ptr<AudioData> &data) = 0;
-    virtual void OnEventReceived(const std::shared_ptr<AudioEvent> &event) = 0;
+    virtual void OnEventReceived(const AudioEvent &event) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

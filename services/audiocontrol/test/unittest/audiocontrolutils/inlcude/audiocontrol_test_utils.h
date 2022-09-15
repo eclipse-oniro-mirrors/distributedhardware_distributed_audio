@@ -29,7 +29,7 @@ public:
     }
     ~MockIAudioEventCallback() {}
 
-    void NotifyEvent(const std::shared_ptr<AudioEvent> &event)
+    void NotifyEvent(const AudioEvent &event)
     {
         (void) event;
     }
@@ -60,7 +60,7 @@ public:
         return 0;
     }
 
-    int32_t SendAudioEvent(const std::shared_ptr<AudioEvent> &event) override
+    int32_t SendAudioEvent(const AudioEvent &event) override
     {
         (void) event;
         return 0;

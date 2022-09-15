@@ -110,7 +110,7 @@ int32_t DMicDev::OpenDevice(const std::string &devId, const int32_t dhId)
         return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
     }
     json jParam = { { KEY_DH_ID, std::to_string(dhId) } };
-    auto event = std::make_shared<AudioEvent>(AudioEventType::OPEN_MIC, jParam.dump());
+    AudioEvent event(AudioEventType::OPEN_MIC, jParam.dump());
     cbObj->NotifyEvent(event);
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_OPEN, devId, std::to_string(dhId),
         "daudio mic device open success.");
@@ -126,7 +126,7 @@ int32_t DMicDev::CloseDevice(const std::string &devId, const int32_t dhId)
         return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
     }
     json jParam = { { KEY_DH_ID, std::to_string(dhId) } };
-    auto event = std::make_shared<AudioEvent>(AudioEventType::CLOSE_MIC, jParam.dump());
+    AudioEvent event(AudioEventType::CLOSE_MIC, jParam.dump());
     cbObj->NotifyEvent(event);
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_CLOSE, devId, std::to_string(dhId),
         "daudio mic device close success.");
@@ -160,7 +160,7 @@ int32_t DMicDev::NotifyEvent(const std::string &devId, int32_t dhId, const Audio
         DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
-    auto audioEvent = std::make_shared<AudioEvent>(event.type, event.content);
+    AudioEvent audioEvent(event.type, event.content);
     cbObj->NotifyEvent(audioEvent);
     return DH_SUCCESS;
 }
@@ -258,11 +258,11 @@ AudioParam DMicDev::GetAudioParam() const
     return param_;
 }
 
-int32_t DMicDev::NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event)
+int32_t DMicDev::NotifyHdfAudioEvent(const AudioEvent &event)
 {
     int32_t ret = DAudioHdiHandler::GetInstance().NotifyEvent(devId_, curPort_, event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Notify event: %d, result: %s.", event->type, event->content.c_str());
+        DHLOGE("Notify event: %d, result: %s.", event.type, event.content.c_str());
     }
     return DH_SUCCESS;
 }
@@ -270,15 +270,15 @@ int32_t DMicDev::NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event)
 int32_t DMicDev::OnStateChange(const AudioEventType type)
 {
     DHLOGI("On mic device state change, type: %d", type);
-    auto event = std::make_shared<AudioEvent>();
+    AudioEvent event;
     switch (type) {
         case AudioEventType::DATA_OPENED:
             isTransReady_.store(true);
-            event->type = AudioEventType::MIC_OPENED;
+            event.type = AudioEventType::MIC_OPENED;
             break;
         case AudioEventType::DATA_CLOSED:
             isTransReady_.store(false);
-            event->type = AudioEventType::MIC_CLOSED;
+            event.type = AudioEventType::MIC_CLOSED;
             break;
         default:
             break;

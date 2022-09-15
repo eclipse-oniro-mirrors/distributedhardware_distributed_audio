@@ -60,8 +60,8 @@ public:
     int32_t Release();
     int32_t StartRender();
     int32_t StopRender();
-    int32_t SetMute(const std::shared_ptr<AudioEvent> &event);
-    int32_t SetAudioParameters(const std::shared_ptr<AudioEvent> &event);
+    int32_t SetMute(const AudioEvent &event);
+    int32_t SetAudioParameters(const AudioEvent &event);
     std::string GetVolumeLevel();
 
 private:

@@ -30,7 +30,7 @@ public:
     virtual int32_t Release() = 0;
     virtual int32_t Start() = 0;
     virtual int32_t Stop() = 0;
-    virtual int32_t SendAudioEvent(const std::shared_ptr<AudioEvent> &event) = 0;
+    virtual int32_t SendAudioEvent(const AudioEvent &event) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -58,7 +58,7 @@ public:
     bool IsOpened();
 
     AudioParam GetAudioParam() const;
-    int32_t NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event);
+    int32_t NotifyHdfAudioEvent(const AudioEvent &event);
 
 private:
     int32_t EnableDevice(const int32_t dhId, const std::string &capability);

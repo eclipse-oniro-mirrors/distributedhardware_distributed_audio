@@ -49,9 +49,7 @@ void DAudioSinkDevCtrlMgr::OnStateChange(int32_t type)
         DHLOGE("Callback is nullptr.");
         return;
     }
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    event->type = static_cast<AudioEventType>(type);
-    event->content = "";
+    AudioEvent event(static_cast<AudioEventType>(type), "");
     audioEventCallback_->NotifyEvent(event);
     switch (type) {
         case AudioEventType::CTRL_OPENED:
@@ -124,29 +122,21 @@ bool DAudioSinkDevCtrlMgr::IsOpened()
     return isOpened_.load();
 }
 
-void DAudioSinkDevCtrlMgr::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
+void DAudioSinkDevCtrlMgr::OnEventReceived(const AudioEvent &event)
 {
     DHLOGI("Received event.");
     if (audioEventCallback_ == nullptr) {
         DHLOGE("Callback is nullptr.");
         return;
     }
-    if (event == nullptr) {
-        DHLOGE("The parameter is empty.");
-        return;
-    }
     audioEventCallback_->NotifyEvent(event);
 }
 
-int32_t DAudioSinkDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent> &event)
+int32_t DAudioSinkDevCtrlMgr::SendAudioEvent(const AudioEvent &event)
 {
     DHLOGI("Send audio event.");
     if (audioCtrlTrans_ == nullptr) {
         return ERR_DH_AUDIO_SA_SINK_CTRL_TRANS_NULL;
-    }
-    if (event == nullptr) {
-        DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_NULLPTR;
     }
     int32_t ret = audioCtrlTrans_->SendAudioEvent(event);
     if (ret != DH_SUCCESS) {

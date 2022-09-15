@@ -40,12 +40,12 @@ public:
     int32_t Release() override;
     int32_t Start() override;
     int32_t Stop() override;
-    int32_t SendAudioEvent(const std::shared_ptr<AudioEvent> &event) override;
+    int32_t SendAudioEvent(const AudioEvent &event) override;
 
     void OnSessionOpened() override;
     void OnSessionClosed() override;
     void OnDataReceived(const std::shared_ptr<AudioData> &data) override;
-    void OnEventReceived(const std::shared_ptr<AudioEvent> &event) override;
+    void OnEventReceived(const AudioEvent &event) override;
 
 private:
     int32_t InitAudioCtrlTrans(const std::string &devId);

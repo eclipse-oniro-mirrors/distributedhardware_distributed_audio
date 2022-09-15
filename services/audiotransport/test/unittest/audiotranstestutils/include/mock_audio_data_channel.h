@@ -55,7 +55,7 @@ public:
         return DH_SUCCESS;
     }
 
-    int32_t SendEvent(const std::shared_ptr<AudioEvent> &audioEvent) override
+    int32_t SendEvent(const AudioEvent &audioEvent) override
     {
         return DH_SUCCESS;
     }

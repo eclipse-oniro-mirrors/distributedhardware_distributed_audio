@@ -151,7 +151,7 @@ int32_t DAudioSinkManager::DAudioNotify(const std::string &devId, const std::str
 
 void DAudioSinkManager::NotifyEvent(const std::string &devId, const int32_t eventType, const std::string &eventContent)
 {
-    auto audioEvent = std::make_shared<AudioEvent>(eventType, eventContent);
+    AudioEvent audioEvent(eventType, eventContent);
     audioDevMap_[devId]->NotifyEvent(audioEvent);
 }
 

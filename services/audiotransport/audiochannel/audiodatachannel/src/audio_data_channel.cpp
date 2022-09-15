@@ -102,7 +102,7 @@ int32_t AudioDataChannel::CloseSession()
     return DH_SUCCESS;
 }
 
-int32_t AudioDataChannel::SendEvent(const std::shared_ptr<AudioEvent> &audioEvent)
+int32_t AudioDataChannel::SendEvent(const AudioEvent &audioEvent)
 {
     (void) audioEvent;
     return DH_SUCCESS;

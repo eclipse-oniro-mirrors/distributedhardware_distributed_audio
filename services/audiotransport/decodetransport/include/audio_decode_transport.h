@@ -53,7 +53,7 @@ public:
     void OnSessionOpened() override;
     void OnSessionClosed() override;
     void OnDataReceived(const std::shared_ptr<AudioData> &data) override;
-    void OnEventReceived(const std::shared_ptr<AudioEvent> &event) override;
+    void OnEventReceived(const AudioEvent &event) override;
 
     void OnAudioDataDone(const std::shared_ptr<AudioData> &outputData) override;
     void OnStateNotify(const AudioEvent &event) override;

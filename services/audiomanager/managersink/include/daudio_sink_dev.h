@@ -40,7 +40,7 @@ public:
     int32_t AwakeAudioDev();
     void SleepAudioDev();
 
-    void NotifyEvent(const std::shared_ptr<AudioEvent> &audioEvent) override;
+    void NotifyEvent(const AudioEvent &audioEvent) override;
 
     int32_t TaskOpenCtrlChannel(const std::string &args);
     int32_t TaskCloseCtrlChannel(const std::string &args);
@@ -57,30 +57,30 @@ public:
     void OnTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
 
 private:
-    bool IsSpeakerEvent(const std::shared_ptr<AudioEvent> &event);
-    bool IsMicEvent(const std::shared_ptr<AudioEvent> &event);
-    bool IsVolumeEvent(const std::shared_ptr<AudioEvent> &event);
-    void NotifySpeakerEvent(const std::shared_ptr<AudioEvent> &event);
-    void NotifyMicEvent(const std::shared_ptr<AudioEvent> &event);
-    void NotifyVolumeEvent(const std::shared_ptr<AudioEvent> &event);
-    int32_t NotifyOpenCtrlChannel(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyCloseCtrlChannel(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyCtrlOpened(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyCtrlClosed(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyOpenSpeaker(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyCloseSpeaker(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifySpeakerOpened(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifySpeakerClosed(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyOpenMic(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyCloseMic(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyMicOpened(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyMicClosed(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifySetVolume(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyVolumeChange(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifySetParam(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifySetMute(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyFocusChange(const std::shared_ptr<AudioEvent> &audioEvent);
-    int32_t NotifyRenderStateChange(const std::shared_ptr<AudioEvent> &audioEvent);
+    bool IsSpeakerEvent(const AudioEvent &event);
+    bool IsMicEvent(const AudioEvent &event);
+    bool IsVolumeEvent(const AudioEvent &event);
+    void NotifySpeakerEvent(const AudioEvent &event);
+    void NotifyMicEvent(const AudioEvent &event);
+    void NotifyVolumeEvent(const AudioEvent &event);
+    int32_t NotifyOpenCtrlChannel(const AudioEvent &audioEvent);
+    int32_t NotifyCloseCtrlChannel(const AudioEvent &audioEvent);
+    int32_t NotifyCtrlOpened(const AudioEvent &audioEvent);
+    int32_t NotifyCtrlClosed(const AudioEvent &audioEvent);
+    int32_t NotifyOpenSpeaker(const AudioEvent &audioEvent);
+    int32_t NotifyCloseSpeaker(const AudioEvent &audioEvent);
+    int32_t NotifySpeakerOpened(const AudioEvent &audioEvent);
+    int32_t NotifySpeakerClosed(const AudioEvent &audioEvent);
+    int32_t NotifyOpenMic(const AudioEvent &audioEvent);
+    int32_t NotifyCloseMic(const AudioEvent &audioEvent);
+    int32_t NotifyMicOpened(const AudioEvent &audioEvent);
+    int32_t NotifyMicClosed(const AudioEvent &audioEvent);
+    int32_t NotifySetVolume(const AudioEvent &audioEvent);
+    int32_t NotifyVolumeChange(const AudioEvent &audioEvent);
+    int32_t NotifySetParam(const AudioEvent &audioEvent);
+    int32_t NotifySetMute(const AudioEvent &audioEvent);
+    int32_t NotifyFocusChange(const AudioEvent &audioEvent);
+    int32_t NotifyRenderStateChange(const AudioEvent &audioEvent);
     void NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result);
     int32_t from_json(const json &j, AudioParam &audioParam);
     bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);

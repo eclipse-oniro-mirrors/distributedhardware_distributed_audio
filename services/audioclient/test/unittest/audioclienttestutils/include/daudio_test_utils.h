@@ -23,7 +23,7 @@ namespace OHOS {
 namespace DistributedHardware {
 class MockIAudioEventCallback : public IAudioEventCallback {
 public:
-    void NotifyEvent(const std::shared_ptr<AudioEvent> &event) override {}
+    void NotifyEvent(const AudioEvent &event) override {}
 };
 
 class MockIAudioDataTransport : public IAudioDataTransport {

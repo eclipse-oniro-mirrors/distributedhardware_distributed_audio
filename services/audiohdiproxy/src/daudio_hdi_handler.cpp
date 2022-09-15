@@ -163,16 +163,16 @@ int32_t DAudioHdiHandler::UnRegisterAudioDevice(const std::string &devId, const 
 }
 
 int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, const int32_t dhId,
-    const std::shared_ptr<AudioEvent> &audioEvent)
+    const AudioEvent &audioEvent)
 {
     DHLOGI("Notify event adpname: %s, dhId: %d, event type: %d, event content: %s.",
-        GetAnonyString(devId).c_str(), dhId, audioEvent->type, audioEvent->content.c_str());
+        GetAnonyString(devId).c_str(), dhId, audioEvent.type, audioEvent.content.c_str());
     if (audioSrvHdf_ == nullptr) {
         DHLOGE("Audio hdi proxy not init");
         return ERR_DH_AUDIO_HDI_PROXY_NOT_INIT;
     }
-    OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent newEvent = {AUDIO_EVENT_UNKNOWN, audioEvent->content};
-    switch (audioEvent->type) {
+    OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent newEvent = {AUDIO_EVENT_UNKNOWN, audioEvent.content};
+    switch (audioEvent.type) {
         case AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT:
             newEvent.type = AUDIO_EVENT_OPEN_SPK_RESULT;
             break;

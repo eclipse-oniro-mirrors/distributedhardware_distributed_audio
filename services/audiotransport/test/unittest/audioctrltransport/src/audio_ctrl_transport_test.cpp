@@ -138,7 +138,7 @@ HWTEST_F(AudioCtrlTransportTest, SendAudioEvent_001, TestSize.Level1)
 {
     std::string peerDevId = "peerDevId";
     trans->audioChannel_ = std::make_shared<MockAudioCtrlChannel>(peerDevId);
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    AudioEvent event ;
     EXPECT_EQ(DH_SUCCESS, trans->SendAudioEvent(event));
 }
 
@@ -150,7 +150,7 @@ HWTEST_F(AudioCtrlTransportTest, SendAudioEvent_001, TestSize.Level1)
  */
 HWTEST_F(AudioCtrlTransportTest, SendAudioEvent_002, TestSize.Level1)
 {
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
+    AudioEvent event ;
     EXPECT_EQ(ERR_DH_AUDIO_TRANS_NULL_VALUE, trans->SendAudioEvent(event));
 }
 

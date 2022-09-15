@@ -95,14 +95,9 @@ int32_t AudioCtrlTransport::Stop()
     return DH_SUCCESS;
 }
 
-int32_t AudioCtrlTransport::SendAudioEvent(const std::shared_ptr<AudioEvent> &event)
+int32_t AudioCtrlTransport::SendAudioEvent(const AudioEvent &event)
 {
     DHLOGI("Send audio event.");
-    if (event == nullptr) {
-        DHLOGE("Audio event is null.");
-        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
-    }
-
     if (audioChannel_ == nullptr) {
         DHLOGE("Channel is null.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
@@ -144,7 +139,7 @@ void AudioCtrlTransport::OnDataReceived(const std::shared_ptr<AudioData> &data)
     (void)data;
 }
 
-void AudioCtrlTransport::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
+void AudioCtrlTransport::OnEventReceived(const AudioEvent &event)
 {
     DHLOGI("Audio event received.");
     auto callback = ctrlTransCallback_.lock();

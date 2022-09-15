@@ -109,7 +109,7 @@ int32_t DSpeakerDev::OpenDevice(const std::string &devId, const int32_t dhId)
     }
 
     json jParam = { { KEY_DH_ID, std::to_string(dhId) } };
-    auto event = std::make_shared<AudioEvent>(AudioEventType::OPEN_SPEAKER, jParam.dump());
+    AudioEvent event(AudioEventType::OPEN_SPEAKER, jParam.dump());
     cbObj->NotifyEvent(event);
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_OPEN, devId, std::to_string(dhId),
         "daudio spk device open success.");
@@ -126,7 +126,7 @@ int32_t DSpeakerDev::CloseDevice(const std::string &devId, const int32_t dhId)
     }
 
     json jParam = { { KEY_DH_ID, std::to_string(dhId) } };
-    auto event = std::make_shared<AudioEvent>(AudioEventType::CLOSE_SPEAKER, jParam.dump());
+    AudioEvent event(AudioEventType::CLOSE_SPEAKER, jParam.dump());
     cbObj->NotifyEvent(event);
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_CLOSE, devId, std::to_string(dhId),
         "daudio spk device close success.");
@@ -160,7 +160,7 @@ int32_t DSpeakerDev::NotifyEvent(const std::string &devId, int32_t dhId, const A
         DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
-    auto audioEvent = std::make_shared<AudioEvent>(event.type, event.content);
+    AudioEvent audioEvent(event.type, event.content);
     cbObj->NotifyEvent(audioEvent);
     return DH_SUCCESS;
 }
@@ -272,11 +272,11 @@ AudioParam DSpeakerDev::GetAudioParam() const
     return param_;
 }
 
-int32_t DSpeakerDev::NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &event)
+int32_t DSpeakerDev::NotifyHdfAudioEvent(const AudioEvent &event)
 {
     int32_t ret = DAudioHdiHandler::GetInstance().NotifyEvent(devId_, curPort_, event);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Notify event: %d, result: %s.", event->type, event->content.c_str());
+        DHLOGE("Notify event: %d, result: %s.", event.type, event.content.c_str());
     }
     return DH_SUCCESS;
 }
@@ -284,17 +284,17 @@ int32_t DSpeakerDev::NotifyHdfAudioEvent(const std::shared_ptr<AudioEvent> &even
 int32_t DSpeakerDev::OnStateChange(const AudioEventType type)
 {
     DHLOGI("On speaker device state change, type: %d.", type);
-    auto event = std::make_shared<AudioEvent>();
+    AudioEvent event;
     switch (type) {
         case AudioEventType::DATA_OPENED:
             isTransReady_.store(true);
             channelWaitCond_.notify_all();
-            event->type = AudioEventType::SPEAKER_OPENED;
+            event.type = AudioEventType::SPEAKER_OPENED;
             break;
         case AudioEventType::DATA_CLOSED:
             isOpened_.store(false);
             isTransReady_.store(false);
-            event->type = AudioEventType::SPEAKER_CLOSED;
+            event.type = AudioEventType::SPEAKER_CLOSED;
             break;
         default:
             break;

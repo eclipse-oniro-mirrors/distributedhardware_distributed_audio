@@ -24,7 +24,7 @@ class IAudioCtrlTransCallback {
 public:
     virtual ~IAudioCtrlTransCallback() = default;
     virtual void OnStateChange(int32_t type) = 0;
-    virtual void OnEventReceived(const std::shared_ptr<AudioEvent> &event) = 0;
+    virtual void OnEventReceived(const AudioEvent &event) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

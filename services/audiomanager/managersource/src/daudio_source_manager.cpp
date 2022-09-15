@@ -135,7 +135,7 @@ int32_t DAudioSourceManager::HandleDAudioNotify(const std::string &devId, const 
         return ERR_DH_AUDIO_SA_DEVICE_NOT_EXIST;
     }
 
-    auto audioEvent = std::make_shared<AudioEvent>(eventType, eventContent);
+    AudioEvent audioEvent(eventType, eventContent);
     audioDevMap_[devId].dev->NotifyEvent(audioEvent);
     return DH_SUCCESS;
 }

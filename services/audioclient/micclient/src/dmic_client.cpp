@@ -36,8 +36,8 @@ DMicClient::~DMicClient()
 int32_t DMicClient::OnStateChange(const AudioEventType type)
 {
     DHLOGI("On state change type: %d.", type);
-    std::shared_ptr<AudioEvent> event = std::make_shared<AudioEvent>();
-    event->content = "";
+    AudioEvent event;
+    event.content = "";
     switch (type) {
         case AudioEventType::DATA_OPENED: {
             isChannelReady_ = true;
@@ -46,11 +46,11 @@ int32_t DMicClient::OnStateChange(const AudioEventType type)
             captureDataThread_ = std::thread(&DMicClient::CaptureThreadRunning, this);
             std::unique_lock<std::mutex> lck(channelWaitMutex_);
             channelWaitCond_.notify_all();
-            event->type = AudioEventType::MIC_OPENED;
+            event.type = AudioEventType::MIC_OPENED;
             break;
         }
         case AudioEventType::DATA_CLOSED: {
-            event->type = AudioEventType::MIC_CLOSED;
+            event.type = AudioEventType::MIC_CLOSED;
             break;
         }
         default:

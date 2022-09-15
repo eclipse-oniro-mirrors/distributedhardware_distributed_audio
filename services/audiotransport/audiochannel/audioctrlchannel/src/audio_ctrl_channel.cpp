@@ -132,17 +132,12 @@ int32_t AudioCtrlChannel::SendData(const std::shared_ptr<AudioData> &data)
 
     return DH_SUCCESS;
 }
-int32_t AudioCtrlChannel::SendEvent(const std::shared_ptr<AudioEvent> &audioEvent)
+int32_t AudioCtrlChannel::SendEvent(const AudioEvent &audioEvent)
 {
     DHLOGI("Send event, sessionId: %d.", sessionId_);
-    if (!audioEvent) {
-        DHLOGE("Audio event is null.");
-        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
-    }
-
     json jAudioEvent;
-    jAudioEvent[KEY_TYPE] = audioEvent->type;
-    jAudioEvent[KEY_CONTENT] = audioEvent->content;
+    jAudioEvent[KEY_TYPE] = audioEvent.type;
+    jAudioEvent[KEY_CONTENT] = audioEvent.content;
     std::string message = jAudioEvent.dump();
     int ret = SendMsg(message);
     if (ret != DH_SUCCESS) {
@@ -234,7 +229,7 @@ void AudioCtrlChannel::OnBytesReceived(int32_t sessionId, const void *data, uint
 
     std::string message(buf, buf + dataLen);
     DHLOGI("On bytes received message: %s.", message.c_str());
-    std::shared_ptr<AudioEvent> audioEvent = std::make_shared<AudioEvent>();
+    AudioEvent audioEvent;
     json jParam = json::parse(message, nullptr, false);
     if (from_audioEventJson(jParam, audioEvent) != DH_SUCCESS) {
         DHLOGE("Get audioEvent from json failed.");
@@ -257,7 +252,7 @@ void AudioCtrlChannel::OnStreamReceived(int32_t sessionId, const StreamData *dat
     DHLOGI("Ctrl channel not support yet.");
 }
 
-int from_audioEventJson(const json &j, std::shared_ptr<AudioEvent> &audioEvent)
+int from_audioEventJson(const json &j, AudioEvent &audioEvent)
 {
     if (j.is_discarded()) {
         DHLOGE("Json data is discarded.");
@@ -268,8 +263,8 @@ int from_audioEventJson(const json &j, std::shared_ptr<AudioEvent> &audioEvent)
         DHLOGE("Some key values do not exist in json data.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
-    j.at(KEY_TYPE).get_to(audioEvent->type);
-    j.at(KEY_CONTENT).get_to(audioEvent->content);
+    j.at(KEY_TYPE).get_to(audioEvent.type);
+    j.at(KEY_CONTENT).get_to(audioEvent.content);
     return DH_SUCCESS;
 }
 } // namespace DistributedHardware

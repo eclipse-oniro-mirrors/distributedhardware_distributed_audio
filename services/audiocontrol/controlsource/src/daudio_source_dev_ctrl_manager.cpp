@@ -107,16 +107,12 @@ bool DAudioSourceDevCtrlMgr::IsOpened()
     return isOpened_;
 }
 
-int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent> &event)
+int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const AudioEvent &event)
 {
     DHLOGI("Send audio event.");
     if (audioCtrlTrans_ == nullptr) {
         DHLOGE("Send audio event, Audio ctrl trans is null");
         return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
-    }
-    if (event == nullptr) {
-        DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_NULLPTR;
     }
     return audioCtrlTrans_->SendAudioEvent(event);
 }
@@ -124,13 +120,13 @@ int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const std::shared_ptr<AudioEvent>
 void DAudioSourceDevCtrlMgr::OnStateChange(int32_t type)
 {
     DHLOGI("On ctrl device state change, type: %d.", type);
-    auto event = std::make_shared<AudioEvent>();
-    event->type = (AudioEventType)type;
-    if (event->type == AudioEventType::CTRL_OPENED) {
+    AudioEvent event;
+    event.type = (AudioEventType)type;
+    if (event.type == AudioEventType::CTRL_OPENED) {
         DHLOGI("Audio ctrl trans on opened.");
         isOpened_ = true;
         channelWaitCond_.notify_all();
-    } else if (event->type == AudioEventType::CTRL_CLOSED) {
+    } else if (event.type == AudioEventType::CTRL_CLOSED) {
         DHLOGI("Audio ctrl trans on closed.");
         isOpened_ = false;
     }
@@ -141,13 +137,9 @@ void DAudioSourceDevCtrlMgr::OnStateChange(int32_t type)
     audioEventCallback_->NotifyEvent(event);
 }
 
-void DAudioSourceDevCtrlMgr::OnEventReceived(const std::shared_ptr<AudioEvent> &event)
+void DAudioSourceDevCtrlMgr::OnEventReceived(const AudioEvent &event)
 {
     DHLOGI("Received event");
-    if (event == nullptr) {
-        DHLOGE("The parameter is empty.");
-        return;
-    }
     if (audioEventCallback_ == nullptr) {
         DHLOGE("Callback is nullptr.");
         return;
