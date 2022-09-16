@@ -19,9 +19,10 @@
 #include <gtest/gtest.h>
 
 #include "hdf_device_desc.h"
+#include <v1_0/iaudio_manager.h>
+#include <v1_0/id_audio_manager.h>
+
 #include "audio_adapter_interface_impl.h"
-#include "v1_0/iaudio_manager.h"
-#include "v1_0/id_audio_manager.h"
 #include "audio_test_utils.h"
 
 #define private public
@@ -33,7 +34,7 @@ namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent;
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
 
 class AudioManagerInterfaceImplTest : public testing::Test {

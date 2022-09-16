@@ -16,7 +16,7 @@
 #ifndef OHOS_DAUDIO_TEST_UTILS_H
 #define OHOS_DAUDIO_TEST_UTILS_H
 
-#include "v1_0/id_audio_callback.h"
+#include <v1_0/id_audio_callback.h>
 
 namespace OHOS {
 namespace HDI {
@@ -42,7 +42,7 @@ public:
         return 0;
     }
 
-    int32_t NotifyEvent(const std::string &adpNam, int32_t devId, const AudioEvent &event) override
+    int32_t NotifyEvent(const std::string &adpNam, int32_t devId, const DAudioEvent &event) override
     {
         return 0;
     }

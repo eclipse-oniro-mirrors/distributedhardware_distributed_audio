@@ -95,7 +95,7 @@ struct AudioSubPortCapabilityHAL {
     std::string desc;
 };
 
-struct AudioPortCapabilityHAl {
+struct AudioPortCapabilityHAL {
     uint32_t deviceType;
     uint32_t deviceId;
     uint32_t hardwareMode;

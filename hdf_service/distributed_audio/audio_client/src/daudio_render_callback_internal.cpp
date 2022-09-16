@@ -15,82 +15,53 @@
 
 #include "daudio_render_callback_internal.h"
 
-#include <v1_0/iaudio_render_callback.h>
+#include <v1_0/iaudio_callback.h>
 
 #include "daudio_errcode.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioRenderCallback;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioCallback;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioCallbackType;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioExtParamKey;
 
-class AudioRenderCallbackImpl final : public IAudioRenderCallback {
+class AudioRenderCallbackImpl final : public IAudioCallback {
 public:
-    AudioRenderCallbackImpl(RenderCallback callback, void *cookie) : callback_(callback), cookie_(cookie) {}
+    AudioRenderCallbackImpl(::RenderCallback callback, void *cookie) : callback_(callback), cookie_(cookie) {}
     ~AudioRenderCallbackImpl() {}
 
-    virtual int32_t OnAudioWriteCompleted() override;
-    virtual int32_t OnAudioDrainCompleted() override;
-    virtual int32_t OnAudioFlushCompleted() override;
-    virtual int32_t OnAudioRenderFull() override;
-    virtual int32_t OnAudioErrorOccur() override;
+    int32_t RenderCallback(AudioCallbackType type, int8_t &reserved, int8_t &cookie) override;
+    int32_t ParamCallback(AudioExtParamKey key, const std::string& condition, const std::string& value,
+        int8_t &reserved, int8_t &cookie) override;
+
 private:
-    RenderCallback callback_ = nullptr;
+    ::RenderCallback callback_ = nullptr;
     void *cookie_ = nullptr;
 };
 
-AudioRenderCallbackContext::AudioRenderCallbackContext(RenderCallback callback, void *cookie)
+AudioRenderCallbackContext::AudioRenderCallbackContext(::RenderCallback callback, void *cookie)
 {
     callbackStub_ = new AudioRenderCallbackImpl(callback, cookie);
 }
 
-int32_t AudioRenderCallbackImpl::OnAudioWriteCompleted()
+int32_t AudioRenderCallbackImpl::RenderCallback(AudioCallbackType type, int8_t &reserved, int8_t &cookie)
 {
+    (void) reserved;
+    (void) cookie;
     if (callback_ != nullptr) {
-        callback_(AUDIO_NONBLOCK_WRITE_COMPELETED, nullptr, cookie_);
+        callback_(static_cast<::AudioCallbackType>(type), static_cast<void *>(&reserved), cookie_);
         return DH_SUCCESS;
     } else {
         return ERR_DH_AUDIO_HDF_FAILURE;
     }
 }
 
-int32_t AudioRenderCallbackImpl::OnAudioDrainCompleted()
+int32_t AudioRenderCallbackImpl::ParamCallback(AudioExtParamKey key, const std::string& condition,
+    const std::string& value, int8_t &reserved, int8_t &cookie)
 {
-    if (callback_ != nullptr) {
-        callback_(AUDIO_DRAIN_COMPELETED, nullptr, cookie_);
-        return DH_SUCCESS;
-    } else {
-        return ERR_DH_AUDIO_HDF_FAILURE;
-    }
-}
-
-int32_t AudioRenderCallbackImpl::OnAudioFlushCompleted()
-{
-    if (callback_ != nullptr) {
-        callback_(AUDIO_FLUSH_COMPLETED, nullptr, cookie_);
-        return DH_SUCCESS;
-    } else {
-        return ERR_DH_AUDIO_HDF_FAILURE;
-    }
-}
-
-int32_t AudioRenderCallbackImpl::OnAudioRenderFull()
-{
-    if (callback_ != nullptr) {
-        callback_(AUDIO_RENDER_FULL, nullptr, cookie_);
-        return DH_SUCCESS;
-    } else {
-        return ERR_DH_AUDIO_HDF_FAILURE;
-    }
-}
-
-int32_t AudioRenderCallbackImpl::OnAudioErrorOccur()
-{
-    if (callback_ != nullptr) {
-        callback_(AUDIO_ERROR_OCCUR, nullptr, cookie_);
-        return DH_SUCCESS;
-    } else {
-        return ERR_DH_AUDIO_HDF_FAILURE;
-    }
+    (void) reserved;
+    (void) cookie;
+    return DH_SUCCESS;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

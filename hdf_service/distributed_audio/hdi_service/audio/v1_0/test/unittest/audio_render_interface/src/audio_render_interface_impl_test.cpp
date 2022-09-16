@@ -51,7 +51,7 @@ void AudioRenderInterfaceImplTest::TearDown(void)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetLatency_001, TestSize.Level1)
 {
-    uint32_t ms =  12;
+    uint32_t ms = 12;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetLatency(ms));
 }
 
@@ -63,10 +63,9 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetLatency_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, RenderFrame_001, TestSize.Level1)
 {
-    std::vector<uint8_t> frame;
-    uint64_t requestBytes = 0;
+    std::vector<int8_t> frame;
     uint64_t replyBytes = 0;
-    EXPECT_EQ(HDF_FAILURE, audioRenderInterfaceImpl_->RenderFrame(frame, requestBytes, replyBytes));
+    EXPECT_EQ(HDF_FAILURE, audioRenderInterfaceImpl_->RenderFrame(frame, replyBytes));
 }
 
 /**
@@ -78,7 +77,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, RenderFrame_001, TestSize.Level1)
 HWTEST_F(AudioRenderInterfaceImplTest, GetRenderPosition_001, TestSize.Level1)
 {
     uint64_t frames = 0;
-    AudioTimeStampHAL time = {1, 2};
+    AudioTimeStamp time;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetRenderPosition(frames, time));
 }
 
@@ -90,7 +89,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetRenderPosition_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, SetRenderSpeed_001, TestSize.Level1)
 {
-    float speed = 0.0;
+    float speed = 0;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->SetRenderSpeed(speed));
 }
 
@@ -114,7 +113,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetRenderSpeed_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, SetChannelMode_001, TestSize.Level1)
 {
-    AudioChannelModeHAL mode = AudioChannelModeHAL::AUDIO_CHANNEL_NORMAL;
+    AudioChannelMode mode = AudioChannelMode::AUDIO_CHANNEL_NORMAL;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->SetChannelMode(mode));
 }
 
@@ -126,7 +125,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, SetChannelMode_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetChannelMode_001, TestSize.Level1)
 {
-    AudioChannelModeHAL mode = AudioChannelModeHAL::AUDIO_CHANNEL_MIX;
+    AudioChannelMode mode = AudioChannelMode::AUDIO_CHANNEL_MIX;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetChannelMode(mode));
 }
 
@@ -138,8 +137,8 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetChannelMode_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, RegCallback_001, TestSize.Level1)
 {
-    sptr<IAudioRenderCallback> cbObj = nullptr;
-    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->RegCallback(cbObj));
+    sptr<IAudioCallback> cbObj = nullptr;
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->RegCallback(cbObj, 0));
 }
 
 /**
@@ -150,7 +149,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, RegCallback_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, DrainBuffer_001, TestSize.Level1)
 {
-    AudioDrainNotifyTypeHAL type = AudioDrainNotifyTypeHAL::AUDIO_DRAIN_EARLY_MODE;
+    AudioDrainNotifyType type = AudioDrainNotifyType::AUDIO_DRAIN_EARLY_MODE;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->DrainBuffer(type));
 }
 
@@ -241,7 +240,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, AudioDevDump_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, CheckSceneCapability_001, TestSize.Level1)
 {
-    AudioSceneDescriptorHAL scene;
+    AudioSceneDescriptor scene;
     bool support = true;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->CheckSceneCapability(scene, support));
 }
@@ -254,7 +253,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, CheckSceneCapability_001, TestSize.Level1
  */
 HWTEST_F(AudioRenderInterfaceImplTest, SelectScene_001, TestSize.Level1)
 {
-    AudioSceneDescriptorHAL scene;
+    AudioSceneDescriptor scene;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->SelectScene(scene));
 }
 
@@ -290,7 +289,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetMute_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, SetVolume_001, TestSize.Level1)
 {
-    float volume = 0.0;
+    float volume = 0;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->SetVolume(volume));
 }
 
@@ -302,7 +301,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, SetVolume_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetVolume_001, TestSize.Level1)
 {
-    float volume = 0.0;
+    float volume = 0;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetVolume(volume));
 }
 
@@ -314,8 +313,8 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetVolume_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetGainThreshold_001, TestSize.Level1)
 {
-    float min = 0.0;
-    float max = 0.0;
+    float min = 0;
+    float max = 0;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetGainThreshold(min, max));
 }
 
@@ -327,7 +326,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetGainThreshold_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, SetGain_001, TestSize.Level1)
 {
-    float gain = 0.0;
+    float gain = 0;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->SetGain(gain));
 }
 
@@ -339,7 +338,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, SetGain_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetGain_001, TestSize.Level1)
 {
-    float gain = 0.0;
+    float gain = 0;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetGain(gain));
 }
 
@@ -351,7 +350,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetGain_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetFrameSize_001, TestSize.Level1)
 {
-    uint64_t size = 1;
+    uint64_t size = 0;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetFrameSize(size));
 }
 
@@ -363,7 +362,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetFrameSize_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetFrameCount_001, TestSize.Level1)
 {
-    uint64_t count = 1;
+    uint64_t count = 0;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetFrameCount(count));
 }
 
@@ -375,7 +374,21 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetFrameCount_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, SetSampleAttributes_001, TestSize.Level1)
 {
-    AudioSampleAttributesHAL attrs = {1, 1, 16, 44100, 2, 1, 1, 1, 1, 1, 1, 1, 1};
+    AudioSampleAttributes attrs = {
+        .type = AUDIO_IN_MEDIA,
+        .interleaved = true,
+        .format = AUDIO_FORMAT_PCM_16_BIT,
+        .sampleRate = 44100,
+        .channelCount = 2,
+        .period = 1,
+        .frameSize = 1,
+        .isBigEndian = true,
+        .isSignedData = true,
+        .startThreshold = 1,
+        .stopThreshold = 1,
+        .silenceThreshold = 1,
+        .streamId = 1,
+    };
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->SetSampleAttributes(attrs));
 }
 
@@ -387,7 +400,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, SetSampleAttributes_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetSampleAttributes_001, TestSize.Level1)
 {
-    AudioSampleAttributesHAL attrs = {1, 1, 16, 44100, 2, 1, 1, 1, 1, 1, 1, 1, 1};
+    AudioSampleAttributes attrs;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetSampleAttributes(attrs));
 }
 
@@ -399,7 +412,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetSampleAttributes_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetCurrentChannelId_001, TestSize.Level1)
 {
-    uint32_t channelId = 1;
+    uint32_t channelId = 0;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetCurrentChannelId(channelId));
 }
 
@@ -423,7 +436,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, SetExtraParams_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetExtraParams_001, TestSize.Level1)
 {
-    std::string keyValueList = "hello";
+    std::string keyValueList;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetExtraParams(keyValueList));
 }
 
@@ -436,7 +449,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetExtraParams_001, TestSize.Level1)
 HWTEST_F(AudioRenderInterfaceImplTest, ReqMmapBuffer_001, TestSize.Level1)
 {
     int32_t reqSize = 1;
-    AudioMmapBufferDescripterHAL desc = {1, 1, 1, 1};
+    AudioMmapBufferDescripter desc;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->ReqMmapBuffer(reqSize, desc));
 }
 
@@ -448,8 +461,8 @@ HWTEST_F(AudioRenderInterfaceImplTest, ReqMmapBuffer_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetMmapPosition_001, TestSize.Level1)
 {
-    uint64_t frames = 1;
-    AudioTimeStampHAL time = {1, 2};
+    uint64_t frames = 0;
+    AudioTimeStamp time;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetMmapPosition(frames, time));
 }
 

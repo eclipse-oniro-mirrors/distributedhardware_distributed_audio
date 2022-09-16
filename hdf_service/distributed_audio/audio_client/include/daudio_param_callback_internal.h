@@ -16,18 +16,17 @@
 #ifndef DAUDIO_PARAM_CALLBACK_INTERNAL_H
 #define DAUDIO_PARAM_CALLBACK_INTERNAL_H
 
-#include <v1_0/iaudio_param_callback.h>
-
 #include "audio_types.h"
+#include <v1_0/iaudio_callback.h>
 
 namespace OHOS {
 namespace DistributedHardware {
-using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioParamCallback;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioCallback;
 struct AudioParamCallbackContext {
-    AudioParamCallbackContext(ParamCallback callback, void *cookie);
+    AudioParamCallbackContext(::ParamCallback callback, void *cookie);
     ~AudioParamCallbackContext() = default;
 
-    sptr<IAudioParamCallback> callbackStub_ = nullptr;
+    sptr<IAudioCallback> callbackStub_ = nullptr;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

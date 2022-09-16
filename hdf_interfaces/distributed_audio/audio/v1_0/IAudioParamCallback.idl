@@ -1,7 +1,0 @@
-package ohos.hdi.distributed_audio.audio.v1_0;
-
-import ohos.hdi.distributed_audio.audio.v1_0.Types;
-
-[callback] interface IAudioParamCallback {
-    OnAudioParamNotify([in] enum AudioExtParamKeyHAL key, [in] String condition, [in] String value);
-}

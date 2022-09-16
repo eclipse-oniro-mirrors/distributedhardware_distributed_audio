@@ -18,9 +18,9 @@ import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("DestoryCaptureFuzzTest") {
-  module_out_path = "distributed_audio/destorycapture_fuzzer"
-  fuzz_config_file = "${hdf_ser_aud_path}/test/fuzztest/destorycapture_fuzzer"
+ohos_fuzztest("SetExtraParamsFuzzTest") {
+  module_out_path = "distributed_audio/setextraparams_fuzzer"
+  fuzz_config_file = "${hdf_ser_aud_path}/test/fuzztest/setextraparams_fuzzer"
 
   cflags = [
     "-g",
@@ -28,7 +28,7 @@ ohos_fuzztest("DestoryCaptureFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "destorycapture_fuzzer.cpp" ]
+  sources = [ "setextraparams_fuzzer.cpp" ]
 
   include_dirs = [
     "${hdf_ser_aud_path}/include",
@@ -49,7 +49,7 @@ ohos_fuzztest("DestoryCaptureFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"DestoryCaptureFuzzTest\"",
+    "DH_LOG_TAG=\"SetExtraParamsFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 }
@@ -57,6 +57,6 @@ ohos_fuzztest("DestoryCaptureFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":DestoryCaptureFuzzTest" ]
+  deps = [ ":SetExtraParamsFuzzTest" ]
 }
 ###############################################################################

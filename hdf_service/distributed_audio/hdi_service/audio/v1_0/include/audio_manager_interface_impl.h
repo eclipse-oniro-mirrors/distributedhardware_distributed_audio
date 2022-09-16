@@ -21,17 +21,17 @@
 #include <string>
 
 #include "hdf_device_desc.h"
+#include <v1_0/iaudio_manager.h>
+#include <v1_0/id_audio_manager.h>
 
 #include "audio_adapter_interface_impl.h"
-#include "v1_0/iaudio_manager.h"
-#include "v1_0/id_audio_manager.h"
 
 namespace OHOS {
 namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent;
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
 
 typedef struct {
@@ -57,19 +57,19 @@ public:
     }
 
     virtual ~AudioManagerInterfaceImpl();
-    int32_t GetAllAdapters(std::vector<AudioAdapterDescriptorHAL> &descriptors) override;
-    int32_t LoadAdapter(const AudioAdapterDescriptorHAL &descriptor, sptr<IAudioAdapter> &adapter) override;
-    int32_t UnloadAdapter(const std::string &adpName) override;
+    int32_t GetAllAdapters(std::vector<AudioAdapterDescriptor> &descs) override;
+    int32_t LoadAdapter(const AudioAdapterDescriptor &desc, sptr<IAudioAdapter> &adapter) override;
+    int32_t UnloadAdapter(const std::string &adapterName) override;
+    int32_t ReleaseAudioManagerObject() override;
+
     int32_t AddAudioDevice(const std::string &adpName, const uint32_t devId, const std::string &caps,
         const sptr<IDAudioCallback> &callback);
     int32_t RemoveAudioDevice(const std::string &adpName, const uint32_t devId);
-    int32_t Notify(const std::string &adpName, const uint32_t devId, const AudioEvent &event);
+    int32_t Notify(const std::string &adpName, const uint32_t devId, const DAudioEvent &event);
     void SetDeviceObject(struct HdfDeviceObject *deviceObject);
 
 private:
     AudioManagerInterfaceImpl();
-    AudioManagerInterfaceImpl(const AudioManagerInterfaceImpl &);
-    AudioManagerInterfaceImpl &operator = (const AudioManagerInterfaceImpl &);
     int32_t NotifyFwk(const DAudioDevEvent &event);
     int32_t CreateAdapter(const std::string &adpName, const uint32_t devId, const sptr<IDAudioCallback> &callback);
 

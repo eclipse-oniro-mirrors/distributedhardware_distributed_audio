@@ -18,10 +18,9 @@ hdi("daudio") {
     "IAudioAdapter.idl",
     "IAudioCapture.idl",
     "IAudioManager.idl",
-    "IAudioParamCallback.idl",
     "IAudioRender.idl",
-    "IAudioRenderCallback.idl",
-    "Types.idl",
+    "AudioTypes.idl",
+    "IAudioCallback.idl",
   ]
   language = "cpp"
   root = "ohos.hdi://foundation/distributedhardware/distributed_audio/hdf_interfaces/"

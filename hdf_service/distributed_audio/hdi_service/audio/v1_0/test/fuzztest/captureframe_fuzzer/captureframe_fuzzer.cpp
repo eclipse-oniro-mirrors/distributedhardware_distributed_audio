@@ -34,15 +34,14 @@ void CaptureFrameFuzzTest(const uint8_t* data, size_t size)
     }
 
     std::string adpName(reinterpret_cast<const char*>(data), size);
-    AudioDeviceDescriptorHAL desc;
-    AudioSampleAttributesHAL attrs;
+    AudioDeviceDescriptor desc;
+    AudioSampleAttributes attrs;
     sptr<IDAudioCallback> callback = nullptr;
     auto audioCapture = std::make_shared<AudioCaptureInterfaceImpl>(adpName, desc, attrs, callback);
-    std::vector<uint8_t> frame;
+    std::vector<int8_t> frame;
     uint64_t requestBytes = *(reinterpret_cast<const uint64_t*>(data));
-    uint64_t replyBytes = *(reinterpret_cast<const uint64_t*>(data));
 
-    audioCapture->CaptureFrame(frame, requestBytes, replyBytes);
+    audioCapture->CaptureFrame(frame, requestBytes);
 }
 } // V1_0
 } // Audio

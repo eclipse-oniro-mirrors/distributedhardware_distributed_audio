@@ -21,9 +21,10 @@
 #include <mutex>
 #include <vector>
 #include <string>
-#include <v1_0/iaudio_manager.h>
 
 #include "audio_manager.h"
+#include <v1_0/iaudio_manager.h>
+
 #include "daudio_adapter_internal.h"
 
 namespace OHOS {
@@ -41,7 +42,7 @@ struct AudioManagerContext {
     std::mutex mtx_;
 
     std::map<std::string, std::unique_ptr<AudioAdapterContext>> adapters_;
-    std::vector<AudioAdapterDescriptor> descriptors_;
+    std::vector<::AudioAdapterDescriptor> descriptors_;
 };
 } // DistributedHardware
 } // OHOS

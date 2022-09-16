@@ -28,6 +28,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+using namespace OHOS::HDI::DistributedAudio::Audio::V1_0;
+
 static int32_t GetLatencyInternal(struct AudioRender *render, uint32_t *ms)
 {
     if (render == nullptr || ms == nullptr) {
@@ -58,16 +60,17 @@ static int32_t RenderFrameInternal(struct AudioRender *render, const void *frame
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
     const uint8_t *uframe = reinterpret_cast<const uint8_t *>(frame);
-    std::vector<uint8_t> frameHal(requestBytes);
+    std::vector<int8_t> frameHal(requestBytes);
     int32_t ret = memcpy_s(frameHal.data(), requestBytes, uframe, requestBytes);
     if (ret != EOK) {
         DHLOGE("Memcpy_s failed ret: %d.", ret);
         return ERR_DH_AUDIO_HDF_FAILURE;
     }
-    return context->proxy_->RenderFrame(frameHal, requestBytes, *replyBytes);
+    return context->proxy_->RenderFrame(frameHal, *replyBytes);
 }
 
-static int32_t GetRenderPositionInternal(struct AudioRender *render, uint64_t *frames, struct AudioTimeStamp *time)
+static int32_t GetRenderPositionInternal(struct AudioRender *render, uint64_t *frames,
+    struct ::AudioTimeStamp *time)
 {
     if (render == nullptr || frames == nullptr || time == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -79,7 +82,7 @@ static int32_t GetRenderPositionInternal(struct AudioRender *render, uint64_t *f
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    AudioTimeStampHAL timeHal;
+    AudioTimeStamp timeHal;
     int32_t ret = context->proxy_->GetRenderPosition(*frames, timeHal);
     if (ret != DH_SUCCESS) {
         return ret;
@@ -119,7 +122,7 @@ static int32_t GetRenderSpeedInternal(struct AudioRender *render, float *speed)
     return context->proxy_->GetRenderSpeed(*speed);
 }
 
-static int32_t SetChannelModeInternal(struct AudioRender *render, enum AudioChannelMode mode)
+static int32_t SetChannelModeInternal(struct AudioRender *render, enum ::AudioChannelMode mode)
 {
     if (render == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -131,10 +134,10 @@ static int32_t SetChannelModeInternal(struct AudioRender *render, enum AudioChan
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    return context->proxy_->SetChannelMode(static_cast<AudioChannelModeHAL>(mode));
+    return context->proxy_->SetChannelMode(static_cast<AudioChannelMode>(mode));
 }
 
-static int32_t GetChannelModeInternal(struct AudioRender *render, enum AudioChannelMode *mode)
+static int32_t GetChannelModeInternal(struct AudioRender *render, enum ::AudioChannelMode *mode)
 {
     if (render == nullptr || mode == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -146,10 +149,10 @@ static int32_t GetChannelModeInternal(struct AudioRender *render, enum AudioChan
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    return context->proxy_->GetChannelMode(*(reinterpret_cast<AudioChannelModeHAL *>(mode)));
+    return context->proxy_->GetChannelMode(*(reinterpret_cast<AudioChannelMode *>(mode)));
 }
 
-static int32_t RegCallbackInternal(struct AudioRender *render, RenderCallback callback, void *cookie)
+static int32_t RegCallbackInternal(struct AudioRender *render, ::RenderCallback callback, void *cookie)
 {
     if (render == nullptr || callback == nullptr || cookie == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -172,7 +175,7 @@ static int32_t RegCallbackInternal(struct AudioRender *render, RenderCallback ca
         context->callbackInternal_ = nullptr;
         return ERR_DH_AUDIO_HDF_FAILURE;
     }
-    int32_t ret = context->proxy_->RegCallback(context->callbackInternal_->callbackStub_);
+    int32_t ret = context->proxy_->RegCallback(context->callbackInternal_->callbackStub_, 0);
     if (ret == DH_SUCCESS) {
         context->callback_ = callback;
     } else {
@@ -181,7 +184,7 @@ static int32_t RegCallbackInternal(struct AudioRender *render, RenderCallback ca
     return ret;
 }
 
-static int32_t DrainBufferInternal(struct AudioRender *render, enum AudioDrainNotifyType *type)
+static int32_t DrainBufferInternal(struct AudioRender *render, enum ::AudioDrainNotifyType *type)
 {
     if (render == nullptr || type == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -193,7 +196,7 @@ static int32_t DrainBufferInternal(struct AudioRender *render, enum AudioDrainNo
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    return context->proxy_->DrainBuffer(*(reinterpret_cast<AudioDrainNotifyTypeHAL *>(type)));
+    return context->proxy_->DrainBuffer(*(reinterpret_cast<AudioDrainNotifyType *>(type)));
 }
 
 AudioRenderContext::AudioRenderContext()
@@ -207,6 +210,7 @@ AudioRenderContext::AudioRenderContext()
     instance_.GetChannelMode = GetChannelModeInternal;
     instance_.RegCallback = RegCallbackInternal;
     instance_.DrainBuffer = DrainBufferInternal;
+    instance_.IsSupportsDrain = nullptr;
 
     instance_.control.Start = AudioControlInternal<AudioRenderContext>::Start;
     instance_.control.Stop = AudioControlInternal<AudioRenderContext>::Stop;
@@ -238,8 +242,7 @@ AudioRenderContext::AudioRenderContext()
     instance_.volume.GetGain = AudioVolumeInternal<AudioRenderContext>::GetGain;
 
     descHal_.portId = 0;
-    instance_.IsSupportsDrain = nullptr;
-    descHal_.pins = 0;
+    descHal_.pins = PIN_NONE;
 }
 
 AudioRenderContext::~AudioRenderContext() {}

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "destorycapture_fuzzer.h"
+#include "destroyrender_fuzzer.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -27,24 +27,22 @@ namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-void DestoryCaptureFuzzTest(const uint8_t* data, size_t size)
+void DestroyRenderFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < (sizeof(int32_t)))) {
         return;
     }
 
-    AudioAdapterDescriptorHAL desc;
+    AudioAdapterDescriptor desc;
     auto audioAdapter = std::make_shared<AudioAdapterInterfaceImpl>(desc);
 
-    uint32_t portId = *(reinterpret_cast<const uint32_t*>(data));
-    uint32_t pins = *(reinterpret_cast<const uint32_t*>(data));
-    std::string tdesc(reinterpret_cast<const char*>(data), size);
-    AudioDeviceDescriptorHAL deviceDes;
-    deviceDes.portId = portId;
-    deviceDes.pins = pins;
-    deviceDes.desc = tdesc;
+    AudioDeviceDescriptor deviceDes = {
+        .portId = *(reinterpret_cast<const uint32_t*>(data)),
+        .pins = *(reinterpret_cast<const AudioPortPin*>(data)),
+        .desc = std::string(reinterpret_cast<const char*>(data), size),
+    };
 
-    audioAdapter->DestoryCapture(deviceDes);
+    audioAdapter->DestroyRender(deviceDes);
 }
 } // V1_0
 } // Audio
@@ -56,7 +54,7 @@ void DestoryCaptureFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::HDI::DistributedAudio::Audio::V1_0::DestoryCaptureFuzzTest(data, size);
+    OHOS::HDI::DistributedAudio::Audio::V1_0::DestroyRenderFuzzTest(data, size);
     return 0;
 }
 

@@ -19,8 +19,8 @@
 #include <mutex>
 #include <string>
 
-#include "v1_0/iaudio_capture.h"
-#include "v1_0/id_audio_manager.h"
+#include <v1_0/iaudio_capture.h>
+#include <v1_0/id_audio_manager.h>
 
 namespace OHOS {
 namespace HDI {
@@ -41,13 +41,33 @@ typedef enum {
 
 class AudioCaptureInterfaceImpl : public IAudioCapture {
 public:
-    AudioCaptureInterfaceImpl(const std::string adpName, const AudioDeviceDescriptorHAL &desc,
-        const AudioSampleAttributesHAL &attrs, const sptr<IDAudioCallback> &callback);
-
+    AudioCaptureInterfaceImpl(const std::string adpName, const AudioDeviceDescriptor &desc,
+        const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
     virtual ~AudioCaptureInterfaceImpl();
 
-    int32_t GetCapturePosition(uint64_t &frames, AudioTimeStampHAL &time) override;
-    int32_t CaptureFrame(std::vector<uint8_t> &frame, uint64_t requestBytes, uint64_t &replyBytes) override;
+    int32_t CaptureFrame(std::vector<int8_t> &frame, uint64_t requestBytes) override;
+    int32_t GetCapturePosition(uint64_t &frames, AudioTimeStamp &time) override;
+    int32_t CheckSceneCapability(const AudioSceneDescriptor &scene, bool &supported) override;
+    int32_t SelectScene(const AudioSceneDescriptor &scene) override;
+    int32_t SetMute(bool mute) override;
+    int32_t GetMute(bool &mute) override;
+    int32_t SetVolume(float volume) override;
+    int32_t GetVolume(float &volume) override;
+    int32_t GetGainThreshold(float &min, float &max) override;
+    int32_t GetGain(float &gain) override;
+    int32_t SetGain(float gain) override;
+    int32_t GetFrameSize(uint64_t &size) override;
+    int32_t GetFrameCount(uint64_t &count) override;
+    int32_t SetSampleAttributes(const AudioSampleAttributes &attrs) override;
+    int32_t GetSampleAttributes(AudioSampleAttributes &attrs) override;
+    int32_t GetCurrentChannelId(uint32_t &channelId) override;
+    int32_t SetExtraParams(const std::string &keyValueList) override;
+    int32_t GetExtraParams(std::string &keyValueList) override;
+    int32_t ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescripter &desc) override;
+    int32_t GetMmapPosition(uint64_t &frames, AudioTimeStamp &time) override;
+    int32_t AddAudioEffect(uint64_t effectid) override;
+    int32_t RemoveAudioEffect(uint64_t effectid) override;
+    int32_t GetFrameBufferSize(uint64_t &bufferSize) override;
     int32_t Start() override;
     int32_t Stop() override;
     int32_t Pause() override;
@@ -55,30 +75,13 @@ public:
     int32_t Flush() override;
     int32_t TurnStandbyMode() override;
     int32_t AudioDevDump(int32_t range, int32_t fd) override;
-    int32_t CheckSceneCapability(const AudioSceneDescriptorHAL &scene, bool &support) override;
-    int32_t SelectScene(const AudioSceneDescriptorHAL &scene) override;
-    int32_t SetMute(bool mute) override;
-    int32_t GetMute(bool &mute) override;
-    int32_t SetVolume(float volume) override;
-    int32_t GetVolume(float &volume) override;
-    int32_t GetGainThreshold(float &min, float &max) override;
-    int32_t SetGain(float gain) override;
-    int32_t GetGain(float &gain) override;
-    int32_t GetFrameSize(uint64_t &size) override;
-    int32_t GetFrameCount(uint64_t &count) override;
-    int32_t SetSampleAttributes(const AudioSampleAttributesHAL &attrs) override;
-    int32_t GetSampleAttributes(AudioSampleAttributesHAL &attrs) override;
-    int32_t GetCurrentChannelId(uint32_t &channelId) override;
-    int32_t SetExtraParams(const std::string &keyValueList) override;
-    int32_t GetExtraParams(std::string &keyValueList) override;
-    int32_t ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescripterHAL &desc) override;
-    int32_t GetMmapPosition(uint64_t &frames, AudioTimeStampHAL &time) override;
-    const AudioDeviceDescriptorHAL &GetCaptureDesc();
+    int32_t IsSupportsPauseAndResume(bool &supportPause, bool &supportResume) override;
+    const AudioDeviceDescriptor &GetCaptureDesc();
 
 private:
     std::string adapterName_;
-    AudioDeviceDescriptorHAL devDesc_;
-    AudioSampleAttributesHAL devAttrs_;
+    AudioDeviceDescriptor devDesc_;
+    AudioSampleAttributes devAttrs_;
 
     std::mutex captureMtx_;
     AudioCaptureStatus captureStatus_ = CAPTURE_STATUS_CLOSE;

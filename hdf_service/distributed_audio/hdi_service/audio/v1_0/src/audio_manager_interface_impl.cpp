@@ -51,24 +51,24 @@ AudioManagerInterfaceImpl::~AudioManagerInterfaceImpl()
     DHLOGI("Distributed audio manager destructed.");
 }
 
-int32_t AudioManagerInterfaceImpl::GetAllAdapters(std::vector<AudioAdapterDescriptorHAL> &descriptors)
+int32_t AudioManagerInterfaceImpl::GetAllAdapters(std::vector<AudioAdapterDescriptor> &descs)
 {
     DHLOGI("Get all distributed audio adapters.");
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
     for (auto &adp : mapAudioAdapter_) {
-        descriptors.push_back(adp.second->GetAdapterDesc());
+        descs.push_back(adp.second->GetAdapterDesc());
     }
 
     DHLOGI("Get adapters success, total is (%zu). ", mapAudioAdapter_.size());
     return HDF_SUCCESS;
 }
 
-int32_t AudioManagerInterfaceImpl::LoadAdapter(const AudioAdapterDescriptorHAL &descriptor,
+int32_t AudioManagerInterfaceImpl::LoadAdapter(const AudioAdapterDescriptor &desc,
     sptr<IAudioAdapter> &adapter)
 {
-    DHLOGI("Load distributed audio adapter: %s.", GetAnonyString(descriptor.adapterName).c_str());
+    DHLOGI("Load distributed audio adapter: %s.", GetAnonyString(desc.adapterName).c_str());
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
-    auto adp = mapAudioAdapter_.find(descriptor.adapterName);
+    auto adp = mapAudioAdapter_.find(desc.adapterName);
     if (adp == mapAudioAdapter_.end()) {
         DHLOGE("Load audio adapter failed, can not find adapter.");
         adapter = nullptr;
@@ -87,11 +87,11 @@ int32_t AudioManagerInterfaceImpl::LoadAdapter(const AudioAdapterDescriptorHAL &
     return HDF_SUCCESS;
 }
 
-int32_t AudioManagerInterfaceImpl::UnloadAdapter(const std::string &adpName)
+int32_t AudioManagerInterfaceImpl::UnloadAdapter(const std::string &adapterName)
 {
-    DHLOGI("Unload distributed audio adapter: %s.", GetAnonyString(adpName).c_str());
+    DHLOGI("Unload distributed audio adapter: %s.", GetAnonyString(adapterName).c_str());
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
-    auto adp = mapAudioAdapter_.find(adpName);
+    auto adp = mapAudioAdapter_.find(adapterName);
     if (adp == mapAudioAdapter_.end()) {
         DHLOGE("Unload audio adapter failed, can not find adapter.");
         return HDF_SUCCESS;
@@ -103,6 +103,12 @@ int32_t AudioManagerInterfaceImpl::UnloadAdapter(const std::string &adpName)
         return HDF_SUCCESS;
     }
     DHLOGI("Unload adapter success.");
+    return HDF_SUCCESS;
+}
+
+int32_t AudioManagerInterfaceImpl::ReleaseAudioManagerObject()
+{
+    DHLOGI("Release distributed audio manager object.");
     return HDF_SUCCESS;
 }
 
@@ -186,7 +192,7 @@ int32_t AudioManagerInterfaceImpl::RemoveAudioDevice(const std::string &adpName,
     return DH_SUCCESS;
 }
 
-int32_t AudioManagerInterfaceImpl::Notify(const std::string &adpName, const uint32_t devId, const AudioEvent &event)
+int32_t AudioManagerInterfaceImpl::Notify(const std::string &adpName, const uint32_t devId, const DAudioEvent &event)
 {
     DHLOGI("Notify event, adapter name: %s. event type: %d", GetAnonyString(adpName).c_str(),
         event.type);
@@ -239,7 +245,7 @@ int32_t AudioManagerInterfaceImpl::CreateAdapter(const std::string &adpName, con
         return ERR_DH_AUDIO_HDF_FAIL;
     }
 
-    AudioAdapterDescriptorHAL desc = { adpName };
+    AudioAdapterDescriptor desc = { adpName };
     sptr<AudioAdapterInterfaceImpl> adapter(new AudioAdapterInterfaceImpl(desc));
     if (adapter == nullptr) {
         DHLOGE("Create new audio adapter failed.");

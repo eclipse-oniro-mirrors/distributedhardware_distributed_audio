@@ -18,14 +18,17 @@
 
 #include <mutex>
 
+#include <v1_0/id_audio_manager.h>
+
 #include "audio_manager_interface_impl.h"
-#include "v1_0/id_audio_manager.h"
 
 namespace OHOS {
 namespace HDI {
 namespace DistributedAudio {
 namespace Audioext {
 namespace V1_0 {
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
+
 class DAudioManagerInterfaceImpl : public IDAudioManager {
 public:
     static DAudioManagerInterfaceImpl *GetDAudioManager()
@@ -46,7 +49,7 @@ public:
 
     int32_t UnRegisterAudioDevice(const std::string &adpName, int32_t devId) override;
 
-    int32_t NotifyEvent(const std::string &adpName, int32_t devId, const AudioEvent &event) override;
+    int32_t NotifyEvent(const std::string &adpName, int32_t devId, const DAudioEvent &event) override;
 
 private:
     DAudioManagerInterfaceImpl();

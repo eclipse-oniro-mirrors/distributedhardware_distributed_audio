@@ -32,8 +32,8 @@ namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-AudioCaptureInterfaceImpl::AudioCaptureInterfaceImpl(const std::string adpName, const AudioDeviceDescriptorHAL &desc,
-    const AudioSampleAttributesHAL &attrs, const sptr<IDAudioCallback> &callback)
+AudioCaptureInterfaceImpl::AudioCaptureInterfaceImpl(const std::string adpName, const AudioDeviceDescriptor &desc,
+    const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback)
     : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
 {
     DHLOGD("Distributed audio capture constructed, id(%d).", desc.pins);
@@ -44,7 +44,7 @@ AudioCaptureInterfaceImpl::~AudioCaptureInterfaceImpl()
     DHLOGD("Distributed audio capture destructed, id(%d).", devDesc_.pins);
 }
 
-int32_t AudioCaptureInterfaceImpl::GetCapturePosition(uint64_t &frames, AudioTimeStampHAL &time)
+int32_t AudioCaptureInterfaceImpl::GetCapturePosition(uint64_t &frames, AudioTimeStamp &time)
 {
     DHLOGI("Get capture position, not support yet.");
     (void)frames;
@@ -52,8 +52,7 @@ int32_t AudioCaptureInterfaceImpl::GetCapturePosition(uint64_t &frames, AudioTim
     return HDF_SUCCESS;
 }
 
-int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<uint8_t> &frame, uint64_t requestBytes,
-    uint64_t &replyBytes)
+int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<int8_t> &frame, uint64_t requestBytes)
 {
     DHLOGI("Capture frame[samplerate: %d, channelmask: %d, bitformat: %d].", devAttrs_.sampleRate,
         devAttrs_.channelCount, devAttrs_.format);
@@ -134,15 +133,23 @@ int32_t AudioCaptureInterfaceImpl::AudioDevDump(int32_t range, int32_t fd)
     return HDF_SUCCESS;
 }
 
-int32_t AudioCaptureInterfaceImpl::CheckSceneCapability(const AudioSceneDescriptorHAL &scene, bool &support)
+int32_t AudioCaptureInterfaceImpl::IsSupportsPauseAndResume(bool &supportPause, bool &supportResume)
 {
-    DHLOGI("Check scene capability.");
-    (void)scene;
-    support = false;
+    DHLOGI("Check whether pause and resume is supported, not support yet.");
+    (void)supportPause;
+    (void)supportResume;
     return HDF_SUCCESS;
 }
 
-int32_t AudioCaptureInterfaceImpl::SelectScene(const AudioSceneDescriptorHAL &scene)
+int32_t AudioCaptureInterfaceImpl::CheckSceneCapability(const AudioSceneDescriptor &scene, bool &supported)
+{
+    DHLOGI("Check scene capability.");
+    (void)scene;
+    supported = false;
+    return HDF_SUCCESS;
+}
+
+int32_t AudioCaptureInterfaceImpl::SelectScene(const AudioSceneDescriptor &scene)
 {
     DHLOGI("Select audio scene, not support yet.");
     (void)scene;
@@ -211,14 +218,14 @@ int32_t AudioCaptureInterfaceImpl::GetFrameCount(uint64_t &count)
     return HDF_SUCCESS;
 }
 
-int32_t AudioCaptureInterfaceImpl::SetSampleAttributes(const AudioSampleAttributesHAL &attrs)
+int32_t AudioCaptureInterfaceImpl::SetSampleAttributes(const AudioSampleAttributes &attrs)
 {
     DHLOGI("Set sample attributes.");
     devAttrs_ = attrs;
     return HDF_SUCCESS;
 }
 
-int32_t AudioCaptureInterfaceImpl::GetSampleAttributes(AudioSampleAttributesHAL &attrs)
+int32_t AudioCaptureInterfaceImpl::GetSampleAttributes(AudioSampleAttributes &attrs)
 {
     DHLOGI("Get sample attributes.");
     attrs = devAttrs_;
@@ -246,7 +253,7 @@ int32_t AudioCaptureInterfaceImpl::GetExtraParams(std::string &keyValueList)
     return HDF_SUCCESS;
 }
 
-int32_t AudioCaptureInterfaceImpl::ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescripterHAL &desc)
+int32_t AudioCaptureInterfaceImpl::ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescripter &desc)
 {
     DHLOGI("Request mmap buffer, not support yet.");
     (void)reqSize;
@@ -254,7 +261,7 @@ int32_t AudioCaptureInterfaceImpl::ReqMmapBuffer(int32_t reqSize, AudioMmapBuffe
     return HDF_SUCCESS;
 }
 
-int32_t AudioCaptureInterfaceImpl::GetMmapPosition(uint64_t &frames, AudioTimeStampHAL &time)
+int32_t AudioCaptureInterfaceImpl::GetMmapPosition(uint64_t &frames, AudioTimeStamp &time)
 {
     DHLOGI("Get mmap position, not support yet.");
     (void)frames;
@@ -262,7 +269,28 @@ int32_t AudioCaptureInterfaceImpl::GetMmapPosition(uint64_t &frames, AudioTimeSt
     return HDF_SUCCESS;
 }
 
-const AudioDeviceDescriptorHAL &AudioCaptureInterfaceImpl::GetCaptureDesc()
+int32_t AudioCaptureInterfaceImpl::AddAudioEffect(uint64_t effectid)
+{
+    DHLOGI("Add audio effect, not support yet.");
+    (void)effectid;
+    return HDF_SUCCESS;
+}
+
+int32_t AudioCaptureInterfaceImpl::RemoveAudioEffect(uint64_t effectid)
+{
+    DHLOGI("Remove audio effect, not support yet.");
+    (void)effectid;
+    return HDF_SUCCESS;
+}
+
+int32_t AudioCaptureInterfaceImpl::GetFrameBufferSize(uint64_t &bufferSize)
+{
+    DHLOGI("Get frame buffer size, not support yet.");
+    (void)bufferSize;
+    return HDF_SUCCESS;
+}
+
+const AudioDeviceDescriptor &AudioCaptureInterfaceImpl::GetCaptureDesc()
 {
     return devDesc_;
 }

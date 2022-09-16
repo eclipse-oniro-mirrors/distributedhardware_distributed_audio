@@ -17,7 +17,7 @@
 #include <hdf_device_desc.h>
 #include <hdf_log.h>
 #include <hdf_sbuf_ipc.h>
-#include "v1_0/daudio_manager_stub.h"
+#include <v1_0/daudio_manager_stub.h>
 
 using namespace OHOS::HDI::DistributedAudio::Audioext::V1_0;
 

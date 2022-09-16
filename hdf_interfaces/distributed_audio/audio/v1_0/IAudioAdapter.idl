@@ -1,22 +1,41 @@
+/*
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ohos.hdi.distributed_audio.audio.v1_0;
 
+import ohos.hdi.distributed_audio.audio.v1_0.AudioTypes;
 import ohos.hdi.distributed_audio.audio.v1_0.IAudioCapture;
 import ohos.hdi.distributed_audio.audio.v1_0.IAudioRender;
-import ohos.hdi.distributed_audio.audio.v1_0.IAudioParamCallback;
-import ohos.hdi.distributed_audio.audio.v1_0.Types;
+import ohos.hdi.distributed_audio.audio.v1_0.IAudioCallback;
 
 interface IAudioAdapter {
     InitAllPorts();
-    CreateRender([in] struct AudioDeviceDescriptorHAL desc,[in] struct AudioSampleAttributesHAL attrs,[out] IAudioRender render);
-    DestoryRender([in] struct AudioDeviceDescriptorHAL desc);
-    CreateCapture([in] struct AudioDeviceDescriptorHAL desc,[in] struct AudioSampleAttributesHAL attrs,[out] IAudioCapture capture);
-    DestoryCapture([in] struct AudioDeviceDescriptorHAL desc);
-    GetPortCapability([in] struct AudioPortHAL port,[out] struct AudioPortCapabilityHAl capability);
-    SetPassthroughMode([in] struct AudioPortHAL port,[in] enum AudioPortPassthroughModeHAL mode);
-    GetPassthroughMode([in] struct AudioPortHAL port,[out] enum AudioPortPassthroughModeHAL mode);
-    UpdateAudioRoute([in] struct AudioRouteHAL route,[out] int handle);
-    ReleaseAudioRoute([in] int handle);
-    SetAudioParameters([in] enum AudioExtParamKeyHAL key,[in] String condition, [in] String value);
-    GetAudioParameters([in] enum AudioExtParamKeyHAL key,[in] String condition, [out] String value);
-    RegAudioParamObserver([in] IAudioParamCallback cbObj);
+    CreateRender([in] struct AudioDeviceDescriptor desc, [in] struct AudioSampleAttributes attrs, [out] IAudioRender render);
+    DestroyRender([in] struct AudioDeviceDescriptor desc);
+    CreateCapture([in] struct AudioDeviceDescriptor desc, [in] struct AudioSampleAttributes attrs, [out] IAudioCapture capture);
+    DestroyCapture([in] struct AudioDeviceDescriptor desc);
+    GetPortCapability([in] struct AudioPort port, [out] struct AudioPortCapability capability);
+    SetPassthroughMode([in] struct AudioPort port, [in] enum AudioPortPassthroughMode mode);
+    GetPassthroughMode([in] struct AudioPort port, [out] enum AudioPortPassthroughMode mode);
+    GetDeviceStatus([out] struct AudioDeviceStatus status);
+    UpdateAudioRoute([in] struct AudioRoute route, [out] int routeHandle);
+    ReleaseAudioRoute([in] int routeHandle);
+    SetMicMute([in] boolean mute);
+    GetMicMute([out] boolean mute);
+    SetVoiceVolume([in] float volume);
+    SetExtraParams([in] enum AudioExtParamKey key, [in] String condition, [in] String value);
+    GetExtraParams([in] enum AudioExtParamKey key, [in] String condition, [out] String value);
+    RegExtraParamObserver([in] IAudioCallback audioCallback, [in] byte cookie);
 }

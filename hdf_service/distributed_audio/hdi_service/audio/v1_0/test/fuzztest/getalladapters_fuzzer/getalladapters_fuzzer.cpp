@@ -33,7 +33,7 @@ void GetAllAdaptersFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
-    std::vector<AudioAdapterDescriptorHAL> descriptors;
+    std::vector<AudioAdapterDescriptor> descriptors;
     AudioManagerInterfaceImpl::GetAudioManager()->GetAllAdapters(descriptors);
 }
 } // V1_0

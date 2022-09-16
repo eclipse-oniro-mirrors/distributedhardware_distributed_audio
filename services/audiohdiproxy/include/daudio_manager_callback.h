@@ -16,32 +16,33 @@
 #ifndef OHOS_DAUDIO_MANAGER_CALLBACK_H
 #define OHOS_DAUDIO_MANAGER_CALLBACK_H
 
+#include <v1_0/id_audio_callback.h>
+#include <v1_0/types.h>
+
 #include "idaudio_hdi_callback.h"
-#include "v1_0/id_audio_callback.h"
-#include "v1_0/types.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class DAudioManagerCallback : public OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback {
 public:
-    DAudioManagerCallback(const std::shared_ptr<IDAudioHdiCallback> callback) : callback_(callback){};
+    DAudioManagerCallback(const std::shared_ptr<IDAudioHdiCallback> callback) : callback_(callback) {};
     ~DAudioManagerCallback() = default;
 
-    int32_t OpenDevice(const std::string& adpName, int32_t devId) override;
+    int32_t OpenDevice(const std::string &adpName, int32_t devId) override;
 
-    int32_t CloseDevice(const std::string& adpName, int32_t devId) override;
+    int32_t CloseDevice(const std::string &adpName, int32_t devId) override;
 
-    int32_t SetParameters(const std::string& adpNam, int32_t devId,
-        const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter& param) override;
+    int32_t SetParameters(const std::string &adpNam, int32_t devId,
+        const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter &param) override;
 
-    int32_t NotifyEvent(const std::string& adpNam, int32_t devId,
-        const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent& event) override;
+    int32_t NotifyEvent(const std::string &adpNam, int32_t devId,
+        const OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent &event) override;
 
-    int32_t WriteStreamData(const std::string& adpNam, int32_t devId,
-	    const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData& data) override;
+    int32_t WriteStreamData(const std::string &adpNam, int32_t devId,
+        const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData &data) override;
 
-    int32_t ReadStreamData(const std::string& adpName, int32_t devId,
-	    OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData& data) override;
+    int32_t ReadStreamData(const std::string &adpName, int32_t devId,
+        OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData &data) override;
 
 private:
     int32_t GetAudioParamHDF(const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter& param,

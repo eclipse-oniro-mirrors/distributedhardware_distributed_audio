@@ -62,7 +62,7 @@ HWTEST_F(DAudioManagerInterfaceImplTest, RegisterAudioDevice_002, TestSize.Level
     int32_t devId = 64;
     EXPECT_NE(HDF_SUCCESS,
         DAudioManagerInterfaceImpl::GetDAudioManager()->RegisterAudioDevice(adpName, devId, capability, callbackObj_));
-    EXPECT_EQ(HDF_SUCCESS, DAudioManagerInterfaceImpl::GetDAudioManager()->UnRegisterAudioDevice(adpName, devId));
+    EXPECT_NE(HDF_SUCCESS, DAudioManagerInterfaceImpl::GetDAudioManager()->UnRegisterAudioDevice(adpName, devId));
 }
 
 /**
@@ -88,7 +88,7 @@ HWTEST_F(DAudioManagerInterfaceImplTest, NotifyEvent_001, TestSize.Level1)
 {
     std::string adpName = "hello";
     int32_t devId = 11;
-    AudioEvent event;
+    DAudioEvent event;
     EXPECT_EQ(HDF_FAILURE, DAudioManagerInterfaceImpl::GetDAudioManager()->NotifyEvent(adpName, devId, event));
 }
 
@@ -102,7 +102,7 @@ HWTEST_F(DAudioManagerInterfaceImplTest, NotifyEvent_002, TestSize.Level1)
 {
     std::string adpName = "hello";
     int32_t devId = 64;
-    AudioEvent event;
+    DAudioEvent event;
     event.type = 15;
     event.content = "hello_world";
     EXPECT_NE(HDF_SUCCESS, DAudioManagerInterfaceImpl::GetDAudioManager()->NotifyEvent(adpName, devId, event));

@@ -17,24 +17,27 @@
 #define DAUDIO_RENDER_INTERNAL_H
 
 #include <mutex>
-#include <v1_0/iaudio_render.h>
 
 #include "audio_render.h"
+#include <v1_0/iaudio_render.h>
+
 #include "daudio_render_callback_internal.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-using namespace OHOS::HDI::DistributedAudio::Audio::V1_0;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioDeviceDescriptor;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioRender;
+
 struct AudioRenderContext {
     AudioRenderContext();
     ~AudioRenderContext();
 
     struct AudioRender instance_;
     sptr<IAudioRender> proxy_ = nullptr;
-    struct AudioDeviceDescriptorHAL descHal_;
+    struct AudioDeviceDescriptor descHal_;
     std::mutex mtx_;
     std::unique_ptr<AudioRenderCallbackContext> callbackInternal_ = nullptr;
-    RenderCallback callback_ = nullptr;
+    ::RenderCallback callback_ = nullptr;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

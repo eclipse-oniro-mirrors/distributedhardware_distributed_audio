@@ -16,18 +16,17 @@
 #ifndef DAUDIO_RENDER_CALLBACK_INTERNAL_H
 #define DAUDIO_RENDER_CALLBACK_INTERNAL_H
 
-#include <v1_0/iaudio_render_callback.h>
-
 #include "audio_types.h"
+#include <v1_0/iaudio_callback.h>
 
 namespace OHOS {
 namespace DistributedHardware {
-using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioRenderCallback;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioCallback;
 struct AudioRenderCallbackContext {
-    AudioRenderCallbackContext(RenderCallback callback, void *cookie);
+    AudioRenderCallbackContext(::RenderCallback callback, void *cookie);
     ~AudioRenderCallbackContext() = default;
 
-    sptr<IAudioRenderCallback> callbackStub_ = nullptr;
+    sptr<IAudioCallback> callbackStub_ = nullptr;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

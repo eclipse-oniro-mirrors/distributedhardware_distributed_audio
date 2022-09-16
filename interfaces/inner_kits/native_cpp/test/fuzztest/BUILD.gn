@@ -55,10 +55,10 @@ group("fuzztest") {
     "${hdf_ser_aud_path}/test/fuzztest/unloadadapter_fuzzer:fuzztest",
     "${hdf_ser_aud_path}/test/fuzztest/renderframe_fuzzer:fuzztest",
     "${hdf_ser_aud_path}/test/fuzztest/createrender_fuzzer:fuzztest",
-    "${hdf_ser_aud_path}/test/fuzztest/destoryrender_fuzzer:fuzztest",
-    "${hdf_ser_aud_path}/test/fuzztest/destorycapture_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/destroycapture_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/destroyrender_fuzzer:fuzztest",
     "${hdf_ser_aud_path}/test/fuzztest/createcapture_fuzzer:fuzztest",
-    "${hdf_ser_aud_path}/test/fuzztest/setaudioparameters_fuzzer:fuzztest",
-    "${hdf_ser_aud_path}/test/fuzztest/getaudioparameters_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/setextraparams_fuzzer:fuzztest",
+    "${hdf_ser_aud_path}/test/fuzztest/getextraparams_fuzzer:fuzztest",
   ]
 }

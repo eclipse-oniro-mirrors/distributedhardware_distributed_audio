@@ -36,8 +36,8 @@ void AudioCaptureInterfaceImplTest::TearDownTestCase(void) {}
 void AudioCaptureInterfaceImplTest::SetUp(void)
 {
     std::string adpName_;
-    AudioDeviceDescriptorHAL desc_;
-    AudioSampleAttributesHAL attrs_;
+    AudioDeviceDescriptor desc_;
+    AudioSampleAttributes attrs_;
     sptr<IDAudioCallback> callback_;
     audioCaptureInterfaceImpl_ = std::make_shared<AudioCaptureInterfaceImpl>(adpName_, desc_, attrs_, callback_);
 }
@@ -56,7 +56,7 @@ void AudioCaptureInterfaceImplTest::TearDown(void)
 HWTEST_F(AudioCaptureInterfaceImplTest, GetCapturePosition_001, TestSize.Level1)
 {
     uint64_t frames = 0;
-    AudioTimeStampHAL time;
+    AudioTimeStamp time;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->GetCapturePosition(frames, time));
 }
 
@@ -68,10 +68,9 @@ HWTEST_F(AudioCaptureInterfaceImplTest, GetCapturePosition_001, TestSize.Level1)
  */
 HWTEST_F(AudioCaptureInterfaceImplTest, CaptureFrame_001, TestSize.Level1)
 {
-    vector<uint8_t> frame;
+    vector<int8_t> frame;
     uint64_t requestBytes = 0;
-    uint64_t replyBytes = 0;
-    EXPECT_EQ(HDF_FAILURE, audioCaptureInterfaceImpl_->CaptureFrame(frame, requestBytes, replyBytes));
+    EXPECT_EQ(HDF_FAILURE, audioCaptureInterfaceImpl_->CaptureFrame(frame, requestBytes));
 }
 
 /**
@@ -161,7 +160,7 @@ HWTEST_F(AudioCaptureInterfaceImplTest, AudioDevDump_001, TestSize.Level1)
  */
 HWTEST_F(AudioCaptureInterfaceImplTest, CheckSceneCapability_001, TestSize.Level1)
 {
-    AudioSceneDescriptorHAL scene;
+    AudioSceneDescriptor scene;
     bool support = false;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->CheckSceneCapability(scene, support));
 }
@@ -174,7 +173,7 @@ HWTEST_F(AudioCaptureInterfaceImplTest, CheckSceneCapability_001, TestSize.Level
  */
 HWTEST_F(AudioCaptureInterfaceImplTest, SelectScene_001, TestSize.Level1)
 {
-    AudioSceneDescriptorHAL scene;
+    AudioSceneDescriptor scene;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->SelectScene(scene));
 }
 
@@ -198,7 +197,7 @@ HWTEST_F(AudioCaptureInterfaceImplTest, SetMute_001, TestSize.Level1)
  */
 HWTEST_F(AudioCaptureInterfaceImplTest, SetVolume_001, TestSize.Level1)
 {
-    float volume = 0.0;
+    float volume = 0;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->SetVolume(volume));
 }
 
@@ -210,8 +209,8 @@ HWTEST_F(AudioCaptureInterfaceImplTest, SetVolume_001, TestSize.Level1)
  */
 HWTEST_F(AudioCaptureInterfaceImplTest, GetGainThreshold_001, TestSize.Level1)
 {
-    float min = 0.0;
-    float max = 0.0;
+    float min = 0;
+    float max = 0;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->GetGainThreshold(min, max));
 }
 
@@ -223,7 +222,7 @@ HWTEST_F(AudioCaptureInterfaceImplTest, GetGainThreshold_001, TestSize.Level1)
  */
 HWTEST_F(AudioCaptureInterfaceImplTest, SetGain_001, TestSize.Level1)
 {
-    float gain = 0.0;
+    float gain = 0;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->SetGain(gain));
 }
 
@@ -235,7 +234,7 @@ HWTEST_F(AudioCaptureInterfaceImplTest, SetGain_001, TestSize.Level1)
  */
 HWTEST_F(AudioCaptureInterfaceImplTest, GetGain_001, TestSize.Level1)
 {
-    float gain = 0.0;
+    float gain = 0;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->GetGain(gain));
 }
 
@@ -272,7 +271,7 @@ HWTEST_F(AudioCaptureInterfaceImplTest, GetFrameCount_001, TestSize.Level1)
  */
 HWTEST_F(AudioCaptureInterfaceImplTest, SetSampleAttributes_001, TestSize.Level1)
 {
-    AudioSampleAttributesHAL attrs;
+    AudioSampleAttributes attrs;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->SetSampleAttributes(attrs));
 }
 
@@ -284,7 +283,7 @@ HWTEST_F(AudioCaptureInterfaceImplTest, SetSampleAttributes_001, TestSize.Level1
  */
 HWTEST_F(AudioCaptureInterfaceImplTest, GetSampleAttributes_001, TestSize.Level1)
 {
-    AudioSampleAttributesHAL attrs;
+    AudioSampleAttributes attrs;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->GetSampleAttributes(attrs));
 }
 
@@ -333,7 +332,7 @@ HWTEST_F(AudioCaptureInterfaceImplTest, GetExtraParams_001, TestSize.Level1)
 HWTEST_F(AudioCaptureInterfaceImplTest, ReqMmapBuffer_001, TestSize.Level1)
 {
     int32_t reqSize = 0;
-    AudioMmapBufferDescripterHAL desc;
+    AudioMmapBufferDescripter desc;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->ReqMmapBuffer(reqSize, desc));
 }
 
@@ -346,7 +345,7 @@ HWTEST_F(AudioCaptureInterfaceImplTest, ReqMmapBuffer_001, TestSize.Level1)
 HWTEST_F(AudioCaptureInterfaceImplTest, GetMmapPosition_001, TestSize.Level1)
 {
     uint64_t frames = 0;
-    AudioTimeStampHAL time;
+    AudioTimeStamp time;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->GetMmapPosition(frames, time));
 }
 } // V1_0

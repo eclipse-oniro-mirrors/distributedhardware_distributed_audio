@@ -16,6 +16,7 @@
 #include "daudio_manager_interface_impl.h"
 
 #include <hdf_base.h>
+
 #include "daudio_errcode.h"
 #include "daudio_log.h"
 #include "daudio_utils.h"
@@ -86,7 +87,7 @@ int32_t DAudioManagerInterfaceImpl::UnRegisterAudioDevice(const std::string &adp
     return HDF_SUCCESS;
 }
 
-int32_t DAudioManagerInterfaceImpl::NotifyEvent(const std::string &adpName, int32_t devId, const AudioEvent &event)
+int32_t DAudioManagerInterfaceImpl::NotifyEvent(const std::string &adpName, int32_t devId, const DAudioEvent &event)
 {
     if (audiomgr_ == nullptr) {
         DHLOGE("Audio manager is null.");

@@ -16,22 +16,23 @@
 #ifndef OHOS_DAUDIO_TEST_UTILS_H
 #define OHOS_DAUDIO_TEST_UTILS_H
 
+#include <v1_0/iaudio_callback.h>
+#include <v1_0/iaudio_capture.h>
+#include <v1_0/iaudio_render.h>
+#include <v1_0/id_audio_callback.h>
+
 #include "daudio_errcode.h"
-#include "v1_0/iaudio_capture.h"
-#include "v1_0/iaudio_param_callback.h"
-#include "v1_0/iaudio_render.h"
-#include "v1_0/id_audio_callback.h"
 
 namespace OHOS {
 namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent;
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
-using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioParamCallback;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioCallback;
 class MockIDAudioCallback : public IDAudioCallback {
 public:
     MockIDAudioCallback() {}
@@ -52,7 +53,7 @@ public:
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t NotifyEvent(const std::string &adpNam, int32_t devId, const AudioEvent &event) override
+    int32_t NotifyEvent(const std::string &adpNam, int32_t devId, const DAudioEvent &event) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
@@ -73,17 +74,17 @@ public:
     MockIAudioRender() {}
     ~MockIAudioRender() {}
 
-    int32_t GetLatency(uint32_t& ms) override
+    int32_t GetLatency(uint32_t &ms) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t RenderFrame(const std::vector<uint8_t>& frame, uint64_t requestBytes, uint64_t& replyBytes) override
+    int32_t RenderFrame(const std::vector<int8_t> &frame, uint64_t &replyBytes) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t GetRenderPosition(uint64_t& frames, AudioTimeStampHAL& time) override
+    int32_t GetRenderPosition(uint64_t &frames, AudioTimeStamp &time) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
@@ -93,27 +94,137 @@ public:
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t GetRenderSpeed(float& speed) override
+    int32_t GetRenderSpeed(float &speed) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t SetChannelMode(AudioChannelModeHAL mode) override
+    int32_t SetChannelMode(AudioChannelMode mode) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t GetChannelMode(AudioChannelModeHAL& mode) override
+    int32_t GetChannelMode(AudioChannelMode &mode) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t RegCallback(const sptr<IAudioRenderCallback>& cbObj) override
+    int32_t RegCallback(const sptr<IAudioCallback> &audioCallback, int8_t cookie) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t DrainBuffer(AudioDrainNotifyTypeHAL type) override
+    int32_t DrainBuffer(AudioDrainNotifyType &type) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t IsSupportsDrain(bool &support) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t CheckSceneCapability(const AudioSceneDescriptor &scene, bool &supported) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SelectScene(const AudioSceneDescriptor &scene) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SetMute(bool mute) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetMute(bool &mute) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SetVolume(float volume) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetVolume(float &volume) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetGainThreshold(float &min, float &max) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SetGain(float gain) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetGain(float &gain) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetFrameSize(uint64_t &size) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetFrameCount(uint64_t &count) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SetSampleAttributes(const AudioSampleAttributes &attrs) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetSampleAttributes(AudioSampleAttributes &attrs) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetCurrentChannelId(uint32_t &channelId) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SetExtraParams(const std::string &keyValueList) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetExtraParams(std::string &keyValueList) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescripter &desc) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetMmapPosition(uint64_t &frames, AudioTimeStamp &time) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t AddAudioEffect(uint64_t effectid) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t RemoveAudioEffect(uint64_t effectid) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetFrameBufferSize(uint64_t &bufferSize) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
@@ -153,92 +264,7 @@ public:
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t CheckSceneCapability(const AudioSceneDescriptorHAL& scene, bool& support) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SelectScene(const AudioSceneDescriptorHAL& scene) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SetMute(bool mute) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetMute(bool& mute) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SetVolume(float volume) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetVolume(float& volume) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetGainThreshold(float& min, float& max) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SetGain(float gain) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetGain(float& gain) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetFrameSize(uint64_t& size) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetFrameCount(uint64_t& count) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SetSampleAttributes(const AudioSampleAttributesHAL& attrs) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetSampleAttributes(AudioSampleAttributesHAL& attrs) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetCurrentChannelId(uint32_t& channelId) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SetExtraParams(const std::string& keyValueList) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetExtraParams(std::string& keyValueList) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescripterHAL& desc) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetMmapPosition(uint64_t& frames, AudioTimeStampHAL& time) override
+    int32_t IsSupportsPauseAndResume(bool &supportPause, bool &supportResume) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
@@ -249,12 +275,117 @@ public:
     MockIAudioCapture() {}
     ~MockIAudioCapture() {}
 
-    int32_t GetCapturePosition(uint64_t& frames, AudioTimeStampHAL& time) override
+    int32_t CaptureFrame(std::vector<int8_t> &frame, uint64_t requestBytes) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t CaptureFrame(std::vector<uint8_t>& frame, uint64_t requestBytes, uint64_t& replyBytes) override
+    int32_t GetCapturePosition(uint64_t &frames, AudioTimeStamp &time) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t CheckSceneCapability(const AudioSceneDescriptor &scene, bool &supported) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SelectScene(const AudioSceneDescriptor &scene) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SetMute(bool mute) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetMute(bool &mute) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SetVolume(float volume) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetVolume(float &volume) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetGainThreshold(float &min, float &max) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetGain(float &gain) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SetGain(float gain) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetFrameSize(uint64_t &size) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetFrameCount(uint64_t &count) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SetSampleAttributes(const AudioSampleAttributes &attrs) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetSampleAttributes(AudioSampleAttributes &attrs) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetCurrentChannelId(uint32_t &channelId) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t SetExtraParams(const std::string &keyValueList) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetExtraParams(std::string &keyValueList) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescripter &desc) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetMmapPosition(uint64_t &frames, AudioTimeStamp &time) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t AddAudioEffect(uint64_t effectid) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t RemoveAudioEffect(uint64_t effectid) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t GetFrameBufferSize(uint64_t &bufferSize) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
@@ -294,104 +425,24 @@ public:
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t CheckSceneCapability(const AudioSceneDescriptorHAL& scene, bool& support) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SelectScene(const AudioSceneDescriptorHAL& scene) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SetMute(bool mute) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetMute(bool& mute) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SetVolume(float volume) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetVolume(float& volume) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetGainThreshold(float& min, float& max) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SetGain(float gain) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetGain(float& gain) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetFrameSize(uint64_t& size) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetFrameCount(uint64_t& count) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SetSampleAttributes(const AudioSampleAttributesHAL& attrs) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetSampleAttributes(AudioSampleAttributesHAL& attrs) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetCurrentChannelId(uint32_t& channelId) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t SetExtraParams(const std::string& keyValueList) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetExtraParams(std::string& keyValueList) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescripterHAL& desc) override
-    {
-        return DistributedHardware::DH_SUCCESS;
-    }
-
-    int32_t GetMmapPosition(uint64_t& frames, AudioTimeStampHAL& time) override
+    int32_t IsSupportsPauseAndResume(bool &supportPause, bool &supportResume) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
 };
 
-class MockIAudioParamCallback : public IAudioParamCallback {
+class MockIAudioParamCallback : public IAudioCallback {
 public:
     MockIAudioParamCallback() {}
     ~MockIAudioParamCallback() {}
 
-    int32_t OnAudioParamNotify(AudioExtParamKeyHAL key, const std::string& condition,
-         const std::string& value) override
+    int32_t RenderCallback(AudioCallbackType type, int8_t &reserved, int8_t &cookie) override
+    {
+        return DistributedHardware::DH_SUCCESS;
+    }
+
+    int32_t ParamCallback(AudioExtParamKey key, const std::string& condition, const std::string& value,
+        int8_t &reserved, int8_t &cookie) override
     {
         return DistributedHardware::DH_SUCCESS;
     }

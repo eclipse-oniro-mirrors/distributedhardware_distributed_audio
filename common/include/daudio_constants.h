@@ -45,9 +45,9 @@ constexpr int32_t AUDIO_DEVICE_TYPE_SPEAKER = 1;
 constexpr int32_t AUDIO_DEVICE_TYPE_MIC = 2;
 
 constexpr int32_t PIN_OUT_SPEAKER = 1;
-constexpr int32_t PIN_OUT_DAUDIO_DEFAULT = 64;
-constexpr int32_t PIN_IN_DAUDIO_DEFAULT = 134217744;
-constexpr int32_t PIN_IN_MIC = 134217729;
+constexpr int32_t PIN_OUT_DAUDIO_DEFAULT = 1 << 7;
+constexpr int32_t PIN_IN_DAUDIO_DEFAULT = 1 << 27 | 1 << 5;
+constexpr int32_t PIN_IN_MIC = 1 << 27 | 1 << 0;
 
 constexpr int32_t NONE_ITEM = 0;
 constexpr int32_t SINGLE_ITEM = 1;

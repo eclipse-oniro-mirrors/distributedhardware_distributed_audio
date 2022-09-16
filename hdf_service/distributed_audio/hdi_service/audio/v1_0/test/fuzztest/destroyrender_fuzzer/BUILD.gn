@@ -18,9 +18,9 @@ import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("GetAudioParametersFuzzTest") {
-  module_out_path = "distributed_audio/getaudioparameters_fuzzer"
-  fuzz_config_file = "${hdf_ser_aud_path}/test/fuzztest/getaudioparameters_fuzzer"
+ohos_fuzztest("DestroyRenderFuzzTest") {
+  module_out_path = "distributed_audio/destroyrender_fuzzer"
+  fuzz_config_file = "${hdf_ser_aud_path}/test/fuzztest/destroyrender_fuzzer"
 
   cflags = [
     "-g",
@@ -28,7 +28,7 @@ ohos_fuzztest("GetAudioParametersFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "getaudioparameters_fuzzer.cpp" ]
+  sources = [ "destroyrender_fuzzer.cpp" ]
 
   include_dirs = [
     "${hdf_ser_aud_path}/include",
@@ -49,7 +49,7 @@ ohos_fuzztest("GetAudioParametersFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"GetAudioParametersFuzzTest\"",
+    "DH_LOG_TAG=\"DestroyRenderFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 }
@@ -57,6 +57,6 @@ ohos_fuzztest("GetAudioParametersFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":GetAudioParametersFuzzTest" ]
+  deps = [ ":DestroyRenderFuzzTest" ]
 }
 ###############################################################################

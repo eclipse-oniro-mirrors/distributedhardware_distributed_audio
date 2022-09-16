@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-#ifndef GETAUDIOPARAMETERS_FUZZER_H
-#define GETAUDIOPARAMETERS_FUZZER_H
+#ifndef GETEXTRAPARAMS_FUZZER_H
+#define GETEXTRAPARAMS_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "getaudioparameters_fuzzer"
+#define FUZZ_PROJECT_NAME "getextraparams_fuzzer"
 
 #endif

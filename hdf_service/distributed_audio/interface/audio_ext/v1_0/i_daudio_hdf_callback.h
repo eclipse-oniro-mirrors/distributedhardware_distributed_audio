@@ -26,7 +26,7 @@ public:
     virtual int32_t OpenDevice(int32_t devId, int32_t dhId) = 0;
     virtual int32_t CloseDevice(int32_t devId, int32_t dhId = 0;
     virtual int32_t SetParameters(int32_t devId, int32_t dhId, struct AudioParameter &param) = 0;
-    virtual int32_t NotifyEvent(int32_t devId, int32_t dhId, struct AudioEvent &event) = 0;
+    virtual int32_t NotifyEvent(int32_t devId, int32_t dhId, struct DAudioEvent &event) = 0;
     virtual int32_t WriteStreamData(int32_t devId, int32_t dhId, struct AudioStreamData &data) = 0;
     virtual struct AudioStreamData* ReadStreamData(int32_t devId, int32_t dhId) = 0;
 } // namespace DistributedHardware

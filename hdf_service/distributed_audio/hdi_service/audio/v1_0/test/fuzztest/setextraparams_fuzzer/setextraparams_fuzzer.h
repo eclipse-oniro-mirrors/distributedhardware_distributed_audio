@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-#ifndef DESTORYRENDER_FUZZER_H
-#define DESTORYRENDER_FUZZER_H
+#ifndef SETEXTRAPARAMS_FUZZER_H
+#define SETEXTRAPARAMS_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "destoryrender_fuzzer"
+#define FUZZ_PROJECT_NAME "setextraparams_fuzzer"
 
 #endif

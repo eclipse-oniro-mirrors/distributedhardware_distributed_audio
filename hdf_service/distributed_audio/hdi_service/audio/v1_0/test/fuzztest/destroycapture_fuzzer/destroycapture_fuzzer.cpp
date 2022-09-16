@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "setaudioparameters_fuzzer.h"
+#include "destroycapture_fuzzer.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -27,19 +27,22 @@ namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-void SetAudioParametersFuzzTest(const uint8_t* data, size_t size)
+void DestroyCaptureFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < (sizeof(int32_t)))) {
         return;
     }
 
-    AudioAdapterDescriptorHAL desc;
+    AudioAdapterDescriptor desc;
     auto audioAdapter = std::make_shared<AudioAdapterInterfaceImpl>(desc);
-    AudioExtParamKeyHAL key = *(reinterpret_cast<const AudioExtParamKeyHAL*>(data));
-    std::string condition(reinterpret_cast<const char*>(data), size);
-    std::string value(reinterpret_cast<const char*>(data), size);
 
-    audioAdapter->SetAudioParameters(key, condition, value);
+    AudioDeviceDescriptor deviceDes = {
+        .portId = *(reinterpret_cast<const uint32_t*>(data)),
+        .pins = *(reinterpret_cast<const AudioPortPin*>(data)),
+        .desc = std::string(reinterpret_cast<const char*>(data), size),
+    };
+
+    audioAdapter->DestroyCapture(deviceDes);
 }
 } // V1_0
 } // Audio
@@ -51,7 +54,7 @@ void SetAudioParametersFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::HDI::DistributedAudio::Audio::V1_0::SetAudioParametersFuzzTest(data, size);
+    OHOS::HDI::DistributedAudio::Audio::V1_0::DestroyCaptureFuzzTest(data, size);
     return 0;
 }
 

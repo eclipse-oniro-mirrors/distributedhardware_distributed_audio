@@ -10,9 +10,9 @@ struct AudioParameter {
 };
 struct AudioData {
     struct AudioParameter param;
-    unsigned char[] data;
+    byte[] data;
 };
-struct AudioEvent {
+struct DAudioEvent {
     int type;
     String content;
 };

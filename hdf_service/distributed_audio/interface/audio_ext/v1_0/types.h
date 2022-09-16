@@ -28,4 +28,4 @@ struct AudioStreamData {
 typedef struct {
     int type;
     std::string content;
-} AudioEvent;
+} DAudioEvent;

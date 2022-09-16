@@ -44,7 +44,7 @@ public:
 
     virtual int32_t DestoryCapture(const CaptureHandle handle) = 0;
 
-    virtual int32_t GetPortCapability(const AudioPortHAL &port, AudioPortCapabilityHAl &capability) = 0;
+    virtual int32_t GetPortCapability(const AudioPortHAL &port, AudioPortCapabilityHAL &capability) = 0;
 
     virtual int32_t SetPassthroughMode(const AudioPortHAL &port, const AudioPortPassthroughModeHAL mode) = 0;
 

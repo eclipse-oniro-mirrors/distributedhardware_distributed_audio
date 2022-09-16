@@ -28,7 +28,7 @@ void AudioAdapterInterfaceImpTest::TearDownTestCase(void) {}
 
 void AudioAdapterInterfaceImpTest::SetUp(void)
 {
-    AudioAdapterDescriptorHAL adaDesc;
+    AudioAdapterDescriptor adaDesc;
     AdapterTest_ = std::make_shared<AudioAdapterInterfaceImpl>(adaDesc);
 }
 
@@ -56,12 +56,12 @@ HWTEST_F(AudioAdapterInterfaceImpTest, InitAllPorts_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, CreateRender_001, TestSize.Level1)
 {
-    AudioDeviceDescriptorHAL devDesc;
-    AudioSampleAttributesHAL attrs;
+    AudioDeviceDescriptor devDesc;
+    AudioSampleAttributes attrs;
     sptr<IAudioRender> render = nullptr;
     AdapterTest_->extSpeakerCallback_ = new MockIDAudioCallback();
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->CreateRender(devDesc, attrs, render));
-    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->DestoryRender(devDesc));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->DestroyRender(devDesc));
 }
 
 /**
@@ -72,12 +72,12 @@ HWTEST_F(AudioAdapterInterfaceImpTest, CreateRender_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, CreateCapture_001, TestSize.Level1)
 {
-    AudioDeviceDescriptorHAL devDesc;
-    AudioSampleAttributesHAL attrs;
+    AudioDeviceDescriptor devDesc;
+    AudioSampleAttributes attrs;
     sptr<IAudioCapture> capture = nullptr;
     AdapterTest_->extMicCallback_ = new MockIDAudioCallback();
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->CreateCapture(devDesc, attrs, capture));
-    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->DestoryCapture(devDesc));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->DestroyCapture(devDesc));
 }
 
 /**
@@ -88,8 +88,8 @@ HWTEST_F(AudioAdapterInterfaceImpTest, CreateCapture_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, GetPortCapability_001, TestSize.Level1)
 {
-    AudioPortHAL port;
-    AudioPortCapabilityHAl capability;
+    AudioPort port;
+    AudioPortCapability capability;
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->GetPortCapability(port, capability));
 }
 
@@ -101,8 +101,8 @@ HWTEST_F(AudioAdapterInterfaceImpTest, GetPortCapability_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, SetPassthroughMode_001, TestSize.Level1)
 {
-    AudioPortHAL port;
-    AudioPortPassthroughModeHAL mode = AudioPortPassthroughModeHAL::PORT_PASSTHROUGH_LPCM;
+    AudioPort port;
+    AudioPortPassthroughMode mode = AudioPortPassthroughMode::PORT_PASSTHROUGH_LPCM;
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->SetPassthroughMode(port, mode));
 }
 
@@ -114,8 +114,8 @@ HWTEST_F(AudioAdapterInterfaceImpTest, SetPassthroughMode_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, GetPassthroughMode_001, TestSize.Level1)
 {
-    AudioPortHAL port;
-    AudioPortPassthroughModeHAL mode = AudioPortPassthroughModeHAL::PORT_PASSTHROUGH_LPCM;
+    AudioPort port;
+    AudioPortPassthroughMode mode = AudioPortPassthroughMode::PORT_PASSTHROUGH_LPCM;
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->GetPassthroughMode(port, mode));
 }
 
@@ -127,7 +127,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, GetPassthroughMode_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, UpdateAudioRoute_001, TestSize.Level1)
 {
-    AudioRouteHAL route;
+    AudioRoute route;
     int32_t handle = 0;
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->UpdateAudioRoute(route, handle));
 }
@@ -145,56 +145,56 @@ HWTEST_F(AudioAdapterInterfaceImpTest, ReleaseAudioRoute_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: SetAudioParameters_001
- * @tc.desc: Verify the SetAudioParameters function.
+ * @tc.name: SetExtraParams_001
+ * @tc.desc: Verify the SetExtraParams function.
  * @tc.type: FUNC
  * @tc.require: AR000H0E6H
  */
-HWTEST_F(AudioAdapterInterfaceImpTest, SetAudioParameters_001, TestSize.Level1)
+HWTEST_F(AudioAdapterInterfaceImpTest, SetExtraParams_001, TestSize.Level1)
 {
-    AudioExtParamKeyHAL key = AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_NONE;
+    AudioExtParamKey key = AudioExtParamKey::AUDIO_EXT_PARAM_KEY_NONE;
     std::string condition = "hello";
     std::string value = "world";
-    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->SetAudioParameters(key, condition, value));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->SetExtraParams(key, condition, value));
 }
 
 /**
- * @tc.name: GetAudioParameters_001
- * @tc.desc: Verify the GetAudioParameters function.
+ * @tc.name: GetExtraParams_001
+ * @tc.desc: Verify the GetExtraParams function.
  * @tc.type: FUNC
  * @tc.require: AR000H0E6H
  */
-HWTEST_F(AudioAdapterInterfaceImpTest, GetAudioParameters_001, TestSize.Level1)
+HWTEST_F(AudioAdapterInterfaceImpTest, GetExtraParams_001, TestSize.Level1)
 {
-    AudioExtParamKeyHAL key = AudioExtParamKeyHAL::AUDIO_EXT_PARAM_KEY_NONE;
+    AudioExtParamKey key = AudioExtParamKey::AUDIO_EXT_PARAM_KEY_NONE;
     std::string condition = "hello";
     std::string value = "world";
-    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->GetAudioParameters(key, condition, value));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->GetExtraParams(key, condition, value));
 }
 
 /**
- * @tc.name: RegAudioParamObserver_001
- * @tc.desc: Verify the RegAudioParamObserver function.
+ * @tc.name: RegExtraParamObserver_001
+ * @tc.desc: Verify the RegExtraParamObserver function.
  * @tc.type: FUNC
  * @tc.require: AR000H0E6H
  */
-HWTEST_F(AudioAdapterInterfaceImpTest, RegAudioParamObserver_001, TestSize.Level1)
+HWTEST_F(AudioAdapterInterfaceImpTest, RegExtraParamObserver_001, TestSize.Level1)
 {
-    sptr<IAudioParamCallback> cbObj = nullptr;
-    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->RegAudioParamObserver(cbObj));
+    sptr<IAudioCallback> cbObj = nullptr;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->RegExtraParamObserver(cbObj, 0));
 }
 
 /**
- * @tc.name: RegAudioParamObserver_002
- * @tc.desc: Verify the RegAudioParamObserver function.
+ * @tc.name: RegExtraParamObserver_002
+ * @tc.desc: Verify the RegExtraParamObserver function.
  * @tc.type: FUNC
  * @tc.require: AR000H0E6H
  */
-HWTEST_F(AudioAdapterInterfaceImpTest, RegAudioParamObserver_002, TestSize.Level1)
+HWTEST_F(AudioAdapterInterfaceImpTest, RegExtraParamObserver_002, TestSize.Level1)
 {
     AdapterTest_->paramCallback_ = new MockIAudioParamCallback();
-    sptr<IAudioParamCallback> cbObj = new MockIAudioParamCallback();
-    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->RegAudioParamObserver(cbObj));
+    sptr<IAudioCallback> cbObj = new MockIAudioParamCallback();
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->RegExtraParamObserver(cbObj, 0));
 }
 
 /**
@@ -227,7 +227,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, AdapterUnload_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, Notify_001, TestSize.Level1)
 {
-    AudioEvent event;
+    DAudioEvent event;
     event.type = 3;
     event.content = "VOLUME_LEVEL";
     uint32_t devId = 64;
@@ -271,11 +271,11 @@ HWTEST_F(AudioAdapterInterfaceImpTest, AddAudioDevice_002, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, OpenRenderDevice_001, TestSize.Level1)
 {
-    AudioDeviceDescriptorHAL devDesc;
-    AudioSampleAttributesHAL attrs;
+    AudioDeviceDescriptor devDesc;
+    AudioSampleAttributes attrs;
     AdapterTest_->extSpeakerCallback_ = new MockIDAudioCallback;
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->OpenRenderDevice(devDesc, attrs));
-    EXPECT_NE(HDF_SUCCESS, AdapterTest_->CloseRenderDevice(devDesc));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->CloseRenderDevice(devDesc));
 }
 
 /**
@@ -286,11 +286,11 @@ HWTEST_F(AudioAdapterInterfaceImpTest, OpenRenderDevice_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, OpenCaptureDevice_001, TestSize.Level1)
 {
-    AudioDeviceDescriptorHAL devDesc;
-    AudioSampleAttributesHAL attrs;
+    AudioDeviceDescriptor devDesc;
+    AudioSampleAttributes attrs;
     AdapterTest_->extMicCallback_ = new MockIDAudioCallback();
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->OpenCaptureDevice(devDesc, attrs));
-    EXPECT_NE(HDF_SUCCESS, AdapterTest_->CloseCaptureDevice(devDesc));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->CloseCaptureDevice(devDesc));
 }
 
 /**

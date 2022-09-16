@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-#ifndef SETAUDIOPARAMETERS_FUZZER_H
-#define SETAUDIOPARAMETERS_FUZZER_H
+#ifndef DESTROYRENDER_FUZZER_H
+#define DESTROYRENDER_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "setaudioparameters_fuzzer"
+#define FUZZ_PROJECT_NAME "destroyrender_fuzzer"
 
 #endif

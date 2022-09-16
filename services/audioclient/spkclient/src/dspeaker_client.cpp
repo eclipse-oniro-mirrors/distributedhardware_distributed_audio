@@ -359,7 +359,7 @@ int32_t DSpeakerClient::SetMute(const AudioEvent &event)
         return ret;
     }
 
-    bool muteStatus;
+    bool muteStatus = false;
     ret = GetAudioParamBool(event.content, STREAM_MUTE_STATUS, muteStatus);
     if (ret != DH_SUCCESS) {
         DHLOGE("Get mute status failed.");

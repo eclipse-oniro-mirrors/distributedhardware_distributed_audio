@@ -30,7 +30,10 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-static int32_t GetCapturePositionInternal(struct AudioCapture *capture, uint64_t *frames, struct AudioTimeStamp *time)
+using namespace OHOS::HDI::DistributedAudio::Audio::V1_0;
+
+static int32_t GetCapturePositionInternal(struct AudioCapture *capture, uint64_t *frames,
+    struct ::AudioTimeStamp *time)
 {
     if (capture == nullptr || frames == nullptr || time == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -41,7 +44,7 @@ static int32_t GetCapturePositionInternal(struct AudioCapture *capture, uint64_t
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    AudioTimeStampHAL timeHal;
+    AudioTimeStamp timeHal;
     int32_t ret = context->proxy_->GetCapturePosition(*frames, timeHal);
     if (ret != DH_SUCCESS) {
         DHLOGE("Failed to getr the capture position.");
@@ -65,9 +68,9 @@ static int32_t CaptureFrameInternal(struct AudioCapture *capture, void *frame, u
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    uint8_t *uframe = reinterpret_cast<uint8_t *>(frame);
-    std::vector<uint8_t> frameHal;
-    int32_t ret = context->proxy_->CaptureFrame(frameHal, requestBytes, *replyBytes);
+    int8_t *uframe = reinterpret_cast<int8_t *>(frame);
+    std::vector<int8_t> frameHal;
+    int32_t ret = context->proxy_->CaptureFrame(frameHal, requestBytes);
     if (ret != DH_SUCCESS) {
         DHLOGE("Failed to capture frames.");
         return ret;
@@ -116,7 +119,7 @@ AudioCaptureContext::AudioCaptureContext()
     instance_.volume.GetGain = AudioVolumeInternal<AudioCaptureContext>::GetGain;
 
     descHal_.portId = 0;
-    descHal_.pins = 0;
+    descHal_.pins = PIN_NONE;
 }
 
 AudioCaptureContext::~AudioCaptureContext() {}

@@ -126,7 +126,7 @@ int32_t DAudioManagerCallback::SetParameters(const std::string& adpName, int32_t
 }
 
 int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t devId,
-    const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent& event)
+    const OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent& event)
 {
     DHLOGI("Notify event.");
     if (callback_ == nullptr) {

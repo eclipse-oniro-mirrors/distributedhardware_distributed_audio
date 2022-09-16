@@ -17,21 +17,23 @@
 #define DAUDIO_CAPTURE_INTERNAL_H
 
 #include <mutex>
-#include <v1_0/iaudio_capture.h>
-#include <v1_0/types.h>
 
 #include "audio_capture.h"
+#include <v1_0/audio_types.h>
+#include <v1_0/iaudio_capture.h>
+
 #include "daudio_render_callback_internal.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-using namespace OHOS::HDI::DistributedAudio::Audio::V1_0;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioDeviceDescriptor;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioCapture;
 struct AudioCaptureContext {
     AudioCaptureContext();
     ~AudioCaptureContext();
 
     struct AudioCapture instance_;
-    struct AudioDeviceDescriptorHAL descHal_;
+    struct AudioDeviceDescriptor descHal_;
     sptr<IAudioCapture> proxy_ = nullptr;
 };
 } // namespace DistributedHardware

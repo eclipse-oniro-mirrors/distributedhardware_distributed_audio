@@ -171,7 +171,7 @@ int32_t DAudioHdiHandler::NotifyEvent(const std::string &devId, const int32_t dh
         DHLOGE("Audio hdi proxy not init");
         return ERR_DH_AUDIO_HDI_PROXY_NOT_INIT;
     }
-    OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent newEvent = {AUDIO_EVENT_UNKNOWN, audioEvent.content};
+    OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent newEvent = {AUDIO_EVENT_UNKNOWN, audioEvent.content};
     switch (audioEvent.type) {
         case AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT:
             newEvent.type = AUDIO_EVENT_OPEN_SPK_RESULT;

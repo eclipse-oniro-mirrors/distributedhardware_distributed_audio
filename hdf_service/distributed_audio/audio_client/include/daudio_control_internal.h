@@ -19,6 +19,7 @@
 #include <stdint.h>
 
 #include "audio_types.h"
+
 #include "daudio_errcode.h"
 
 #undef DH_LOG_TAG

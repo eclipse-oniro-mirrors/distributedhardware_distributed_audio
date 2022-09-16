@@ -19,9 +19,10 @@
 #include <securec.h>
 #include <stdint.h>
 #include <sys/mman.h>
-#include <v1_0/types.h>
 
 #include "audio_types.h"
+#include <v1_0/audio_types.h>
+
 #include "daudio_errcode.h"
 #include "daudio_log.h"
 
@@ -31,18 +32,19 @@
 namespace OHOS {
 namespace DistributedHardware {
 using namespace OHOS::HDI::DistributedAudio::Audio::V1_0;
+
 template<typename T>
 class AudioAttributeInternal final {
 public:
     static int32_t GetFrameSize(AudioHandle handle, uint64_t *size);
     static int32_t GetFrameCount(AudioHandle handle, uint64_t *count);
-    static int32_t SetSampleAttributes(AudioHandle handle, const struct AudioSampleAttributes *attrs);
-    static int32_t GetSampleAttributes(AudioHandle handle, struct AudioSampleAttributes *attrs);
+    static int32_t SetSampleAttributes(AudioHandle handle, const struct ::AudioSampleAttributes *attrs);
+    static int32_t GetSampleAttributes(AudioHandle handle, struct ::AudioSampleAttributes *attrs);
     static int32_t GetCurrentChannelId(AudioHandle handle, uint32_t *channelId);
     static int32_t SetExtraParams(AudioHandle handle, const char *keyValueList);
     static int32_t GetExtraParams(AudioHandle handle, char *keyValueList, int32_t listLenth);
-    static int32_t ReqMmapBuffer(AudioHandle handle, int32_t reqSize, struct AudioMmapBufferDescripter *desc);
-    static int32_t GetMmapPosition(AudioHandle handle, uint64_t *frames, struct AudioTimeStamp *time);
+    static int32_t ReqMmapBuffer(AudioHandle handle, int32_t reqSize, struct ::AudioMmapBufferDescripter *desc);
+    static int32_t GetMmapPosition(AudioHandle handle, uint64_t *frames, struct ::AudioTimeStamp *time);
 };
 
 template<typename T>
@@ -72,7 +74,8 @@ int32_t AudioAttributeInternal<T>::GetFrameCount(AudioHandle handle, uint64_t *c
 }
 
 template<typename T>
-int32_t AudioAttributeInternal<T>::SetSampleAttributes(AudioHandle handle, const struct AudioSampleAttributes *attrs)
+int32_t AudioAttributeInternal<T>::SetSampleAttributes(AudioHandle handle,
+    const struct ::AudioSampleAttributes *attrs)
 {
     if (handle == nullptr || attrs == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -80,8 +83,8 @@ int32_t AudioAttributeInternal<T>::SetSampleAttributes(AudioHandle handle, const
     }
 
     T *context = reinterpret_cast<T *>(handle);
-    AudioSampleAttributesHAL attrsHal = {
-        .format = static_cast<uint32_t>(attrs->format),
+    AudioSampleAttributes attrsHal = {
+        .format = static_cast<AudioFormat>(attrs->format),
         .sampleRate = attrs->sampleRate,
         .channelCount = attrs->channelCount,
     };
@@ -91,7 +94,7 @@ int32_t AudioAttributeInternal<T>::SetSampleAttributes(AudioHandle handle, const
 }
 
 template<typename T>
-int32_t AudioAttributeInternal<T>::GetSampleAttributes(AudioHandle handle, struct AudioSampleAttributes *attrs)
+int32_t AudioAttributeInternal<T>::GetSampleAttributes(AudioHandle handle, struct ::AudioSampleAttributes *attrs)
 {
     if (handle == nullptr || attrs == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -104,15 +107,15 @@ int32_t AudioAttributeInternal<T>::GetSampleAttributes(AudioHandle handle, struc
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
-    AudioSampleAttributesHAL attrsHal;
+    AudioSampleAttributes attrsHal;
     int32_t ret = context->proxy_->GetSampleAttributes(attrsHal);
     if (ret != DH_SUCCESS) {
         return ret;
     }
 
-    attrs->type = static_cast<AudioCategory>(attrsHal.type);
+    attrs->type = static_cast<::AudioCategory>(attrsHal.type);
     attrs->interleaved = static_cast<bool>(attrsHal.interleaved);
-    attrs->format = static_cast<AudioFormat>(attrsHal.format);
+    attrs->format = static_cast<::AudioFormat>(attrsHal.format);
     attrs->sampleRate = attrsHal.sampleRate;
     attrs->channelCount = attrsHal.channelCount;
     attrs->streamId = (int32_t)attrsHal.streamId;
@@ -182,7 +185,7 @@ int32_t AudioAttributeInternal<T>::GetExtraParams(AudioHandle handle, char *keyV
 
 template<typename T>
 int32_t AudioAttributeInternal<T>::ReqMmapBuffer(AudioHandle handle, int32_t reqSize,
-    struct AudioMmapBufferDescripter *desc)
+    struct ::AudioMmapBufferDescripter *desc)
 {
     if (handle == nullptr || desc == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -195,7 +198,7 @@ int32_t AudioAttributeInternal<T>::ReqMmapBuffer(AudioHandle handle, int32_t req
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
-    AudioMmapBufferDescripterHAL descHal;
+    AudioMmapBufferDescripter descHal;
     int32_t ret = context->proxy_->ReqMmapBuffer(reqSize, descHal);
     if (ret != DH_SUCCESS) {
         DHLOGE("Failed to request the mmap buffer.");
@@ -215,7 +218,8 @@ int32_t AudioAttributeInternal<T>::ReqMmapBuffer(AudioHandle handle, int32_t req
 }
 
 template<typename T>
-int32_t AudioAttributeInternal<T>::GetMmapPosition(AudioHandle handle, uint64_t *frames, struct AudioTimeStamp *time)
+int32_t AudioAttributeInternal<T>::GetMmapPosition(AudioHandle handle, uint64_t *frames,
+    struct ::AudioTimeStamp *time)
 {
     if (handle == nullptr || frames == nullptr || time == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -229,7 +233,7 @@ int32_t AudioAttributeInternal<T>::GetMmapPosition(AudioHandle handle, uint64_t 
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
-    AudioTimeStampHAL timeHal;
+    AudioTimeStamp timeHal;
     int32_t ret = context->proxy_->GetMmapPosition(*frames, timeHal);
     if (ret != DH_SUCCESS) {
         DHLOGE("Failed to get the mmap position.");

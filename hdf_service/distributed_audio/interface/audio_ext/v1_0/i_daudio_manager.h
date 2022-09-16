@@ -17,7 +17,9 @@
 #define HDF_I_DAUDIO_MANGER_H
 
 #include <String>
+
 #include "i_daudio_hdf_callback.h"
+#include "types.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -28,7 +30,7 @@ public:
 
     virtual int32_t UnRegisterAudioDevice(std::string devId, std::string dhId) = 0;
 
-    virtual int32_t NotifyEvent(std::string devId, std::string dhId, struct AudioEvent &event) = 0;
+    virtual int32_t NotifyEvent(std::string devId, std::string dhId, struct DAudioEvent &event) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

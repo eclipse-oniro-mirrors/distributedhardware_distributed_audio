@@ -19,10 +19,11 @@
 #include <map>
 #include <mutex>
 #include <vector>
-#include <v1_0/iaudio_adapter.h>
 
 #include "audio_adapter.h"
 #include "audio_types.h"
+#include <v1_0/iaudio_adapter.h>
+
 #include "daudio_capture_internal.h"
 #include "daudio_render_internal.h"
 #include "daudio_param_callback_internal.h"
@@ -44,7 +45,7 @@ struct AudioAdapterContext {
 
     std::vector<std::unique_ptr<AudioCaptureContext>> captures_;
     std::vector<std::unique_ptr<AudioRenderContext>> renders_;
-    std::map<uint32_t, std::unique_ptr<AudioPortCapability>> caps_;
+    std::map<uint32_t, std::unique_ptr<::AudioPortCapability>> caps_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -33,31 +33,30 @@ void CreateCaptureFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
-    AudioAdapterDescriptorHAL desc;
+    AudioAdapterDescriptor desc;
     auto audioAdapter = std::make_shared<AudioAdapterInterfaceImpl>(desc);
 
-    uint32_t portId = *(reinterpret_cast<const uint32_t*>(data));
-    uint32_t pins = *(reinterpret_cast<const uint32_t*>(data));
-    std::string tdesc(reinterpret_cast<const char*>(data), size);
-    AudioDeviceDescriptorHAL deviceDes;
-    deviceDes.portId = portId;
-    deviceDes.pins = pins;
-    deviceDes.desc = tdesc;
+    AudioDeviceDescriptor deviceDes = {
+        .portId = *(reinterpret_cast<const uint32_t*>(data)),
+        .pins = *(reinterpret_cast<const AudioPortPin*>(data)),
+        .desc = std::string(reinterpret_cast<const char*>(data), size),
+    };
 
-    AudioSampleAttributesHAL sampleAttr;
-    sampleAttr.type = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.interleaved = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.format = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.sampleRate = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.channelCount = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.period = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.frameSize = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.isBigEndian = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.isSignedData = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.startThreshold = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.stopThreshold = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.silenceThreshold = *(reinterpret_cast<const uint32_t*>(data));
-    sampleAttr.streamId = *(reinterpret_cast<const uint32_t*>(data));
+    AudioSampleAttributes sampleAttr = {
+        .type = *(reinterpret_cast<const AudioCategory*>(data)),
+        .interleaved = *(reinterpret_cast<const uint32_t*>(data)),
+        .format = *(reinterpret_cast<const AudioFormat*>(data)),
+        .sampleRate = *(reinterpret_cast<const uint32_t*>(data)),
+        .channelCount = *(reinterpret_cast<const uint32_t*>(data)),
+        .period = *(reinterpret_cast<const uint32_t*>(data)),
+        .frameSize = *(reinterpret_cast<const uint32_t*>(data)),
+        .isBigEndian = *(reinterpret_cast<const uint32_t*>(data)),
+        .isSignedData = *(reinterpret_cast<const uint32_t*>(data)),
+        .startThreshold = *(reinterpret_cast<const uint32_t*>(data)),
+        .stopThreshold = *(reinterpret_cast<const uint32_t*>(data)),
+        .silenceThreshold = *(reinterpret_cast<const uint32_t*>(data)),
+        .streamId = *(reinterpret_cast<const uint32_t*>(data)),
+    };
 
     sptr<IAudioCapture> capture;
     audioAdapter->CreateCapture(deviceDes, sampleAttr, capture);

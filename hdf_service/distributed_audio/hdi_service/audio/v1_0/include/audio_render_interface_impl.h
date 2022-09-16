@@ -19,8 +19,8 @@
 #include <mutex>
 #include <string>
 
-#include "v1_0/iaudio_render.h"
-#include "v1_0/id_audio_manager.h"
+#include <v1_0/iaudio_render.h>
+#include <v1_0/id_audio_manager.h>
 
 namespace OHOS {
 namespace HDI {
@@ -41,29 +41,22 @@ typedef enum {
 
 class AudioRenderInterfaceImpl : public IAudioRender {
 public:
-    AudioRenderInterfaceImpl(const std::string adpName, const AudioDeviceDescriptorHAL &desc,
-        const AudioSampleAttributesHAL &attrs, const sptr<IDAudioCallback> &callback);
-
+    AudioRenderInterfaceImpl(const std::string adpName, const AudioDeviceDescriptor &desc,
+        const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
     virtual ~AudioRenderInterfaceImpl();
 
     int32_t GetLatency(uint32_t &ms) override;
-    int32_t RenderFrame(const std::vector<uint8_t> &frame, uint64_t requestBytes, uint64_t &replyBytes) override;
-    int32_t GetRenderPosition(uint64_t &frames, AudioTimeStampHAL &time) override;
+    int32_t RenderFrame(const std::vector<int8_t> &frame, uint64_t &replyBytes) override;
+    int32_t GetRenderPosition(uint64_t &frames, AudioTimeStamp &time) override;
     int32_t SetRenderSpeed(float speed) override;
     int32_t GetRenderSpeed(float &speed) override;
-    int32_t SetChannelMode(AudioChannelModeHAL mode) override;
-    int32_t GetChannelMode(AudioChannelModeHAL &mode) override;
-    int32_t RegCallback(const sptr<IAudioRenderCallback> &cbObj) override;
-    int32_t DrainBuffer(AudioDrainNotifyTypeHAL type) override;
-    int32_t Start() override;
-    int32_t Stop() override;
-    int32_t Pause() override;
-    int32_t Resume() override;
-    int32_t Flush() override;
-    int32_t TurnStandbyMode() override;
-    int32_t AudioDevDump(int32_t range, int32_t fd) override;
-    int32_t CheckSceneCapability(const AudioSceneDescriptorHAL &scene, bool &support) override;
-    int32_t SelectScene(const AudioSceneDescriptorHAL &scene) override;
+    int32_t SetChannelMode(AudioChannelMode mode) override;
+    int32_t GetChannelMode(AudioChannelMode &mode) override;
+    int32_t RegCallback(const sptr<IAudioCallback> &audioCallback, int8_t cookie) override;
+    int32_t DrainBuffer(AudioDrainNotifyType &type) override;
+    int32_t IsSupportsDrain(bool &support) override;
+    int32_t CheckSceneCapability(const AudioSceneDescriptor &scene, bool &supported) override;
+    int32_t SelectScene(const AudioSceneDescriptor &scene) override;
     int32_t SetMute(bool mute) override;
     int32_t GetMute(bool &mute) override;
     int32_t SetVolume(float volume) override;
@@ -73,15 +66,26 @@ public:
     int32_t GetGain(float &gain) override;
     int32_t GetFrameSize(uint64_t &size) override;
     int32_t GetFrameCount(uint64_t &count) override;
-    int32_t SetSampleAttributes(const AudioSampleAttributesHAL &attrs) override;
-    int32_t GetSampleAttributes(AudioSampleAttributesHAL &attrs) override;
+    int32_t SetSampleAttributes(const AudioSampleAttributes &attrs) override;
+    int32_t GetSampleAttributes(AudioSampleAttributes &attrs) override;
     int32_t GetCurrentChannelId(uint32_t &channelId) override;
     int32_t SetExtraParams(const std::string &keyValueList) override;
     int32_t GetExtraParams(std::string &keyValueList) override;
-    int32_t ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescripterHAL &desc) override;
-    int32_t GetMmapPosition(uint64_t &frames, AudioTimeStampHAL &time) override;
+    int32_t ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescripter &desc) override;
+    int32_t GetMmapPosition(uint64_t &frames, AudioTimeStamp &time) override;
+    int32_t AddAudioEffect(uint64_t effectid) override;
+    int32_t RemoveAudioEffect(uint64_t effectid) override;
+    int32_t GetFrameBufferSize(uint64_t &bufferSize) override;
+    int32_t Start() override;
+    int32_t Stop() override;
+    int32_t Pause() override;
+    int32_t Resume() override;
+    int32_t Flush() override;
+    int32_t TurnStandbyMode() override;
+    int32_t AudioDevDump(int32_t range, int32_t fd) override;
+    int32_t IsSupportsPauseAndResume(bool &supportPause, bool &supportResume) override;
 
-    const AudioDeviceDescriptorHAL &GetRenderDesc();
+    const AudioDeviceDescriptor &GetRenderDesc();
     void SetVolumeInner(const uint32_t vol);
     void SetVolumeRangeInner(const uint32_t maxVol, const uint32_t minVol);
     uint32_t GetVolumeInner();
@@ -90,8 +94,8 @@ public:
 
 private:
     std::string adapterName_;
-    AudioDeviceDescriptorHAL devDesc_;
-    AudioSampleAttributesHAL devAttrs_;
+    AudioDeviceDescriptor devDesc_;
+    AudioSampleAttributes devAttrs_;
 
     float renderSpeed_ = 0;
     std::mutex volMtx_;
@@ -99,10 +103,10 @@ private:
     uint32_t volMax_ = 0;
     uint32_t volMin_ = 0;
     std::mutex renderMtx_;
-    AudioChannelModeHAL channelMode_ = AUDIO_CHANNEL_NORMAL;
+    AudioChannelMode channelMode_ = AUDIO_CHANNEL_NORMAL;
     AudioRenderStatus renderStatus_ = RENDER_STATUS_CLOSE;
     sptr<IDAudioCallback> audioExtCallback_ = nullptr;
-    sptr<IAudioRenderCallback> renderCallback_ = nullptr;
+    sptr<IAudioCallback> renderCallback_ = nullptr;
 };
 } // V1_0
 } // Audio

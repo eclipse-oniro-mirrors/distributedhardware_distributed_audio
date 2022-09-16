@@ -16,9 +16,10 @@
 #include "distributed_audio_client.h"
 
 #include <securec.h>
-#include <v1_0/types.h>
 
 #include "audio_types.h"
+#include <v1_0/audio_types.h>
+
 #include "daudio_errcode.h"
 #include "daudio_log.h"
 
@@ -28,14 +29,14 @@
 namespace OHOS {
 namespace DistributedHardware {
 using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioAdapter;
-using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioAdapterDescriptorHAL;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioAdapterDescriptor;
 
 static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
-    std::vector<AudioAdapterDescriptorHAL> &descriptors)
+    std::vector<AudioAdapterDescriptor> &descriptors)
 {
     DHLOGI("Init audio adapters descriptor, size is: %zd.", descriptors.size());
     for (auto desc : descriptors) {
-        AudioPort *audioPorts = (AudioPort *)malloc(desc.ports.size() * sizeof(AudioPort));
+        ::AudioPort *audioPorts = (::AudioPort *)malloc(desc.ports.size() * sizeof(AudioPort));
         if (audioPorts == nullptr) {
             DHLOGE("Audio ports is nullptr.");
             return ERR_DH_AUDIO_HDF_FAILURE;
@@ -43,10 +44,9 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
         char* adapterName = (char*)calloc(desc.adapterName.length() + 1, sizeof(char));
         if (strcpy_s(adapterName, desc.adapterName.length() + 1, desc.adapterName.c_str()) != EOK) {
             DHLOGI("Strcpy_s adapter name failed.");
-            free(audioPorts);
             continue;
         }
-        AudioAdapterDescriptor descInternal = {
+        ::AudioAdapterDescriptor descInternal = {
             .adapterName = adapterName,
             .portNum = desc.ports.size(),
             .ports = audioPorts,
@@ -55,9 +55,10 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
             char* portName = (char*)calloc(port.portName.length() + 1, sizeof(char));
             if (strcpy_s(portName, port.portName.length() + 1, port.portName.c_str()) != EOK) {
                 DHLOGI("Strcpy_s port name failed.");
+                free(audioPorts);
                 continue;
             }
-            audioPorts->dir = static_cast<AudioPortDirection>(port.dir);
+            audioPorts->dir = static_cast<::AudioPortDirection>(port.dir);
             audioPorts->portId = port.portId;
             audioPorts->portName = portName;
             audioPorts++;
@@ -71,7 +72,7 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
     return DH_SUCCESS;
 }
 
-static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct AudioAdapterDescriptor **descs,
+static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct ::AudioAdapterDescriptor **descs,
     int32_t *size)
 {
     DHLOGI("Get all adapters.");
@@ -83,7 +84,7 @@ static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct Audio
     AudioManagerContext *context = reinterpret_cast<AudioManagerContext *>(manager);
     std::lock_guard<std::mutex> lock(context->mtx_);
 
-    std::vector<AudioAdapterDescriptorHAL> descriptors;
+    std::vector<AudioAdapterDescriptor> descriptors;
     if (context == nullptr || context->proxy_ == nullptr) {
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
@@ -105,7 +106,7 @@ static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct Audio
     return DH_SUCCESS;
 }
 
-static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct AudioAdapterDescriptor *desc,
+static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct ::AudioAdapterDescriptor *desc,
     struct AudioAdapter **adapter)
 {
     DHLOGI("Load adapter.");
@@ -124,7 +125,7 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct Au
         }
     }
 
-    AudioAdapterDescriptorHAL descriptor = {
+    AudioAdapterDescriptor descriptor = {
         .adapterName = desc->adapterName,
     };
     sptr<IAudioAdapter> adapterProxy = nullptr;
@@ -139,7 +140,7 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct Au
         return ret;
     }
 
-    std::unique_ptr<AudioAdapterContext> adapterContext  = std::make_unique<AudioAdapterContext>();
+    auto adapterContext  = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = adapterProxy;
     *adapter = &adapterContext->instance_;
     adapterContext->adapterName_ = descriptor.adapterName;

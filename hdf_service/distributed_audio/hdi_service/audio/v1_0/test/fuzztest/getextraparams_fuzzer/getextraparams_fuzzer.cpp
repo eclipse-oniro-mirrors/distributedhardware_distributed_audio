@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "destoryrender_fuzzer.h"
+#include "getextraparams_fuzzer.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -27,24 +27,19 @@ namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-void DestoryRenderFuzzTest(const uint8_t* data, size_t size)
+void GetExtraParamsFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < (sizeof(int32_t)))) {
         return;
     }
 
-    AudioAdapterDescriptorHAL desc;
+    AudioAdapterDescriptor desc;
     auto audioAdapter = std::make_shared<AudioAdapterInterfaceImpl>(desc);
+    AudioExtParamKey key = *(reinterpret_cast<const AudioExtParamKey*>(data));
+    std::string condition(reinterpret_cast<const char*>(data), size);
+    std::string value(reinterpret_cast<const char*>(data), size);
 
-    uint32_t portId = *(reinterpret_cast<const uint32_t*>(data));
-    uint32_t pins = *(reinterpret_cast<const uint32_t*>(data));
-    std::string tdesc(reinterpret_cast<const char*>(data), size);
-    AudioDeviceDescriptorHAL deviceDes;
-    deviceDes.portId = portId;
-    deviceDes.pins = pins;
-    deviceDes.desc = tdesc;
-
-    audioAdapter->DestoryRender(deviceDes);
+    audioAdapter->GetExtraParams(key, condition, value);
 }
 } // V1_0
 } // Audio
@@ -56,7 +51,7 @@ void DestoryRenderFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::HDI::DistributedAudio::Audio::V1_0::DestoryRenderFuzzTest(data, size);
+    OHOS::HDI::DistributedAudio::Audio::V1_0::GetExtraParamsFuzzTest(data, size);
     return 0;
 }
 

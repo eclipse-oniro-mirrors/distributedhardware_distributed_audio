@@ -20,8 +20,8 @@
 #include <mutex>
 #include <string>
 
-#include "v1_0/iaudio_render.h"
-#include "v1_0/id_audio_manager.h"
+#include <v1_0/iaudio_render.h>
+#include <v1_0/id_audio_manager.h>
 
 #define private public
 #include "audio_render_interface_impl.h"
@@ -44,8 +44,8 @@ public:
     void TearDown();
 
     std::string adpName_;
-    AudioDeviceDescriptorHAL desc_;
-    AudioSampleAttributesHAL attrs_;
+    AudioDeviceDescriptor desc_;
+    AudioSampleAttributes attrs_;
     sptr<IDAudioCallback> callback_;
     std::shared_ptr<AudioRenderInterfaceImpl> audioRenderInterfaceImpl_ = nullptr;
 };

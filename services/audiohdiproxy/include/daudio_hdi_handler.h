@@ -20,17 +20,18 @@
 #include <mutex>
 #include <set>
 
+#include <v1_0/id_audio_callback.h>
+#include <v1_0/id_audio_manager.h>
+
 #include "audio_event.h"
 #include "daudio_manager_callback.h"
 #include "idaudio_hdi_callback.h"
 #include "single_instance.h"
-#include "v1_0/id_audio_callback.h"
-#include "v1_0/id_audio_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioManager;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioManager;
 class DAudioHdiHandler {
     DECLARE_SINGLE_INSTANCE_BASE(DAudioHdiHandler);
 

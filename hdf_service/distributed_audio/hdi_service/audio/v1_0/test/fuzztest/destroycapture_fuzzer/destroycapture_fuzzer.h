@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-#ifndef DESTORYCAPTURE_FUZZER_H
-#define DESTORYCAPTURE_FUZZER_H
+#ifndef DESTROYCAPTURE_FUZZER_H
+#define DESTROYCAPTURE_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "destorycapture_fuzzer"
+#define FUZZ_PROJECT_NAME "destroycapture_fuzzer"
 
 #endif

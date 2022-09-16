@@ -20,18 +20,19 @@
 #include <map>
 #include <mutex>
 
+#include <v1_0/iaudio_adapter.h>
+#include <v1_0/id_audio_manager.h>
+#include <v1_0/audio_types.h>
+
 #include "audio_capture_interface_impl.h"
 #include "audio_render_interface_impl.h"
-#include "v1_0/iaudio_adapter.h"
-#include "v1_0/id_audio_manager.h"
-#include "v1_0/types.h"
 
 namespace OHOS {
 namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent;
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
 
@@ -60,40 +61,43 @@ typedef enum {
 
 class AudioAdapterInterfaceImpl : public IAudioAdapter {
 public:
-    AudioAdapterInterfaceImpl(const AudioAdapterDescriptorHAL &desc);
+    AudioAdapterInterfaceImpl(const AudioAdapterDescriptor &desc);
     virtual ~AudioAdapterInterfaceImpl();
 
-    void SetSpeakerCallback(const sptr<IDAudioCallback> &speakerCallback);
-    void SetMicCallback(const sptr<IDAudioCallback> &micCallback);
     int32_t InitAllPorts() override;
-    int32_t CreateRender(const AudioDeviceDescriptorHAL &desc, const AudioSampleAttributesHAL &attrs,
+    int32_t CreateRender(const AudioDeviceDescriptor &desc, const AudioSampleAttributes &attrs,
         sptr<IAudioRender> &render) override;
-    int32_t DestoryRender(const AudioDeviceDescriptorHAL &desc) override;
-    int32_t CreateCapture(const AudioDeviceDescriptorHAL &desc, const AudioSampleAttributesHAL &attrs,
+    int32_t DestroyRender(const AudioDeviceDescriptor &desc) override;
+    int32_t CreateCapture(const AudioDeviceDescriptor &desc, const AudioSampleAttributes &attrs,
         sptr<IAudioCapture> &capture) override;
-    int32_t DestoryCapture(const AudioDeviceDescriptorHAL &desc) override;
-    int32_t GetPortCapability(const AudioPortHAL &port, AudioPortCapabilityHAl &capability) override;
-    int32_t SetPassthroughMode(const AudioPortHAL &port, AudioPortPassthroughModeHAL mode) override;
-    int32_t GetPassthroughMode(const AudioPortHAL &port, AudioPortPassthroughModeHAL &mode) override;
-    int32_t UpdateAudioRoute(const AudioRouteHAL &route, int32_t &handle) override;
-    int32_t ReleaseAudioRoute(int32_t handle) override;
-    int32_t SetAudioParameters(AudioExtParamKeyHAL key, const std::string &condition,
-        const std::string &value) override;
-    int32_t GetAudioParameters(AudioExtParamKeyHAL key, const std::string &condition, std::string &value) override;
-    int32_t RegAudioParamObserver(const sptr<IAudioParamCallback> &cbObj) override;
+    int32_t DestroyCapture(const AudioDeviceDescriptor &desc) override;
+    int32_t GetPortCapability(const AudioPort &port, AudioPortCapability &capability) override;
+    int32_t SetPassthroughMode(const AudioPort &port, AudioPortPassthroughMode mode) override;
+    int32_t GetPassthroughMode(const AudioPort &port, AudioPortPassthroughMode &mode) override;
+    int32_t GetDeviceStatus(AudioDeviceStatus& status) override;
+    int32_t UpdateAudioRoute(const AudioRoute &route, int32_t &routeHandle) override;
+    int32_t ReleaseAudioRoute(int32_t routeHandle) override;
+    int32_t SetMicMute(bool mute) override;
+    int32_t GetMicMute(bool& mute) override;
+    int32_t SetVoiceVolume(float volume) override;
+    int32_t SetExtraParams(AudioExtParamKey key, const std::string &condition, const std::string &value) override;
+    int32_t GetExtraParams(AudioExtParamKey key, const std::string &condition, std::string &value) override;
+    int32_t RegExtraParamObserver(const sptr<IAudioCallback> &audioCallback, int8_t cookie) override;
 
 public:
-    AudioAdapterDescriptorHAL GetAdapterDesc();
+    void SetSpeakerCallback(const sptr<IDAudioCallback> &speakerCallback);
+    void SetMicCallback(const sptr<IDAudioCallback> &micCallback);
+    AudioAdapterDescriptor GetAdapterDesc();
     std::string GetDeviceCapabilitys(const uint32_t devId);
     int32_t AdapterLoad();
     int32_t AdapterUnload();
-    int32_t Notify(const uint32_t devId, const AudioEvent &event);
+    int32_t Notify(const uint32_t devId, const DAudioEvent &event);
     int32_t AddAudioDevice(const uint32_t devId, const std::string &caps);
     int32_t RemoveAudioDevice(const uint32_t devId);
-    int32_t OpenRenderDevice(const AudioDeviceDescriptorHAL &desc, const AudioSampleAttributesHAL &attrs);
-    int32_t CloseRenderDevice(const AudioDeviceDescriptorHAL &desc);
-    int32_t OpenCaptureDevice(const AudioDeviceDescriptorHAL &desc, const AudioSampleAttributesHAL &attrs);
-    int32_t CloseCaptureDevice(const AudioDeviceDescriptorHAL &desc);
+    int32_t OpenRenderDevice(const AudioDeviceDescriptor &desc, const AudioSampleAttributes &attrs);
+    int32_t CloseRenderDevice(const AudioDeviceDescriptor &desc);
+    int32_t OpenCaptureDevice(const AudioDeviceDescriptor &desc, const AudioSampleAttributes &attrs);
+    int32_t CloseCaptureDevice(const AudioDeviceDescriptor &desc);
     uint32_t GetVolumeGroup(const uint32_t devId);
     uint32_t GetInterruptGroup(const uint32_t devId);
     bool isPortsNoReg();
@@ -101,23 +105,23 @@ public:
 private:
     int32_t SetAudioVolume(const std::string& condition, const std::string &param);
     int32_t GetAudioVolume(const std::string& condition, std::string &param);
-    int32_t HandleFocusChangeEvent(const AudioEvent &event);
-    int32_t HandleRenderStateChangeEvent(const AudioEvent &event);
-    int32_t HandleVolumeChangeEvent(const AudioEvent &event);
-    int32_t HandleSANotifyEvent(const AudioEvent &event);
+    int32_t HandleFocusChangeEvent(const DAudioEvent &event);
+    int32_t HandleRenderStateChangeEvent(const DAudioEvent &event);
+    int32_t HandleVolumeChangeEvent(const DAudioEvent &event);
+    int32_t HandleSANotifyEvent(const DAudioEvent &event);
     int32_t WaitForSANotify(const AudioDeviceEvent &event);
-    int32_t HandleDeviceClosed(const AudioEvent &event);
+    int32_t HandleDeviceClosed(const DAudioEvent &event);
     int32_t getEventTypeFromCondition(const std::string& condition);
 
 private:
     static constexpr uint8_t WAIT_SECONDS = 10;
     static constexpr int32_t TYPE_CONDITION = 11;
-    AudioAdapterDescriptorHAL adpDescriptor_;
+    AudioAdapterDescriptor adpDescriptor_;
     AudioAdapterStatus status_ = STATUS_OFFLINE;
 
     sptr<IDAudioCallback> extSpeakerCallback_ = nullptr;
     sptr<IDAudioCallback> extMicCallback_ = nullptr;
-    sptr<IAudioParamCallback> paramCallback_ = nullptr;
+    sptr<IAudioCallback> paramCallback_ = nullptr;
     sptr<AudioRenderInterfaceImpl> audioRender_ = nullptr;
     AudioParameter renderParam_;
     sptr<AudioCaptureInterfaceImpl> audioCapture_ = nullptr;

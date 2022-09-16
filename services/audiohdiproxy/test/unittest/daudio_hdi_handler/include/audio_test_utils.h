@@ -16,10 +16,11 @@
 #ifndef OHOS_AUDIO_TEST_UTILS_H
 #define OHOS_AUDIO_TEST_UTILS_H
 
+#include <v1_0/id_audio_callback.h>
+#include <v1_0/id_audio_manager.h>
+
 #include "daudio_errorcode.h"
 #include "idaudio_hdi_callback.h"
-#include "v1_0/id_audio_callback.h"
-#include "v1_0/id_audio_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -43,7 +44,7 @@ public:
     }
 
     int32_t NotifyEvent(const std::string &adpName, int32_t devId,
-        const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioEvent &event) override
+        const OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent &event) override
     {
         return DH_SUCCESS;
     }

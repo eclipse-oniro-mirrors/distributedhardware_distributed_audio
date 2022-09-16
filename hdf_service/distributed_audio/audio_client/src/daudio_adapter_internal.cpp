@@ -17,11 +17,11 @@
 
 #include <securec.h>
 #include <string>
+
 #include <v1_0/iaudio_render.h>
 #include <v1_0/iaudio_capture.h>
-#include <v1_0/types.h>
+#include <v1_0/audio_types.h>
 
-#include "audio_types.h"
 #include "daudio_errcode.h"
 #include "daudio_log.h"
 
@@ -30,8 +30,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioRender;
-using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioCapture;
+using namespace OHOS::HDI::DistributedAudio::Audio::V1_0;
 
 static int32_t InitAllPortsInternal(struct AudioAdapter *adapter)
 {
@@ -47,26 +46,26 @@ static int32_t InitAllPortsInternal(struct AudioAdapter *adapter)
     return context->proxy_->InitAllPorts();
 }
 
-static void SetAudioSampleAttributesHAL(const struct AudioSampleAttributes *attrs, AudioSampleAttributesHAL &attrsHal)
+static void SetAudioSampleAttributesHAL(const struct ::AudioSampleAttributes *attrs,
+    AudioSampleAttributes &attrsHal)
 {
-    attrsHal.type = static_cast<uint32_t>(attrs->type);
-    attrsHal.interleaved = static_cast<uint32_t>(attrs->interleaved);
-    attrsHal.format = static_cast<uint32_t>(attrs->format);
+    attrsHal.type = static_cast<AudioCategory>(attrs->type);
+    attrsHal.interleaved = attrs->interleaved;
+    attrsHal.format = static_cast<AudioFormat>(attrs->format);
     attrsHal.sampleRate = attrs->sampleRate;
     attrsHal.channelCount = attrs->channelCount;
-
     attrsHal.period = attrs->period;
     attrsHal.frameSize = attrs->frameSize;
-    attrsHal.isBigEndian = static_cast<uint32_t>(attrs->isBigEndian);
-    attrsHal.isSignedData = static_cast<uint32_t>(attrs->isSignedData);
+    attrsHal.isBigEndian = attrs->isBigEndian;
+    attrsHal.isSignedData = attrs->isSignedData;
     attrsHal.startThreshold = attrs->startThreshold;
     attrsHal.stopThreshold = attrs->stopThreshold;
     attrsHal.silenceThreshold = attrs->silenceThreshold;
-    attrsHal.streamId = static_cast<uint32_t>(attrs->streamId);
+    attrsHal.streamId = attrs->streamId;
 }
 
-static int32_t CreateRenderInternal(struct AudioAdapter *adapter, const struct AudioDeviceDescriptor *desc,
-    const struct AudioSampleAttributes *attrs, struct AudioRender **render)
+static int32_t CreateRenderInternal(struct AudioAdapter *adapter, const struct ::AudioDeviceDescriptor *desc,
+    const struct ::AudioSampleAttributes *attrs, struct AudioRender **render)
 {
     DHLOGI("Create distributed audio render.");
     if (adapter == nullptr || desc == nullptr || attrs == nullptr || render == nullptr) {
@@ -79,9 +78,9 @@ static int32_t CreateRenderInternal(struct AudioAdapter *adapter, const struct A
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    AudioDeviceDescriptorHAL descHal = {
+    AudioDeviceDescriptor descHal = {
         .portId = desc->portId,
-        .pins = desc->pins,
+        .pins = static_cast<AudioPortPin>(desc->pins),
     };
     if (desc->desc == nullptr) {
         descHal.desc = "";
@@ -89,7 +88,7 @@ static int32_t CreateRenderInternal(struct AudioAdapter *adapter, const struct A
         descHal.desc = desc->desc;
     }
 
-    AudioSampleAttributesHAL attrsHal;
+    AudioSampleAttributes attrsHal;
     SetAudioSampleAttributesHAL(attrs, attrsHal);
     sptr<IAudioRender> renderProxy = nullptr;
     int32_t ret = context->proxy_->CreateRender(descHal, attrsHal, renderProxy);
@@ -126,7 +125,7 @@ static int32_t DestroyRenderInternal(struct AudioAdapter *adapter, struct AudioR
 
     for (auto it = adapterContext->renders_.begin(); it != adapterContext->renders_.end(); ++it) {
         if ((*it).get() == renderContext) {
-            int32_t ret = adapterContext->proxy_->DestoryRender(renderContext->descHal_);
+            int32_t ret = adapterContext->proxy_->DestroyRender(renderContext->descHal_);
             if (ret != DH_SUCCESS) {
                 return ret;
             }
@@ -137,8 +136,8 @@ static int32_t DestroyRenderInternal(struct AudioAdapter *adapter, struct AudioR
     return DH_SUCCESS;
 }
 
-static int32_t CreateCaptureInternal(struct AudioAdapter *adapter, const struct AudioDeviceDescriptor *desc,
-    const struct AudioSampleAttributes *attrs, struct AudioCapture **capture)
+static int32_t CreateCaptureInternal(struct AudioAdapter *adapter, const struct ::AudioDeviceDescriptor *desc,
+    const struct ::AudioSampleAttributes *attrs, struct AudioCapture **capture)
 {
     DHLOGI("Create distributed audio capture.");
     if (adapter == nullptr || desc == nullptr || attrs == nullptr || capture == nullptr) {
@@ -151,15 +150,15 @@ static int32_t CreateCaptureInternal(struct AudioAdapter *adapter, const struct 
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    AudioDeviceDescriptorHAL descHal = {
+    AudioDeviceDescriptor descHal = {
         .portId = desc->portId,
-        .pins = desc->pins,
+        .pins = static_cast<AudioPortPin>(desc->pins),
     };
     descHal.desc = "";
     if (desc->desc != nullptr) {
         descHal.desc = desc->desc;
     }
-    AudioSampleAttributesHAL attrsHal;
+    AudioSampleAttributes attrsHal;
     SetAudioSampleAttributesHAL(attrs, attrsHal);
     sptr<IAudioCapture> captureProxy = nullptr;
     int32_t ret = context->proxy_->CreateCapture(descHal, attrsHal, captureProxy);
@@ -197,7 +196,7 @@ static int32_t DestroyCaptureInternal(struct AudioAdapter *adapter, struct Audio
 
     for (auto it = adapterContext->captures_.begin(); it != adapterContext->captures_.end(); ++it) {
         if ((*it).get() == captureContext) {
-            int32_t ret = adapterContext->proxy_->DestoryCapture(captureContext->descHal_);
+            int32_t ret = adapterContext->proxy_->DestroyCapture(captureContext->descHal_);
             if (ret != DH_SUCCESS) {
                 return ret;
             }
@@ -208,8 +207,8 @@ static int32_t DestroyCaptureInternal(struct AudioAdapter *adapter, struct Audio
     return DH_SUCCESS;
 }
 
-static int32_t GetPassthroughModeInternal(struct AudioAdapter *adapter, const struct AudioPort *port,
-    enum AudioPortPassthroughMode *mode)
+static int32_t GetPassthroughModeInternal(struct AudioAdapter *adapter, const struct ::AudioPort *port,
+    enum ::AudioPortPassthroughMode *mode)
 {
     if (adapter == nullptr || port == nullptr || mode == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -221,18 +220,18 @@ static int32_t GetPassthroughModeInternal(struct AudioAdapter *adapter, const st
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    AudioPortHAL portHal = {
-        .dir = port->dir,
+    AudioPort portHal = {
+        .dir = static_cast<AudioPortDirection>(port->dir),
         .portId = port->portId,
         .portName= port->portName,
     };
-    return context->proxy_->GetPassthroughMode(portHal, *(reinterpret_cast<AudioPortPassthroughModeHAL *>(mode)));
+    return context->proxy_->GetPassthroughMode(portHal, *(reinterpret_cast<AudioPortPassthroughMode *>(mode)));
 }
 
-static int32_t InitAudioPortCapability(std::unique_ptr<AudioPortCapability> &capInternal,
-    AudioPortCapabilityHAl &capabilityHal)
+static int32_t InitAudioPortCapability(std::unique_ptr<::AudioPortCapability> &capInternal,
+    AudioPortCapability &capabilityHal)
 {
-    AudioFormat *audioFormats = (AudioFormat *)malloc(capabilityHal.formatNum * sizeof(AudioFormat));
+    ::AudioFormat *audioFormats = (::AudioFormat *)malloc(capabilityHal.formatNum * sizeof(::AudioFormat));
     if (audioFormats == nullptr) {
         DHLOGE("Malloc failed.");
         return ERR_DH_AUDIO_HDF_FAILURE;
@@ -244,19 +243,19 @@ static int32_t InitAudioPortCapability(std::unique_ptr<AudioPortCapability> &cap
     capInternal->formatNum = capabilityHal.formatNum;
     capInternal->formats = audioFormats;
     for (auto format : capabilityHal.formats) {
-        *audioFormats = static_cast<AudioFormat>(format);
+        *audioFormats = static_cast<::AudioFormat>(format);
         audioFormats++;
     }
     capInternal->sampleRateMasks = capabilityHal.sampleRateMasks;
-    capInternal->channelMasks = static_cast<AudioChannelMask>(capabilityHal.channelMasks);
+    capInternal->channelMasks = static_cast<::AudioChannelMask>(capabilityHal.channelMasks);
     capInternal->channelCount = capabilityHal.channelCount;
     capInternal->subPortsNum = 0;
     capInternal->subPorts = nullptr;
     return DH_SUCCESS;
 }
 
-static int32_t GetPortCapabilityInternal(struct AudioAdapter *adapter, const struct AudioPort *port,
-    struct AudioPortCapability *capability)
+static int32_t GetPortCapabilityInternal(struct AudioAdapter *adapter, const struct ::AudioPort *port,
+    struct ::AudioPortCapability *capability)
 {
     if (adapter == nullptr || port == nullptr || port->portName == nullptr || capability == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -276,19 +275,19 @@ static int32_t GetPortCapabilityInternal(struct AudioAdapter *adapter, const str
             return DH_SUCCESS;
         }
     }
-    AudioPortHAL portHal = {
-        .dir = port->dir,
+    AudioPort portHal = {
+        .dir = static_cast<AudioPortDirection>(port->dir),
         .portId = port->portId,
         .portName = port->portName,
     };
 
-    AudioPortCapabilityHAl capabilityHal {};
+    AudioPortCapability capabilityHal;
     int32_t ret = context->proxy_->GetPortCapability(portHal, capabilityHal);
     if (ret != DH_SUCCESS) {
         return ret;
     }
 
-    std::unique_ptr<AudioPortCapability> capInternal = std::make_unique<AudioPortCapability>();
+    auto capInternal = std::make_unique<::AudioPortCapability>();
     ret = InitAudioPortCapability(capInternal, capabilityHal);
     if (ret != DH_SUCCESS) {
         return ret;
@@ -316,8 +315,8 @@ static int32_t ReleaseAudioRouteInternal(struct AudioAdapter *adapter, int32_t r
     return context->proxy_->ReleaseAudioRoute(routeHandle);
 }
 
-static int32_t SetPassthroughModeInternal(struct AudioAdapter *adapter, const struct AudioPort *port,
-    enum AudioPortPassthroughMode mode)
+static int32_t SetPassthroughModeInternal(struct AudioAdapter *adapter, const struct ::AudioPort *port,
+    enum ::AudioPortPassthroughMode mode)
 {
     if (adapter == nullptr || port == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -329,19 +328,20 @@ static int32_t SetPassthroughModeInternal(struct AudioAdapter *adapter, const st
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    AudioPortHAL portHal = {
-        .dir = port->dir,
+    AudioPort portHal = {
+        .dir = static_cast<AudioPortDirection>(port->dir),
         .portId = port->portId,
         .portName = port->portName,
     };
-    return context->proxy_->SetPassthroughMode(portHal, static_cast<AudioPortPassthroughModeHAL>(mode));
+    AudioPortPassthroughMode modeHal = static_cast<AudioPortPassthroughMode>(static_cast<int32_t>(mode));
+    return context->proxy_->SetPassthroughMode(portHal, modeHal);
 }
 
-static void ConvertAudioRouteNodeToHAL(const AudioRouteNode &node, AudioRouteNodeHAL &halNode)
+static void ConvertAudioRouteNodeToHAL(const ::AudioRouteNode &node, AudioRouteNode &halNode)
 {
     halNode.portId = node.portId;
-    halNode.role = static_cast<uint32_t>(node.role);
-    halNode.type = static_cast<uint32_t>(node.type);
+    halNode.role = static_cast<AudioPortRole>(node.role);
+    halNode.type = static_cast<AudioPortType>(node.type);
     size_t descLength = 32;
     DHLOGI("Convert audio route node To HAL, portId: %d role: %d type: %d.", halNode.portId, halNode.role,
         halNode.type);
@@ -350,33 +350,33 @@ static void ConvertAudioRouteNodeToHAL(const AudioRouteNode &node, AudioRouteNod
         case AUDIO_PORT_UNASSIGNED_TYPE:
             break;
         case AUDIO_PORT_DEVICE_TYPE: {
-            halNode.device.moduleId = node.ext.device.moduleId;
-            halNode.device.type = static_cast<uint32_t>(node.ext.device.type);
+            halNode.ext.device.moduleId = node.ext.device.moduleId;
+            halNode.ext.device.type = static_cast<AudioPortPin>(node.ext.device.type);
             if (node.ext.device.desc != nullptr) {
                 size_t length = strlen(node.ext.device.desc);
                 length = length < descLength ? length : descLength;
-                halNode.device.desc = std::vector<uint8_t>(node.ext.device.desc, node.ext.device.desc + length);
+                halNode.ext.device.desc = std::string(node.ext.device.desc, node.ext.device.desc + length);
             }
             break;
         }
         case AUDIO_PORT_MIX_TYPE: {
-            halNode.mix.moduleId = node.ext.mix.moduleId;
-            halNode.mix.streamId = node.ext.mix.streamId;
+            halNode.ext.mix.moduleId = node.ext.mix.moduleId;
+            halNode.ext.mix.streamId = node.ext.mix.streamId;
 
             DHLOGI("Convert audio route node To HAL, [Mix] moduleId: %d streamId: %d.",
-                halNode.mix.moduleId, halNode.mix.streamId);
+                halNode.ext.mix.moduleId, halNode.ext.mix.streamId);
             break;
         }
         case AUDIO_PORT_SESSION_TYPE: {
-            halNode.session.sessionType = static_cast<uint32_t>(node.ext.session.sessionType);
-            DHLOGI("Convert audio route node To HAL, [Session] sessionType: %d.", halNode.session.sessionType);
+            halNode.ext.session.sessionType = static_cast<AudioSessionType>(node.ext.session.sessionType);
+            DHLOGI("Convert audio route node To HAL, [Session] sessionType: %d.", halNode.ext.session.sessionType);
             break;
         }
         default :
             DHLOGI("Unkown node Type");
     }
 }
-static int32_t UpdateAudioRouteInternal(struct AudioAdapter *adapter, const struct AudioRoute *route,
+static int32_t UpdateAudioRouteInternal(struct AudioAdapter *adapter, const struct ::AudioRoute *route,
     int32_t *routeHandle)
 {
     if (adapter == nullptr || route == nullptr || routeHandle == nullptr) {
@@ -384,17 +384,17 @@ static int32_t UpdateAudioRouteInternal(struct AudioAdapter *adapter, const stru
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
-    AudioRouteHAL audioRouteHal;
+    AudioRoute audioRoute;
     for (uint32_t i = 0; i < route->sourcesNum; ++i) {
-        AudioRouteNodeHAL halNode = {0};
+        AudioRouteNode halNode = {0};
         ConvertAudioRouteNodeToHAL(route->sources[i], halNode);
-        audioRouteHal.sources.push_back(halNode);
+        audioRoute.sources.push_back(halNode);
     }
 
     for (uint32_t i = 0; i < route->sinksNum; ++i) {
-        AudioRouteNodeHAL halNode = {0};
+        AudioRouteNode halNode = {0};
         ConvertAudioRouteNodeToHAL(route->sinks[i], halNode);
-        audioRouteHal.sinks.push_back(halNode);
+        audioRoute.sinks.push_back(halNode);
     }
 
     int32_t handle = -1;
@@ -403,13 +403,13 @@ static int32_t UpdateAudioRouteInternal(struct AudioAdapter *adapter, const stru
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    int32_t ret = context->proxy_->UpdateAudioRoute(audioRouteHal, handle);
+    int32_t ret = context->proxy_->UpdateAudioRoute(audioRoute, handle);
     *routeHandle = handle;
     return ret;
 }
 
-static int32_t SetExtraParamsInternal(struct AudioAdapter *adapter, enum AudioExtParamKey key, const char *condition,
-    const char *value)
+static int32_t SetExtraParamsInternal(struct AudioAdapter *adapter, enum ::AudioExtParamKey key,
+    const char *condition, const char *value)
 {
     if (adapter == nullptr || condition == nullptr || value == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -421,12 +421,12 @@ static int32_t SetExtraParamsInternal(struct AudioAdapter *adapter, enum AudioEx
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
-    return context->proxy_->SetAudioParameters(static_cast<AudioExtParamKeyHAL>(key), std::string(condition),
-        std::string(value));
+    return context->proxy_->SetExtraParams(static_cast<AudioExtParamKey>(key),
+        std::string(condition), std::string(value));
 }
 
-static int32_t GetExtraParamsInternal(struct AudioAdapter *adapter, enum AudioExtParamKey key, const char *condition,
-    char *value, int32_t length)
+static int32_t GetExtraParamsInternal(struct AudioAdapter *adapter, enum ::AudioExtParamKey key,
+    const char *condition, char *value, int32_t length)
 {
     if (adapter == nullptr || condition == nullptr || value == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -440,7 +440,8 @@ static int32_t GetExtraParamsInternal(struct AudioAdapter *adapter, enum AudioEx
     }
     std::string valueHal;
     int32_t ret =
-        context->proxy_->GetAudioParameters(static_cast<AudioExtParamKeyHAL>(key), std::string(condition), valueHal);
+        context->proxy_->GetExtraParams(static_cast<AudioExtParamKey>(key),
+            std::string(condition), valueHal);
     if (ret != DH_SUCCESS) {
         return ret;
     }
@@ -476,7 +477,7 @@ static int32_t RegExtraParamObserverInternal(struct AudioAdapter *adapter, Param
         return ERR_DH_AUDIO_HDF_FAILURE;
     }
 
-    int32_t ret = context->proxy_->RegAudioParamObserver(context->callbackInternal_->callbackStub_);
+    int32_t ret = context->proxy_->RegExtraParamObserver(context->callbackInternal_->callbackStub_, 0);
     if (ret == DH_SUCCESS) {
         context->callback_ = callback;
     } else {

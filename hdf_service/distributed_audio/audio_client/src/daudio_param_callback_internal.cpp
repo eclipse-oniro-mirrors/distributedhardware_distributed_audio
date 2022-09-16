@@ -16,37 +16,51 @@
 #include "daudio_param_callback_internal.h"
 
 #include <string>
-#include <v1_0/iaudio_param_callback.h>
-#include <v1_0/types.h>
+
+#include <v1_0/iaudio_callback.h>
+#include <v1_0/audio_types.h>
 
 #include "daudio_errcode.h"
 
 #define HDF_LOG_TAG HDF_AUDIO
 namespace OHOS {
 namespace DistributedHardware {
-using namespace OHOS::HDI::DistributedAudio::Audio::V1_0;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioCallback;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioCallbackType;
+using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioExtParamKey;
 
-class AudioParamCallbackImpl final : public IAudioParamCallback {
+class AudioParamCallbackImpl final : public IAudioCallback {
 public:
-    AudioParamCallbackImpl(ParamCallback callback, void *cookie) : callback_(callback), cookie_(cookie) {}
+    AudioParamCallbackImpl(::ParamCallback callback, void *cookie) : callback_(callback), cookie_(cookie) {}
     ~AudioParamCallbackImpl() {}
 
-    virtual int32_t OnAudioParamNotify(AudioExtParamKeyHAL key, const std::string& condition,
-        const std::string& value) override;
+    int32_t RenderCallback(AudioCallbackType type, int8_t &reserved, int8_t &cookie) override;
+    int32_t ParamCallback(AudioExtParamKey key, const std::string& condition, const std::string& value,
+        int8_t &reserved, int8_t &cookie) override;
 private:
-    ParamCallback callback_ = nullptr;
+    ::ParamCallback callback_ = nullptr;
     void *cookie_ = nullptr;
 };
-AudioParamCallbackContext::AudioParamCallbackContext(ParamCallback callback, void *cookie)
+AudioParamCallbackContext::AudioParamCallbackContext(::ParamCallback callback, void *cookie)
 {
     callbackStub_ = new AudioParamCallbackImpl(callback, cookie);
 }
 
-int32_t AudioParamCallbackImpl::OnAudioParamNotify(AudioExtParamKeyHAL key, const std::string& condition,
-    const std::string& value)
+int32_t AudioParamCallbackImpl::RenderCallback(AudioCallbackType type, int8_t &reserved, int8_t &cookie)
 {
+    (void) type;
+    (void) reserved;
+    (void) cookie;
+    return DH_SUCCESS;
+}
+
+int32_t AudioParamCallbackImpl::ParamCallback(AudioExtParamKey key, const std::string& condition,
+    const std::string& value, int8_t &reserved, int8_t &cookie)
+{
+    (void) cookie;
     if (callback_ != nullptr) {
-        callback_(static_cast<AudioExtParamKey>(key), condition.c_str(), value.c_str(), nullptr, cookie_);
+        callback_(static_cast<::AudioExtParamKey>(key), condition.c_str(),
+            value.c_str(), static_cast<void *>(&reserved), cookie_);
         return DH_SUCCESS;
     } else {
         return ERR_DH_AUDIO_HDF_FAILURE;
