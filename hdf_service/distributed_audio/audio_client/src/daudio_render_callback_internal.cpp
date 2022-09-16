@@ -15,7 +15,7 @@
 
 #include "daudio_render_callback_internal.h"
 
-#include <v1_0/audio_render_callback_stub.h>
+#include <v1_0/iaudio_render_callback.h>
 
 #include "daudio_errcode.h"
 

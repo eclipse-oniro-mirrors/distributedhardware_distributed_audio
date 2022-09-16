@@ -17,7 +17,7 @@
 #define OHOS_DAUDIO_MANAGER_CALLBACK_H
 
 #include "idaudio_hdi_callback.h"
-#include "v1_0/daudio_callback_stub.h"
+#include "v1_0/id_audio_callback.h"
 #include "v1_0/types.h"
 
 namespace OHOS {

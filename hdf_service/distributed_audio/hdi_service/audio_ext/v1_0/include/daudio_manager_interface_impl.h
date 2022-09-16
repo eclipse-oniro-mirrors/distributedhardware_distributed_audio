@@ -19,7 +19,7 @@
 #include <mutex>
 
 #include "audio_manager_interface_impl.h"
-#include "v1_0/daudio_manager_stub.h"
+#include "v1_0/id_audio_manager.h"
 
 namespace OHOS {
 namespace HDI {

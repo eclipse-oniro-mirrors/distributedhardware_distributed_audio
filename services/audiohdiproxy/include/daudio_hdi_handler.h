@@ -24,7 +24,7 @@
 #include "daudio_manager_callback.h"
 #include "idaudio_hdi_callback.h"
 #include "single_instance.h"
-#include "v1_0/daudio_callback_stub.h"
+#include "v1_0/id_audio_callback.h"
 #include "v1_0/id_audio_manager.h"
 
 namespace OHOS {
