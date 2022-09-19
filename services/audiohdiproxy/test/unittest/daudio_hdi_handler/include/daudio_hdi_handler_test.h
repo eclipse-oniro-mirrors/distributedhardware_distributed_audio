@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 
 #include "audio_test_utils.h"
+#include "daudio_constants.h"
 #define private public
 #include "daudio_hdi_handler.h"
 #undef private
@@ -32,8 +33,8 @@ public:
     void SetUp();
     void TearDown();
 
-    int32_t dhId_ = 64;
-    std::string devId_ = "64";
+    int32_t dhId_ = PIN_OUT_DAUDIO_DEFAULT;
+    std::string devId_ = "PIN_OUT_DAUDIO_DEFAULT";
     std::string capability_ = "DH_SUCCESS";
 
     std::shared_ptr<DAudioHdiHandler> hdiHandler_ = nullptr;

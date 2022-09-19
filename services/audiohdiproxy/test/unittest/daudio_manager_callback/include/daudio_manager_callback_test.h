@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 
 #include "audio_test_utils.h"
+#include "daudio_constants.h"
 #define private public
 #include "daudio_manager_callback.h"
 #undef private
@@ -33,7 +34,7 @@ public:
     void TearDown();
 
     std::string adpName_;
-    int32_t devId_ = 64;
+    int32_t devId_ = PIN_OUT_DAUDIO_DEFAULT;
 
     std::shared_ptr<IDAudioHdiCallback> hdiCallback_ = nullptr;
     std::shared_ptr<DAudioManagerCallback> manCallback_ = nullptr;
