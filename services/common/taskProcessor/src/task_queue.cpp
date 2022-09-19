@@ -75,6 +75,10 @@ void TaskQueue::Consume(std::shared_ptr<TaskImplInterface> &task)
 
 int32_t TaskQueue::Produce(std::shared_ptr<TaskImplInterface> &task)
 {
+    if (task == nullptr) {
+        DHLOGE("The parameter is empty.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     std::lock_guard<std::mutex> lck(taskQueueMutex_);
     if (taskQueue_.size() >= maxSize_) {
         DHLOGI("task queue is full, size: %zu", taskQueue_.size());

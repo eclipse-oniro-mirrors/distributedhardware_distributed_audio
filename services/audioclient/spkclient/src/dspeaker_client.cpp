@@ -198,6 +198,10 @@ void DSpeakerClient::PlayThreadRunning()
 int32_t DSpeakerClient::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData)
 {
     DHLOGI("Write stream buffer.");
+    if (audioData == nullptr) {
+        DHLOGE("The parameter is empty.");
+        return ERR_DH_AUDIO_CLIENT_PARAM_IS_NULL;
+    }
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     while (dataQueue_.size() > DATA_QUEUE_MAX_SIZE) {
         DHLOGD("Data queue overflow.");

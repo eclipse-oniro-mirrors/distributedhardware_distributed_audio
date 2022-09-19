@@ -234,6 +234,10 @@ bool DAudioHandler::IsSupportPlugin()
 void DAudioHandler::RegisterPluginListener(std::shared_ptr<PluginListener> listener)
 {
     DHLOGI("Register plugin listener");
+    if (listener == nullptr) {
+        DHLOGE("The parameter is empty.");
+        return;
+    }
     listener_ = listener;
 }
 

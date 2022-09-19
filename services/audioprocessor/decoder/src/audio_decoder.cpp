@@ -422,11 +422,6 @@ void AudioDecoder::OnError(const AudioEvent &event)
 int32_t AudioDecoder::DecodeDone(const std::shared_ptr<AudioData> &outputData)
 {
     DHLOGD("Decode done.");
-    if (outputData == nullptr) {
-        DHLOGE("Output data is null.");
-        return ERR_DH_AUDIO_BAD_VALUE;
-    }
-
     std::shared_ptr<IAudioCodecCallback> cbObj = codecCallback_.lock();
     if (cbObj == nullptr) {
         DHLOGE("Codec callback is null.");

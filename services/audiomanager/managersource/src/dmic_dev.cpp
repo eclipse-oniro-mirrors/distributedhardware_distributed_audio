@@ -294,6 +294,10 @@ int32_t DMicDev::OnStateChange(const AudioEventType type)
 
 int32_t DMicDev::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData)
 {
+    if (audioData == nullptr) {
+        DHLOGE("The parameter is empty.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     while (dataQueue_.size() > DATA_QUEUE_MAX_SIZE) {
         DHLOGD("Data queue overflow.");
