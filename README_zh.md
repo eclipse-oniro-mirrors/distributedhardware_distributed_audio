@@ -1,4 +1,4 @@
-# **分布式音频组件**
+# **分布式音频部件**
 
 ## **简介**
 
@@ -80,21 +80,21 @@
 #### **3. 设备下线**
 设备下线后，分布式硬件管理框架去使能下线设备的音频硬件，本地移除分布式音频驱动并通知到音频框架，此时下线设备的分布式音频不可用。
 
-## **涉及仓**
+## **相关仓**
 ****
-**分布式硬件子系统：**  
+**分布式硬件子系统：**
 
 设备管理
-[device_manager](https://gitee.com/openharmony/device_manager)
+[device_manager](https://gitee.com/openharmony/distributedhardware_device_manager)
 
 分步式硬件管理框架
-[distributed_hardware_fwk](https://gitee.com/openharmony/distributed_hardware_fwk)
+[distributed_hardware_fwk](https://gitee.com/openharmony/distributedhardware_distributed_hardware_fwk)
 
 分布式相机
-[distributed_camera](https://gitee.com/openharmony/distributed_camera)
+[distributed_camera](https://gitee.com/openharmony/distributedhardware_distributed_camera)
 
 分布式屏幕
-[distributed_screen](https://gitee.com/openharmony/distributed_screen)
+[distributed_screen](https://gitee.com/openharmony/distributedhardware_distributed_screen)
 
 **分布式音频**
-[distributed_audio](https://gitee.com/openharmony/distributed_audio)
+[distributed_audio](http://mgit-tm.rnd.huawei.com/hmf/distributedhardware/distributed_audio)
