@@ -95,7 +95,7 @@ static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct ::Aud
     std::lock_guard<std::mutex> lock(context->mtx_);
 
     std::vector<AudioAdapterDescriptor> descriptors;
-    if (context == nullptr || context->proxy_ == nullptr) {
+    if (context->proxy_ == nullptr) {
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
@@ -171,7 +171,7 @@ static void UnloadAdapterInternal(struct AudioManager *manager, struct AudioAdap
 
     AudioManagerContext *context = reinterpret_cast<AudioManagerContext *>(manager);
     AudioAdapterContext *adapterContext = reinterpret_cast<AudioAdapterContext *>(adapter);
-    if (context == nullptr || context->proxy_ == nullptr) {
+    if (context->proxy_ == nullptr) {
         DHLOGE("The context or proxy for the context is nullptr.");
         return;
     }

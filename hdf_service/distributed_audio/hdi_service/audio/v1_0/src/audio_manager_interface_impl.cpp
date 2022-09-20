@@ -55,9 +55,9 @@ int32_t AudioManagerInterfaceImpl::GetAllAdapters(std::vector<AudioAdapterDescri
 {
     DHLOGI("Get all distributed audio adapters.");
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
-    for (auto &adp : mapAudioAdapter_) {
-        descs.push_back(adp.second->GetAdapterDesc());
-    }
+
+    std::transform(mapAudioAdapter_.begin(), mapAudioAdapter_.end(), std::back_inserter(descs),
+        [](auto& adp) { return adp.second->GetAdapterDesc(); });
 
     DHLOGI("Get adapters success, total is (%zu). ", mapAudioAdapter_.size());
     return HDF_SUCCESS;

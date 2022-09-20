@@ -71,9 +71,8 @@ void DHLog(DHLogLevel logLevel, const char *fmt, ...)
 {
     char logBuf[LOG_MAX_LEN] = {0};
     va_list arg;
-
-    (void)memset_s(&arg, sizeof(va_list), 0, sizeof(va_list));
     va_start(arg, fmt);
+
     int32_t ret = vsprintf_s(logBuf, sizeof(logBuf), fmt, arg);
     va_end(arg);
     if (ret < 0) {

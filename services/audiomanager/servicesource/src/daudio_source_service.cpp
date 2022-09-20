@@ -127,9 +127,9 @@ int DAudioSourceService::Dump(int32_t fd, const std::vector<std::u16string>& arg
     DHLOGI("Distributed audio source service dump.");
     std::string result;
     std::vector<std::string> argsStr;
-    for (auto item : args) {
-        argsStr.emplace_back(Str16ToStr8(item));
-    }
+
+    std::transform(args.cbegin(), args.cend(), std::back_inserter(argsStr),
+        [](const std::u16string& item) { return Str16ToStr8(item); });
 
     if (!DaudioHidumper::GetInstance().Dump(argsStr, result)) {
         DHLOGE("Hidump error");

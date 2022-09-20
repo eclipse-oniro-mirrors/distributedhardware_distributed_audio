@@ -57,11 +57,11 @@ int32_t DAudioSinkManager::UnInit()
 {
     DHLOGI("UnInit audio sink manager.");
     {
-        std::lock_guard<std::mutex> lock(remoteSvrMutex_);
+        std::lock_guard<std::mutex> remoteSvrLock(remoteSvrMutex_);
         sourceServiceMap_.clear();
     }
     {
-        std::lock_guard<std::mutex> lock(devMapMutex_);
+        std::lock_guard<std::mutex> devMapLock(devMapMutex_);
         for (auto iter = audioDevMap_.begin(); iter != audioDevMap_.end(); iter++) {
             if (iter->second != nullptr) {
                 iter->second->SleepAudioDev();

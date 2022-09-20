@@ -40,7 +40,7 @@ static int32_t GetCapturePositionInternal(struct AudioCapture *capture, uint64_t
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
     AudioCaptureContext *context = reinterpret_cast<AudioCaptureContext *>(capture);
-    if (context == nullptr || context->proxy_ == nullptr) {
+    if (context->proxy_ == nullptr) {
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
@@ -64,7 +64,7 @@ static int32_t CaptureFrameInternal(struct AudioCapture *capture, void *frame, u
     }
 
     AudioCaptureContext *context = reinterpret_cast<AudioCaptureContext *>(capture);
-    if (context == nullptr || context->proxy_ == nullptr) {
+    if (context->proxy_ == nullptr) {
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
