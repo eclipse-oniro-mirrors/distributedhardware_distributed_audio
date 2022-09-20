@@ -26,6 +26,7 @@
 #include "daudio_errorcode.h"
 #include "daudio_hisysevent.h"
 #include "daudio_log.h"
+#include "daudio_sa_process_state.h"
 #include "daudio_source_manager.h"
 #include "daudio_util.h"
 
@@ -83,7 +84,7 @@ int32_t DAudioSourceService::ReleaseSource()
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_EXIT, "daudio source sa exit success.");
     DAudioSourceManager::GetInstance().UnInit();
     DHLOGI("Audio source service process exit.");
-    exit(0);
+    SetSourceProcessExit();
     return DH_SUCCESS;
 }
 

@@ -13,25 +13,13 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DAUDIO_SOURCE_HANDLER_TEST_H
-#define OHOS_DAUDIO_SOURCE_HANDLER_TEST_H
-
-#include <gtest/gtest.h>
-#include <memory>
-
-#include "daudio_errorcode.h"
-#include "daudio_ipc_common.h"
-#include "daudio_source_handler.h"
+#ifndef DAUDIO_SA_PROCESS_STATE_H
+#define DAUDIO_SA_PROCESS_STATE_H
 
 namespace OHOS {
 namespace DistributedHardware {
-class DAudioSourceHandlerTest : public testing::Test {
-public:
-    static void SetUpTestCase(void);
-    static void TearDownTestCase(void);
-    void SetUp();
-    void TearDown();
-};
+void SetSinkProcessExit();
+void SetSourceProcessExit();
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif // OHOS_DAUDIO_SOURCE_HANDLER_TEST_H
+#endif // DAUDIO_SA_PROCESS_STATE_H
