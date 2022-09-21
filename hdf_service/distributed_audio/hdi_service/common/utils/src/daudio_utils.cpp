@@ -92,24 +92,6 @@ int32_t SetAudioParamStr(std::string &params, const std::string &key, const std:
     return DH_SUCCESS;
 }
 
-int32_t SetAudioParamInt(std::string &params, const std::string &key, const int32_t value)
-{
-    params = params + key + '=' + std::to_string(value) + ';';
-    return DH_SUCCESS;
-}
-
-int32_t SetAudioParamUInt(std::string &params, const std::string &key, const uint32_t value)
-{
-    params = params + key + '=' + std::to_string(value) + ';';
-    return DH_SUCCESS;
-}
-
-int32_t SetAudioParamBool(std::string &params, const std::string &key, const bool value)
-{
-    params = params + key + '=' + std::to_string(value) + ';';
-    return DH_SUCCESS;
-}
-
 int32_t GetDevTypeByDHId(int32_t dhId)
 {
     if ((uint32_t)dhId & 0x8000000) {

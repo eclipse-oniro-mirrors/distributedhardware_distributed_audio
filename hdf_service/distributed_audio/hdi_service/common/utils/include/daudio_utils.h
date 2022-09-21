@@ -32,12 +32,6 @@ int32_t GetAudioParamBool(const std::string &params, const std::string &key, boo
 
 int32_t SetAudioParamStr(std::string &params, const std::string &key, const std::string &value);
 
-int32_t SetAudioParamInt(std::string &params, const std::string &key, const int32_t value);
-
-int32_t SetAudioParamUInt(std::string &params, const std::string &key, const uint32_t value);
-
-int32_t SetAudioParamBool(std::string &params, const std::string &key, const bool value);
-
 int32_t GetDevTypeByDHId(int32_t dhId);
 } // DistributedHardware
 } // OHOS

@@ -108,13 +108,6 @@ int32_t GetDevTypeByDHId(int32_t dhId)
     return AUDIO_DEVICE_TYPE_UNKNOWN;
 }
 
-int64_t GetNowTimeMs()
-{
-    std::chrono::milliseconds nowMs =
-        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-    return nowMs.count();
-}
-
 int64_t GetNowTimeUs()
 {
     std::chrono::microseconds nowUs =
