@@ -18,6 +18,7 @@
 
 #include <mutex>
 #include <string>
+#include <cmath>
 
 #include <v1_0/audio_types.h>
 #include <v1_0/iaudio_render.h>
@@ -33,6 +34,8 @@ using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
 
+constexpr uint32_t DURATION_FRAMES = 100;
+constexpr uint32_t CUR_FRAME_INIT_VALUE = 0;
 typedef enum {
     RENDER_STATUS_OPEN = 0,
     RENDER_STATUS_CLOSE,
@@ -93,6 +96,9 @@ public:
     uint32_t GetVolumeInner();
     uint32_t GetMaxVolumeInner();
     uint32_t GetMinVolumeInner();
+private:
+    float GetFadeRate(uint32_t currentIndex, const uint32_t durationIndex);
+    int32_t FadeInProcess(const uint32_t durationFrame, int8_t* frameData, const size_t frameLength);
 
 private:
     std::string adapterName_;
@@ -104,6 +110,7 @@ private:
     uint32_t vol_ = 0;
     uint32_t volMax_ = 0;
     uint32_t volMin_ = 0;
+    uint32_t currentFrame_ = 0;
     std::mutex renderMtx_;
     AudioChannelMode channelMode_ = AUDIO_CHANNEL_NORMAL;
     AudioRenderStatus renderStatus_ = RENDER_STATUS_CLOSE;

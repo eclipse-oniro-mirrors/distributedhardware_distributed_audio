@@ -51,6 +51,37 @@ int32_t AudioRenderInterfaceImpl::GetLatency(uint32_t &ms)
     return HDF_SUCCESS;
 }
 
+float AudioRenderInterfaceImpl::GetFadeRate(uint32_t currentIndex, const uint32_t durationIndex)
+{
+    if (currentIndex > durationIndex) {
+        return 1.0f;
+    }
+
+    float fadeRate = static_cast<float>(currentIndex) / durationIndex * DAUDIO_FADE_NORMALIZATION_FACTOR;
+    if (fadeRate < 1) {
+        return pow(fadeRate, DAUDIO_FADE_POWER_NUM) / DAUDIO_FADE_NORMALIZATION_FACTOR;
+    }
+    return -pow(fadeRate - DAUDIO_FADE_MAXIMUM_VALUE, DAUDIO_FADE_POWER_NUM) /
+        DAUDIO_FADE_NORMALIZATION_FACTOR + 1;
+}
+
+int32_t AudioRenderInterfaceImpl::FadeInProcess(const uint32_t durationFrame,
+    int8_t* frameData, const size_t frameLength)
+{
+    int16_t* frame = reinterpret_cast<int16_t *>(frameData);
+    const size_t newFrameLength = frameLength / 2;
+
+    for (size_t k = 0; k < newFrameLength; ++k) {
+        float rate = GetFadeRate(currentFrame_ * newFrameLength + k, durationFrame * newFrameLength);
+        frame[k] = currentFrame_ == durationFrame - 1 ? frame[k] : static_cast<int16_t>(rate * frame[k]);
+    }
+    DHLOGI("Fade-in frame[currentFrame: %d].", currentFrame_);
+    ++currentFrame_;
+    currentFrame_ = currentFrame_ >= durationFrame ? durationFrame - 1 : currentFrame_;
+
+    return HDF_SUCCESS;
+}
+
 int32_t AudioRenderInterfaceImpl::RenderFrame(const std::vector<int8_t> &frame, uint64_t &replyBytes)
 {
     DHLOGI("Render frame[samplerate: %d, channelmask: %d, bitformat: %d].", devAttrs_.sampleRate,
@@ -64,6 +95,7 @@ int32_t AudioRenderInterfaceImpl::RenderFrame(const std::vector<int8_t> &frame, 
 
     AudioParameter param = { devAttrs_.format, devAttrs_.channelCount, devAttrs_.sampleRate };
     AudioData data = { param, frame };
+    FadeInProcess(DURATION_FRAMES, data.data.data(), frame.size());
     if (audioExtCallback_ == nullptr) {
         DHLOGE("Callback is nullptr.");
         return HDF_FAILURE;
@@ -150,6 +182,7 @@ int32_t AudioRenderInterfaceImpl::Start()
     }
     std::lock_guard<std::mutex> renderLck(renderMtx_);
     renderStatus_ = RENDER_STATUS_START;
+    currentFrame_ = CUR_FRAME_INIT_VALUE;
     return HDF_SUCCESS;
 }
 

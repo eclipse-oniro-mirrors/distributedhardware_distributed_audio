@@ -31,6 +31,8 @@
 namespace OHOS {
 namespace DistributedHardware {
 using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioAdapter;
+
+constexpr int DESCRIPTOR_LENGTH = 32;
 struct AudioAdapterContext {
     AudioAdapterContext();
     ~AudioAdapterContext();

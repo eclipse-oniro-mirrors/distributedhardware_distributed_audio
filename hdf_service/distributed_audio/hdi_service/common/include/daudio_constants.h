@@ -53,6 +53,10 @@ constexpr int32_t AUDIO_DEVICE_TYPE_UNKNOWN = 0;
 constexpr int32_t AUDIO_DEVICE_TYPE_SPEAKER = 1;
 constexpr int32_t AUDIO_DEVICE_TYPE_MIC = 2;
 
+constexpr uint32_t DAUDIO_FADE_NORMALIZATION_FACTOR = 2;
+constexpr uint32_t DAUDIO_FADE_POWER_NUM = 2;
+constexpr uint32_t DAUDIO_FADE_MAXIMUM_VALUE = 2;
+
 constexpr uint32_t VOLUME_GROUP_ID_DEFAULT = 0;
 constexpr uint32_t INTERRUPT_GROUP_ID_DEFAULT = 0;
 

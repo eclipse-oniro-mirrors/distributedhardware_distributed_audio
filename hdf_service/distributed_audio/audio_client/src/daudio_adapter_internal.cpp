@@ -32,8 +32,6 @@ namespace OHOS {
 namespace DistributedHardware {
 using namespace OHOS::HDI::DistributedAudio::Audio::V1_0;
 
-constexpr int DESCRIPTOR_LENGTH = 32;
-
 static int32_t InitAllPortsInternal(struct AudioAdapter *adapter)
 {
     if (adapter == nullptr) {
