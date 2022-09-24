@@ -74,6 +74,25 @@ HWTEST_F(DAudioIpcCallbackTest, OnNotifyRegResult_002, TestSize.Level1)
 }
 
 /**
+ * @tc.name: OnNotifyRegResult_003
+ * @tc.desc: Verify the OnNotifyRegResult function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioIpcCallbackTest, OnNotifyRegResult_003, TestSize.Level1)
+{
+    size_t  DAUDIO_MAX_DEVICE_ID_LEN = 101;
+    std::string devId ;
+    devId.resize(DAUDIO_MAX_DEVICE_ID_LEN);
+    const std::string dhId = "dhId";
+    const std::string reqId = "reqId";
+    int32_t status = 0;
+    const std::string data = "data";
+    int32_t ret = dAudioIpcCallback_->OnNotifyRegResult(devId, dhId, reqId, status, data);
+    EXPECT_EQ(ERR_DH_AUDIO_SA_DEVID_ILLEGAL, ret);
+}
+
+/**
  * @tc.name: OnNotifyUnregResult_001
  * @tc.desc: Verify the OnNotifyUnregResult function.
  * @tc.type: FUNC
@@ -108,6 +127,25 @@ HWTEST_F(DAudioIpcCallbackTest, OnNotifyUnregResult_002, TestSize.Level1)
     const std::string data = "data";
     int32_t ret = dAudioIpcCallback_->OnNotifyUnregResult(devId, dhId, reqId, status, data);
     EXPECT_EQ(ERR_DH_AUDIO_SA_UNREGISTERCALLBACK_NOT_FOUND, ret);
+}
+
+/**
+ * @tc.name: OnNotifyUnregResult_003
+ * @tc.desc: Verify the OnNotifyUnregResult function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioIpcCallbackTest, OnNotifyUnregResult_003, TestSize.Level1)
+{
+    size_t  DAUDIO_MAX_DEVICE_ID_LEN = 101;
+    std::string devId ;
+    devId.resize(DAUDIO_MAX_DEVICE_ID_LEN);
+    const std::string dhId = "dhId";
+    const std::string reqId = "reqId";
+    int32_t status = 0;
+    const std::string data = "data";
+    int32_t ret = dAudioIpcCallback_->OnNotifyUnregResult(devId, dhId, reqId, status, data);
+    EXPECT_EQ(ERR_DH_AUDIO_SA_DEVID_ILLEGAL, ret);
 }
 
 /**

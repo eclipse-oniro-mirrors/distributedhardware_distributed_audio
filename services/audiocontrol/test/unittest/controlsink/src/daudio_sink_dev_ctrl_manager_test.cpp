@@ -37,6 +37,18 @@ void DAudioSinkDevCtrlMgrTest::TearDown(void)
 }
 
 /**
+ * @tc.name: OnStateChange_001
+ * @tc.desc: Verify the OnStateChange function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSinkDevCtrlMgrTest, OnStateChange_001, TestSize.Level1)
+{
+    int32_t type = static_cast<int32_t>(AudioEventType::CTRL_OPENED);
+    sinkDevCtrl_->OnStateChange(type);
+}
+
+/**
  * @tc.name: SetUp_001
  * @tc.desc: Verify the SetUp function.
  * @tc.type: FUNC
@@ -114,6 +126,19 @@ HWTEST_F(DAudioSinkDevCtrlMgrTest, IsOpened_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: OnEventReceived_001
+ * @tc.desc: Verify the OnEventReceived function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSinkDevCtrlMgrTest, OnEventReceived_001, TestSize.Level1)
+{
+    AudioEvent event;
+    sinkDevCtrl_->audioEventCallback_ = std::make_shared<MockIAudioEventCallback>();
+    sinkDevCtrl_->OnEventReceived(event);
+}
+
+/**
  * @tc.name: SendAudioEvent_001
  * @tc.desc: Verify the SendAudioEvent function.
  * @tc.type: FUNC
@@ -135,22 +160,9 @@ HWTEST_F(DAudioSinkDevCtrlMgrTest, SendAudioEvent_001, TestSize.Level1)
 HWTEST_F(DAudioSinkDevCtrlMgrTest, SendAudioEvent_002, TestSize.Level1)
 {
     std::string devId = "devId";
-    AudioEvent event ;
+    AudioEvent event;
     sinkDevCtrl_->audioCtrlTrans_ = std::make_shared<MockIAudioCtrlTransport>(devId);
     EXPECT_EQ(DH_SUCCESS, sinkDevCtrl_->SendAudioEvent(event));
-}
-
-/**
- * @tc.name: OnEventReceived_001
- * @tc.desc: Verify the OnEventReceived function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSinkDevCtrlMgrTest, OnEventReceived_001, TestSize.Level1)
-{
-    AudioEvent event ;
-    sinkDevCtrl_->audioEventCallback_ = std::make_shared<MockIAudioEventCallback>();
-    sinkDevCtrl_->OnEventReceived(event);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
