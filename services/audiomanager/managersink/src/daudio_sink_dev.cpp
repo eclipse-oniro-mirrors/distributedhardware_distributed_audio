@@ -33,6 +33,24 @@ namespace DistributedHardware {
 DAudioSinkDev::DAudioSinkDev(const std::string &devId) : devId_(devId)
 {
     DHLOGI("Distributed audio sink device constructed, devId: %s.", GetAnonyString(devId).c_str());
+    memberFuncMap_[OPEN_CTRL] = &DAudioSinkDev::NotifyOpenCtrlChannel;
+    memberFuncMap_[CLOSE_CTRL] = &DAudioSinkDev::NotifyCloseCtrlChannel;
+    memberFuncMap_[CTRL_OPENED] = &DAudioSinkDev::NotifyCtrlOpened;
+    memberFuncMap_[CTRL_CLOSED] = &DAudioSinkDev::NotifyCtrlClosed;
+    memberFuncMap_[SET_PARAM] = &DAudioSinkDev::NotifySetParam;
+    memberFuncMap_[AUDIO_FOCUS_CHANGE] = &DAudioSinkDev::NotifyFocusChange;
+    memberFuncMap_[AUDIO_RENDER_STATE_CHANGE] = &DAudioSinkDev::NotifyRenderStateChange;
+    memberFuncMap_[OPEN_SPEAKER] = &DAudioSinkDev::NotifyOpenSpeaker;
+    memberFuncMap_[CLOSE_SPEAKER] = &DAudioSinkDev::NotifyCloseSpeaker;
+    memberFuncMap_[SPEAKER_OPENED] = &DAudioSinkDev::NotifySpeakerOpened;
+    memberFuncMap_[SPEAKER_CLOSED] = &DAudioSinkDev::NotifySpeakerClosed;
+    memberFuncMap_[OPEN_MIC] = &DAudioSinkDev::NotifyOpenMic;
+    memberFuncMap_[CLOSE_MIC] = &DAudioSinkDev::NotifyCloseMic;
+    memberFuncMap_[MIC_OPENED] = &DAudioSinkDev::NotifyMicOpened;
+    memberFuncMap_[MIC_CLOSED] = &DAudioSinkDev::NotifyMicClosed;
+    memberFuncMap_[VOLUME_SET] = &DAudioSinkDev::NotifySetVolume;
+    memberFuncMap_[VOLUME_MUTE_SET] = &DAudioSinkDev::NotifySetMute;
+    memberFuncMap_[VOLUME_CHANGE] = &DAudioSinkDev::NotifyVolumeChange;
 }
 
 DAudioSinkDev::~DAudioSinkDev()
@@ -57,123 +75,16 @@ void DAudioSinkDev::SleepAudioDev()
 void DAudioSinkDev::NotifyEvent(const AudioEvent &audioEvent)
 {
     DHLOGI("Notify event, eventType: %d.", (int32_t)audioEvent.type);
-    if (IsSpeakerEvent(audioEvent)) {
-        NotifySpeakerEvent(audioEvent);
-        return;
-    } else if (IsMicEvent(audioEvent)) {
-        NotifyMicEvent(audioEvent);
-        return;
-    } else if (IsVolumeEvent(audioEvent)) {
-        NotifyVolumeEvent(audioEvent);
+
+    std::map<AudioEventType, DAudioSinkDevFunc>::iterator iter = memberFuncMap_.find(audioEvent.type);
+    if (iter == memberFuncMap_.end()) {
+        DHLOGE("Invalid eventType.");
         return;
     }
-    switch (audioEvent.type) {
-        case OPEN_CTRL:
-            NotifyOpenCtrlChannel(audioEvent);
-            break;
-        case CLOSE_CTRL:
-            NotifyCloseCtrlChannel(audioEvent);
-            break;
-        case CTRL_OPENED:
-            NotifyCtrlOpened(audioEvent);
-            break;
-        case CTRL_CLOSED:
-            NotifyCtrlClosed(audioEvent);
-            break;
-        case SET_PARAM:
-            NotifySetParam(audioEvent);
-            break;
-        case AUDIO_FOCUS_CHANGE:
-            NotifyFocusChange(audioEvent);
-            break;
-        case AUDIO_RENDER_STATE_CHANGE:
-            NotifyRenderStateChange(audioEvent);
-            break;
-        default:
-            DHLOGE("Unknown event type: %d", (int32_t)audioEvent.type);
-    }
+    DAudioSinkDevFunc &func = iter->second;
+    (this->*func)(audioEvent);
 }
 
-void DAudioSinkDev::NotifySpeakerEvent(const AudioEvent &audioEvent)
-{
-    DHLOGI("Notify speaker event, eventType: %d.", audioEvent.type);
-    switch (audioEvent.type) {
-        case OPEN_SPEAKER:
-            NotifyOpenSpeaker(audioEvent);
-            break;
-        case CLOSE_SPEAKER:
-            NotifyCloseSpeaker(audioEvent);
-            break;
-        case SPEAKER_OPENED:
-            NotifySpeakerOpened(audioEvent);
-            break;
-        case SPEAKER_CLOSED:
-            NotifySpeakerClosed(audioEvent);
-            break;
-        default:
-            return;
-    }
-}
-
-void DAudioSinkDev::NotifyMicEvent(const AudioEvent &audioEvent)
-{
-    DHLOGI("Notify mic event, eventType: %d.", audioEvent.type);
-    switch (audioEvent.type) {
-        case OPEN_MIC:
-            NotifyOpenMic(audioEvent);
-            break;
-        case CLOSE_MIC:
-            NotifyCloseMic(audioEvent);
-            break;
-        case MIC_OPENED:
-            NotifyMicOpened(audioEvent);
-            break;
-        case MIC_CLOSED:
-            NotifyMicClosed(audioEvent);
-            break;
-        default:
-            return;
-    }
-}
-
-void DAudioSinkDev::NotifyVolumeEvent(const AudioEvent &audioEvent)
-{
-    DHLOGI("Notify volume event, eventType: %d.", audioEvent.type);
-    switch (audioEvent.type) {
-        case VOLUME_SET:
-            NotifySetVolume(audioEvent);
-            break;
-        case VOLUME_MUTE_SET:
-            NotifySetMute(audioEvent);
-            break;
-        case VOLUME_CHANGE:
-            NotifyVolumeChange(audioEvent);
-            break;
-        default:
-            return;
-    }
-}
-
-bool DAudioSinkDev::IsSpeakerEvent(const AudioEvent &event)
-{
-    const int32_t formatNum = 10;
-    const int32_t spkEventBegin = 1;
-    return ((int32_t)((int32_t)event.type / formatNum) == spkEventBegin);
-}
-
-bool DAudioSinkDev::IsMicEvent(const AudioEvent &event)
-{
-    const int32_t formatNum = 10;
-    const int32_t micEventBegin = 2;
-    return ((int32_t)((int32_t)event.type / formatNum) == micEventBegin);
-}
-
-bool DAudioSinkDev::IsVolumeEvent(const AudioEvent &event)
-{
-    const int32_t formatNum = 10;
-    const int32_t volumeEventBegin = 3;
-    return ((int32_t)((int32_t)event.type / formatNum) == volumeEventBegin);
-}
 int32_t DAudioSinkDev::NotifyOpenCtrlChannel(const AudioEvent &audioEvent)
 {
     DHLOGI("Notify open ctrl channel.");

@@ -37,8 +37,7 @@ namespace OHOS {
 namespace DistributedHardware {
 class DAudioSourceDev : public IAudioEventCallback, public std::enable_shared_from_this<DAudioSourceDev> {
 public:
-    DAudioSourceDev(const std::string &devId, const std::shared_ptr<DAudioSourceMgrCallback> &callback)
-        : devId_(devId), mgrCallback_(callback) {};
+    DAudioSourceDev(const std::string &devId, const std::shared_ptr<DAudioSourceMgrCallback> &callback);
     ~DAudioSourceDev() = default;
 
     int32_t AwakeAudioDev();
@@ -91,10 +90,6 @@ private:
 
     int32_t NotifySinkDev(const AudioEventType type, const json Param, const std::string dhId);
     int32_t NotifyHDF(const AudioEventType type, const std::string result);
-    void NotifySpeakerEvent(const AudioEvent &event);
-    void NotifyMicEvent(const AudioEvent &event);
-    bool IsSpeakerEvent(const AudioEvent &event);
-    bool IsMicEvent(const AudioEvent &event);
     int32_t OpenCtrlTrans(const AudioEvent &event);
     int32_t CloseCtrlTrans(const AudioEvent &event, bool isSpk);
     AudioEventType getEventTypeFromArgs (const std::string &args);
@@ -126,6 +121,10 @@ private:
     std::condition_variable rpcWaitCond_;
     bool rpcResult_ = false;
     uint8_t rpcNotify_ = 0;
+
+    using DAudioSourceDevFunc = int32_t (DAudioSourceDev::*)(const AudioEvent &audioEvent);
+    std::map<AudioEventType, DAudioSourceDevFunc> memberFuncMap_;
+    std::map<AudioEventType, uint8_t> eventNotifyMap_;
 };
 } // DistributedHardware
 } // OHOS

@@ -25,11 +25,13 @@ namespace OHOS {
 namespace DistributedHardware {
 void TaskQueue::Start()
 {
+    DHLOGI("Start task queue.");
     taskQueueReady_ = true;
     isQuitTaskQueue_ = false;
     mainThreadLoop_ = std::thread(&TaskQueue::Run, this);
     while (!mainThreadLoop_.joinable()) {
     }
+    DHLOGI("Start task queue success.");
 }
 
 void TaskQueue::Stop()

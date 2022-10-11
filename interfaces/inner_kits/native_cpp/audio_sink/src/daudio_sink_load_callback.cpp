@@ -24,26 +24,21 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-DAudioSinkLoadCallback::DAudioSinkLoadCallback(const std::string &params) : params_(params) {}
-
 void DAudioSinkLoadCallback::OnLoadSystemAbilitySuccess(
     int32_t systemAbilityId, const sptr<IRemoteObject> &remoteObject)
 {
-    DHLOGI("Load audio SA success, systemAbilityId: %d, remoteObject result: %s.",
-        systemAbilityId, (remoteObject != nullptr) ? "true" : "false");
+    DHLOGI("Load audio SA success, systemAbilityId: %d.", systemAbilityId);
     if (remoteObject == nullptr) {
         DHLOGE("RemoteObject is nullptr.");
         return;
     }
-
     DAudioSinkHandler::GetInstance().FinishStartSA(params_, remoteObject);
 }
 
 void DAudioSinkLoadCallback::OnLoadSystemAbilityFail(int32_t systemAbilityId)
 {
     DHLOGE("Load audio SA failed, systemAbilityId: %d.", systemAbilityId);
-    DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL,
-        "daudio sink LoadSystemAbility call failed.");
+    DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, "daudio sink LoadSA call failed.");
 }
 } // namespace DistributedHardware
 } // namespace OHOS

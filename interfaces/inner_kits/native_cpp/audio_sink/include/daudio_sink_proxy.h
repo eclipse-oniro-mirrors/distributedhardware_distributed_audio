@@ -25,16 +25,12 @@ namespace OHOS {
 namespace DistributedHardware {
 class DAudioSinkProxy : public IRemoteProxy<IDAudioSink> {
 public:
-    explicit DAudioSinkProxy(const sptr<IRemoteObject> impl)
-        : IRemoteProxy<IDAudioSink>(impl)
-    {
-    }
+    explicit DAudioSinkProxy(const sptr<IRemoteObject> impl) : IRemoteProxy<IDAudioSink>(impl) {}
+    ~DAudioSinkProxy() = default;
 
-    ~DAudioSinkProxy() {}
     int32_t InitSink(const std::string &params) override;
     int32_t ReleaseSink() override;
-    int32_t SubscribeLocalHardware(const std::string &dhId, const std::string
-     &param) override;
+    int32_t SubscribeLocalHardware(const std::string &dhId, const std::string &param) override;
     int32_t UnsubscribeLocalHardware(const std::string &dhId) override;
     void DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
         const std::string &eventContent) override;

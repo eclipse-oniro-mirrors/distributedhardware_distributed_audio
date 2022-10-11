@@ -50,6 +50,46 @@ public:
         return DH_SUCCESS;
     }
 };
+
+class MockIDAudioSource : public IDAudioSource {
+public:
+    ~MockIDAudioSource() = default;
+
+    int32_t InitSource(const std::string &params, const sptr<IDAudioIpcCallback> &callback)
+    {
+        return DH_SUCCESS;
+    }
+
+    int32_t ReleaseSource()
+    {
+        return DH_SUCCESS;
+    }
+
+    int32_t RegisterDistributedHardware(const std::string &devId, const std::string &dhId, const EnableParam &param,
+        const std::string &reqId)
+    {
+        return DH_SUCCESS;
+    }
+
+    int32_t UnregisterDistributedHardware(const std::string &devId, const std::string &dhId, const std::string &reqId)
+    {
+        return DH_SUCCESS;
+    }
+
+    int32_t ConfigDistributedHardware(const std::string &devId, const std::string &dhId, const std::string &key,
+        const std::string &value)
+    {
+        return DH_SUCCESS;
+    }
+
+    sptr<IRemoteObject> AsObject()
+    {
+        return nullptr;
+    }
+
+    void DAudioNotify(const std::string &devId, const std::string &dhId, const int32_t eventType,
+        const std::string &eventContent) {}
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_AUDIO_IPC_COMMON_H

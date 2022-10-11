@@ -51,7 +51,6 @@ int32_t DAudioIpcCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &dat
 
 int32_t DAudioIpcCallbackStub::OnNotifyRegResultInner(MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    DHLOGI("Notification of registration result.");
     std::string networkId = data.ReadString();
     std::string dhId = data.ReadString();
     std::string reqId = data.ReadString();
@@ -64,7 +63,6 @@ int32_t DAudioIpcCallbackStub::OnNotifyRegResultInner(MessageParcel &data, Messa
 int32_t DAudioIpcCallbackStub::OnNotifyUnregResultInner(MessageParcel &data, MessageParcel &reply,
     MessageOption &option)
 {
-    DHLOGI("Notification of unregistration result.");
     std::string networkId = data.ReadString();
     std::string dhId = data.ReadString();
     std::string reqId = data.ReadString();

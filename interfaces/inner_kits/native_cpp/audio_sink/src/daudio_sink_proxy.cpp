@@ -26,7 +26,6 @@ namespace OHOS {
 namespace DistributedHardware {
 int32_t DAudioSinkProxy::InitSink(const std::string &params)
 {
-    DHLOGI("Init sink.");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -57,8 +56,7 @@ int32_t DAudioSinkProxy::ReleaseSink()
     return ret;
 }
 
-int32_t DAudioSinkProxy::SubscribeLocalHardware(const std::string &dhId, const std::string
-    &param)
+int32_t DAudioSinkProxy::SubscribeLocalHardware(const std::string &dhId, const std::string &param)
 {
     MessageParcel data;
     MessageParcel reply;

@@ -57,12 +57,6 @@ public:
     void OnTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
 
 private:
-    bool IsSpeakerEvent(const AudioEvent &event);
-    bool IsMicEvent(const AudioEvent &event);
-    bool IsVolumeEvent(const AudioEvent &event);
-    void NotifySpeakerEvent(const AudioEvent &event);
-    void NotifyMicEvent(const AudioEvent &event);
-    void NotifyVolumeEvent(const AudioEvent &event);
     int32_t NotifyOpenCtrlChannel(const AudioEvent &audioEvent);
     int32_t NotifyCloseCtrlChannel(const AudioEvent &audioEvent);
     int32_t NotifyCtrlOpened(const AudioEvent &audioEvent);
@@ -97,6 +91,9 @@ private:
 
     std::mutex taskQueueMutex_;
     std::shared_ptr<TaskQueue> taskQueue_;
+
+    using DAudioSinkDevFunc = int32_t (DAudioSinkDev::*)(const AudioEvent &audioEvent);
+    std::map<AudioEventType, DAudioSinkDevFunc> memberFuncMap_;
 };
 } // DistributedHardware
 } // OHOS

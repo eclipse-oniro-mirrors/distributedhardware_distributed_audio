@@ -22,7 +22,7 @@ namespace OHOS {
 namespace DistributedHardware {
 class DAudioSinkLoadCallback : public SystemAbilityLoadCallbackStub {
 public:
-    explicit DAudioSinkLoadCallback(const std::string &params);
+    explicit DAudioSinkLoadCallback(const std::string &params) : params_(params) {}
     void OnLoadSystemAbilitySuccess(int32_t systemAbilityId,
         const sptr<IRemoteObject> &remoteObject) override;
     void OnLoadSystemAbilityFail(int32_t systemAbilityId) override;

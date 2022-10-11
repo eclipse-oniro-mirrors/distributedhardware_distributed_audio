@@ -77,18 +77,19 @@ private:
     };
 
 private:
+    static constexpr size_t DATA_QUEUE_MAX_SIZE = 500;
     std::mutex listenerMtx_;
     std::mutex sessSetMtx_;
     std::mutex dataQueueMtx_;
     std::condition_variable sendDataCond_;
     std::thread sendDataThread_;
 
-    bool isSessionOpened_ = false;
+    std::atomic<bool> isSessionOpened_ = false;
     ISessionListener sessListener_;
     std::shared_ptr<ISoftbusListener> nullListener_;
     std::unordered_map<std::string, std::set<std::string>> mapSessionSet_;
-    std::unordered_map<std::string, std::shared_ptr<ISoftbusListener>> mapListeners_;
-    std::unordered_map<int32_t, std::shared_ptr<ISoftbusListener>> mapSessListeners_;
+    std::unordered_map<std::string, std::shared_ptr<ISoftbusListener>> mapListenersN_;
+    std::unordered_map<int32_t, std::shared_ptr<ISoftbusListener>> mapListenersI_;
     std::queue<std::shared_ptr<SoftbusStreamData>> audioDataQueue_;
 };
 } // namespace DistributedHardware

@@ -28,6 +28,38 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+DAudioSourceDev::DAudioSourceDev(const std::string &devId, const std::shared_ptr<DAudioSourceMgrCallback> &callback)
+    : devId_(devId), mgrCallback_(callback)
+{
+    memberFuncMap_[OPEN_SPEAKER] = &DAudioSourceDev::HandleOpenDSpeaker;
+    memberFuncMap_[CLOSE_SPEAKER] = &DAudioSourceDev::HandleCloseDSpeaker;
+    memberFuncMap_[SPEAKER_OPENED] = &DAudioSourceDev::HandleDSpeakerOpened;
+    memberFuncMap_[SPEAKER_CLOSED] = &DAudioSourceDev::HandleDSpeakerClosed;
+    memberFuncMap_[NOTIFY_OPEN_SPEAKER_RESULT] = &DAudioSourceDev::HandleNotifyRPC;
+    memberFuncMap_[NOTIFY_CLOSE_SPEAKER_RESULT] = &DAudioSourceDev::HandleNotifyRPC;
+    memberFuncMap_[OPEN_MIC] = &DAudioSourceDev::HandleOpenDMic;
+    memberFuncMap_[CLOSE_MIC] = &DAudioSourceDev::HandleCloseDMic;
+    memberFuncMap_[MIC_OPENED] = &DAudioSourceDev::HandleDMicOpened;
+    memberFuncMap_[MIC_CLOSED] = &DAudioSourceDev::HandleDMicClosed;
+    memberFuncMap_[NOTIFY_OPEN_MIC_RESULT] = &DAudioSourceDev::HandleNotifyRPC;
+    memberFuncMap_[NOTIFY_CLOSE_MIC_RESULT] = &DAudioSourceDev::HandleNotifyRPC;
+    memberFuncMap_[NOTIFY_OPEN_CTRL_RESULT] = &DAudioSourceDev::HandleNotifyRPC;
+    memberFuncMap_[NOTIFY_CLOSE_CTRL_RESULT] = &DAudioSourceDev::HandleNotifyRPC;
+    memberFuncMap_[CTRL_CLOSED] = &DAudioSourceDev::HandleCtrlTransClosed;
+    memberFuncMap_[VOLUME_SET] = &DAudioSourceDev::HandleVolumeSet;
+    memberFuncMap_[VOLUME_MUTE_SET] = &DAudioSourceDev::HandleVolumeSet;
+    memberFuncMap_[VOLUME_CHANGE] = &DAudioSourceDev::HandleVolumeChange;
+    memberFuncMap_[AUDIO_FOCUS_CHANGE] = &DAudioSourceDev::HandleFocusChange;
+    memberFuncMap_[AUDIO_RENDER_STATE_CHANGE] = &DAudioSourceDev::HandleRenderStateChange;
+
+    eventNotifyMap_[NOTIFY_OPEN_SPEAKER_RESULT] = EVENT_NOTIFY_OPEN_SPK;
+    eventNotifyMap_[NOTIFY_CLOSE_SPEAKER_RESULT] = EVENT_NOTIFY_CLOSE_SPK;
+    eventNotifyMap_[NOTIFY_OPEN_MIC_RESULT] = EVENT_NOTIFY_OPEN_MIC;
+    eventNotifyMap_[NOTIFY_CLOSE_MIC_RESULT] = EVENT_NOTIFY_CLOSE_MIC;
+    eventNotifyMap_[NOTIFY_OPEN_CTRL_RESULT] = EVENT_NOTIFY_OPEN_CTRL;
+    eventNotifyMap_[NOTIFY_CLOSE_CTRL_RESULT] = EVENT_NOTIFY_CLOSE_CTRL;
+}
+
 int32_t DAudioSourceDev::AwakeAudioDev()
 {
     constexpr size_t capacity = 20;
@@ -64,110 +96,14 @@ int32_t DAudioSourceDev::DisableDAudio(const std::string &dhId)
 
 void DAudioSourceDev::NotifyEvent(const AudioEvent &event)
 {
-    if (IsSpeakerEvent(event)) {
-        NotifySpeakerEvent(event);
+    DHLOGI("Notify event, eventType: %d.", event.type);
+    std::map<AudioEventType, DAudioSourceDevFunc>::iterator iter = memberFuncMap_.find(event.type);
+    if (iter == memberFuncMap_.end()) {
+        DHLOGE("Invalid eventType.");
         return;
-    } else if (IsMicEvent(event)) {
-        NotifyMicEvent(event);
-        return;
     }
-    DHLOGI("NotifyEvent, eventType: %d.", event.type);
-    switch (event.type) {
-        case AudioEventType::NOTIFY_OPEN_CTRL_RESULT:
-            HandleNotifyRPC(event);
-            break;
-        case AudioEventType::NOTIFY_CLOSE_CTRL_RESULT:
-            HandleNotifyRPC(event);
-            break;
-        case AudioEventType::CTRL_OPENED:
-            break;
-        case AudioEventType::CTRL_CLOSED:
-            HandleCtrlTransClosed(event);
-            break;
-        case AudioEventType::VOLUME_SET:
-        case AudioEventType::VOLUME_MUTE_SET:
-            HandleVolumeSet(event);
-            break;
-        case AudioEventType::VOLUME_CHANGE:
-            HandleVolumeChange(event);
-            break;
-        case AudioEventType::AUDIO_FOCUS_CHANGE:
-            HandleFocusChange(event);
-            break;
-        case AudioEventType::AUDIO_RENDER_STATE_CHANGE:
-            HandleRenderStateChange(event);
-            break;
-        default:
-            DHLOGE("Unknown event type.");
-    }
-}
-
-bool DAudioSourceDev::IsSpeakerEvent(const AudioEvent &event)
-{
-    const int32_t formatNum = 10;
-    const int32_t spkEventBegin = 1;
-    return ((int32_t)((int32_t)event.type / formatNum) == spkEventBegin);
-}
-
-bool DAudioSourceDev::IsMicEvent(const AudioEvent &event)
-{
-    const int32_t formatNum = 10;
-    const int32_t micEventBegin = 2;
-    return ((int32_t)((int32_t)event.type / formatNum) == micEventBegin);
-}
-
-void DAudioSourceDev::NotifySpeakerEvent(const AudioEvent &event)
-{
-    DHLOGI("Notify speaker event, eventType: %d.", event.type);
-    switch (event.type) {
-        case AudioEventType::OPEN_SPEAKER:
-            HandleOpenDSpeaker(event);
-            break;
-        case AudioEventType::CLOSE_SPEAKER:
-            HandleCloseDSpeaker(event);
-            break;
-        case AudioEventType::SPEAKER_OPENED:
-            HandleDSpeakerOpened(event);
-            break;
-        case AudioEventType::SPEAKER_CLOSED:
-            HandleDSpeakerClosed(event);
-            break;
-        case AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT:
-            HandleNotifyRPC(event);
-            break;
-        case AudioEventType::NOTIFY_CLOSE_SPEAKER_RESULT:
-            HandleNotifyRPC(event);
-            break;
-        default:
-            return;
-    }
-}
-
-void DAudioSourceDev::NotifyMicEvent(const AudioEvent &event)
-{
-    DHLOGI("Notify mic event, eventType: %d.", event.type);
-    switch (event.type) {
-        case AudioEventType::OPEN_MIC:
-            HandleOpenDMic(event);
-            break;
-        case AudioEventType::CLOSE_MIC:
-            HandleCloseDMic(event);
-            break;
-        case AudioEventType::MIC_OPENED:
-            HandleDMicOpened(event);
-            break;
-        case AudioEventType::MIC_CLOSED:
-            HandleDMicClosed(event);
-            break;
-        case AudioEventType::NOTIFY_OPEN_MIC_RESULT:
-            HandleNotifyRPC(event);
-            break;
-        case AudioEventType::NOTIFY_CLOSE_MIC_RESULT:
-            HandleNotifyRPC(event);
-            break;
-        default:
-            return;
-    }
+    DAudioSourceDevFunc &func = iter->second;
+    (this->*func)(event);
 }
 
 int32_t DAudioSourceDev::HandleOpenDSpeaker(const AudioEvent &event)
@@ -339,29 +275,13 @@ int32_t DAudioSourceDev::HandleNotifyRPC(const AudioEvent &event)
 
     rpcResult_ = (jParam[KEY_RESULT] == DH_SUCCESS) ? true : false;
     DHLOGI("Notify RPC event: %d, result: %d.", (int32_t)event.type, (int32_t)rpcResult_);
-    switch (event.type) {
-        case AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT:
-            rpcNotify_ = EVENT_NOTIFY_OPEN_SPK;
-            break;
-        case AudioEventType::NOTIFY_CLOSE_SPEAKER_RESULT:
-            rpcNotify_ = EVENT_NOTIFY_CLOSE_SPK;
-            break;
-        case AudioEventType::NOTIFY_OPEN_MIC_RESULT:
-            rpcNotify_ = EVENT_NOTIFY_OPEN_MIC;
-            break;
-        case AudioEventType::NOTIFY_CLOSE_MIC_RESULT:
-            rpcNotify_ = EVENT_NOTIFY_CLOSE_MIC;
-            break;
-        case AudioEventType::NOTIFY_OPEN_CTRL_RESULT:
-            rpcNotify_ = EVENT_NOTIFY_OPEN_CTRL;
-            break;
-        case AudioEventType::NOTIFY_CLOSE_CTRL_RESULT:
-            rpcNotify_ = EVENT_NOTIFY_CLOSE_CTRL;
-            break;
-        default:
-            DHLOGI("Notify RPC event not define.");
-            break;
+    DHLOGI("Notify event, eventType: %d.", event.type);
+    std::map<AudioEventType, uint8_t>::iterator iter = eventNotifyMap_.find(event.type);
+    if (iter == eventNotifyMap_.end()) {
+        DHLOGE("Invalid eventType.");
+        return ERR_DH_AUDIO_NOT_FOUND_KEY;
     }
+    rpcNotify_ = iter->second;
     rpcWaitCond_.notify_all();
     return DH_SUCCESS;
 }

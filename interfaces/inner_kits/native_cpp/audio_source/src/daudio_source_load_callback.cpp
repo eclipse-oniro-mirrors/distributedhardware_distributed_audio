@@ -27,8 +27,7 @@ namespace DistributedHardware {
 void DAudioSourceLoadCallback::OnLoadSystemAbilitySuccess(int32_t systemAbilityId,
     const sptr<IRemoteObject> &remoteObject)
 {
-    DHLOGI("Load audio SA success, systemAbilityId: %d, remoteObject result: %s", systemAbilityId,
-        (remoteObject != nullptr) ? "true" : "false");
+    DHLOGI("Load audio SA success, systemAbilityId: %d.", systemAbilityId);
     if (remoteObject == nullptr) {
         DHLOGE("remoteObject is nullptr");
         return;
@@ -39,8 +38,7 @@ void DAudioSourceLoadCallback::OnLoadSystemAbilitySuccess(int32_t systemAbilityI
 void DAudioSourceLoadCallback::OnLoadSystemAbilityFail(int32_t systemAbilityId)
 {
     DHLOGI("Load audio SA failed, systemAbilityId: %d", systemAbilityId);
-    DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL,
-        "daudio source LoadSystemAbility call failed.");
+    DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, "daudio source LoadSA call failed.");
 }
 } // namespace DistributedHardware
 } // namespace OHOS

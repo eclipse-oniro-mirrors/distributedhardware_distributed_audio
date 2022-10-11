@@ -35,30 +35,6 @@ void DAudioSourceDevTest::TearDown(void)
 }
 
 /**
- * @tc.name: IsSpeakerEvent_001
- * @tc.desc: Verify the IsSpeakerEvent function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSourceDevTest, IsSpeakerEvent_001, TestSize.Level1)
-{
-    AudioEvent event;
-    EXPECT_EQ(DH_SUCCESS, sourceDev_->IsSpeakerEvent(event));
-}
-
-/**
- * @tc.name: IsMicEvent_001
- * @tc.desc: Verify the IsMicEvent function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSourceDevTest, IsMicEvent_001, TestSize.Level1)
-{
-    AudioEvent event;
-    EXPECT_EQ(DH_SUCCESS, sourceDev_->IsMicEvent(event));
-}
-
-/**
  * @tc.name: HandleDMicClosed_001
  * @tc.desc: Verify the HandleDMicClosed function.
  * @tc.type: FUNC

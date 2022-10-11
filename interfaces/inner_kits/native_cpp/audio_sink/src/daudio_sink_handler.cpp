@@ -50,15 +50,12 @@ int32_t DAudioSinkHandler::InitSink(const std::string &params)
         sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         if (samgr == nullptr) {
             DHLOGE("Failed to get system ability mgr.");
-            DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
-                ERR_DH_AUDIO_SA_GET_SAMGR_FAILED, "daudio sink get samgr failed.");
-            return ERR_DH_AUDIO_SA_GET_SAMGR_FAILED;
+            return ERR_DH_AUDIO_NULLPTR;
         }
         sptr<DAudioSinkLoadCallback> loadCallback = new DAudioSinkLoadCallback(params);
         int32_t ret = samgr->LoadSystemAbility(DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID, loadCallback);
         if (ret != ERR_OK) {
-            DHLOGE("Failed to Load systemAbility, systemAbilityId:%d, ret code:%d.",
-                DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID, ret);
+            DHLOGE("Failed to Load systemAbility ret code: %d.", ret);
             DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_INIT_FAIL, DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID,
                 ERR_DH_AUDIO_SA_LOAD_FAILED, "daudio sink LoadSystemAbility call failed.");
             return ERR_DH_AUDIO_SA_LOAD_FAILED;
@@ -79,7 +76,7 @@ int32_t DAudioSinkHandler::InitSink(const std::string &params)
 
 int32_t DAudioSinkHandler::ReleaseSink()
 {
-    DHLOGI("Release sink handler");
+    DHLOGI("Release sink handler.");
     std::lock_guard<std::mutex> lock(sinkProxyMutex_);
     if (dAudioSinkProxy_ == nullptr) {
         DHLOGE("Daudio sink proxy not init.");
@@ -125,7 +122,7 @@ int32_t DAudioSinkHandler::UnsubscribeLocalHardware(const std::string &dhId)
 
 void DAudioSinkHandler::OnRemoteSinkSvrDied(const wptr<IRemoteObject> &remote)
 {
-    DHLOGI("The remote sink server died.");
+    DHLOGI("The daudio service of sink device died.");
     sptr<IRemoteObject> remoteObject = remote.promote();
     if (remoteObject == nullptr) {
         DHLOGE("OnRemoteDied remote promoted failed.");
@@ -158,7 +155,6 @@ void DAudioSinkHandler::FinishStartSA(const std::string &param, const sptr<IRemo
 
 void DAudioSinkHandler::DAudioSinkSvrRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
-    DHLOGI("On remote died.");
     DAudioSinkHandler::GetInstance().OnRemoteSinkSvrDied(remote);
 }
 
