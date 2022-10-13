@@ -56,6 +56,8 @@ public:
     int32_t Stop();
     int32_t Release();
     bool IsOpened();
+    int32_t Pause();
+    int32_t Restart();
 
     AudioParam GetAudioParam() const;
     int32_t NotifyHdfAudioEvent(const AudioEvent &event);

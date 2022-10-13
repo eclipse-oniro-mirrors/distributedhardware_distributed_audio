@@ -63,10 +63,12 @@ public:
     int32_t SetMute(const AudioEvent &event);
     int32_t SetAudioParameters(const AudioEvent &event);
     std::string GetVolumeLevel();
+    void PlayStatusChange(const std::string &args);
 
 private:
     void PlayThreadRunning();
-    void StringSplit(const std::string &str, const uint8_t &splits, std::vector<std::string> &res);
+    void Pause();
+    void ReStart();
 
 private:
     constexpr static size_t DATA_QUEUE_MAX_SIZE = 5;

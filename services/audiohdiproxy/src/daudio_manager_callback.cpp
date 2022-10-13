@@ -141,6 +141,9 @@ int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t d
         case AudioEventHDF::AUDIO_EVENT_MUTE_SET:
             newEvent.type = AudioEventType::VOLUME_MUTE_SET;
             break;
+        case AudioEventHDF::AUDIO_EVENT_CHANGE_PLAY_STATUS:
+            newEvent.type = AudioEventType::CHANGE_PLAY_STATUS;
+            break;
         default:
             DHLOGE("Unsupport event tpye.");
             break;

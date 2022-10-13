@@ -24,6 +24,7 @@
 #include "daudio_log.h"
 #include "daudio_util.h"
 #include "mock_audio_data_channel.h"
+#include "mock_audio_processor.h"
 #include "mock_audio_transport_callback.h"
 #include "securec.h"
 
@@ -109,7 +110,7 @@ HWTEST_F(DecodeTransportTest, decode_transport_test_002, TestSize.Level1)
 HWTEST_F(DecodeTransportTest, decode_transport_test_004, TestSize.Level1)
 {
     EXPECT_NE(DH_SUCCESS, decodeTrans_->Start());
-    EXPECT_EQ(DH_SUCCESS, decodeTrans_->Stop());
+    EXPECT_NE(DH_SUCCESS, decodeTrans_->Stop());
     EXPECT_EQ(DH_SUCCESS, decodeTrans_->Release());
 }
 } // namespace DistributedHardware

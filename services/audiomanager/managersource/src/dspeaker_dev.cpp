@@ -239,6 +239,39 @@ int32_t DSpeakerDev::Release()
     return DH_SUCCESS;
 }
 
+int32_t DSpeakerDev::Pause()
+{
+    DHLOGI("Pause.");
+    if (speakerTrans_ == nullptr) {
+        DHLOGE("Speaker trans is null.");
+        return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
+    }
+
+    int32_t ret = speakerTrans_->Pause();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Pause speaker trans failed, ret: %d.", ret);
+        return ret;
+    }
+    DHLOGI("Pause success.");
+    return DH_SUCCESS;
+}
+
+int32_t DSpeakerDev::Restart()
+{
+    DHLOGI("Restart.");
+    if (speakerTrans_ == nullptr) {
+        DHLOGE("Speaker trans is null.");
+        return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
+    }
+
+    int32_t ret = speakerTrans_->Restart(param_, param_);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Restart speaker trans failed, ret: %d.", ret);
+        return ret;
+    }
+    DHLOGI("Restart success.");
+    return DH_SUCCESS;
+}
 bool DSpeakerDev::IsOpened()
 {
     return isOpened_.load();

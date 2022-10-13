@@ -46,6 +46,9 @@ const std::string STREAM_MUTE_STATUS = "STREAM_MUTE_STATUS";
 const std::string HDF_EVENT_RESULT_SUCCESS = "DH_SUCCESS";
 const std::string HDF_EVENT_RESULT_FAILED = "DH_FAILED";
 
+const std::string HDF_EVENT_RESTART = "restart";
+const std::string HDF_EVENT_PAUSE = "pause";
+
 constexpr int32_t AUDIO_DEVICE_TYPE_UNKNOWN = 0;
 constexpr int32_t AUDIO_DEVICE_TYPE_SPEAKER = 1;
 constexpr int32_t AUDIO_DEVICE_TYPE_MIC = 2;

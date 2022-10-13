@@ -31,6 +31,8 @@ public:
     virtual int32_t Start() = 0;
     virtual int32_t Stop() = 0;
     virtual int32_t Release() = 0;
+    virtual int32_t Pause() = 0;
+    virtual int32_t Restart(const AudioParam &localParam, const AudioParam &remoteParam) = 0;
     virtual int32_t FeedAudioData(std::shared_ptr<AudioData> &audioData) = 0;
 };
 } // namespace DistributedHardware

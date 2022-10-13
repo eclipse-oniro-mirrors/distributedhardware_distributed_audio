@@ -43,6 +43,8 @@ public:
     int32_t Start() override;
     int32_t Stop() override;
     int32_t Release() override;
+    int32_t Pause() override;
+    int32_t Restart(const AudioParam &localParam, const AudioParam &remoteParam) override;
     int32_t FeedAudioData(std::shared_ptr<AudioData> &audioData) override;
 
     void OnSessionOpened() override;
@@ -65,6 +67,12 @@ private:
     std::shared_ptr<IAudioChannel> audioChannel_ = nullptr;
     std::shared_ptr<IAudioProcessor> processor_ = nullptr;
     std::string peerDevId_;
+    enum transStatus : uint32_t {
+        TRANSPORT_STOP = 0,
+        TRANSPORT_START = 1,
+        TRANSPORT_PAUSE = 2,
+    };
+    uint32_t encodeTransStatus_ = TRANSPORT_STOP;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -85,6 +85,9 @@ const std::string STREAM_MUTE_STATUS = "STREAM_MUTE_STATUS";
 const std::string AUDIO_VOLUME_TYPE = "AUDIO_VOLUME_TYPE";
 const std::string VOLUME_LEVEL = "VOLUME_LEVEL";
 
+const std::string AUDIO_EVENT_RESTART = "restart";
+const std::string AUDIO_EVENT_PAUSE = "pause";
+
 constexpr const char *KEY_TYPE = "type";
 constexpr const char *KEY_CONTENT = "content";
 constexpr const char *KEY_DH_ID = "dhId";

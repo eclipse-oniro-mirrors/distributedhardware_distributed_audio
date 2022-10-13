@@ -109,7 +109,7 @@ HWTEST_F(EncodeTransportTest, encode_transport_test_002, TestSize.Level1)
 HWTEST_F(EncodeTransportTest, encode_transport_test_004, TestSize.Level1)
 {
     EXPECT_NE(DH_SUCCESS, encodeTrans_->Start());
-    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
+    EXPECT_NE(DH_SUCCESS, encodeTrans_->Stop());
     EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
 }
 } // namespace DistributedHardware

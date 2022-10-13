@@ -60,6 +60,8 @@ typedef enum {
 
     AUDIO_ENCODER_ERR = 61,
     AUDIO_DECODER_ERR = 62,
+
+    CHANGE_PLAY_STATUS = 71,
 } AudioEventType;
 
 typedef enum {
@@ -76,6 +78,7 @@ typedef enum {
     AUDIO_EVENT_FOCUS_CHANGE = 10,
     AUDIO_EVENT_RENDER_STATE_CHANGE = 11,
     AUDIO_EVENT_MUTE_SET = 12,
+    AUDIO_EVENT_CHANGE_PLAY_STATUS = 13,
 } AudioEventHDF;
 class AudioEvent {
 public:

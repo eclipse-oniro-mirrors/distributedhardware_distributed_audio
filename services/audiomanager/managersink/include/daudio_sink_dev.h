@@ -75,6 +75,7 @@ private:
     int32_t NotifySetMute(const AudioEvent &audioEvent);
     int32_t NotifyFocusChange(const AudioEvent &audioEvent);
     int32_t NotifyRenderStateChange(const AudioEvent &audioEvent);
+    int32_t NotifyPlayStatusChange(const AudioEvent &audioEvent);
     void NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result);
     int32_t from_json(const json &j, AudioParam &audioParam);
     bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);

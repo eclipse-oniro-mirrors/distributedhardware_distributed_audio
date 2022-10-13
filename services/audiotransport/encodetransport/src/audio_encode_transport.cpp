@@ -46,6 +46,14 @@ int32_t AudioEncodeTransport::SetUp(const AudioParam &localParam, const AudioPar
 int32_t AudioEncodeTransport::Start()
 {
     DHLOGI("Start audio encode transport.");
+    if (encodeTransStatus_ == TRANSPORT_START) {
+        DHLOGE("Encode trans status is start.");
+        return DH_SUCCESS;
+    }
+    if (encodeTransStatus_ == TRANSPORT_PAUSE) {
+        DHLOGE("Decode trans status is pause, can not start.");
+        return ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION;
+    }
     if (processor_ == nullptr || audioChannel_ == nullptr) {
         DHLOGE("Processor or channel is null, setup first.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
@@ -62,6 +70,7 @@ int32_t AudioEncodeTransport::Start()
         processor_ = nullptr;
         return ERR_DH_AUDIO_TRANS_PROCESSOR_FAILED;
     }
+    encodeTransStatus_ = TRANSPORT_START;
     DHLOGI("Start success.");
     return DH_SUCCESS;
 }
@@ -69,26 +78,87 @@ int32_t AudioEncodeTransport::Start()
 int32_t AudioEncodeTransport::Stop()
 {
     DHLOGI("Stop audio encode transport.");
-    bool stopStatus = true;
-    if (processor_ != nullptr) {
+    if (encodeTransStatus_ == TRANSPORT_STOP) {
+        DHLOGE("Encode trans status is stop.");
+        return DH_SUCCESS;
+    }
+
+    if (processor_ != nullptr && encodeTransStatus_ == TRANSPORT_START) {
         int32_t ret = processor_->StopAudioProcessor();
         if (ret != DH_SUCCESS) {
             DHLOGE("Stop audio processor failed, ret: %d.", ret);
-            stopStatus = false;
         }
     }
     if (audioChannel_ != nullptr) {
         int32_t ret = audioChannel_->CloseSession();
         if (ret != DH_SUCCESS) {
             DHLOGE("Close session failed, ret: %d.", ret);
-            stopStatus = false;
+            return ret;
         }
     }
-    if (!stopStatus) {
-        DHLOGE("The stopStatus is false: %d.");
+    encodeTransStatus_ = TRANSPORT_STOP;
+    DHLOGI("Stop success.");
+    return DH_SUCCESS;
+}
+
+int32_t AudioEncodeTransport::Pause()
+{
+    DHLOGI("Pause.");
+    if (encodeTransStatus_ == TRANSPORT_PAUSE) {
+        DHLOGI("Encode trans status is pasue.");
+        return DH_SUCCESS;
+    }
+    if (encodeTransStatus_ == TRANSPORT_STOP) {
+        DHLOGI("Encode trans status is stop, can not pause.");
+        return ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION;
+    }
+    if (processor_ == nullptr) {
+        DHLOGE("Processor_ is null.");
+        return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
+    }
+
+    int32_t ret = processor_->StopAudioProcessor();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Pause processor failed, ret: %d.", ret);
+        return ret;
+    }
+    if (processor_ != nullptr) {
+        ret = processor_->ReleaseAudioProcessor();
+        if (ret != DH_SUCCESS) {
+            DHLOGE("Release audio processor failed, ret: %d.", ret);
+            return ret;
+        }
+    }
+    encodeTransStatus_ = TRANSPORT_PAUSE;
+    DHLOGI("Pause success.");
+    return DH_SUCCESS;
+}
+
+int32_t AudioEncodeTransport::Restart(const AudioParam &localParam, const AudioParam &remoteParam)
+{
+    DHLOGI("Restart.");
+    if (encodeTransStatus_ == TRANSPORT_START) {
+        DHLOGE("Encode trans status is start.");
+        return DH_SUCCESS;
+    }
+    if (encodeTransStatus_ == TRANSPORT_STOP) {
+        DHLOGE("Encode trans status is stop, can not restart.");
+        return ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION;
+    }
+    int32_t ret = RegisterProcessorListener(localParam, remoteParam);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Register processor listener failed, ret: %d.", ret);
+        processor_ = nullptr;
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
-    DHLOGI("Stop success.");
+
+    ret = processor_->StartAudioProcessor();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Restart processor_ failed, ret: %d.", ret);
+        return ret;
+    }
+    encodeTransStatus_ =TRANSPORT_START;
+    DHLOGI("Restart success.");
     return DH_SUCCESS;
 }
 

@@ -51,6 +51,7 @@ DAudioSourceDev::DAudioSourceDev(const std::string &devId, const std::shared_ptr
     memberFuncMap_[VOLUME_CHANGE] = &DAudioSourceDev::HandleVolumeChange;
     memberFuncMap_[AUDIO_FOCUS_CHANGE] = &DAudioSourceDev::HandleFocusChange;
     memberFuncMap_[AUDIO_RENDER_STATE_CHANGE] = &DAudioSourceDev::HandleRenderStateChange;
+    memberFuncMap_[CHANGE_PLAY_STATUS] = &DAudioSourceDev::HandlePlayStatusChange;
 
     eventNotifyMap_[NOTIFY_OPEN_SPEAKER_RESULT] = EVENT_NOTIFY_OPEN_SPK;
     eventNotifyMap_[NOTIFY_CLOSE_SPEAKER_RESULT] = EVENT_NOTIFY_CLOSE_SPK;
@@ -316,6 +317,37 @@ int32_t DAudioSourceDev::HandleRenderStateChange(const AudioEvent &event)
     auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeRenderState, event.content, "render state change",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
+}
+
+int32_t DAudioSourceDev::HandlePlayStatusChange(const AudioEvent &event)
+{
+    DHLOGI("Play status change, content: %s.", event.content.c_str());
+    if (audioCtrlMgr_ == nullptr) {
+        DHLOGE("Audio ctrl mgr not init.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    AudioEvent audioEvent(CHANGE_PLAY_STATUS, event.content);
+    int32_t ret = audioCtrlMgr_->SendAudioEvent(audioEvent);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Play status change failed.");
+    }
+
+    if (event.content == AUDIO_EVENT_RESTART) {
+        ret = speaker_->Restart();
+        if (ret != DH_SUCCESS) {
+            DHLOGE("Speaker restart  failed.");
+        }
+        return ret;
+    } else if (event.content == AUDIO_EVENT_PAUSE) {
+        ret = speaker_->Pause();
+        if (ret != DH_SUCCESS) {
+            DHLOGE("Speaker Pause failed.");
+        }
+        return ret;
+    } else {
+        DHLOGE("Play status error.");
+        return ERR_DH_AUDIO_FAILED;
+    }
 }
 
 int32_t DAudioSourceDev::WaitForRPC(const AudioEventType type)

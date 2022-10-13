@@ -58,6 +58,7 @@ typedef enum AudioExtParamEvent {
     HDF_AUDIO_EVENT_FOCUS_CHANGE = 10,
     HDF_AUDIO_EVENT_RENDER_STATE_CHANGE = 11,
     HDF_AUDIO_EVNET_MUTE_SET = 12,
+    HDF_AUDIO_EVENT_CHANGE_PLAY_STATUS = 13,
 } EXT_PARAM_EVENT;
 
 typedef enum AudioVolumeEvent {

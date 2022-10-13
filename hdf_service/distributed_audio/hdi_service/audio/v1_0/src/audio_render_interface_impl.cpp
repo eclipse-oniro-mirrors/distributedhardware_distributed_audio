@@ -20,6 +20,7 @@
 #include "sys/time.h"
 
 #include "daudio_constants.h"
+#include "daudio_events.h"
 #include "daudio_log.h"
 
 #undef DH_LOG_TAG
@@ -138,6 +139,15 @@ int32_t AudioRenderInterfaceImpl::IsSupportsDrain(bool &support)
 int32_t AudioRenderInterfaceImpl::Start()
 {
     DHLOGI("Start render.");
+    if (firstOpenFlag) {
+        firstOpenFlag = false;
+    } else {
+        DAudioEvent event = { HDF_AUDIO_EVENT_CHANGE_PLAY_STATUS, HDF_EVENT_RESTART };
+        int32_t ret = audioExtCallback_->NotifyEvent(adapterName_, devDesc_.pins, event);
+        if (ret != HDF_SUCCESS) {
+            DHLOGE("Restart failed.");
+        }
+    }
     std::lock_guard<std::mutex> renderLck(renderMtx_);
     renderStatus_ = RENDER_STATUS_START;
     return HDF_SUCCESS;
@@ -146,6 +156,11 @@ int32_t AudioRenderInterfaceImpl::Start()
 int32_t AudioRenderInterfaceImpl::Stop()
 {
     DHLOGI("Stop render.");
+    DAudioEvent event = { HDF_AUDIO_EVENT_CHANGE_PLAY_STATUS, HDF_EVENT_PAUSE };
+    int32_t ret = audioExtCallback_->NotifyEvent(adapterName_, devDesc_.pins, event);
+    if (ret != HDF_SUCCESS) {
+        DHLOGE("Pause and clear cache streams failed.");
+    }
     std::lock_guard<std::mutex> renderLck(renderMtx_);
     renderStatus_ = RENDER_STATUS_STOP;
     return HDF_SUCCESS;

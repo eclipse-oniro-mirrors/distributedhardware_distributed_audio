@@ -19,6 +19,7 @@
 #include <mutex>
 #include <string>
 
+#include <v1_0/audio_types.h>
 #include <v1_0/iaudio_render.h>
 #include <v1_0/id_audio_manager.h>
 
@@ -29,6 +30,7 @@ namespace Audio {
 namespace V1_0 {
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter;
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
 
 typedef enum {
@@ -107,6 +109,7 @@ private:
     AudioRenderStatus renderStatus_ = RENDER_STATUS_CLOSE;
     sptr<IDAudioCallback> audioExtCallback_ = nullptr;
     sptr<IAudioCallback> renderCallback_ = nullptr;
+    bool firstOpenFlag = true;
 };
 } // V1_0
 } // Audio

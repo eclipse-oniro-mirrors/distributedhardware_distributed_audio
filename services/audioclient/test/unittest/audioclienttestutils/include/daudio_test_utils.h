@@ -49,6 +49,16 @@ public:
         return 0;
     }
 
+    int32_t Pause() override
+    {
+        return 0;
+    }
+
+    int32_t Restart(const AudioParam &localParam, const AudioParam &remoteParam) override
+    {
+        return 0;
+    }
+
     int32_t FeedAudioData(std::shared_ptr<AudioData> &audioData) override
     {
         return 0;

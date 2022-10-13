@@ -51,6 +51,7 @@ DAudioSinkDev::DAudioSinkDev(const std::string &devId) : devId_(devId)
     memberFuncMap_[VOLUME_SET] = &DAudioSinkDev::NotifySetVolume;
     memberFuncMap_[VOLUME_MUTE_SET] = &DAudioSinkDev::NotifySetMute;
     memberFuncMap_[VOLUME_CHANGE] = &DAudioSinkDev::NotifyVolumeChange;
+    memberFuncMap_[CHANGE_PLAY_STATUS] = &DAudioSinkDev::NotifyPlayStatusChange;
 }
 
 DAudioSinkDev::~DAudioSinkDev()
@@ -242,6 +243,18 @@ int32_t DAudioSinkDev::NotifyRenderStateChange(const AudioEvent &audioEvent)
     std::shared_ptr<TaskImplInterface> task = GenerateTask(this, &DAudioSinkDev::TaskRenderStateChange,
         audioEvent.content, "Sink Notify Render State Change", &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
+}
+
+int32_t DAudioSinkDev::NotifyPlayStatusChange(const AudioEvent &audioEvent)
+{
+    DHLOGI("Handle play status change, content: %s.", audioEvent.content.c_str());
+    if (speakerClient_ == nullptr) {
+        DHLOGE("Speaker client already closed.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    speakerClient_->PlayStatusChange(audioEvent.content);
+    DHLOGI("Play status change success.");
+    return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDev::TaskOpenCtrlChannel(const std::string &args)

@@ -382,5 +382,47 @@ int32_t DSpeakerClient::SetMute(const AudioEvent &event)
     }
     return DH_SUCCESS;
 }
+
+void DSpeakerClient::Pause()
+{
+    DHLOGI("Pause and flush");
+    isRenderReady_.store(false);
+    if (renderDataThread_.joinable()) {
+        renderDataThread_.join();
+    }
+    int32_t ret = speakerTrans_->Pause();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Speaker trans Pause failed.");
+    }
+
+    audioRenderer_->Flush();
+    clientStatus_ = CLIENT_STATUS_START;
+    isRenderReady_.store(true);
+}
+
+void DSpeakerClient::ReStart()
+{
+    DHLOGI("ReStart");
+    int32_t ret = speakerTrans_->Restart(audioParam_, audioParam_);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Speaker trans Restart failed.");
+    }
+    isRenderReady_.store(true);
+    renderDataThread_ = std::thread(&DSpeakerClient::PlayThreadRunning, this);
+    clientStatus_ = CLIENT_STATUS_START;
+}
+
+void DSpeakerClient::PlayStatusChange(const std::string &args)
+{
+    DHLOGI("Play status change, args: %s.", args.c_str());
+    if (args == AUDIO_EVENT_RESTART) {
+        ReStart();
+    } else if (args == AUDIO_EVENT_PAUSE) {
+        Pause();
+    } else {
+        DHLOGE("Play status error.");
+    }
+}
+
 } // DistributedHardware
 } // OHOS
