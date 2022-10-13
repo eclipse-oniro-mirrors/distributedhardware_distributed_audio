@@ -151,18 +151,18 @@ int32_t AudioCtrlChannel::SendEvent(const AudioEvent &audioEvent)
 int32_t AudioCtrlChannel::SendMsg(string &message)
 {
     DHLOGI("Start send messages.");
-    uint8_t *buf = (uint8_t *)calloc((MSG_MAX_SIZE), sizeof(uint8_t));
+    uint8_t *buf = reinterpret_cast<uint8_t *>(calloc((MSG_MAX_SIZE), sizeof(uint8_t)));
     if (buf == nullptr) {
         DHLOGE("Malloc memory failed.");
         return ERR_DH_AUDIO_CTRL_CHANNEL_SEND_MSG_FAIL;
     }
     int32_t outLen = 0;
-    if (memcpy_s(buf, MSG_MAX_SIZE, (const uint8_t *)message.c_str(), message.size()) != DH_SUCCESS) {
+    if (memcpy_s(buf, MSG_MAX_SIZE, reinterpret_cast<const uint8_t *>(message.c_str()), message.size()) != DH_SUCCESS) {
         DHLOGE("Memcpy memory failed.");
         free(buf);
         return ERR_DH_AUDIO_CTRL_CHANNEL_SEND_MSG_FAIL;
     }
-    outLen = (int32_t)message.size();
+    outLen = static_cast<int32_t>(message.size());
     int32_t ret = SoftbusAdapter::GetInstance().SendSoftbusBytes(sessionId_, buf, outLen);
     free(buf);
     return ret;
@@ -215,13 +215,13 @@ void AudioCtrlChannel::OnBytesReceived(int32_t sessionId, const void *data, uint
         return;
     }
 
-    uint8_t *buf = (uint8_t *)calloc(dataLen + 1, sizeof(uint8_t));
+    uint8_t *buf = reinterpret_cast<uint8_t *>(calloc(dataLen + 1, sizeof(uint8_t)));
     if (buf == nullptr) {
         DHLOGE("Malloc memory failed.");
         return;
     }
 
-    if (memcpy_s(buf, dataLen + 1, (const uint8_t *)data, dataLen) != DH_SUCCESS) {
+    if (memcpy_s(buf, dataLen + 1, reinterpret_cast<const uint8_t *>(data), dataLen) != DH_SUCCESS) {
         DHLOGE("Memcpy memory failed.");
         free(buf);
         return;

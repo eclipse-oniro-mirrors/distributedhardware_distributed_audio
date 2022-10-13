@@ -17,9 +17,9 @@
 
 #include <securec.h>
 
-#include "audio_types.h"
 #include <v1_0/audio_types.h>
 
+#include "audio_types.h"
 #include "daudio_errcode.h"
 #include "daudio_log.h"
 
@@ -41,7 +41,7 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
             DHLOGE("Audio ports is nullptr.");
             return ERR_DH_AUDIO_HDF_FAILURE;
         }
-        char* adapterName = (char*)calloc(desc.adapterName.length() + 1, sizeof(char));
+        char* adapterName = reinterpret_cast<char *>(calloc(desc.adapterName.length() + 1, sizeof(char)));
         if (adapterName == nullptr) {
             DHLOGE("Calloc failed.");
             return ERR_DH_AUDIO_HDF_FAILURE;
@@ -58,7 +58,7 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
             .ports = audioPorts,
         };
         for (auto port : desc.ports) {
-            char* portName = (char*)calloc(port.portName.length() + 1, sizeof(char));
+            char* portName = reinterpret_cast<char *>(calloc(port.portName.length() + 1, sizeof(char)));
             if (portName == nullptr) {
                 DHLOGE("Calloc failed.");
                 return ERR_DH_AUDIO_HDF_FAILURE;

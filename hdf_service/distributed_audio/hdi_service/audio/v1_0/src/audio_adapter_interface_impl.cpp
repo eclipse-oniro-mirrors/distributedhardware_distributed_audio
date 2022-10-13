@@ -320,11 +320,10 @@ AudioAdapterDescriptor AudioAdapterInterfaceImpl::GetAdapterDesc()
 std::string AudioAdapterInterfaceImpl::GetDeviceCapabilitys(const uint32_t devId)
 {
     std::lock_guard<std::mutex> devLck(devMapMtx_);
-    std::string caps;
     auto dev = mapAudioDevice_.find(devId);
     if (dev == mapAudioDevice_.end()) {
         DHLOGE("Device not found.");
-        return caps;
+        return "";
     }
     return dev->second;
 }

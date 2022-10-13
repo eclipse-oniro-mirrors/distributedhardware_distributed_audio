@@ -172,7 +172,8 @@ void AudioDataChannel::OnStreamReceived(int32_t sessionId, const StreamData *dat
 
     DHLOGI("On audio stream received, sessionId: %d dataSize: %zu.", sessionId, data->bufLen);
     auto audioData = std::make_shared<AudioData>(data->bufLen);
-    int32_t ret = memcpy_s(audioData->Data(), audioData->Capacity(), (uint8_t *)data->buf, data->bufLen);
+    int32_t ret =
+        memcpy_s(audioData->Data(), audioData->Capacity(), reinterpret_cast<uint8_t *>(data->buf), data->bufLen);
     if (ret != EOK) {
         DHLOGE("Data memcpy_s failed.");
         return;

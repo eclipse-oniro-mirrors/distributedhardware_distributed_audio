@@ -354,7 +354,7 @@ void SoftbusAdapter::SendAudioData()
             continue;
         }
 
-        StreamData data = { (char *)(audioData->data_->Data()), audioData->data_->Capacity() };
+        StreamData data = { reinterpret_cast<char *>(audioData->data_->Data()), audioData->data_->Capacity() };
         StreamData ext = { 0 };
         StreamFrameInfo frameInfo = { 0 };
         DHLOGI("Send audio data, sessionId: %d.", audioData->sessionId_);
