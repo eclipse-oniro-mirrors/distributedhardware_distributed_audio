@@ -55,12 +55,12 @@ void EncodeTransportTest::TearDown(void)
 }
 
 /**
- * @tc.name: encode_transport_test_002
+ * @tc.name: encode_transport_test_001
  * @tc.desc: Verify the configure transport function.
  * @tc.type: FUNC
  * @tc.require: AR000H0E5U
  */
-HWTEST_F(EncodeTransportTest, encode_transport_test_002, TestSize.Level1)
+HWTEST_F(EncodeTransportTest, encode_transport_test_001, TestSize.Level1)
 {
     AudioParam testLocalParaEnc = {
         {
@@ -101,16 +101,62 @@ HWTEST_F(EncodeTransportTest, encode_transport_test_002, TestSize.Level1)
 }
 
 /**
- * @tc.name: encode_transport_test_004
+ * @tc.name: encode_transport_test_002
  * @tc.desc: Verify the start transport without configure transport function.
  * @tc.type: FUNC
  * @tc.require: AR000H0E5U
  */
-HWTEST_F(EncodeTransportTest, encode_transport_test_004, TestSize.Level1)
+HWTEST_F(EncodeTransportTest, encode_transport_test_002, TestSize.Level1)
 {
     EXPECT_NE(DH_SUCCESS, encodeTrans_->Start());
-    EXPECT_NE(DH_SUCCESS, encodeTrans_->Stop());
+    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
     EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
+}
+
+/**
+ * @tc.name: encode_transport_test_003
+ * @tc.desc: Verify the pasue and restart transport without configure transport function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncodeTransportTest, encode_transport_test_003, TestSize.Level1)
+{
+        AudioParam testLocalParaEnc = {
+        {
+            SAMPLE_RATE_48000,
+            STEREO,
+            SAMPLE_S16LE,
+            AUDIO_CODEC_FLAC
+        },
+        {
+            SOURCE_TYPE_INVALID,
+            0
+        },
+        {
+            CONTENT_TYPE_UNKNOWN,
+            STREAM_USAGE_UNKNOWN,
+            0
+        }
+    };
+    AudioParam testRemoteParaEnc = {
+        {
+            SAMPLE_RATE_48000,
+            STEREO,
+            SAMPLE_S16LE,
+            AUDIO_CODEC_FLAC
+        },
+        {
+            SOURCE_TYPE_INVALID,
+            0
+        },
+        {
+            CONTENT_TYPE_UNKNOWN,
+            STREAM_USAGE_UNKNOWN,
+            0
+        }
+    };
+    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION, encodeTrans_->Pause());
+    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION, encodeTrans_->Restart(testLocalParaEnc, testRemoteParaEnc));
 }
 } // namespace DistributedHardware
 } // namespace OHOS
