@@ -25,6 +25,7 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "${hdf_ser_aud_path}/include",
+    "${hdf_service_path}/hdi_service/audio/v1_0/test/unittest/audio_test_utils",
     "${hdf_service_path}/hdi_service/common/include",
     "${hdf_service_path}/hdi_service/common/log/include",
     "${hdf_service_path}/hdi_service/common/utils/include",

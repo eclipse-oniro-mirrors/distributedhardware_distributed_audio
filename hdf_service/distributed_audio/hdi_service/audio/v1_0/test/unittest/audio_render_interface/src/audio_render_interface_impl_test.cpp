@@ -476,6 +476,68 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetVolumeInner_001, TestSize.Level1)
 {
     EXPECT_EQ(audioRenderInterfaceImpl_->vol_, audioRenderInterfaceImpl_->GetVolumeInner());
 }
+
+/**
+ * @tc.name: GetFadeRate_001
+ * @tc.desc: Verify the GetFadeRate function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, GetFadeRate_001, TestSize.Level1)
+{
+    uint32_t currentIndex = 2;
+    const uint32_t durationIndex = 5;
+
+    float fadeRate = audioRenderInterfaceImpl_->GetFadeRate(currentIndex, durationIndex);
+    EXPECT_LE(0, fadeRate);
+    EXPECT_GE(0.5f, fadeRate);
+}
+
+/**
+ * @tc.name: GetFadeRate_002
+ * @tc.desc: Verify the GetFadeRate function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, GetFadeRate_002, TestSize.Level1)
+{
+    uint32_t currentIndex = 3;
+    const uint32_t durationIndex = 5;
+
+    float fadeRate = audioRenderInterfaceImpl_->GetFadeRate(currentIndex, durationIndex);
+    EXPECT_LE(0.5f, fadeRate);
+    EXPECT_GE(1.0f, fadeRate);
+}
+
+/**
+ * @tc.name: GetFadeRate_002
+ * @tc.desc: Verify the GetFadeRate function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, GetFadeRate_003, TestSize.Level1)
+{
+    uint32_t currentIndex = 6;
+    const uint32_t durationIndex = 5;
+
+    float fadeRate = audioRenderInterfaceImpl_->GetFadeRate(currentIndex, durationIndex);
+    EXPECT_EQ(1.0f, fadeRate);
+}
+
+/**
+ * @tc.name: FadeInProcess_001
+ * @tc.desc: Verify the FadeInProcess function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, FadeInProcess_001, TestSize.Level1)
+{
+    const uint32_t durationFrame = 10;
+    const size_t frameLength = 4096;
+    int8_t* frameData = new int8_t[frameLength];
+
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->FadeInProcess(durationFrame, frameData, frameLength));
+}
 } // V1_0
 } // Audio
 } // Distributedaudio

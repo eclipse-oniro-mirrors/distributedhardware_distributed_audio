@@ -20,6 +20,7 @@
 #include <mutex>
 #include <string>
 
+#include <audio_test_utils.h>
 #include <v1_0/iaudio_render.h>
 #include <v1_0/id_audio_manager.h>
 
@@ -46,7 +47,7 @@ public:
     std::string adpName_;
     AudioDeviceDescriptor desc_;
     AudioSampleAttributes attrs_;
-    sptr<IDAudioCallback> callback_;
+    sptr<IDAudioCallback> callback_  = new MockIDAudioCallback();
     std::shared_ptr<AudioRenderInterfaceImpl> audioRenderInterfaceImpl_ = nullptr;
 };
 } // V1_0
