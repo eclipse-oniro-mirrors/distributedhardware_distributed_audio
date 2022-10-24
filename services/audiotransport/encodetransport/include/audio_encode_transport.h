@@ -23,6 +23,7 @@
 #include <thread>
 
 #include "audio_event.h"
+#include "audio_transport_context.h"
 #include "iaudio_channel.h"
 #include "iaudio_datatrans_callback.h"
 #include "iaudio_data_transport.h"
@@ -66,13 +67,8 @@ private:
     std::weak_ptr<IAudioDataTransCallback> dataTransCallback_;
     std::shared_ptr<IAudioChannel> audioChannel_ = nullptr;
     std::shared_ptr<IAudioProcessor> processor_ = nullptr;
+    std::shared_ptr<AudioTransportContext> context_ = nullptr;
     std::string peerDevId_;
-    enum transStatus : uint32_t {
-        TRANSPORT_STOP = 0,
-        TRANSPORT_START = 1,
-        TRANSPORT_PAUSE = 2,
-    };
-    uint32_t encodeTransStatus_ = TRANSPORT_STOP;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

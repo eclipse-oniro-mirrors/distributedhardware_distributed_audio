@@ -155,8 +155,8 @@ HWTEST_F(EncodeTransportTest, encode_transport_test_003, TestSize.Level1)
             0
         }
     };
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION, encodeTrans_->Pause());
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION, encodeTrans_->Restart(testLocalParaEnc, testRemoteParaEnc));
+    EXPECT_EQ(ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL, encodeTrans_->Pause());
+    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, encodeTrans_->Restart(testLocalParaEnc, testRemoteParaEnc));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

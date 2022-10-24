@@ -47,6 +47,8 @@ ohos_shared_library("distributed_audio_sink") {
     "${audio_transport_path}/audiochannel/audiodatachannel/include",
     "${audio_transport_path}/audioctrltransport/include",
     "${audio_transport_path}/audioctrltransport/interface",
+    "${audio_transport_path}/audiotransportstatus/include",
+    "${audio_transport_path}/audiotransportstatus/interface",
     "${audio_transport_path}/decodetransport/include",
     "${audio_transport_path}/encodetransport/include",
     "${audio_transport_path}/interface",

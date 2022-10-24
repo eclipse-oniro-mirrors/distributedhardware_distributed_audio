@@ -42,6 +42,8 @@ config("module_private_config") {
     "${audio_processor_path}/interface",
     "${audio_transport_path}/interface",
     "${audio_transport_path}/audioctrltransport/interface",
+    "${audio_transport_path}/audiotransportstatus/include",
+    "${audio_transport_path}/audiotransportstatus/interface",
     "${common_path}/include",
     "${common_path}/dfx_utils/include",
     "${distributedaudio_path}/audiohandler/include",

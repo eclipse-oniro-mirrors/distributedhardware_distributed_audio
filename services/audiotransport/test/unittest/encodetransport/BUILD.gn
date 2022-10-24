@@ -35,6 +35,8 @@ config("module_private_config") {
     "${services_path}/common/audiodata/include",
     "${audio_transport_path}/audiochannel/interface",
     "${audio_transport_path}/audiochannel/audiodatachannel/include",
+    "${audio_transport_path}/audiotransportstatus/include",
+    "${audio_transport_path}/audiotransportstatus/interface",
     "${audio_transport_path}/encodetransport/include",
     "${audio_transport_path}/interface",
     "${audio_processor_path}/encodeprocessor/include",

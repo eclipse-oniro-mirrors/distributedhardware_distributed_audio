@@ -34,6 +34,8 @@ config("module_private_config") {
     "${softbusadapter_path}/include",
     "${services_path}/common/audioparam",
     "${services_path}/common/audiodata/include",
+    "${audio_transport_path}/audiotransportstatus/include",
+    "${audio_transport_path}/audiotransportstatus/interface",
     "${audio_processor_path}/interface",
     "${audio_processor_path}/decodeprocessor/include",
     "${audio_transport_path}/interface",
