@@ -377,7 +377,7 @@ HWTEST_F(AudioRenderInterfaceImplTest, SetSampleAttributes_001, TestSize.Level1)
     AudioSampleAttributes attrs = {
         .type = AUDIO_IN_MEDIA,
         .interleaved = true,
-        .format = AUDIO_FORMAT_PCM_16_BIT,
+        .format = AUDIO_FORMAT_TYPE_PCM_16_BIT,
         .sampleRate = 44100,
         .channelCount = 2,
         .period = 1,

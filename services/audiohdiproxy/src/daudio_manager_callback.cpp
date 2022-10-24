@@ -67,13 +67,13 @@ int32_t DAudioManagerCallback::GetAudioParamHDF(const AudioParameter& param, Aud
     paramHDF.sampleRate = static_cast<AudioSampleRate>(param.sampleRate);
     paramHDF.channelMask = static_cast<AudioChannel>(param.channelCount);
     switch (static_cast<AudioFormat>(param.format)) {
-        case AUDIO_FORMAT_PCM_8_BIT:
+        case AUDIO_FORMAT_TYPE_PCM_8_BIT:
             paramHDF.bitFormat = AudioSampleFormat::SAMPLE_U8;
             break;
-        case AUDIO_FORMAT_PCM_16_BIT:
+        case AUDIO_FORMAT_TYPE_PCM_16_BIT:
             paramHDF.bitFormat = AudioSampleFormat::SAMPLE_S16LE;
             break;
-        case AUDIO_FORMAT_PCM_24_BIT:
+        case AUDIO_FORMAT_TYPE_PCM_24_BIT:
             paramHDF.bitFormat = AudioSampleFormat::SAMPLE_S24LE;
             break;
         default:
