@@ -24,5 +24,6 @@ group("daudio_transport_test") {
     "${audio_transport_path}/test/unittest/audiodatachannel:audio_data_channel_test",
     "${audio_transport_path}/test/unittest/decodetransport:decode_transport_test",
     "${audio_transport_path}/test/unittest/encodetransport:encode_transport_test",
+    "${audio_transport_path}/test/unittest/audiotransportstatus:transport_status_test",
   ]
 }
