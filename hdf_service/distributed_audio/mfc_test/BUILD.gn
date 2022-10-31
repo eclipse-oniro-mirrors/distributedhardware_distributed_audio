@@ -1,0 +1,37 @@
+import("//build/ohos.gni")
+import("//drivers/hdf_core/adapter/uhdf2/uhdf.gni")
+import("//drivers/peripheral/adapter/base/hidl_adapter.gni")
+
+ohos_executable("audio_test_distributed_fifo") {
+  include_dirs = [
+    "./include",
+    "//drivers/peripheral/audio/interfaces/include",
+    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/include",
+    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/include",
+  ]
+
+  sources = [
+    "distributedaudiotest.cpp",
+  ]
+
+  deps = [
+    "$hdf_uhdf_path/utils:libhdf_utils",
+    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client:daudio_client",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudioTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  install_enable = true
+  install_images = [ chipset_base_dir ]
+  subsystem_name = "distributedhardware"
+  part_name = "distributed_audio"
+}
