@@ -143,7 +143,7 @@ struct AudioParameter {
     std::string content;
 };
 
-struct AudioMmapBufferDescripterHAL {
+struct AudioMmapBufferDescriptorHAL {
     int32_t memoryFd;
     int32_t totalBufferFrames;
     int32_t transferFrameSize;

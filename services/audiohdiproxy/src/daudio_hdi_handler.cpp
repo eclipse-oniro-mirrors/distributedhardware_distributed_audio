@@ -100,7 +100,7 @@ int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, const in
         case AUDIO_DEVICE_TYPE_UNKNOWN:
         default:
             DHLOGE("Unknown audio device.");
-            return ERR_DH_AUDIO_HDI_UNKOWN_DEVTYPE;
+            return ERR_DH_AUDIO_HDI_UNKNOWN_DEVTYPE;
     }
     {
         std::lock_guard<std::mutex> devLck(devMapMtx_);

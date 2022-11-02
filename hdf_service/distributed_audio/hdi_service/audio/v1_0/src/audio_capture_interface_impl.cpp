@@ -253,7 +253,7 @@ int32_t AudioCaptureInterfaceImpl::GetExtraParams(std::string &keyValueList)
     return HDF_SUCCESS;
 }
 
-int32_t AudioCaptureInterfaceImpl::ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescripter &desc)
+int32_t AudioCaptureInterfaceImpl::ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescriptor &desc)
 {
     DHLOGI("Request mmap buffer, not support yet.");
     (void)reqSize;

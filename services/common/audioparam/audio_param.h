@@ -112,7 +112,7 @@ typedef struct {
 } AudioParam;
 
 typedef enum {
-    STATE_UNKOWN = -1,
+    STATE_UNKNOWN = -1,
     STATE_CHANNEL_OPEN = 0,
     STATE_CHANNEL_CLOSE = 1
 } STATE;

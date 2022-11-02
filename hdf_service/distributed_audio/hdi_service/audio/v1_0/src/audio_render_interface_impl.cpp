@@ -351,7 +351,7 @@ int32_t AudioRenderInterfaceImpl::GetExtraParams(std::string &keyValueList)
     return HDF_SUCCESS;
 }
 
-int32_t AudioRenderInterfaceImpl::ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescripter &desc)
+int32_t AudioRenderInterfaceImpl::ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescriptor &desc)
 {
     DHLOGI("Request mmap buffer, not support yet.");
     (void)reqSize;

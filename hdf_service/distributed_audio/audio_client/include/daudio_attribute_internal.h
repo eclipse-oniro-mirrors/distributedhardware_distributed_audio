@@ -43,7 +43,7 @@ public:
     static int32_t GetCurrentChannelId(AudioHandle handle, uint32_t *channelId);
     static int32_t SetExtraParams(AudioHandle handle, const char *keyValueList);
     static int32_t GetExtraParams(AudioHandle handle, char *keyValueList, int32_t listLenth);
-    static int32_t ReqMmapBuffer(AudioHandle handle, int32_t reqSize, struct ::AudioMmapBufferDescripter *desc);
+    static int32_t ReqMmapBuffer(AudioHandle handle, int32_t reqSize, struct ::AudioMmapBufferDescriptor *desc);
     static int32_t GetMmapPosition(AudioHandle handle, uint64_t *frames, struct ::AudioTimeStamp *time);
 };
 
@@ -185,7 +185,7 @@ int32_t AudioAttributeInternal<T>::GetExtraParams(AudioHandle handle, char *keyV
 
 template<typename T>
 int32_t AudioAttributeInternal<T>::ReqMmapBuffer(AudioHandle handle, int32_t reqSize,
-    struct ::AudioMmapBufferDescripter *desc)
+    struct ::AudioMmapBufferDescriptor *desc)
 {
     if (handle == nullptr || desc == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -198,7 +198,7 @@ int32_t AudioAttributeInternal<T>::ReqMmapBuffer(AudioHandle handle, int32_t req
         return ERR_DH_AUDIO_HDF_INVALID_PARAM;
     }
 
-    AudioMmapBufferDescripter descHal;
+    AudioMmapBufferDescriptor descHal;
     int32_t ret = context->proxy_->ReqMmapBuffer(reqSize, descHal);
     if (ret != DH_SUCCESS) {
         DHLOGE("Failed to request the mmap buffer.");

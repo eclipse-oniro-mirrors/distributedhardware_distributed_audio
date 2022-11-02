@@ -76,7 +76,7 @@ public:
     int32_t GetCurrentChannelId(uint32_t &channelId) override;
     int32_t SetExtraParams(const std::string &keyValueList) override;
     int32_t GetExtraParams(std::string &keyValueList) override;
-    int32_t ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescripter &desc) override;
+    int32_t ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescriptor &desc) override;
     int32_t GetMmapPosition(uint64_t &frames, AudioTimeStamp &time) override;
     int32_t AddAudioEffect(uint64_t effectid) override;
     int32_t RemoveAudioEffect(uint64_t effectid) override;

@@ -33,7 +33,7 @@ class IAudioAttribute {
 
     virtual int32_t GetExtraParams(std::string &keyValueList) = 0;
 
-    virtual int32_t ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescripterHAL &desc) = 0;
+    virtual int32_t ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescriptorHAL &desc) = 0;
 
     virtual int32_t GetMmapPosition(uint64_t &frames, AudioTimeStampHAL &time) = 0;
 };

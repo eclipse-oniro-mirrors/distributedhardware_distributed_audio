@@ -373,7 +373,7 @@ static void ConvertAudioRouteNodeToHAL(const ::AudioRouteNode &node, AudioRouteN
             break;
         }
         default :
-            DHLOGI("Unkown node Type");
+            DHLOGI("Unknown node Type");
     }
 }
 static int32_t UpdateAudioRouteInternal(struct AudioAdapter *adapter, const struct ::AudioRoute *route,

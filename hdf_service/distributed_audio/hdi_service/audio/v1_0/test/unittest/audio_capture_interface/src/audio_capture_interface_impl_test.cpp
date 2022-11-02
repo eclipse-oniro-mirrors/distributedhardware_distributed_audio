@@ -332,7 +332,7 @@ HWTEST_F(AudioCaptureInterfaceImplTest, GetExtraParams_001, TestSize.Level1)
 HWTEST_F(AudioCaptureInterfaceImplTest, ReqMmapBuffer_001, TestSize.Level1)
 {
     int32_t reqSize = 0;
-    AudioMmapBufferDescripter desc;
+    AudioMmapBufferDescriptor desc;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->ReqMmapBuffer(reqSize, desc));
 }
 
