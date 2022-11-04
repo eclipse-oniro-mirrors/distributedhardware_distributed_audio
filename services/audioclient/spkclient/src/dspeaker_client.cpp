@@ -302,7 +302,8 @@ void DSpeakerClient::OnInterrupt(const AudioStandard::InterruptEvent &interruptE
     cbObj->NotifyEvent(audioEvent);
 }
 
-void DSpeakerClient::OnStateChange(const AudioStandard::RendererState state)
+void DSpeakerClient::OnStateChange(const AudioStandard::RendererState state,
+    const AudioStandard::StateChangeCmdType __attribute__((unused)) cmdType)
 {
     DHLOGI("On render state change. state: %d", state);
     std::shared_ptr<IAudioEventCallback> cbObj = eventCallback_.lock();

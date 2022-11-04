@@ -52,7 +52,8 @@ public:
     ~DSpeakerClient();
 
     int32_t OnStateChange(const AudioEventType type) override;
-    void OnStateChange(const AudioStandard::RendererState state) override;
+    void OnStateChange(const AudioStandard::RendererState state,
+        const AudioStandard::StateChangeCmdType __attribute__((unused)) cmdType) override;
     int32_t OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData) override;
     void OnVolumeKeyEvent(AudioStandard::VolumeEvent event) override;
     void OnInterrupt(const AudioStandard::InterruptEvent &interruptEvent) override;
