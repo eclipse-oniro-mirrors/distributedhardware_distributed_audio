@@ -34,7 +34,7 @@ class AudioCtrlTransport : public IAudioCtrlTransport,
     public std::enable_shared_from_this<AudioCtrlTransport> {
 public:
     explicit AudioCtrlTransport(const std::string &devId) : devId_(devId) {};
-    ~AudioCtrlTransport() = default;
+    ~AudioCtrlTransport() override = default;
 
     int32_t SetUp(const std::shared_ptr<IAudioCtrlTransCallback> &callback) override;
     int32_t Release() override;

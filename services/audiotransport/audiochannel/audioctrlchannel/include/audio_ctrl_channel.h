@@ -30,7 +30,7 @@ class AudioCtrlChannel : public IAudioChannel,
     public std::enable_shared_from_this<AudioCtrlChannel> {
 public:
     explicit AudioCtrlChannel(const std::string &peerDevId) : peerDevId_(peerDevId) {};
-    ~AudioCtrlChannel() = default;
+    ~AudioCtrlChannel() override = default;
 
     int32_t CreateSession(const std::shared_ptr<IAudioChannelListener> &listener,
         const std::string &sessionName) override;

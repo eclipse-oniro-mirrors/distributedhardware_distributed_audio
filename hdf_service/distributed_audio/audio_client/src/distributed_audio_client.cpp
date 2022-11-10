@@ -135,7 +135,7 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct ::
         .adapterName = desc->adapterName,
     };
     sptr<IAudioAdapter> adapterProxy = nullptr;
-    if (context == nullptr || context->proxy_ == nullptr) {
+    if (context->proxy_ == nullptr) {
         DHLOGE("The context or proxy for the context is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }

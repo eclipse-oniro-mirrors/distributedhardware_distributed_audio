@@ -49,13 +49,13 @@ class DSpeakerClient : public IAudioDataTransCallback,
 public:
     DSpeakerClient(const std::string &devId, const std::shared_ptr<IAudioEventCallback> &callback)
         : devId_(devId), eventCallback_(callback) {};
-    ~DSpeakerClient();
+    ~DSpeakerClient() override;
 
     int32_t OnStateChange(const AudioEventType type) override;
     void OnStateChange(const AudioStandard::RendererState state,
         const AudioStandard::StateChangeCmdType __attribute__((unused)) cmdType) override;
     int32_t OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioData) override;
-    void OnVolumeKeyEvent(AudioStandard::VolumeEvent event) override;
+    void OnVolumeKeyEvent(AudioStandard::VolumeEvent volumeEvent) override;
     void OnInterrupt(const AudioStandard::InterruptEvent &interruptEvent) override;
     int32_t SetUp(const AudioParam &param);
     int32_t Release();

@@ -23,7 +23,7 @@ namespace DistributedHardware {
 class AudioTransportStartStatus : public AudioTransportStatus {
 public:
     explicit AudioTransportStartStatus(std::shared_ptr<AudioTransportContext>& stateContext);
-    ~AudioTransportStartStatus() {}
+    ~AudioTransportStartStatus() override {}
     int32_t Start(std::shared_ptr<IAudioChannel> audioChannel, std::shared_ptr<IAudioProcessor> processor) override;
     int32_t Stop(std::shared_ptr<IAudioChannel> audioChannel, std::shared_ptr<IAudioProcessor> processor) override;
     int32_t Pause(std::shared_ptr<IAudioProcessor> processor) override;

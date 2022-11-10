@@ -26,7 +26,7 @@ namespace DistributedHardware {
 class DAudioIpcCallback : public DAudioIpcCallbackStub {
 public:
     DAudioIpcCallback() = default;
-    ~DAudioIpcCallback() = default;
+    ~DAudioIpcCallback() override = default;
 
     int32_t OnNotifyRegResult(const std::string &devId, const std::string &dhId, const std::string &reqId,
         int32_t status, const std::string &resultData) override;

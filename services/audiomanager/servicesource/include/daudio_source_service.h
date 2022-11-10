@@ -32,7 +32,7 @@ class DAudioSourceService : public SystemAbility, public DAudioSourceStub {
 
 public:
     DAudioSourceService(int32_t saId, bool runOnCreate) : SystemAbility(saId, runOnCreate) {};
-    ~DAudioSourceService() = default;
+    ~DAudioSourceService() override = default;
 
     int32_t InitSource(const std::string &params, const sptr<IDAudioIpcCallback> &callback) override;
     int32_t ReleaseSource() override;

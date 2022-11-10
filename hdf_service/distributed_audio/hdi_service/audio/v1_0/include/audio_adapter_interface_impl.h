@@ -61,8 +61,8 @@ typedef enum {
 
 class AudioAdapterInterfaceImpl : public IAudioAdapter {
 public:
-    AudioAdapterInterfaceImpl(const AudioAdapterDescriptor &desc);
-    virtual ~AudioAdapterInterfaceImpl();
+    explicit AudioAdapterInterfaceImpl(const AudioAdapterDescriptor &desc);
+    ~AudioAdapterInterfaceImpl() override;
 
     int32_t InitAllPorts() override;
     int32_t CreateRender(const AudioDeviceDescriptor &desc, const AudioSampleAttributes &attrs,
@@ -100,7 +100,7 @@ public:
     int32_t CloseCaptureDevice(const AudioDeviceDescriptor &desc);
     uint32_t GetVolumeGroup(const uint32_t devId);
     uint32_t GetInterruptGroup(const uint32_t devId);
-    bool isPortsNoReg();
+    bool IsPortsNoReg();
 
 private:
     int32_t SetAudioVolume(const std::string& condition, const std::string &param);

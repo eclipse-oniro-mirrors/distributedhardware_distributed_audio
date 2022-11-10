@@ -107,7 +107,7 @@ typedef struct AudioParamHDF {
 
 typedef struct {
     AudioCommonParam comParam;
-    AudioCaptureOptions CaptureOpts;
+    AudioCaptureOptions captureOpts;
     AudioRenderOptions renderOpts;
 } AudioParam;
 

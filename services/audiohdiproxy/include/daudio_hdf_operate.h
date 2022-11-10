@@ -24,11 +24,6 @@
 #include "iservmgr_hdi.h"
 #include "single_instance.h"
 
-using OHOS::HDI::DeviceManager::V1_0::IDeviceManager;
-using OHOS::HDI::ServiceManager::V1_0::IServiceManager;
-using OHOS::HDI::ServiceManager::V1_0::IServStatListener;
-using OHOS::HDI::ServiceManager::V1_0::ServiceStatus;
-using OHOS::HDI::ServiceManager::V1_0::ServStatListenerStub;
 const std::string AUDIO_SERVICE_NAME = "daudio_primary_service";
 const std::string AUDIOEXT_SERVICE_NAME = "daudio_ext_service";
 constexpr uint16_t INVALID_VALUE = 0xffff;
@@ -36,6 +31,12 @@ constexpr int32_t WAIT_TIME = 5000;
 
 namespace OHOS {
 namespace DistributedHardware {
+using OHOS::HDI::DeviceManager::V1_0::IDeviceManager;
+using OHOS::HDI::ServiceManager::V1_0::IServiceManager;
+using OHOS::HDI::ServiceManager::V1_0::IServStatListener;
+using OHOS::HDI::ServiceManager::V1_0::ServiceStatus;
+using OHOS::HDI::ServiceManager::V1_0::ServStatListenerStub;
+
 class DaudioHdfOperate {
 DECLARE_SINGLE_INSTANCE(DaudioHdfOperate);
 
@@ -61,7 +62,7 @@ public:
     explicit DAudioHdfServStatListener(StatusCallback callback) : callback_(std::move(callback))
     {
     }
-    ~DAudioHdfServStatListener() = default;
+    ~DAudioHdfServStatListener() override = default;
     void OnReceive(const ServiceStatus& status) override;
 
 private:

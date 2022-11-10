@@ -19,11 +19,11 @@
 #include <map>
 #include <string>
 
+namespace OHOS {
+namespace DistributedHardware {
 using std::string;
 using std::map;
 
-namespace OHOS {
-namespace DistributedHardware {
 class AudioData {
 public:
     explicit AudioData(const size_t capacity);

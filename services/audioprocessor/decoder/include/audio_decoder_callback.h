@@ -32,7 +32,7 @@ class AudioDecoderCallback : public Media::AVCodecCallback {
 public:
     explicit AudioDecoderCallback(const std::weak_ptr<AudioDecoder> &decoder)
         : audioDecoder_(decoder) {};
-    ~AudioDecoderCallback() = default;
+    ~AudioDecoderCallback() override = default;
 
     void OnError(Media::AVCodecErrorType errorType, int32_t errorCode) override;
     void OnOutputBufferAvailable(uint32_t index, Media::AVCodecBufferInfo info, Media::AVCodecBufferFlag flag) override;

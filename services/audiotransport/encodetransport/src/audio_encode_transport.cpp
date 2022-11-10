@@ -47,11 +47,19 @@ int32_t AudioEncodeTransport::SetUp(const AudioParam &localParam, const AudioPar
 int32_t AudioEncodeTransport::Start()
 {
     DHLOGI("Start audio encode transport.");
+    if (audioChannel_ == nullptr) {
+        DHLOGE("Channel is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     int32_t ret = audioChannel_->OpenSession();
     if (ret != DH_SUCCESS) {
         DHLOGE("Open channel session failed ret: %d.", ret);
         audioChannel_ = nullptr;
         return ret;
+    }
+    if (context_ == nullptr) {
+        DHLOGE("Context is null.");
+        return ERR_DH_AUDIO_NULLPTR;
     }
     ret = context_->Start();
     if (ret != DH_SUCCESS) {

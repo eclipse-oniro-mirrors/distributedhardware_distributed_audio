@@ -16,7 +16,7 @@
 #ifndef HDI_DAUDIO_CONTROL_INTERNAL_H
 #define HDI_DAUDIO_CONTROL_INTERNAL_H
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "audio_types.h"
 

@@ -55,6 +55,7 @@ ohos_unittest("EncodeTransportTest") {
 
   deps = [
     "${audio_transport_path}/encodetransport:distributed_audio_encode_transport",
+    "${audio_transport_path}/audiotransportstatus:distributed_audio_transport_status",
     "${services_path}/common:distributed_audio_utils",
     "//third_party/googletest:gtest_main",
   ]

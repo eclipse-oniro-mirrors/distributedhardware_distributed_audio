@@ -543,7 +543,7 @@ int32_t DAudioSinkDev::from_json(const json &j, AudioParam &audioParam)
     j.at(KEY_SAMPLING_RATE).get_to(audioParam.comParam.sampleRate);
     j.at(KEY_CHANNELS).get_to(audioParam.comParam.channelMask);
     j.at(KEY_FORMAT).get_to(audioParam.comParam.bitFormat);
-    j.at(KEY_SOURCE_TYPE).get_to(audioParam.CaptureOpts.sourceType);
+    j.at(KEY_SOURCE_TYPE).get_to(audioParam.captureOpts.sourceType);
     j.at(KEY_CONTENT_TYPE).get_to(audioParam.renderOpts.contentType);
     j.at(KEY_STREAM_USAGE).get_to(audioParam.renderOpts.streamUsage);
     return DH_SUCCESS;

@@ -38,7 +38,7 @@ namespace DistributedHardware {
 class DAudioSourceDev : public IAudioEventCallback, public std::enable_shared_from_this<DAudioSourceDev> {
 public:
     DAudioSourceDev(const std::string &devId, const std::shared_ptr<DAudioSourceMgrCallback> &callback);
-    ~DAudioSourceDev() = default;
+    ~DAudioSourceDev() override = default;
 
     int32_t AwakeAudioDev();
     void SleepAudioDev();
@@ -93,10 +93,10 @@ private:
     int32_t NotifyHDF(const AudioEventType type, const std::string result);
     int32_t OpenCtrlTrans(const AudioEvent &event);
     int32_t CloseCtrlTrans(const AudioEvent &event, bool isSpk);
-    AudioEventType getEventTypeFromArgs (const std::string &args);
+    AudioEventType getEventTypeFromArgs(const std::string &args);
     void to_json(json &j, const AudioParam &param);
     bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);
-    bool CheckIsNum (const std::string &jsonString);
+    bool CheckIsNum(const std::string &jsonString);
 
 private:
     static constexpr uint8_t RPC_WAIT_SECONDS = 2;

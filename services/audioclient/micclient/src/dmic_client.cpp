@@ -70,7 +70,7 @@ int32_t DMicClient::OnStateChange(const AudioEventType type)
 int32_t DMicClient::SetUp(const AudioParam &param)
 {
     DHLOGI("Set up mic client, param: {sampleRate: %d, bitFormat: %d, channelMask: %d, sourceType: %d}.",
-        param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.CaptureOpts.sourceType);
+        param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.captureOpts.sourceType);
     audioParam_ = param;
     AudioStandard::AudioCapturerOptions capturerOptions = {
         {
@@ -80,7 +80,7 @@ int32_t DMicClient::SetUp(const AudioParam &param)
             static_cast<AudioStandard::AudioChannel>(audioParam_.comParam.channelMask),
         },
         {
-            static_cast<AudioStandard::SourceType>(audioParam_.CaptureOpts.sourceType),
+            static_cast<AudioStandard::SourceType>(audioParam_.captureOpts.sourceType),
             0,
         }
     };
@@ -180,7 +180,7 @@ void DMicClient::CaptureThreadRunning()
             int32_t len = audioCapturer_->Read(*(audioData->Data() + bytesRead),
                 DEFAULT_AUDIO_DATA_SIZE - bytesRead, isBlocking_);
             if (len >= 0) {
-                bytesRead += (size_t)len;
+                bytesRead += static_cast<size_t>(len);
             } else {
                 errorFlag = true;
                 break;

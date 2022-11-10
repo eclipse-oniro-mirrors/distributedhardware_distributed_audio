@@ -42,7 +42,7 @@ public:
         return dmgr;
     }
 
-    virtual ~DAudioManagerInterfaceImpl();
+    ~DAudioManagerInterfaceImpl() override;
 
     int32_t RegisterAudioDevice(const std::string &adpName, int32_t devId, const std::string &capability,
         const sptr<IDAudioCallback> &callbackObj) override;

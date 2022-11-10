@@ -87,8 +87,8 @@ static int32_t GetRenderPositionInternal(struct AudioRender *render, uint64_t *f
     if (ret != DH_SUCCESS) {
         return ret;
     }
-    time->tvSec = (int64_t)timeHal.tvSec;
-    time->tvNSec = (int64_t)timeHal.tvNSec;
+    time->tvSec = static_cast<int64_t>(timeHal.tvSec);
+    time->tvNSec = static_cast<int64_t>(timeHal.tvNSec);
     return DH_SUCCESS;
 }
 

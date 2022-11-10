@@ -19,10 +19,13 @@
 
 #include "audio_data.h"
 #include "audio_event.h"
+#include "audio_transport_status.h"
+#include "audio_transport_status_factory.h"
 #include "audio_param.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 #include "daudio_util.h"
+#include "audio_transport_context.h"
 #include "mock_audio_data_channel.h"
 #include "mock_audio_transport_callback.h"
 #include "securec.h"
@@ -33,6 +36,7 @@ namespace OHOS {
 namespace DistributedHardware {
 const std::string RMT_DEV_ID_TEST = "RemoteTest";
 const std::string ROLE_TEST = "speaker";
+const std::string PEER_DEVID = "peerDevId";
 
 void EncodeTransportTest::SetUpTestCase(void)
 {
@@ -108,7 +112,14 @@ HWTEST_F(EncodeTransportTest, encode_transport_test_001, TestSize.Level1)
  */
 HWTEST_F(EncodeTransportTest, encode_transport_test_002, TestSize.Level1)
 {
-    EXPECT_NE(DH_SUCCESS, encodeTrans_->Start());
+    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(PEER_DEVID);
+    encodeTrans_->context_ = std::make_shared<AudioTransportContext>();
+    auto stateContext = std::shared_ptr<AudioTransportContext>(encodeTrans_->context_);
+    encodeTrans_->context_->currentState_ =
+        AudioTransportStatusFactory::GetInstance().CreateState(TRANSPORT_STATE_START, stateContext);
+    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Start());
+    encodeTrans_->context_->currentState_ =
+        AudioTransportStatusFactory::GetInstance().CreateState(TRANSPORT_STATE_STOP, stateContext);
     EXPECT_EQ(DH_SUCCESS, encodeTrans_->Stop());
     EXPECT_EQ(DH_SUCCESS, encodeTrans_->Release());
 }
@@ -155,7 +166,11 @@ HWTEST_F(EncodeTransportTest, encode_transport_test_003, TestSize.Level1)
             0
         }
     };
-    EXPECT_EQ(ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL, encodeTrans_->Pause());
+    encodeTrans_->context_ = std::make_shared<AudioTransportContext>();
+    auto stateContext = std::shared_ptr<AudioTransportContext>(encodeTrans_->context_);
+    encodeTrans_->context_->currentState_ =
+        AudioTransportStatusFactory::GetInstance().CreateState(TRANSPORT_STATE_PAUSE, stateContext);
+    EXPECT_EQ(DH_SUCCESS, encodeTrans_->Pause());
     EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, encodeTrans_->Restart(testLocalParaEnc, testRemoteParaEnc));
 }
 } // namespace DistributedHardware

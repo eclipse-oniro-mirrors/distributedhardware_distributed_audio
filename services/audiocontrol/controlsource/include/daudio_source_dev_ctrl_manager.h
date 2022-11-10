@@ -31,7 +31,7 @@ class DAudioSourceDevCtrlMgr : public IAudioCtrlTransCallback,
     public std::enable_shared_from_this<DAudioSourceDevCtrlMgr> {
 public:
     DAudioSourceDevCtrlMgr(const std::string &networkId, std::shared_ptr<IAudioEventCallback> audioEventCallback);
-    ~DAudioSourceDevCtrlMgr();
+    ~DAudioSourceDevCtrlMgr() override;
 
     void OnStateChange(int32_t type) override;
     void OnEventReceived(const AudioEvent &event) override;

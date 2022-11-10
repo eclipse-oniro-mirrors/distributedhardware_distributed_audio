@@ -84,7 +84,7 @@ class AudioEvent {
 public:
     AudioEvent() = default;
     AudioEvent(const AudioEventType t, const std::string &c) : type(t), content(c) {};
-    AudioEvent(const int32_t t, const std::string &c) : type((AudioEventType)t), content(c) {};
+    AudioEvent(const int32_t t, const std::string &c) : type(static_cast<AudioEventType>(t)), content(c) {};
     ~AudioEvent() = default;
     AudioEventType type = EVENT_UNKNOWN;
     std::string content;

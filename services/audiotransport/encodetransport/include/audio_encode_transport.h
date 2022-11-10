@@ -38,7 +38,7 @@ class AudioEncodeTransport : public IAudioDataTransport,
     public std::enable_shared_from_this<AudioEncodeTransport> {
 public:
     explicit AudioEncodeTransport(const std::string peerDevId) : peerDevId_(peerDevId) {}
-    ~AudioEncodeTransport() = default;
+    ~AudioEncodeTransport() override = default;
     int32_t SetUp(const AudioParam &localParam, const AudioParam &remoteParam,
         const std::shared_ptr<IAudioDataTransCallback> &callback, const std::string &role) override;
     int32_t Start() override;

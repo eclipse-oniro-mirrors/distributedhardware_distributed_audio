@@ -43,7 +43,7 @@ public:
         audioParam_.comParam.bitFormat = AudioSampleFormat::SAMPLE_U8;
         audioParam_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
     }
-    ~AudioDecodeTransport() = default;
+    ~AudioDecodeTransport() override = default;
     int32_t SetUp(const AudioParam &localParam, const AudioParam &remoteParam,
         const std::shared_ptr<IAudioDataTransCallback> &callback, const std::string &role) override;
     int32_t Start() override;

@@ -16,7 +16,7 @@
 #ifndef OHOS_DAUDIO_LOG_H
 #define OHOS_DAUDIO_LOG_H
 
-#include <string.h>
+#include <cstring>
 
 namespace OHOS {
 namespace DistributedHardware {

@@ -56,7 +56,7 @@ public:
         return mgr;
     }
 
-    virtual ~AudioManagerInterfaceImpl();
+    ~AudioManagerInterfaceImpl() override;
     int32_t GetAllAdapters(std::vector<AudioAdapterDescriptor> &descs) override;
     int32_t LoadAdapter(const AudioAdapterDescriptor &desc, sptr<IAudioAdapter> &adapter) override;
     int32_t UnloadAdapter(const std::string &adapterName) override;

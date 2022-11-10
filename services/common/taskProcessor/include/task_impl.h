@@ -25,7 +25,7 @@ namespace DistributedHardware {
 class TaskImpl : public TaskImplInterface {
 public:
     TaskImpl(std::function<int32_t()> taskFunc, std::function<void(int32_t)> taskCallback);
-    ~TaskImpl() = default;
+    ~TaskImpl() override = default;
     void Run() override;
 
 private:

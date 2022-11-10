@@ -43,7 +43,7 @@ class AudioCaptureInterfaceImpl : public IAudioCapture {
 public:
     AudioCaptureInterfaceImpl(const std::string adpName, const AudioDeviceDescriptor &desc,
         const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
-    virtual ~AudioCaptureInterfaceImpl();
+    ~AudioCaptureInterfaceImpl() override;
 
     int32_t CaptureFrame(std::vector<int8_t> &frame, uint64_t requestBytes) override;
     int32_t GetCapturePosition(uint64_t &frames, AudioTimeStamp &time) override;

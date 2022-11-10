@@ -36,7 +36,7 @@ void DMicClientTest::SetUp()
     audioParam_.comParam.sampleRate = AudioSampleRate::SAMPLE_RATE_48000;
     audioParam_.comParam.bitFormat = AudioSampleFormat::SAMPLE_S16LE;
     audioParam_.comParam.channelMask = AudioChannel::STEREO;
-    audioParam_.CaptureOpts.sourceType = SourceType::SOURCE_TYPE_MIC;
+    audioParam_.captureOpts.sourceType = SourceType::SOURCE_TYPE_MIC;
 }
 
 void DMicClientTest::TearDown()

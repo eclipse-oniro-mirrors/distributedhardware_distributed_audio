@@ -30,7 +30,7 @@ class AudioDataChannel : public IAudioChannel,
     public std::enable_shared_from_this<AudioDataChannel> {
 public:
     explicit AudioDataChannel(const std::string &peerDevId) : peerDevId_(peerDevId) {};
-    ~AudioDataChannel() = default;
+    ~AudioDataChannel() override = default;
 
     int32_t CreateSession(const std::shared_ptr<IAudioChannelListener> &listener,
         const std::string &sessionName) override;

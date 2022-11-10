@@ -34,8 +34,8 @@ namespace OHOS {
 namespace DistributedHardware {
 class DAudioSinkDev : public IAudioEventCallback, public std::enable_shared_from_this<DAudioSinkDev> {
 public:
-    DAudioSinkDev(const std::string &networkId);
-    ~DAudioSinkDev();
+    explicit DAudioSinkDev(const std::string &networkId);
+    ~DAudioSinkDev() override;
 
     int32_t AwakeAudioDev();
     void SleepAudioDev();

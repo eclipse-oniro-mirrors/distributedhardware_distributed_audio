@@ -36,7 +36,7 @@ class DMicDev : public IDAudioHdiCallback,
 public:
     DMicDev(const std::string &devId, std::shared_ptr<IAudioEventCallback> callback)
         : devId_(devId), audioEventCallback_(callback) {};
-    ~DMicDev() = default;
+    ~DMicDev() override = default;
 
     int32_t EnableDMic(const int32_t dhId, const std::string &capability);
     int32_t DisableDMic(const int32_t dhId);

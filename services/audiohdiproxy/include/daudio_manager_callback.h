@@ -25,8 +25,8 @@ namespace OHOS {
 namespace DistributedHardware {
 class DAudioManagerCallback : public OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback {
 public:
-    DAudioManagerCallback(const std::shared_ptr<IDAudioHdiCallback> callback) : callback_(callback) {};
-    ~DAudioManagerCallback() = default;
+    explicit DAudioManagerCallback(const std::shared_ptr<IDAudioHdiCallback> callback) : callback_(callback) {};
+    ~DAudioManagerCallback() override = default;
 
     int32_t OpenDevice(const std::string &adpName, int32_t devId) override;
 

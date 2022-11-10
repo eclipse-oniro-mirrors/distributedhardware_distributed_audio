@@ -32,7 +32,7 @@ using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioExtParamKey;
 class AudioParamCallbackImpl final : public IAudioCallback {
 public:
     AudioParamCallbackImpl(::ParamCallback callback, void *cookie) : callback_(callback), cookie_(cookie) {}
-    ~AudioParamCallbackImpl() {}
+    ~AudioParamCallbackImpl() override {}
 
     int32_t RenderCallback(AudioCallbackType type, int8_t &reserved, int8_t &cookie) override;
     int32_t ParamCallback(AudioExtParamKey key, const std::string& condition, const std::string& value,

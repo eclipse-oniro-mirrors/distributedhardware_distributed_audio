@@ -36,7 +36,7 @@ namespace DistributedHardware {
 class AudioDecoder : public IAudioCodec, public std::enable_shared_from_this<AudioDecoder> {
 public:
     AudioDecoder() = default;
-    ~AudioDecoder();
+    ~AudioDecoder() override;
 
     int32_t ConfigureAudioCodec(const AudioCommonParam &codecParam,
         const std::shared_ptr<IAudioCodecCallback> &codecCallback) override;

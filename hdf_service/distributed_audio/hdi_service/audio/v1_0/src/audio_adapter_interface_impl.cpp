@@ -342,7 +342,7 @@ int32_t AudioAdapterInterfaceImpl::AdapterUnload()
 
 int32_t AudioAdapterInterfaceImpl::Notify(const uint32_t devId, const DAudioEvent &event)
 {
-    switch ((AudioExtParamEvent)event.type) {
+    switch (static_cast<AudioExtParamEvent>(event.type)) {
         case HDF_AUDIO_EVENT_VOLUME_CHANGE:
             DHLOGI("Notify event: VOLUME_CHANGE, event content: %s.", event.content.c_str());
             return HandleVolumeChangeEvent(event);
@@ -631,7 +631,7 @@ int32_t AudioAdapterInterfaceImpl::getEventTypeFromCondition(const std::string &
 {
     std::string::size_type position = condition.find_first_of(";");
     int32_t type = std::stoi(condition.substr(TYPE_CONDITION, position - TYPE_CONDITION));
-    return (VolumeEventType)type;
+    return static_cast<VolumeEventType>(type);
 }
 
 int32_t AudioAdapterInterfaceImpl::HandleVolumeChangeEvent(const DAudioEvent &event)
@@ -824,7 +824,7 @@ int32_t AudioAdapterInterfaceImpl::HandleDeviceClosed(const DAudioEvent &event)
     return DH_SUCCESS;
 }
 
-bool AudioAdapterInterfaceImpl::isPortsNoReg()
+bool AudioAdapterInterfaceImpl::IsPortsNoReg()
 {
     std::lock_guard<std::mutex> devLck(devMapMtx_);
     return mapAudioDevice_.empty();

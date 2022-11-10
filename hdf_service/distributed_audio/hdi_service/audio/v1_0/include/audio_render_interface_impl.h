@@ -48,7 +48,7 @@ class AudioRenderInterfaceImpl : public IAudioRender {
 public:
     AudioRenderInterfaceImpl(const std::string adpName, const AudioDeviceDescriptor &desc,
         const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
-    virtual ~AudioRenderInterfaceImpl();
+    ~AudioRenderInterfaceImpl() override;
 
     int32_t GetLatency(uint32_t &ms) override;
     int32_t RenderFrame(const std::vector<int8_t> &frame, uint64_t &replyBytes) override;
@@ -92,7 +92,7 @@ public:
 
     const AudioDeviceDescriptor &GetRenderDesc();
     void SetVolumeInner(const uint32_t vol);
-    void SetVolumeRangeInner(const uint32_t maxVol, const uint32_t minVol);
+    void SetVolumeRangeInner(const uint32_t volMax, const uint32_t volMin);
     uint32_t GetVolumeInner();
     uint32_t GetMaxVolumeInner();
     uint32_t GetMinVolumeInner();

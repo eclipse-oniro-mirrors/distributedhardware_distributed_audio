@@ -763,7 +763,7 @@ int32_t DAudioSourceDev::NotifySinkDev(const AudioEventType type, const json Par
                     { KEY_EVENT_TYPE, type },
                     { KEY_AUDIO_PARAM, Param } };
     DAudioSourceManager::GetInstance().DAudioNotify(devId_, dhId, type, jParam.dump());
-    return WaitForRPC((AudioEventType)((int32_t)type + eventOffset));
+    return WaitForRPC((AudioEventType)(static_cast<int32_t>(type) + eventOffset));
 }
 
 int32_t DAudioSourceDev::NotifyHDF(const AudioEventType type, const std::string result)
@@ -808,7 +808,7 @@ void DAudioSourceDev::to_json(json &j, const AudioParam &param)
     j = json {
         { KEY_SAMPLING_RATE, param.comParam.sampleRate },   { KEY_FORMAT, param.comParam.bitFormat },
         { KEY_CHANNELS, param.comParam.channelMask },       { KEY_CONTENT_TYPE, param.renderOpts.contentType },
-        { KEY_STREAM_USAGE, param.renderOpts.streamUsage }, { KEY_SOURCE_TYPE, param.CaptureOpts.sourceType },
+        { KEY_STREAM_USAGE, param.renderOpts.streamUsage }, { KEY_SOURCE_TYPE, param.captureOpts.sourceType },
     };
 }
 

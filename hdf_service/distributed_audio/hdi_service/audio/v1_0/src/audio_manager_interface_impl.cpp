@@ -185,7 +185,7 @@ int32_t AudioManagerInterfaceImpl::RemoveAudioDevice(const std::string &adpName,
     if (ret != DH_SUCCESS) {
         DHLOGI("Notify audio fwk failed, ret = %d.", ret);
     }
-    if (adp->second->isPortsNoReg()) {
+    if (adp->second->IsPortsNoReg()) {
         mapAudioAdapter_.erase(adpName);
     }
     DHLOGI("Remove audio device success, mapAudioAdapter size() is : %d .", mapAudioAdapter_.size());

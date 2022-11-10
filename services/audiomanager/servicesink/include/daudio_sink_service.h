@@ -28,7 +28,7 @@ DECLARE_SYSTEM_ABILITY(DAudioSinkService);
 
 public:
     DAudioSinkService(int32_t saId, bool runOnCreate);
-    ~DAudioSinkService() = default;
+    ~DAudioSinkService() override = default;
 
     int32_t InitSink(const std::string &params) override;
     int32_t ReleaseSink() override;

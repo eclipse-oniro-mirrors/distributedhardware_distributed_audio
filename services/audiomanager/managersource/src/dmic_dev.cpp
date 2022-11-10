@@ -147,8 +147,8 @@ int32_t DMicDev::SetParameters(const std::string &devId, const int32_t dhId, con
     param_.comParam.channelMask = paramHDF_.channelMask;
     param_.comParam.bitFormat = paramHDF_.bitFormat;
     param_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
-    param_.CaptureOpts.sourceType = SOURCE_TYPE_MIC;
-    param_.CaptureOpts.capturerFlags = 0;
+    param_.captureOpts.sourceType = SOURCE_TYPE_MIC;
+    param_.captureOpts.capturerFlags = 0;
     return DH_SUCCESS;
 }
 

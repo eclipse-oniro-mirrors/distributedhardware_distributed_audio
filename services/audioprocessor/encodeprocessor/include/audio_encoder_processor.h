@@ -32,7 +32,7 @@ class AudioEncoderProcessor : public IAudioProcessor, public IAudioCodecCallback
     public std::enable_shared_from_this<AudioEncoderProcessor> {
 public:
     AudioEncoderProcessor() = default;
-    ~AudioEncoderProcessor();
+    ~AudioEncoderProcessor() override;
 
     int32_t ConfigureAudioProcessor(const AudioCommonParam &localDevParam, const AudioCommonParam &remoteDevParam,
         const std::shared_ptr<IAudioProcessorCallback> &procCallback) override;

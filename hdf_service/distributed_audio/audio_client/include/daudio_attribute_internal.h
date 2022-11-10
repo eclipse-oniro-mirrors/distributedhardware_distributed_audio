@@ -17,7 +17,7 @@
 #define HDI_DAUDIO_ATTRIBUTE_INTERNAL_H
 
 #include <securec.h>
-#include <stdint.h>
+#include <cstdint>
 #include <sys/mman.h>
 
 #include "audio_types.h"
@@ -118,7 +118,7 @@ int32_t AudioAttributeInternal<T>::GetSampleAttributes(AudioHandle handle, struc
     attrs->format = static_cast<::AudioFormat>(attrsHal.format);
     attrs->sampleRate = attrsHal.sampleRate;
     attrs->channelCount = attrsHal.channelCount;
-    attrs->streamId = (int32_t)attrsHal.streamId;
+    attrs->streamId = static_cast<int32_t>(attrsHal.streamId);
     return DH_SUCCESS;
 }
 
@@ -240,8 +240,8 @@ int32_t AudioAttributeInternal<T>::GetMmapPosition(AudioHandle handle, uint64_t 
         return ret;
     }
 
-    time->tvSec = (int64_t)timeHal.tvSec;
-    time->tvNSec = (int64_t)timeHal.tvNSec;
+    time->tvSec = static_cast<int64_t>(timeHal.tvSec);
+    time->tvNSec = static_cast<int64_t>(timeHal.tvNSec);
     return DH_SUCCESS;
 }
 } // DistributedHardware

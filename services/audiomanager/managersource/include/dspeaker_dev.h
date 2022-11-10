@@ -36,7 +36,7 @@ class DSpeakerDev : public IDAudioHdiCallback,
 public:
     DSpeakerDev(const std::string &devId, std::shared_ptr<IAudioEventCallback> callback)
         : devId_(devId), audioEventCallback_(callback) {};
-    ~DSpeakerDev() = default;
+    ~DSpeakerDev() override = default;
 
     int32_t EnableDSpeaker(const int32_t dhId, const std::string& capability);
     int32_t DisableDSpeaker(const int32_t dhId);
