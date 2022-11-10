@@ -108,6 +108,7 @@ private:
     static constexpr uint8_t EVENT_NOTIFY_CLOSE_MIC = 0x08;
     static constexpr uint8_t EVENT_NOTIFY_OPEN_CTRL = 0x10;
     static constexpr uint8_t EVENT_NOTIFY_CLOSE_CTRL = 0x20;
+    static constexpr uint8_t MAX_KEY_DH_ID_LEN = 10;
 
     std::string devId_;
     std::shared_ptr<DAudioSourceMgrCallback> mgrCallback_;

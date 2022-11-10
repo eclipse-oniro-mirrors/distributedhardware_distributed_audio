@@ -829,9 +829,13 @@ bool DAudioSourceDev::JsonParamCheck(const json &jParam, const std::initializer_
 
 bool DAudioSourceDev::CheckIsNum(const std::string &jsonString)
 {
+    if (jsonString.empty() || jsonString.size() > MAX_KEY_DH_ID_LEN) {
+        DHLOGE("Json string size %d, is zero or too long.", jsonString.size());
+        return false;
+    }
     for (char const &c : jsonString) {
         if (!std::isdigit(c)) {
-            DHLOGE("jsonString is not number.");
+            DHLOGE("Json string is not number.");
             return false;
         }
     }
