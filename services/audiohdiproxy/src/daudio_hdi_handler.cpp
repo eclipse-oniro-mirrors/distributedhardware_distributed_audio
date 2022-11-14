@@ -72,6 +72,10 @@ int32_t DAudioHdiHandler::InitHdiHandler()
 int32_t DAudioHdiHandler::UninitHdiHandler()
 {
     DHLOGI("Unload hdf driver start.");
+    if (audioSrvHdf_ == nullptr) {
+        DHLOGI("Audio hdi proxy not init. Do not need to uninit.");
+        return DH_SUCCESS;
+    }
     int32_t ret = DaudioHdfOperate::GetInstance().UnLoadDaudioHDFImpl();
     if (ret != DH_SUCCESS) {
         DHLOGE("Unload hdf driver failed, ret: %d", ret);
