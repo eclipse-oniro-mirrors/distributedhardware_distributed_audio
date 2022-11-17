@@ -549,6 +549,7 @@ uint32_t AudioAdapterInterfaceImpl::GetInterruptGroup(const uint32_t devId)
     auto caps = mapAudioDevice_.find(devId);
     if (caps == mapAudioDevice_.end()) {
         DHLOGE("Can not find caps of dev:%u.", devId);
+        return iptGroup;
     }
 
     int32_t ret = GetAudioParamUInt(caps->second, INTERRUPT_GROUP_ID, iptGroup);

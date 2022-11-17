@@ -26,7 +26,7 @@ namespace OHOS {
 namespace DistributedHardware {
 void SinkHandlerUnsubscribeLocalHardwareFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size < 0))  {
+    if (data == nullptr) {
         return;
     }
     std::string dhId(reinterpret_cast<const char*>(data), size);

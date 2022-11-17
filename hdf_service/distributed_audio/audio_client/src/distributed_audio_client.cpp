@@ -44,6 +44,7 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
         char* adapterName = reinterpret_cast<char *>(calloc(desc.adapterName.length() + 1, sizeof(char)));
         if (adapterName == nullptr) {
             DHLOGE("Calloc failed.");
+            free(audioPorts);
             return ERR_DH_AUDIO_HDF_FAILURE;
         }
         if (strcpy_s(adapterName, desc.adapterName.length() + 1, desc.adapterName.c_str()) != EOK) {

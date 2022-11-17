@@ -26,7 +26,7 @@ namespace OHOS {
 namespace DistributedHardware {
 void SourceHandlerInitSourceFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size < 0))  {
+    if (data == nullptr) {
         return;
     }
     std::string params(reinterpret_cast<const char*>(data), size);
