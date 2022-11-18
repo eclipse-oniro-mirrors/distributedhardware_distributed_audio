@@ -115,7 +115,7 @@ int32_t AudioCtrlChannel::CloseSession()
     DAUDIO_SYNC_TRACE(DAUDIO_CLOSE_CTRL_SESSION);
     int32_t ret = SoftbusAdapter::GetInstance().CloseSoftbusSession(sessionId_);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Close ctrl session failed ret: %d.", ret);
+        DHLOGE("Close ctrl session failed, ret: %d.", ret);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret,
             "daudio close ctrl session failed.");
         return ret;
@@ -132,6 +132,7 @@ int32_t AudioCtrlChannel::SendData(const std::shared_ptr<AudioData> &data)
 
     return DH_SUCCESS;
 }
+
 int32_t AudioCtrlChannel::SendEvent(const AudioEvent &audioEvent)
 {
     DHLOGI("Send event, sessionId: %d.", sessionId_);
@@ -157,8 +158,8 @@ int32_t AudioCtrlChannel::SendMsg(string &message)
         return ERR_DH_AUDIO_CTRL_CHANNEL_SEND_MSG_FAIL;
     }
     int32_t outLen = 0;
-    if (memcpy_s(buf, MSG_MAX_SIZE, reinterpret_cast<const uint8_t *>(message.c_str()), message.size()) != DH_SUCCESS) {
-        DHLOGE("Memcpy memory failed.");
+    if (memcpy_s(buf, MSG_MAX_SIZE, reinterpret_cast<const uint8_t *>(message.c_str()), message.size()) != EOK) {
+        DHLOGE("Copy audio event failed.");
         free(buf);
         return ERR_DH_AUDIO_CTRL_CHANNEL_SEND_MSG_FAIL;
     }
@@ -221,8 +222,8 @@ void AudioCtrlChannel::OnBytesReceived(int32_t sessionId, const void *data, uint
         return;
     }
 
-    if (memcpy_s(buf, dataLen + 1, reinterpret_cast<const uint8_t *>(data), dataLen) != DH_SUCCESS) {
-        DHLOGE("Memcpy memory failed.");
+    if (memcpy_s(buf, dataLen + 1, reinterpret_cast<const uint8_t *>(data), dataLen) != EOK) {
+        DHLOGE("Received bytes data copy failed.");
         free(buf);
         return;
     }

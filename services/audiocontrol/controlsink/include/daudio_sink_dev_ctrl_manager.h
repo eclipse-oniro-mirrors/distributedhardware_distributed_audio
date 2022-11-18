@@ -41,12 +41,12 @@ public:
     int32_t SendAudioEvent(const AudioEvent &event);
 
 private:
-    std::string devId_;
-    std::atomic<bool> isOpened_ = false;
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
-    AudioEvent audioEvent_;
+
+    std::string devId_;
+    std::weak_ptr<IAudioEventCallback> audioEventCallback_;
     std::shared_ptr<IAudioCtrlTransport> audioCtrlTrans_ = nullptr;
-    std::shared_ptr<IAudioEventCallback> audioEventCallback_ = nullptr;
+    std::atomic<bool> isOpened_ = false;
 };
 } // DistributedHardware
 } // OHOS

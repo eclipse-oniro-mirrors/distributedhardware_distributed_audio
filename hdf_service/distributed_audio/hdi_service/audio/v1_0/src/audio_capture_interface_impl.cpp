@@ -77,7 +77,7 @@ int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<int8_t> &frame, uint
     frame.resize(AUDIO_DATA_SIZE_DEFAULT);
     ret = memcpy_s(frame.data(), frame.size(), audioData.data.data(), audioData.data.size());
     if (ret != EOK) {
-        DHLOGE("AudioCaptureInterfaceImpl CaptureFrame memcpy_s failed ret: %d.", ret);
+        DHLOGE("Copy capture frame failed, error code %d.", ret);
         return HDF_FAILURE;
     }
 

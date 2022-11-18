@@ -36,7 +36,7 @@ int32_t AudioCtrlTransport::SetUp(const std::shared_ptr<IAudioCtrlTransCallback>
         return ret;
     }
 
-    DHLOGI("Set up  audio control transport success.");
+    DHLOGI("Set up audio control transport success.");
     return DH_SUCCESS;
 }
 

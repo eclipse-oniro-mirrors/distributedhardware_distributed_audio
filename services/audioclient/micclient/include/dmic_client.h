@@ -63,7 +63,7 @@ private:
     std::thread captureDataThread_;
     std::condition_variable channelWaitCond_;
     AudioParam audioParam_;
-    bool isBlocking_ = false;
+    std::atomic<bool> isBlocking_ = false;
     bool isChannelReady_ = false;
     std::atomic<bool> isCaptureReady_ = false;
     std::mutex devMtx_;

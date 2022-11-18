@@ -34,6 +34,7 @@
 #include "audio_status.h"
 #include "audio_decode_transport.h"
 #include "audio_event.h"
+#include "audio_param.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 #include "iaudio_data_transport.h"

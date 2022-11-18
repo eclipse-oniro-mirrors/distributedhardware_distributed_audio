@@ -44,9 +44,9 @@ public:
 
 private:
     std::string devId_;
-    std::shared_ptr<IAudioCtrlTransport> audioCtrlTrans_;
-    std::shared_ptr<IAudioEventCallback> audioEventCallback_;
-    bool isOpened_ = false;
+    std::weak_ptr<IAudioEventCallback> audioEventCallback_;
+    std::shared_ptr<IAudioCtrlTransport> audioCtrlTrans_ = nullptr;
+    std::atomic<bool> isOpened_ = false;
     std::mutex channelWaitMutex_;
     std::condition_variable channelWaitCond_;
 };

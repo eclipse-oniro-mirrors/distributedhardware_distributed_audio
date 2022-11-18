@@ -44,6 +44,8 @@ protected:
 
 private:
     bool Init();
+
+private:
     bool isServiceStarted_ = false;
 };
 } // DistributedHardware

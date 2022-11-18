@@ -44,28 +44,31 @@ DAudioSinkDevCtrlMgr::~DAudioSinkDevCtrlMgr()
 
 void DAudioSinkDevCtrlMgr::OnStateChange(int32_t type)
 {
-    DHLOGI("Distributed audio sink development control manager state change, type: %d.", type);
-    if (audioEventCallback_ == nullptr) {
-        DHLOGE("Callback is nullptr.");
-        return;
-    }
-    AudioEvent event(static_cast<AudioEventType>(type), "");
-    audioEventCallback_->NotifyEvent(event);
+    DHLOGI("Distributed audio sink device control manager state change, type: %d.", type);
     switch (type) {
         case AudioEventType::CTRL_OPENED:
             isOpened_.store(true);
-            return;
+            break;
         case AudioEventType::CTRL_CLOSED:
-            return;
+            isOpened_.store(false);
+            break;
         default:
             DHLOGE("Invalid parameter type, type: %d.", type);
             return;
     }
+
+    auto callback = audioEventCallback_.lock();
+    if (callback == nullptr) {
+        DHLOGE("Callback is nullptr.");
+        return;
+    }
+    AudioEvent event(static_cast<AudioEventType>(type), "");
+    callback->NotifyEvent(event);
 }
 
 int32_t DAudioSinkDevCtrlMgr::SetUp()
 {
-    DHLOGI("Set up sink development control manager.");
+    DHLOGI("Set up sink device control manager.");
     if (audioCtrlTrans_ == nullptr) {
         audioCtrlTrans_ = std::make_shared<AudioCtrlTransport>(devId_);
     }
@@ -80,13 +83,13 @@ int32_t DAudioSinkDevCtrlMgr::SetUp()
 
 int32_t DAudioSinkDevCtrlMgr::Start()
 {
-    DHLOGI("Start sink development control manager.");
+    DHLOGI("Start sink device control manager.");
     return DH_SUCCESS;
 }
 
 int32_t DAudioSinkDevCtrlMgr::Stop()
 {
-    DHLOGI("Stop sink development control manager.");
+    DHLOGI("Stop sink device control manager.");
     isOpened_.store(false);
     if (audioCtrlTrans_ == nullptr) {
         DHLOGI("Ctrl trans already stop.");
@@ -103,7 +106,7 @@ int32_t DAudioSinkDevCtrlMgr::Stop()
 
 int32_t DAudioSinkDevCtrlMgr::Release()
 {
-    DHLOGI("Release sink development control manager.");
+    DHLOGI("Release sink device control manager.");
     if (audioCtrlTrans_ == nullptr) {
         DHLOGI("Ctrl trans already release.");
         return DH_SUCCESS;
@@ -125,11 +128,12 @@ bool DAudioSinkDevCtrlMgr::IsOpened()
 void DAudioSinkDevCtrlMgr::OnEventReceived(const AudioEvent &event)
 {
     DHLOGI("Received event.");
-    if (audioEventCallback_ == nullptr) {
+    auto callback = audioEventCallback_.lock();
+    if (callback == nullptr) {
         DHLOGE("Callback is nullptr.");
         return;
     }
-    audioEventCallback_->NotifyEvent(event);
+    callback->NotifyEvent(event);
 }
 
 int32_t DAudioSinkDevCtrlMgr::SendAudioEvent(const AudioEvent &event)

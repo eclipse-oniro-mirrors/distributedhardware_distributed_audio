@@ -19,6 +19,7 @@ import(
 ohos_shared_library("distributed_audio_softbus_adapter") {
   include_dirs = [
     "//foundation/communication/dsoftbus/interfaces/kits/transport",
+    "//foundation/communication/dsoftbus/interfaces/kits/common",
     "${fwk_common_path}/utils/include",
   ]
 

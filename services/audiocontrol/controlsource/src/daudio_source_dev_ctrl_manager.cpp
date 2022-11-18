@@ -29,10 +29,9 @@ namespace OHOS {
 namespace DistributedHardware {
 DAudioSourceDevCtrlMgr::DAudioSourceDevCtrlMgr(const std::string &devId,
     std::shared_ptr<IAudioEventCallback> audioEventCallback)
+    : devId_(devId), audioEventCallback_(audioEventCallback)
 {
     DHLOGI("Control manager constructed.");
-    devId_ = devId;
-    audioEventCallback_ = audioEventCallback;
 }
 
 DAudioSourceDevCtrlMgr::~DAudioSourceDevCtrlMgr()
@@ -42,17 +41,21 @@ DAudioSourceDevCtrlMgr::~DAudioSourceDevCtrlMgr()
 
 int32_t DAudioSourceDevCtrlMgr::SetUp()
 {
-    DHLOGI("Set up source development control manager.");
+    DHLOGI("Set up source device control manager.");
     if (audioCtrlTrans_ == nullptr) {
         audioCtrlTrans_ = std::make_shared<AudioCtrlTransport>(devId_);
     }
-    audioCtrlTrans_->SetUp(shared_from_this());
+    int32_t ret = audioCtrlTrans_->SetUp(shared_from_this());
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Set up ctrl trans failed, ret: %d.", ret);
+        return ret;
+    }
     return DH_SUCCESS;
 }
 
 int32_t DAudioSourceDevCtrlMgr::Start()
 {
-    DHLOGI("Start source development control manager.");
+    DHLOGI("Start source device control manager.");
     if (audioCtrlTrans_ == nullptr) {
         DHLOGE("Audio ctrl trans is null, start failed");
         return ERR_DH_AUDIO_SA_CTRL_TRANS_NULL;
@@ -66,7 +69,7 @@ int32_t DAudioSourceDevCtrlMgr::Start()
 
     std::unique_lock<std::mutex> lck(channelWaitMutex_);
     auto status = channelWaitCond_.wait_for(lck, std::chrono::seconds(CHANNEL_WAIT_SECONDS),
-        [this]() { return isOpened_ == true; });
+        [this]() { return isOpened_.load() == true; });
     if (!status) {
         DHLOGE("Wait channel open timeout(%ds).", CHANNEL_WAIT_SECONDS);
         return ERR_DH_AUDIO_SA_CTRL_CHANNEL_WAIT_TIMEOUT;
@@ -77,7 +80,7 @@ int32_t DAudioSourceDevCtrlMgr::Start()
 
 int32_t DAudioSourceDevCtrlMgr::Stop()
 {
-    isOpened_ = false;
+    isOpened_.store(false);
     if (audioCtrlTrans_ == nullptr) {
         DHLOGE("Audio ctrl trans is null, no need stop");
         return DH_SUCCESS;
@@ -88,6 +91,7 @@ int32_t DAudioSourceDevCtrlMgr::Stop()
 
 int32_t DAudioSourceDevCtrlMgr::Release()
 {
+    DHLOGI("Release source device control manager.");
     if (audioCtrlTrans_ == nullptr) {
         DHLOGE("Audio ctrl trans is null, no need release.");
         return DH_SUCCESS;
@@ -104,7 +108,7 @@ int32_t DAudioSourceDevCtrlMgr::Release()
 
 bool DAudioSourceDevCtrlMgr::IsOpened()
 {
-    return isOpened_;
+    return isOpened_.load();
 }
 
 int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const AudioEvent &event)
@@ -119,32 +123,38 @@ int32_t DAudioSourceDevCtrlMgr::SendAudioEvent(const AudioEvent &event)
 
 void DAudioSourceDevCtrlMgr::OnStateChange(int32_t type)
 {
-    DHLOGI("On ctrl device state change, type: %d.", type);
-    AudioEvent event;
-    event.type = (AudioEventType)type;
-    if (event.type == AudioEventType::CTRL_OPENED) {
-        DHLOGI("Audio ctrl trans on opened.");
-        isOpened_ = true;
-        channelWaitCond_.notify_all();
-    } else if (event.type == AudioEventType::CTRL_CLOSED) {
-        DHLOGI("Audio ctrl trans on closed.");
-        isOpened_ = false;
+    DHLOGI("Daudio source control state change, type: %d.", type);
+    switch (type) {
+        case AudioEventType::CTRL_OPENED:
+            isOpened_.store(true);
+            channelWaitCond_.notify_all();
+            break;
+        case AudioEventType::CTRL_CLOSED:
+            isOpened_.store(false);
+            break;
+        default:
+            DHLOGE("Invalid parameter type, type: %d.", type);
+            return;
     }
-    if (audioEventCallback_ == nullptr) {
+
+    auto callback = audioEventCallback_.lock();
+    if (callback == nullptr) {
         DHLOGE("Callback is nullptr.");
         return;
     }
-    audioEventCallback_->NotifyEvent(event);
+    AudioEvent event(static_cast<AudioEventType>(type), "");
+    callback->NotifyEvent(event);
 }
 
 void DAudioSourceDevCtrlMgr::OnEventReceived(const AudioEvent &event)
 {
     DHLOGI("Received event");
-    if (audioEventCallback_ == nullptr) {
+    auto callback = audioEventCallback_.lock();
+    if (callback == nullptr) {
         DHLOGE("Callback is nullptr.");
         return;
     }
-    audioEventCallback_->NotifyEvent(event);
+    callback->NotifyEvent(event);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

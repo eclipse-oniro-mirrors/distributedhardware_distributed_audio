@@ -173,7 +173,7 @@ int32_t DAudioManagerCallback::WriteStreamData(const std::string &adpName, int32
     std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(DEFAULT_AUDIO_DATA_SIZE);
     int32_t ret = memcpy_s(audioData->Data(), audioData->Capacity(), data.data.data(), data.data.size());
     if (ret != EOK) {
-        DHLOGE("Copy audio data failed.");
+        DHLOGE("Copy audio data failed, error code %d.", ret);
         return HDF_FAILURE;
     }
     ret = callback_->WriteStreamData(adpName, devId, audioData);

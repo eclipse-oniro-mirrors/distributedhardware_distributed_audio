@@ -87,7 +87,7 @@ int32_t AudioTransportContext::Restart(const AudioParam &localParam, const Audio
         DHLOGI("CurrentState is nullptr.");
         return ERR_DH_AUDIO_NULLPTR;
     }
-    DHLOGI("Audio transport context pause.");
+    DHLOGI("Audio transport context restart.");
     return currentState_->Restart(localParam, remoteParam, processor_);
 }
 

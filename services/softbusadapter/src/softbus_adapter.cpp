@@ -14,6 +14,7 @@
  */
 
 #include "softbus_adapter.h"
+#include "softbus_error_code.h"
 
 #include <securec.h>
 
@@ -77,9 +78,9 @@ int32_t SoftbusAdapter::CreateSoftbusSessionServer(const std::string &pkgName, c
     std::lock_guard<std::mutex> setLock(sessSetMtx_);
     if (mapSessionSet_.find(sessionName) == mapSessionSet_.end()) {
         int32_t ret = CreateSessionServer(pkgName.c_str(), sessionName.c_str(), &sessListener_);
-        if (ret != DH_SUCCESS) {
-            DHLOGE("Create session server failed.");
-            return ret;
+        if (ret != SOFTBUS_OK) {
+            DHLOGE("Create session server failed, ret %d.", ret);
+            return ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION;
         }
     } else {
         DHLOGI("Session is already created.");
@@ -103,7 +104,7 @@ int32_t SoftbusAdapter::RemoveSoftbusSessionServer(const std::string &pkgName, c
     if (mapSessionSet_[sessionName].empty()) {
         mapSessionSet_.erase(sessionName);
         int32_t ret = RemoveSessionServer(pkgName.c_str(), sessionName.c_str());
-        if (ret != DH_SUCCESS) {
+        if (ret != SOFTBUS_OK) {
             DHLOGE("Remove session server failed. Error code %d.", ret);
         }
     }
@@ -132,9 +133,8 @@ int32_t SoftbusAdapter::OpenSoftbusSession(const std::string &localSessionName, 
         LINK_TYPE_WIFI_WLAN_2G,
         LINK_TYPE_BR,
     };
-    int32_t ret = memcpy_s(attr.linkType, sizeof(attr.linkType), linkTypeList, sizeof(linkTypeList));
-    if (ret != EOK) {
-        DHLOGE("Data copy failed.");
+    if (memcpy_s(attr.linkType, sizeof(attr.linkType), linkTypeList, sizeof(linkTypeList)) != EOK) {
+        DHLOGE("Softbus open session params copy failed.");
         return ERR_DH_AUDIO_FAILED;
     }
     attr.attr.streamAttr.streamType = streamType;
@@ -162,7 +162,7 @@ int32_t SoftbusAdapter::SendSoftbusBytes(int32_t sessionId, const void *data, in
 {
     DHLOGI("Send audio event, sessionId: %d.", sessionId);
     int32_t ret = SendBytes(sessionId, data, dataLen);
-    if (ret != DH_SUCCESS) {
+    if (ret != SOFTBUS_OK) {
         DHLOGE("Send bytes failed, ret:%d.", ret);
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
@@ -212,7 +212,7 @@ int32_t SoftbusAdapter::UnRegisterSoftbusListener(const std::string &sessionName
 int32_t SoftbusAdapter::OnSoftbusSessionOpened(int32_t sessionId, int32_t result)
 {
     DHLOGI("On session opened, sessionId: %d, result: %d.", sessionId, result);
-    if (result != DH_SUCCESS) {
+    if (result != SOFTBUS_OK) {
         DHLOGE("Session open failed.");
         return ERR_DH_AUDIO_ADAPTER_OPEN_SESSION_FAIL;
     }
@@ -302,12 +302,12 @@ std::shared_ptr<ISoftbusListener> &SoftbusAdapter::GetSoftbusListenerByName(int3
     char sessionName[DAUDIO_MAX_SESSION_NAME_LEN] = "";
     char peerDevId[DAUDIO_MAX_DEVICE_ID_LEN] = "";
     int32_t ret = GetPeerSessionName(sessionId, sessionName, sizeof(sessionName));
-    if (ret != DH_SUCCESS) {
+    if (ret != SOFTBUS_OK) {
         DHLOGE("Get peer session name failed ret: %d.", ret);
         return nullListener_;
     }
     ret = GetPeerDeviceId(sessionId, peerDevId, sizeof(peerDevId));
-    if (ret != DH_SUCCESS) {
+    if (ret != SOFTBUS_OK) {
         DHLOGE("Get peer deviceId failed ret: %d.", ret);
         return nullListener_;
     }
@@ -359,7 +359,7 @@ void SoftbusAdapter::SendAudioData()
         StreamFrameInfo frameInfo = { 0 };
         DHLOGI("Send audio data, sessionId: %d.", audioData->sessionId_);
         int32_t ret = SendStream(audioData->sessionId_, &data, &ext, &frameInfo);
-        if (ret != DH_SUCCESS) {
+        if (ret != SOFTBUS_OK) {
             DHLOGE("Send data failed. ret: %d.", ret);
         } else {
             DHLOGI("Send audio data successs.");

@@ -512,17 +512,17 @@ int32_t DAudioSourceDev::TaskOpenDSpeaker(const std::string &args)
     to_json(jAudioParam, speaker_->GetAudioParam());
     int32_t ret = NotifySinkDev(OPEN_SPEAKER, jAudioParam, jParam[KEY_DH_ID]);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Notify sink open speaker failed.");
+        DHLOGE("Notify sink open speaker failed, error code %d.", ret);
         return ret;
     }
     ret = speaker_->SetUp();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Speaker setup failed.");
+        DHLOGE("Speaker setup failed, error code %d.", ret);
         return ret;
     }
     ret = speaker_->Start();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Speaker start failed.");
+        DHLOGE("Speaker start failed, error code %d.", ret);
         speaker_->Stop();
         speaker_->Release();
         return ret;
@@ -547,14 +547,14 @@ int32_t DAudioSourceDev::TaskCloseDSpeaker(const std::string &args)
     int32_t ret = speaker_->Stop();
     if (ret != DH_SUCCESS) {
         DHLOGE("Speaker stop failed.");
-        closeStatus = false;
+        closeStatus = closeStatus && false;
     }
     ret = speaker_->Release();
     if (ret != DH_SUCCESS) {
         DHLOGE("Speaker release failed.");
-        closeStatus = false;
+        closeStatus = closeStatus && false;
     }
-    if (speaker_->IsOpened()) {
+    if (!speaker_->IsOpened()) {
         json jAudioParam;
         json jParam = json::parse(args, nullptr, false);
         if (!JsonParamCheck(jParam, { KEY_DH_ID })) {
@@ -595,14 +595,14 @@ int32_t DAudioSourceDev::TaskOpenDMic(const std::string &args)
     to_json(jAudioParam, mic_->GetAudioParam());
     ret = NotifySinkDev(OPEN_MIC, jAudioParam, jParam[KEY_DH_ID]);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Notify sink open speaker failed.");
+        DHLOGE("Notify sink open mic failed, error code %d.", ret);
         mic_->Release();
         return ret;
     }
 
     ret = mic_->Start();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Speaker start failed.");
+        DHLOGE("Mic start failed, error code %d.", ret);
         mic_->Stop();
         mic_->Release();
         return ret;
@@ -627,15 +627,15 @@ int32_t DAudioSourceDev::TaskCloseDMic(const std::string &args)
     bool closeStatus = true;
     int32_t ret = mic_->Stop();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Mic stop failed.");
-        closeStatus = false;
+        DHLOGE("Mic stop failed, error code %d", ret);
+        closeStatus = closeStatus && false;
     }
     ret = mic_->Release();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Mic release failed.");
-        closeStatus = false;
+        DHLOGE("Mic release failed, error code %d", ret);
+        closeStatus = closeStatus && false;
     }
-    if (mic_->IsOpened()) {
+    if (!mic_->IsOpened()) {
         json jAudioParam;
         json jParam = json::parse(args, nullptr, false);
         if (!JsonParamCheck(jParam, { KEY_DH_ID })) {

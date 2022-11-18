@@ -54,8 +54,9 @@ protected:
 private:
     bool Init();
 
+private:
     bool isServiceStarted_ = false;
 };
 } // DistributedHardware
 } // OHOS
-#endif
+#endif // OHOS_DAUDIO_SOURCE_SERVICE_H

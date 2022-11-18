@@ -195,9 +195,8 @@ int32_t DSpeakerDev::Start()
     }
 
     std::unique_lock<std::mutex> lck(channelWaitMutex_);
-    auto status =
-        channelWaitCond_.wait_for(lck, std::chrono::seconds(CHANNEL_WAIT_SECONDS),
-            [this]() { return isTransReady_.load(); });
+    auto status = channelWaitCond_.wait_for(lck, std::chrono::seconds(CHANNEL_WAIT_SECONDS),
+        [this]() { return isTransReady_.load(); });
     if (!status) {
         DHLOGE("Wait channel open timeout(%ds).", CHANNEL_WAIT_SECONDS);
         return ERR_DH_AUDIO_SA_SPEAKER_CHANNEL_WAIT_TIMEOUT;
@@ -272,6 +271,7 @@ int32_t DSpeakerDev::Restart()
     DHLOGI("Restart success.");
     return DH_SUCCESS;
 }
+
 bool DSpeakerDev::IsOpened()
 {
     return isOpened_.load();

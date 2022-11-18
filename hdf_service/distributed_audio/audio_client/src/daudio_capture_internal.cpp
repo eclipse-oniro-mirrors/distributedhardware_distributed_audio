@@ -78,7 +78,7 @@ static int32_t CaptureFrameInternal(struct AudioCapture *capture, void *frame, u
 
     ret = memcpy_s(uframe, requestBytes, frameHal.data(), requestBytes);
     if (ret != EOK) {
-        DHLOGE("Memcpy_s failed ret: %d.", ret);
+        DHLOGE("Copy capture frame failed, error code %d.", ret);
         return ERR_DH_AUDIO_HDF_FAILURE;
     }
     return DH_SUCCESS;

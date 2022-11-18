@@ -126,7 +126,7 @@ int32_t DAudioSinkDev::NotifyCtrlClosed(const AudioEvent &audioEvent)
 
 int32_t DAudioSinkDev::NotifyOpenSpeaker(const AudioEvent &audioEvent)
 {
-    DHLOGI("Notify open dSpeaker.");
+    DHLOGI("Notify open speaker.");
     auto task = GenerateTask(this, &DAudioSinkDev::TaskOpenDSpeaker, audioEvent.content, "Sink Open Speaker",
         &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -134,7 +134,7 @@ int32_t DAudioSinkDev::NotifyOpenSpeaker(const AudioEvent &audioEvent)
 
 int32_t DAudioSinkDev::NotifyCloseSpeaker(const AudioEvent &audioEvent)
 {
-    DHLOGI("Notify close dSpeaker.");
+    DHLOGI("Notify close speaker.");
     auto task = GenerateTask(this, &DAudioSinkDev::TaskCloseDSpeaker, audioEvent.content, "Sink Close Speaker",
         &DAudioSinkDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -355,20 +355,17 @@ int32_t DAudioSinkDev::TaskCloseDSpeaker(const std::string &args)
     int32_t ret = speakerClient_->StopRender();
     if (ret != DH_SUCCESS) {
         DHLOGE("Stop speaker client failed, ret: %d.", ret);
-        closeStatus = false;
+        closeStatus = closeStatus && false;
     }
     ret = speakerClient_->Release();
     if (ret != DH_SUCCESS) {
-        DHLOGE("Release speaker client failed: %d.", ret);
-        closeStatus = false;
+        DHLOGE("Release speaker client failed, ret: %d.", ret);
+        closeStatus = closeStatus && false;
     }
     speakerClient_ = nullptr;
 
-    if (closeStatus) {
-        NotifySourceDev(NOTIFY_CLOSE_SPEAKER_RESULT, spkDhId_, DH_SUCCESS);
-    } else {
+    closeStatus ? NotifySourceDev(NOTIFY_CLOSE_SPEAKER_RESULT, spkDhId_, DH_SUCCESS) :
         NotifySourceDev(NOTIFY_CLOSE_SPEAKER_RESULT, spkDhId_, ERR_DH_AUDIO_FAILED);
-    }
     DHLOGI("Close speaker device task excute success.");
     return DH_SUCCESS;
 }
@@ -433,11 +430,8 @@ int32_t DAudioSinkDev::TaskCloseDMic(const std::string &args)
     }
     micClient_ = nullptr;
 
-    if (closeStatus) {
-        NotifySourceDev(NOTIFY_CLOSE_MIC_RESULT, micDhId_, DH_SUCCESS);
-    } else {
+    closeStatus ? NotifySourceDev(NOTIFY_CLOSE_MIC_RESULT, micDhId_, DH_SUCCESS) :
         NotifySourceDev(NOTIFY_CLOSE_MIC_RESULT, micDhId_, ERR_DH_AUDIO_FAILED);
-    }
     DHLOGI("Close mic device task excute success.");
     return DH_SUCCESS;
 }

@@ -56,6 +56,7 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
         return ERR_DH_AUDIO_CLIENT_CREATE_RENDER_FAILED;
     }
     audioRenderer_ ->SetRendererCallback(shared_from_this());
+
     speakerTrans_ = std::make_shared<AudioDecodeTransport>(devId_);
     int32_t ret = speakerTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), "speaker");
     if (ret != DH_SUCCESS) {
@@ -67,6 +68,7 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
         DHLOGE("Speaker trans start failed.");
         return ret;
     }
+
     auto pid = getpid();
     ret = AudioStandard::AudioSystemManager::GetInstance()->RegisterVolumeKeyEventCallback(pid, shared_from_this());
     if (ret != DH_SUCCESS) {

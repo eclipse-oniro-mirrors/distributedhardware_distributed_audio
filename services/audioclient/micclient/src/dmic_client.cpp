@@ -41,7 +41,7 @@ int32_t DMicClient::OnStateChange(const AudioEventType type)
     switch (type) {
         case AudioEventType::DATA_OPENED: {
             isChannelReady_ = true;
-            isBlocking_ = true;
+            isBlocking_.store(true);
             isCaptureReady_.store(true);
             captureDataThread_ = std::thread(&DMicClient::CaptureThreadRunning, this);
             std::unique_lock<std::mutex> lck(channelWaitMutex_);
@@ -178,7 +178,7 @@ void DMicClient::CaptureThreadRunning()
         bool errorFlag = false;
         while (bytesRead < DEFAULT_AUDIO_DATA_SIZE) {
             int32_t len = audioCapturer_->Read(*(audioData->Data() + bytesRead),
-                DEFAULT_AUDIO_DATA_SIZE - bytesRead, isBlocking_);
+                DEFAULT_AUDIO_DATA_SIZE - bytesRead, isBlocking_.load());
             if (len >= 0) {
                 bytesRead += static_cast<size_t>(len);
             } else {
@@ -221,7 +221,7 @@ int32_t DMicClient::StopCapture()
         return ERR_DH_AUDIO_CLIENT_CAPTURER_OR_MICTRANS_INSTANCE;
     }
 
-    isBlocking_ = false;
+    isBlocking_.store(false);
     isCaptureReady_.store(false);
     if (captureDataThread_.joinable()) {
         captureDataThread_.join();

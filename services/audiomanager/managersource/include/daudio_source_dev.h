@@ -21,6 +21,7 @@
 #include "nlohmann/json.hpp"
 
 #include "audio_event.h"
+#include "audio_param.h"
 #include "daudio_source_dev_ctrl_manager.h"
 #include "daudio_source_mgr_callback.h"
 #include "dmic_dev.h"

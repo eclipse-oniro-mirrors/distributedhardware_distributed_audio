@@ -89,18 +89,7 @@
                 }
             ],
             "test":[
-                "//foundation/distributedhardware/distributed_audio/audiohandler/test/unittest:audio_handler_test",
-                "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/test/unittest:daudio_ipc2manager_test",
-                "//foundation/distributedhardware/distributed_audio/services/audioclient/test/unittest:daudio_client_test",
-                "//foundation/distributedhardware/distributed_audio/services/audiocontrol/test/unittest:daudio_control_test",
-                "//foundation/distributedhardware/distributed_audio/services/audiohdiproxy/test/unittest:daudio_hdi_proxy_test",
-                "//foundation/distributedhardware/distributed_audio/services/audioprocessor/test/unittest:daudio_processor_test",
-                "//foundation/distributedhardware/distributed_audio/services/audiotransport/test/unittest:daudio_transport_test",
-                "//foundation/distributedhardware/distributed_audio/services/audiomanager/test/unittest:daudio_manager_test",
-                "//foundation/distributedhardware/distributed_audio/services/softbusadapter/test/unittest:audio_soft_bus_adapter_test",
-                "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/test/unittest:audio_adapter_hdi_test",
-                "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/audio/v1_0/test/unittest:hdi_service_audio_test",
-                "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/audio_ext/v1_0/test/unittest:hdi_service_audio_ext_test",
+                "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/test/unittest:unittest",
                 "//foundation/distributedhardware/distributed_audio/interfaces/inner_kits/native_cpp/test/fuzztest:fuzztest"
             ]
         }

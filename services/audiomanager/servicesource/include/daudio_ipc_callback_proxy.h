@@ -37,4 +37,4 @@ private:
 };
 } // DistributedHardware
 } // OHOS
-#endif
+#endif // OHOS_DAUDIO_IPC_CALLBACK_PROXY_H
