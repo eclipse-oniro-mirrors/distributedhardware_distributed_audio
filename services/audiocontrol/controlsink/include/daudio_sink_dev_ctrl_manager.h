@@ -29,7 +29,7 @@ namespace DistributedHardware {
 class DAudioSinkDevCtrlMgr : public IAudioCtrlTransCallback, public std::enable_shared_from_this<DAudioSinkDevCtrlMgr> {
 public:
     DAudioSinkDevCtrlMgr(const std::string &networkId, std::shared_ptr<IAudioEventCallback> audioEventCallback);
-    ~DAudioSinkDevCtrlMgr();
+    ~DAudioSinkDevCtrlMgr() override;
 
     void OnStateChange(int32_t type) override;
     void OnEventReceived(const AudioEvent &event) override;

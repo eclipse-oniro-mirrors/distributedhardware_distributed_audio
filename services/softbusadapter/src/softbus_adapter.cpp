@@ -355,8 +355,8 @@ void SoftbusAdapter::SendAudioData()
         }
 
         StreamData data = { reinterpret_cast<char *>(audioData->data_->Data()), audioData->data_->Capacity() };
-        StreamData ext = { 0 };
-        StreamFrameInfo frameInfo = { 0 };
+        StreamData ext;
+        StreamFrameInfo frameInfo;
         DHLOGI("Send audio data, sessionId: %d.", audioData->sessionId_);
         int32_t ret = SendStream(audioData->sessionId_, &data, &ext, &frameInfo);
         if (ret != SOFTBUS_OK) {

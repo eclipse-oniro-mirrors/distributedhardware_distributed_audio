@@ -26,8 +26,8 @@ namespace DistributedHardware {
 class DAudioSourceStub : public IRemoteStub<IDAudioSource> {
 public:
     DAudioSourceStub();
-    virtual ~DAudioSourceStub() = default;
-    virtual int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
+    ~DAudioSourceStub() override = default;
+    int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
         MessageOption &option) override;
 
 private:

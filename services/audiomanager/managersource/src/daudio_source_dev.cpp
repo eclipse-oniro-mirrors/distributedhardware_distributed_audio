@@ -763,7 +763,7 @@ int32_t DAudioSourceDev::NotifySinkDev(const AudioEventType type, const json Par
                     { KEY_EVENT_TYPE, type },
                     { KEY_AUDIO_PARAM, Param } };
     DAudioSourceManager::GetInstance().DAudioNotify(devId_, dhId, type, jParam.dump());
-    return WaitForRPC((AudioEventType)(static_cast<int32_t>(type) + eventOffset));
+    return WaitForRPC(static_cast<AudioEventType>(static_cast<int32_t>(type) + eventOffset));
 }
 
 int32_t DAudioSourceDev::NotifyHDF(const AudioEventType type, const std::string result)

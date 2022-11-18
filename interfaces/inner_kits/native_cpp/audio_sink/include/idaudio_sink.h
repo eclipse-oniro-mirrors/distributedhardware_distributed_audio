@@ -31,7 +31,7 @@ public:
         DAUDIO_NOTIFY = 4,
     };
 
-    virtual ~IDAudioSink() = default;
+    ~IDAudioSink() override = default;
     virtual int32_t InitSink(const std::string &params) = 0;
     virtual int32_t ReleaseSink() = 0;
     virtual int32_t SubscribeLocalHardware(const std::string &dhId, const std::string &param) = 0;

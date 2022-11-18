@@ -28,7 +28,7 @@ public:
         NOTIFY_UNREGRESULT = 1,
     };
 
-    virtual ~IDAudioIpcCallback() {}
+    ~IDAudioIpcCallback() override {}
     virtual int32_t OnNotifyRegResult(const std::string &devId, const std::string &dhId, const std::string &reqId,
         int32_t status, const std::string &resultData) = 0;
     virtual int32_t OnNotifyUnregResult(const std::string &devId, const std::string &dhId, const std::string &reqId,
