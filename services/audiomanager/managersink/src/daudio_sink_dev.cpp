@@ -355,12 +355,12 @@ int32_t DAudioSinkDev::TaskCloseDSpeaker(const std::string &args)
     int32_t ret = speakerClient_->StopRender();
     if (ret != DH_SUCCESS) {
         DHLOGE("Stop speaker client failed, ret: %d.", ret);
-        closeStatus = closeStatus && false;
+        closeStatus = false;
     }
     ret = speakerClient_->Release();
     if (ret != DH_SUCCESS) {
         DHLOGE("Release speaker client failed, ret: %d.", ret);
-        closeStatus = closeStatus && false;
+        closeStatus = false;
     }
     speakerClient_ = nullptr;
 

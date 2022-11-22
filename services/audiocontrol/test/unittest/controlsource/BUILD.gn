@@ -37,6 +37,9 @@ config("module_private_config") {
     "${audio_transport_path}/audioctrltransport/interface",
     "${audio_control_path}/controlsource/include",
     "${audio_control_path}/test/unittest/audiocontrolutils/inlcude",
+    "//base/security/access_token/interfaces/innerkits/token_setproc/include",
+    "//base/security/access_token/interfaces/innerkits/nativetoken/include",
+    "//base/security/access_token/interfaces/innerkits/accesstoken/include",
   ]
 }
 
@@ -52,6 +55,9 @@ ohos_unittest("ControlSourceTest") {
     "${services_path}/audiomanager/servicesource:distributed_audio_source",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
+    "//base/security/access_token/interfaces/innerkits/token_setproc:libtoken_setproc",
+    "//base/security/access_token/interfaces/innerkits/accesstoken:libaccesstoken_sdk",
+    "//base/security/access_token/interfaces/innerkits/nativetoken:libnativetoken",
   ]
 }
 

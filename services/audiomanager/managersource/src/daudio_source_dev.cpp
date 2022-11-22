@@ -547,12 +547,12 @@ int32_t DAudioSourceDev::TaskCloseDSpeaker(const std::string &args)
     int32_t ret = speaker_->Stop();
     if (ret != DH_SUCCESS) {
         DHLOGE("Speaker stop failed.");
-        closeStatus = closeStatus && false;
+        closeStatus = false;
     }
     ret = speaker_->Release();
     if (ret != DH_SUCCESS) {
         DHLOGE("Speaker release failed.");
-        closeStatus = closeStatus && false;
+        closeStatus = false;
     }
     if (!speaker_->IsOpened()) {
         json jAudioParam;
@@ -628,12 +628,12 @@ int32_t DAudioSourceDev::TaskCloseDMic(const std::string &args)
     int32_t ret = mic_->Stop();
     if (ret != DH_SUCCESS) {
         DHLOGE("Mic stop failed, error code %d", ret);
-        closeStatus = closeStatus && false;
+        closeStatus = false;
     }
     ret = mic_->Release();
     if (ret != DH_SUCCESS) {
         DHLOGE("Mic release failed, error code %d", ret);
-        closeStatus = closeStatus && false;
+        closeStatus = false;
     }
     if (!mic_->IsOpened()) {
         json jAudioParam;

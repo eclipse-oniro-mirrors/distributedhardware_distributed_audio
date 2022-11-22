@@ -80,7 +80,7 @@ int32_t SoftbusAdapter::CreateSoftbusSessionServer(const std::string &pkgName, c
         int32_t ret = CreateSessionServer(pkgName.c_str(), sessionName.c_str(), &sessListener_);
         if (ret != SOFTBUS_OK) {
             DHLOGE("Create session server failed, ret %d.", ret);
-            return ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION;
+            return ret;
         }
     } else {
         DHLOGI("Session is already created.");

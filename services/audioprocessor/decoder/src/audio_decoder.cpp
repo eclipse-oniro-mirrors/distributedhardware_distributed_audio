@@ -184,12 +184,12 @@ int32_t AudioDecoder::StopAudioCodec()
     int32_t ret = audioDecoder_->Flush();
     if (ret != Media::MediaServiceErrCode::MSERR_OK) {
         DHLOGE("Decoder flush fail. Error type: %d.", ret);
-        isSuccess = isSuccess && false;
+        isSuccess = false;
     }
     ret = audioDecoder_->Stop();
     if (ret != Media::MediaServiceErrCode::MSERR_OK) {
         DHLOGE("Decoder stop fail. Error type: %d.", ret);
-        isSuccess = isSuccess && false;
+        isSuccess = false;
     }
     if (!isSuccess) {
         return ERR_DH_AUDIO_CODEC_STOP;

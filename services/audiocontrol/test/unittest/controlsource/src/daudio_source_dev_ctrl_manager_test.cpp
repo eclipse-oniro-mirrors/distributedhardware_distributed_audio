@@ -14,7 +14,11 @@
  */
 
 #include "daudio_source_dev_ctrl_manager_test.h"
+
+#include "accesstoken_kit.h"
 #include "audiocontrol_test_utils.h"
+#include "nativetoken_kit.h"
+#include "token_setproc.h"
 
 using namespace testing::ext;
 
@@ -26,6 +30,23 @@ void DAudioSourceDevCtrlMgrTest::TearDownTestCase(void) {}
 
 void DAudioSourceDevCtrlMgrTest::SetUp(void)
 {
+    uint64_t tokenId;
+    const char** perms = new const char *[2];
+    perms[0] = "ohos.permission.DISTRIBUTED_DATASYNC";
+    perms[1] = "ohos.permission.DISTRIBUTED_SOFTBUS_CENTER";
+    NativeTokenInfoParams infoInstance = {
+        .dcapsNum = 0,
+        .permsNum = 2,
+        .aclsNum = 0,
+        .dcaps = nullptr,
+        .perms = perms,
+        .acls = nullptr,
+        .processName = "daudio_source_dev_ctrl_manager_test",
+        .aplStr = "system_basic",
+    };
+    tokenId = GetAccessTokenId(&infoInstance);
+    SetSelfTokenID(tokenId);
+
     std::string networkId = "devId";
     std::shared_ptr<IAudioEventCallback> audioEventCallback = nullptr;
     sourceDevCtrl_ = std::make_shared<DAudioSourceDevCtrlMgr>(networkId, audioEventCallback);
