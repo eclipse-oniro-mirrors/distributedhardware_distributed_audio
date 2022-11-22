@@ -93,7 +93,7 @@ static std::string FindAudioDevice()
     std::string res = "true;";
     std::cout << "Get audio devices success, adapter size: " << g_deviceNum << std::endl;
     for (int32_t index = 0; index < g_deviceNum; index++) {
-        AudioAdapterDescriptor &desc = g_devices[index];
+        const AudioAdapterDescriptor &desc = g_devices[index];
         std::cout << "Device[" << index << "] ID: " << desc.adapterName << std::endl;
         res = res + desc.adapterName;
         if (index != g_deviceNum - 1) {
@@ -140,7 +140,7 @@ static int32_t ParamEventCallback(enum AudioExtParamKey key, const char *conditi
     return DH_SUCCESS;
 }
 
-static int32_t LoadSpkDev(std::string devId)
+static int32_t LoadSpkDev(const std::string &devId)
 {
     std::cout << "Open SPK device , device Id:" << devId << std::endl;
 
@@ -171,7 +171,7 @@ static int32_t LoadSpkDev(std::string devId)
     return DH_SUCCESS;
 }
 
-static std::string OpenSpk(std::string devId)
+static std::string OpenSpk(const std::string &devId)
 {
     if (g_spkStatus != DEVICE_IDLE) {
         std::cout << "Speaker device is already opened." << std::endl;
@@ -341,7 +341,7 @@ static std::string CloseSpk()
     return "true";
 }
 
-static int32_t LoadMicDev(std::string devId)
+static int32_t LoadMicDev(const std::string &devId)
 {
     std::cout << "Open MIC device ,input device Id:" << devId << std::endl;
 
@@ -372,7 +372,7 @@ static int32_t LoadMicDev(std::string devId)
     return DH_SUCCESS;
 }
 
-static std::string OpenMic(std::string devId)
+static std::string OpenMic(const std::string &devId)
 {
     if (g_micStatus != DEVICE_IDLE) {
         return "Mic device is already opened.";
@@ -548,7 +548,7 @@ static std::string GetVolume()
     return "true;"+volStr;
 }
 
-std::string SpkMicPlayEvent(std::string cmd)
+std::string SpkMicPlayEvent(const std::string &cmd)
 {
     if (cmd == CMD_START_SPK || cmd == CMD_START_SPK_EXT) {
         return StartRender();
@@ -572,7 +572,7 @@ std::string SpkMicPlayEvent(std::string cmd)
     return "";
 }
 
-void HandleAudioEvent(std::string& cmd, std::string& cmdResString, struct Request& req)
+void HandleAudioEvent(const std::string& cmd, std::string& cmdResString, struct Request& req)
 {
     // find audio device
     if (cmd == CMD_FIND || cmd == CMD_FIND_EXT) {
@@ -619,14 +619,8 @@ int GenerateFifoName(int& clientFd, char clientFifo[], struct Response& resp,
         perror("open");
         return -1;
     }
-    if (cmdResString.length() < CMD_EXECUTING_RETURN_LENGHT_MAX) {
-        if (strcpy_s(resp.resString, sizeof(resp.resString), cmdResString.c_str()) != 0) {
-            return -1;
-        }
-    } else {
-        if (strcpy_s(resp.resString, sizeof(resp.resString), cmdResString.c_str()) != 0) {
-            return -1;
-        }
+    if (strcpy_s(resp.resString, sizeof(resp.resString), cmdResString.c_str()) != 0) {
+        return -1;
     }
 
     std::cout << "Write resString: " << resp.resString << std::endl;
