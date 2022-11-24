@@ -55,8 +55,6 @@ private:
 
     int32_t TaskEnableDAudio(const std::string &args);
     int32_t TaskDisableDAudio(const std::string &args);
-    int32_t TaskOpenCtrlChannel(const std::string &args);
-    int32_t TaskCloseCtrlChannel(const std::string &args);
     int32_t TaskOpenDSpeaker(const std::string &args);
     int32_t TaskCloseDSpeaker(const std::string &args);
     int32_t TaskOpenDMic(const std::string &args);
@@ -78,21 +76,20 @@ private:
     int32_t HandleCloseDMic(const AudioEvent &event);
     int32_t HandleDMicOpened(const AudioEvent &event);
     int32_t HandleDMicClosed(const AudioEvent &event);
-    int32_t HandleOpenCtrlTrans(const AudioEvent &event);
-    int32_t HandleCloseCtrlTrans(const AudioEvent &event);
-    int32_t HandleCtrlTransClosed(const AudioEvent &event);
     int32_t HandleNotifyRPC(const AudioEvent &event);
-    int32_t WaitForRPC(const AudioEventType type);
+    int32_t HandleCtrlTransClosed(const AudioEvent &event);
+
     int32_t HandleVolumeSet(const AudioEvent &event);
     int32_t HandleVolumeChange(const AudioEvent &event);
     int32_t HandleFocusChange(const AudioEvent &event);
     int32_t HandleRenderStateChange(const AudioEvent &event);
     int32_t HandlePlayStatusChange(const AudioEvent &event);
 
+    int32_t WaitForRPC(const AudioEventType type);
+    int32_t OpenCtrlChannel();
+    int32_t CloseCtrlChannel(const PortCapType capType);
     int32_t NotifySinkDev(const AudioEventType type, const json Param, const std::string dhId);
     int32_t NotifyHDF(const AudioEventType type, const std::string result);
-    int32_t OpenCtrlTrans(const AudioEvent &event);
-    int32_t CloseCtrlTrans(const AudioEvent &event, bool isSpk);
     AudioEventType getEventTypeFromArgs(const std::string &args);
     void to_json(json &j, const AudioParam &param);
     bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);

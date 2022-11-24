@@ -29,7 +29,7 @@ public:
 class MockIAudioDataTransport : public IAudioDataTransport {
 public:
     int32_t SetUp(const AudioParam &localParam, const AudioParam &remoteParam,
-        const std::shared_ptr<IAudioDataTransCallback> &callback, const std::string &role) override
+        const std::shared_ptr<IAudioDataTransCallback> &callback, const PortCapType capType) override
     {
         return 0;
     }

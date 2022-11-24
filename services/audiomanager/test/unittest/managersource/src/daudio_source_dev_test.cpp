@@ -290,58 +290,6 @@ HWTEST_F(DAudioSourceDevTest, TaskCloseDMic_002, TestSize.Level1)
 }
 
 /**
- * @tc.name: TaskOpenCtrlChannel_001
- * @tc.desc: Verify the TaskOpenCtrlChannel function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSourceDevTest, TaskOpenCtrlChannel_001, TestSize.Level1)
-{
-    std::string args = "args";
-    EXPECT_NE(DH_SUCCESS, sourceDev_->TaskOpenCtrlChannel(args));
-}
-
-/**
- * @tc.name: TaskOpenCtrlChannel_002
- * @tc.desc: Verify the TaskOpenCtrlChannel function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSourceDevTest, TaskOpenCtrlChannel_002, TestSize.Level1)
-{
-    std::string args = "args";
-    std::string devId = "devId";
-    sourceDev_->audioCtrlMgr_ = std::make_shared<DAudioSourceDevCtrlMgr>(devId, sourceDev_);
-    EXPECT_EQ(ERR_DH_AUDIO_FAILED, sourceDev_->TaskOpenCtrlChannel(args));
-}
-
-/**
- * @tc.name: TaskCloseCtrlChannel_001
- * @tc.desc: Verify the TaskCloseCtrlChannel function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSourceDevTest, TaskCloseCtrlChannel_001, TestSize.Level1)
-{
-    std::string args = "args";
-    EXPECT_EQ(DH_SUCCESS, sourceDev_->TaskCloseCtrlChannel(args));
-}
-
-/**
- * @tc.name: TaskCloseCtrlChannel_002
- * @tc.desc: Verify the TaskCloseCtrlChannel function.
- * @tc.type: FUNC
- * @tc.require: AR000H0E5F
- */
-HWTEST_F(DAudioSourceDevTest, TaskCloseCtrlChannel_002, TestSize.Level1)
-{
-    std::string args = "args";
-    std::string devId = "devId";
-    sourceDev_->audioCtrlMgr_ = std::make_shared<DAudioSourceDevCtrlMgr>(devId, sourceDev_);
-    EXPECT_EQ(DH_SUCCESS, sourceDev_->TaskCloseCtrlChannel(args));
-}
-
-/**
  * @tc.name: TaskSetVolume_001
  * @tc.desc: Verify the TaskSetVolume function.
  * @tc.type: FUNC
