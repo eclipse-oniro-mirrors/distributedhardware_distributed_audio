@@ -58,7 +58,7 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
     audioRenderer_ ->SetRendererCallback(shared_from_this());
 
     speakerTrans_ = std::make_shared<AudioDecodeTransport>(devId_);
-    int32_t ret = speakerTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), CAP_SPK);
+    int32_t ret = speakerTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), "speaker");
     if (ret != DH_SUCCESS) {
         DHLOGE("Speaker trans setup failed.");
         return ret;

@@ -27,7 +27,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 int32_t AudioDecodeTransport::SetUp(const AudioParam &localParam, const AudioParam &remoteParam,
-    const std::shared_ptr<IAudioDataTransCallback> &callback, const PortCapType capType)
+    const std::shared_ptr<IAudioDataTransCallback> &callback, const std::string &role)
 {
     if (callback == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -36,12 +36,11 @@ int32_t AudioDecodeTransport::SetUp(const AudioParam &localParam, const AudioPar
     dataTransCallback_ = callback;
     context_ = std::make_shared<AudioTransportContext>();
     context_->SetTransportStatus(TRANSPORT_STATE_STOP);
-    int32_t ret = InitAudioDecodeTransport(localParam, remoteParam, capType);
+    int32_t ret = InitAudioDecodeTransport(localParam, remoteParam, role);
     if (ret != DH_SUCCESS) {
         DHLOGE("Init audio encode transport, ret: %d.", ret);
         return ret;
     }
-    capType_ = capType;
     DHLOGI("SetUp success.");
     return DH_SUCCESS;
 }
@@ -49,24 +48,11 @@ int32_t AudioDecodeTransport::SetUp(const AudioParam &localParam, const AudioPar
 int32_t AudioDecodeTransport::Start()
 {
     DHLOGI("Start audio decode transport.");
-    if (capType_ == CAP_MIC) {
-        int32_t ret = audioChannel_->OpenSession();
-        if (ret != DH_SUCCESS) {
-            DHLOGE("Open channel session failed ret: %d.", ret);
-            audioChannel_ = nullptr;
-            return ret;
-        }
-    }
     if (context_ == nullptr) {
-        DHLOGE("Context is null.");
+        DHLOGE("Context_ is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
-    int32_t ret = context_->Start();
-    if (ret != DH_SUCCESS) {
-        DHLOGE("Start failed ret: %d.", ret);
-        return ret;
-    }
-    return DH_SUCCESS;
+    return context_->Start();
 }
 
 int32_t AudioDecodeTransport::Stop()
@@ -76,7 +62,7 @@ int32_t AudioDecodeTransport::Stop()
         audioChannel_->CloseSession();
     }
     if (context_ == nullptr) {
-        DHLOGE("Context is null.");
+        DHLOGE("Context_ is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     return context_->Stop();
@@ -86,7 +72,7 @@ int32_t AudioDecodeTransport::Pause()
 {
     DHLOGI("Pause.");
     if (context_ == nullptr) {
-        DHLOGE("Context is null.");
+        DHLOGE("Context_ is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     return context_->Pause();
@@ -102,7 +88,7 @@ int32_t AudioDecodeTransport::Restart(const AudioParam &localParam, const AudioP
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
     if (context_ == nullptr) {
-        DHLOGE("Context is null.");
+        DHLOGE("Context_ is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     return context_->Restart(localParam, remoteParam);
@@ -199,9 +185,9 @@ void AudioDecodeTransport::OnStateNotify(const AudioEvent &event)
 }
 
 int32_t AudioDecodeTransport::InitAudioDecodeTransport(const AudioParam &localParam,
-    const AudioParam &remoteParam, const PortCapType capType)
+    const AudioParam &remoteParam, const std::string &role)
 {
-    int32_t ret = RegisterChannelListener(capType);
+    int32_t ret = RegisterChannelListener(role);
     if (ret != DH_SUCCESS) {
         DHLOGE("Register channel listener failed, ret: %d.", ret);
         audioChannel_ = nullptr;
@@ -218,11 +204,11 @@ int32_t AudioDecodeTransport::InitAudioDecodeTransport(const AudioParam &localPa
     return DH_SUCCESS;
 }
 
-int32_t AudioDecodeTransport::RegisterChannelListener(const PortCapType capType)
+int32_t AudioDecodeTransport::RegisterChannelListener(const std::string &role)
 {
     DHLOGI("Register Channel Listener.");
     audioChannel_ = std::make_shared<AudioDataChannel>(peerDevId_);
-    int32_t result = (capType == CAP_SPK) ?
+    int32_t result = (role == "speaker") ?
         audioChannel_->CreateSession(shared_from_this(), DATA_SPEAKER_SESSION_NAME) :
         audioChannel_->CreateSession(shared_from_this(), DATA_MIC_SESSION_NAME);
     if (result != DH_SUCCESS) {
@@ -230,7 +216,7 @@ int32_t AudioDecodeTransport::RegisterChannelListener(const PortCapType capType)
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
     if (context_ == nullptr) {
-        DHLOGE("Register channel listener error, state context is null");
+        DHLOGE("Register channel listener error. state context_ is null");
         return ERR_DH_AUDIO_NULLPTR;
     }
     context_->SetAudioChannel(audioChannel_);
@@ -247,7 +233,7 @@ int32_t AudioDecodeTransport::RegisterProcessorListener(const AudioParam &localP
         return ret;
     }
     if (context_ == nullptr) {
-        DHLOGE("Register processor listener error, state context is null");
+        DHLOGE("Register processor listener error. state context_ is null");
         return ERR_DH_AUDIO_NULLPTR;
     }
     context_->SetAudioProcessor(processor_);

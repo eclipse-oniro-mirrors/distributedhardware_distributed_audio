@@ -45,7 +45,7 @@ public:
     }
     ~AudioDecodeTransport() override = default;
     int32_t SetUp(const AudioParam &localParam, const AudioParam &remoteParam,
-        const std::shared_ptr<IAudioDataTransCallback> &callback, const PortCapType capType) override;
+        const std::shared_ptr<IAudioDataTransCallback> &callback, const std::string &role) override;
     int32_t Start() override;
     int32_t Stop() override;
     int32_t Release() override;
@@ -63,8 +63,8 @@ public:
 
 private:
     int32_t InitAudioDecodeTransport(const AudioParam &localParam, const AudioParam &remoteParam,
-        const PortCapType capType);
-    int32_t RegisterChannelListener(const PortCapType capType);
+        const std::string &role);
+    int32_t RegisterChannelListener(const std::string &role);
     int32_t RegisterProcessorListener(const AudioParam &localParam, const AudioParam &remoteParam);
 
 private:
@@ -81,7 +81,6 @@ private:
     std::queue<std::shared_ptr<AudioData>> dataQueue_;
     std::string peerDevId_;
     AudioParam audioParam_;
-    PortCapType capType_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

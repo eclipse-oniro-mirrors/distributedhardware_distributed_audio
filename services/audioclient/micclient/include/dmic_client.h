@@ -59,9 +59,12 @@ private:
     constexpr static uint8_t CHANNEL_WAIT_SECONDS = 5;
 
     std::string devId_;
+    std::mutex channelWaitMutex_;
     std::thread captureDataThread_;
+    std::condition_variable channelWaitCond_;
     AudioParam audioParam_;
     std::atomic<bool> isBlocking_ = false;
+    bool isChannelReady_ = false;
     std::atomic<bool> isCaptureReady_ = false;
     std::mutex devMtx_;
     AudioClientStatus clientStatus_ = CLIENT_STATUS_IDLE;

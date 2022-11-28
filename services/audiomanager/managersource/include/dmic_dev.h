@@ -82,8 +82,6 @@ private:
 
     std::atomic<bool> isTransReady_ = false;
     std::atomic<bool> isOpened_ = false;
-    std::mutex channelWaitMutex_;
-    std::condition_variable channelWaitCond_;
 };
 } // DistributedHardware
 } // OHOS

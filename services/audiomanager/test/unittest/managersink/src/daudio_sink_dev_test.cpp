@@ -88,6 +88,30 @@ HWTEST_F(DAudioSinkDevTest, NotifyMicOpened_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: TaskOpenCtrlChannel_001
+ * @tc.desc: Verify the TaskOpenCtrlChannel function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSinkDevTest, TaskOpenCtrlChannel_001, TestSize.Level1)
+{
+    std::string args;
+    EXPECT_NE(DH_SUCCESS, sinkDev_->TaskOpenCtrlChannel(args));
+}
+
+/**
+ * @tc.name: TaskOpenCtrlChannel_002
+ * @tc.desc: Verify the TaskOpenCtrlChannel function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSinkDevTest, TaskOpenCtrlChannel_002, TestSize.Level1)
+{
+    std::string args = "args";
+    EXPECT_NE(DH_SUCCESS, sinkDev_->TaskOpenCtrlChannel(args));
+}
+
+/**
  * @tc.name: TaskCloseCtrlChannel_001
  * @tc.desc: Verify the TaskCloseCtrlChannel function.
  * @tc.type: FUNC

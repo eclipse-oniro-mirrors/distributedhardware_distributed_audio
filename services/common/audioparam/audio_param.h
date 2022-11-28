@@ -116,12 +116,6 @@ typedef enum {
     STATE_CHANNEL_OPEN = 0,
     STATE_CHANNEL_CLOSE = 1
 } STATE;
-
-typedef enum {
-    CAP_UNKNOWN = 0,
-    CAP_SPK = 1,
-    CAP_MIC = 2,
-} PortCapType;
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DAUDIO_AUDIO_PARAM_H

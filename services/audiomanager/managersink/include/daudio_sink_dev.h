@@ -42,7 +42,7 @@ public:
 
     void NotifyEvent(const AudioEvent &audioEvent) override;
 
-private:
+    int32_t TaskOpenCtrlChannel(const std::string &args);
     int32_t TaskCloseCtrlChannel(const std::string &args);
     int32_t TaskOpenDSpeaker(const std::string &args);
     int32_t TaskCloseDSpeaker(const std::string &args);
@@ -56,6 +56,9 @@ private:
     int32_t TaskSetMute(const std::string &args);
     void OnTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
 
+private:
+    int32_t NotifyOpenCtrlChannel(const AudioEvent &audioEvent);
+    int32_t NotifyCloseCtrlChannel(const AudioEvent &audioEvent);
     int32_t NotifyCtrlOpened(const AudioEvent &audioEvent);
     int32_t NotifyCtrlClosed(const AudioEvent &audioEvent);
     int32_t NotifyOpenSpeaker(const AudioEvent &audioEvent);
@@ -74,12 +77,9 @@ private:
     int32_t NotifyRenderStateChange(const AudioEvent &audioEvent);
     int32_t NotifyPlayStatusChange(const AudioEvent &audioEvent);
     void NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result);
-
-    int32_t OpenCtrlChannel();
     int32_t from_json(const json &j, AudioParam &audioParam);
     bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);
 
-private:
     std::shared_ptr<DSpeakerClient> speakerClient_;
     std::shared_ptr<DMicClient> micClient_;
     std::shared_ptr<DAudioSinkDevCtrlMgr> audioCtrlMgr_;
