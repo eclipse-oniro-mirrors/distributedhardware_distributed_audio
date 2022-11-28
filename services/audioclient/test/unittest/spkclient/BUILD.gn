@@ -23,6 +23,7 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
+    "//foundation/multimedia/audio_framework/services/audio_service/client/include",
     "//foundation/multimedia/audio_framework/frameworks/native/common/include",
     "//foundation/multimedia/audio_framework/frameworks/native/audiopolicy/include",
     "${mediastandardfwk_path}/audiocommon/include",
