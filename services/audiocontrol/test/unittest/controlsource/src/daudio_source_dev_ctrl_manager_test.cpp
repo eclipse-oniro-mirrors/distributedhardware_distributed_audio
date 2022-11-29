@@ -65,6 +65,8 @@ void DAudioSourceDevCtrlMgrTest::TearDown(void)
  */
 HWTEST_F(DAudioSourceDevCtrlMgrTest, SetUp_001, TestSize.Level1)
 {
+    std::string devId = "devId";
+    sourceDevCtrl_->audioCtrlTrans_ = std::make_shared<MockIAudioCtrlTransport>(devId);
     EXPECT_EQ(DH_SUCCESS, sourceDevCtrl_->SetUp());
 }
 
