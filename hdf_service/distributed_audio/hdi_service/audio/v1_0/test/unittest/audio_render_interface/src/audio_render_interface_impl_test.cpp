@@ -35,6 +35,9 @@ void AudioRenderInterfaceImplTest::TearDownTestCase(void) {}
 
 void AudioRenderInterfaceImplTest::SetUp(void)
 {
+    desc_.portId = 0;
+    desc_.pins = PIN_NONE;
+    desc_.desc = "mic";
     audioRenderInterfaceImpl_ = std::make_shared<AudioRenderInterfaceImpl>(adpName_, desc_, attrs_, callback_);
 }
 
@@ -461,9 +464,65 @@ HWTEST_F(AudioRenderInterfaceImplTest, ReqMmapBuffer_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetMmapPosition_001, TestSize.Level1)
 {
-    uint64_t frames = 0;
-    AudioTimeStamp time;
-    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetMmapPosition(frames, time));
+    uint64_t frame = 0;
+    AudioTimeStamp time = {1, 1};
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetMmapPosition(frame, time));
+}
+
+/**
+ * @tc.name: GetFrameBufferSize_001
+ * @tc.desc: Verify the GetFrameBufferSize function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, GetFrameBufferSize_001, TestSize.Level1)
+{
+    uint64_t bufferSize = 6;
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->GetFrameBufferSize(bufferSize));
+}
+
+/**
+ * @tc.name: RemoveAudioEffect_001
+ * @tc.desc: Verify the RemoveAudioEffect function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, RemoveAudioEffect_001, TestSize.Level1)
+{
+    uint64_t effectid = 0;
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->RemoveAudioEffect(effectid));
+}
+
+
+/**
+ * @tc.name: AddAudioEffect_001
+ * @tc.desc: Verify the AddAudioEffect function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, AddAudioEffect_001, TestSize.Level1)
+{
+    uint64_t id = 0;
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->AddAudioEffect(id));
+}
+
+/**
+ * @tc.name: GetRenderDesc_001
+ * @tc.desc: Verify the GetRenderDesc function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, GetRenderDesc_001, TestSize.Level1)
+{
+    desc_.portId = 0;
+    desc_.pins = PIN_NONE;
+    desc_.desc = "mic";
+    auto audioRenderInterfaceImplTmp = std::make_shared<AudioRenderInterfaceImpl>(adpName_, desc_, attrs_, callback_);
+    AudioDeviceDescriptor descriptorTmp = audioRenderInterfaceImplTmp->GetRenderDesc();
+
+    EXPECT_EQ(desc_.portId, descriptorTmp.portId);
+    EXPECT_EQ(desc_.pins, descriptorTmp.pins);
+    EXPECT_EQ(desc_.desc, descriptorTmp.desc);
 }
 
 /**
@@ -474,7 +533,43 @@ HWTEST_F(AudioRenderInterfaceImplTest, GetMmapPosition_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, GetVolumeInner_001, TestSize.Level1)
 {
+    uint32_t volTmp = 2;
+    uint32_t volTmpMin = 2;
+    uint32_t volTmpMax = 10;
+
+    audioRenderInterfaceImpl_->SetVolumeInner(volTmp);
+    audioRenderInterfaceImpl_->SetVolumeRangeInner(volTmpMax, volTmpMin);
     EXPECT_EQ(audioRenderInterfaceImpl_->vol_, audioRenderInterfaceImpl_->GetVolumeInner());
+}
+
+/**
+ * @tc.name: GetMaxVolumeInner_001
+ * @tc.desc: Verify the GetMaxVolumeInner function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, GetMaxVolumeInner_001, TestSize.Level1)
+{
+    uint32_t volTmpMin = 2;
+    uint32_t volTmpMax = 10;
+
+    audioRenderInterfaceImpl_->SetVolumeRangeInner(volTmpMax, volTmpMin);
+    EXPECT_EQ(audioRenderInterfaceImpl_->volMax_, audioRenderInterfaceImpl_->GetMaxVolumeInner());
+}
+
+/**
+ * @tc.name: GetMinVolumeInner_001
+ * @tc.desc: Verify the GetMinVolumeInner function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, GetMinVolumeInner_001, TestSize.Level1)
+{
+    uint32_t volTmpMin = 2;
+    uint32_t volTmpMax = 10;
+
+    audioRenderInterfaceImpl_->SetVolumeRangeInner(volTmpMax, volTmpMin);
+    EXPECT_EQ(audioRenderInterfaceImpl_->volMin_, audioRenderInterfaceImpl_->GetMinVolumeInner());
 }
 
 /**

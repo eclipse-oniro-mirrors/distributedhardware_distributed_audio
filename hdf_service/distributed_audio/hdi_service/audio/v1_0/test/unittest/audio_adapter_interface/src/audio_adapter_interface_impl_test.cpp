@@ -144,6 +144,32 @@ HWTEST_F(AudioAdapterInterfaceImpTest, GetPassthroughMode_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: SetMicMute_001
+ * @tc.desc: Verify the SetMicMute function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, SetMicMute_001, TestSize.Level1)
+{
+    bool muteTmp = true;
+    bool muteGetted;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->SetMicMute(muteTmp));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->GetMicMute(muteGetted));
+}
+
+/**
+ * @tc.name: SetVoiceVolume_001
+ * @tc.desc: Verify the SetVoiceVolume function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, SetVoiceVolume_001, TestSize.Level1)
+{
+    float vol = 1.0f;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->SetVoiceVolume(vol));
+}
+
+/**
  * @tc.name: UpdateAudioRoute_001
  * @tc.desc: Verify the UpdateAudioRoute function.
  * @tc.type: FUNC
@@ -197,6 +223,48 @@ HWTEST_F(AudioAdapterInterfaceImpTest, GetExtraParams_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: GetExtraParams_002
+ * @tc.desc: Verify the GetExtraParams function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, GetExtraParams_002, TestSize.Level1)
+{
+    AudioExtParamKey key = AudioExtParamKey::AUDIO_EXT_PARAM_KEY_VOLUME;
+    std::string condition = "hello";
+    std::string value = "1";
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->GetExtraParams(key, condition, value));
+}
+
+/**
+ * @tc.name: GetExtraParams_003
+ * @tc.desc: Verify the GetExtraParams function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, GetExtraParams_003, TestSize.Level1)
+{
+    AudioExtParamKey key = AudioExtParamKey::AUDIO_EXT_PARAM_KEY_VOLUME;
+    std::string condition = "EVENT_TYPE=1;VOLUME_GROUP_ID=2;AUDIO_VOLUME_TYPE=1;";
+    std::string value = "1";
+    EXPECT_EQ(HDF_FAILURE, AdapterTest_->GetExtraParams(key, condition, value));
+}
+
+/**
+ * @tc.name: GetExtraParams_004
+ * @tc.desc: Verify the GetExtraParams function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, GetExtraParams_004, TestSize.Level1)
+{
+    AudioExtParamKey key = AudioExtParamKey::AUDIO_EXT_PARAM_KEY_STATUS;
+    std::string condition = "hello";
+    std::string value = "world";
+    EXPECT_EQ(HDF_ERR_INVALID_PARAM, AdapterTest_->GetExtraParams(key, condition, value));
+}
+
+/**
  * @tc.name: RegExtraParamObserver_001
  * @tc.desc: Verify the RegExtraParamObserver function.
  * @tc.type: FUNC
@@ -219,6 +287,36 @@ HWTEST_F(AudioAdapterInterfaceImpTest, RegExtraParamObserver_002, TestSize.Level
     AdapterTest_->paramCallback_ = new MockIAudioParamCallback();
     sptr<IAudioCallback> cbObj = new MockIAudioParamCallback();
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->RegExtraParamObserver(cbObj, 0));
+}
+
+/**
+ * @tc.name: GetDeviceCapabilitys_001
+ * @tc.desc: Verify the GetDeviceCapabilitys function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, GetDeviceCapabilitys_001, TestSize.Level1)
+{
+    uint32_t devId = 88;
+    std::string caps = "worldcup";
+    AdapterTest_->AddAudioDevice(devId, caps);
+
+    EXPECT_EQ(caps, AdapterTest_->GetDeviceCapabilitys(devId));
+}
+
+/**
+ * @tc.name: GetDeviceCapabilitys_002
+ * @tc.desc: Verify the GetDeviceCapabilitys function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, GetDeviceCapabilitys_002, TestSize.Level1)
+{
+    uint32_t devId = 88;
+    std::string caps = "worldcup";
+    AdapterTest_->RemoveAudioDevice(devId);
+
+    EXPECT_EQ("", AdapterTest_->GetDeviceCapabilitys(devId));
 }
 
 /**
@@ -254,6 +352,21 @@ HWTEST_F(AudioAdapterInterfaceImpTest, Notify_001, TestSize.Level1)
     DAudioEvent event;
     event.type = 3;
     event.content = "VOLUME_LEVEL";
+    uint32_t devId = 64;
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->Notify(devId, event));
+}
+
+/**
+ * @tc.name: Notify_002
+ * @tc.desc: Verify the Notify function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, Notify_002, TestSize.Level1)
+{
+    DAudioEvent event;
+    event.type = 10;
+    event.content = "FOCUS_CHANGE";
     uint32_t devId = 64;
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->Notify(devId, event));
 }
