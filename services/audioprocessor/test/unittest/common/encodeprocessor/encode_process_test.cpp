@@ -15,6 +15,7 @@
 
 #include <gtest/gtest.h>
 #include <memory>
+#include <unistd.h>
 
 #include "audio_data.h"
 #include "audio_encoder_processor.h"
@@ -40,7 +41,7 @@ public:
     void TearDown();
 
     std::shared_ptr<AudioProcessorCallbackTest> proCallback_ = nullptr;
-    std::shared_ptr<IAudioProcessor> encodeProc_ = nullptr;
+    std::shared_ptr<AudioEncoderProcessor> encodeProc_ = nullptr;
 };
 
 const AudioCommonParam LOC_COMPARA_ENC_TEST = {SAMPLE_RATE_48000, STEREO, SAMPLE_S16LE, AUDIO_CODEC_AAC};
@@ -231,6 +232,99 @@ HWTEST_F(EncodeProcessTest, encode_process_test_0010, TestSize.Level1)
 
     std::shared_ptr<AudioData> inputData = nullptr;
     EXPECT_NE(DH_SUCCESS, encodeProc_->FeedAudioProcessor(inputData));
+
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->StopAudioProcessor());
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->ReleaseAudioProcessor());
+}
+
+/**
+ * @tc.name: encode_process_test_0011
+ * @tc.desc: Verify audio processor encode function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncodeProcessTest, encode_process_test_0011, TestSize.Level1)
+{
+    size_t bufLen = 4096;
+    std::shared_ptr<AudioData> inputData = std::make_shared<AudioData>(bufLen);
+    EXPECT_EQ(EOK, memset_s(inputData->Data(), inputData->Size(), 0, inputData->Size()));
+    EXPECT_EQ(ERR_DH_AUDIO_BAD_VALUE, encodeProc_->FeedAudioProcessor(inputData));
+}
+
+/**
+ * @tc.name: encode_process_test_0012
+ * @tc.desc: Verify audio processor destruct function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncodeProcessTest, encode_process_test_0012, TestSize.Level1)
+{
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->ConfigureAudioProcessor(LOC_COMPARA_ENC_TEST,
+        RMT_COMPARA_ENC_TEST, proCallback_));
+    encodeProc_ = std::make_shared<AudioEncoderProcessor>();
+}
+
+/**
+ * @tc.name: encode_process_test_0013
+ * @tc.desc: Verify config audio processor function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncodeProcessTest, encode_process_test_0013, TestSize.Level1)
+{
+    EXPECT_EQ(ERR_DH_AUDIO_BAD_VALUE, encodeProc_->ConfigureAudioProcessor(LOC_COMPARA_ENC_TEST,
+        RMT_COMPARA_ENC_TEST, nullptr));
+}
+
+/**
+ * @tc.name: encode_process_test_0014
+ * @tc.desc: Verify audio processor encode data function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncodeProcessTest, encode_process_test_0014, TestSize.Level1)
+{
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->ConfigureAudioProcessor(LOC_COMPARA_ENC_TEST,
+        RMT_COMPARA_ENC_TEST, proCallback_));
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->StartAudioProcessor());
+    encodeProc_->OnCodecDataDone(nullptr);
+
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->StopAudioProcessor());
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->ReleaseAudioProcessor());
+}
+
+/**
+ * @tc.name: encode_process_test_0015
+ * @tc.desc: Verify audio processor encode data function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncodeProcessTest, encode_process_test_0015, TestSize.Level1)
+{
+    std::shared_ptr<AudioData> inputData = std::make_shared<AudioData>(4096);
+    EXPECT_EQ(EOK, memset_s(inputData->Data(), inputData->Size(), 0, inputData->Size()));
+    encodeProc_->OnCodecDataDone(inputData);
+    AudioEvent event;
+    encodeProc_->OnCodecStateNotify(event);
+}
+
+/**
+ * @tc.name: encode_process_test_0016
+ * @tc.desc: Verify audio processor encode data function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncodeProcessTest, encode_process_test_0016, TestSize.Level1)
+{
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->ConfigureAudioProcessor(LOC_COMPARA_ENC_TEST,
+        RMT_COMPARA_ENC_TEST, proCallback_));
+    EXPECT_EQ(DH_SUCCESS, encodeProc_->StartAudioProcessor());
+
+    std::shared_ptr<AudioData> inputData = std::make_shared<AudioData>(4096);
+    EXPECT_EQ(EOK, memset_s(inputData->Data(), inputData->Size(), 0, inputData->Size()));
+    encodeProc_->OnCodecDataDone(inputData);
+    AudioEvent event = {1, "test"};
+    encodeProc_->OnCodecStateNotify(event);
 
     EXPECT_EQ(DH_SUCCESS, encodeProc_->StopAudioProcessor());
     EXPECT_EQ(DH_SUCCESS, encodeProc_->ReleaseAudioProcessor());
