@@ -20,6 +20,6 @@ group("daudio_manager_test") {
   testonly = true
   deps = [
     "${services_path}/audiomanager/test/unittest/managersink:DaudioSinkDevTest",
-    "${services_path}/audiomanager/test/unittest/managersource:DaudioSourceDevTest",
+    "${services_path}/audiomanager/test/unittest/source_device:DaudioSourceDevTest",
   ]
 }

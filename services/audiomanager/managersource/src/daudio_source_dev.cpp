@@ -71,6 +71,10 @@ int32_t DAudioSourceDev::AwakeAudioDev()
 
 void DAudioSourceDev::SleepAudioDev()
 {
+    if (taskQueue_ == nullptr) {
+        DHLOGE("Task queue already stop.");
+        return;
+    }
     taskQueue_->Stop();
     taskQueue_ = nullptr;
 }
@@ -78,6 +82,11 @@ void DAudioSourceDev::SleepAudioDev()
 int32_t DAudioSourceDev::EnableDAudio(const std::string &dhId, const std::string &attrs)
 {
     DHLOGI("Enable audio device, dhId: %s.", dhId.c_str());
+    if (taskQueue_ == nullptr) {
+        DHLOGE("Task queue is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+
     json jParam = { { KEY_DEV_ID, devId_ }, { KEY_DH_ID, dhId }, { KEY_ATTRS, attrs } };
     auto task =
         GenerateTask(this, &DAudioSourceDev::TaskEnableDAudio, jParam.dump(), "", &DAudioSourceDev::OnEnableTaskResult);
@@ -88,6 +97,11 @@ int32_t DAudioSourceDev::EnableDAudio(const std::string &dhId, const std::string
 int32_t DAudioSourceDev::DisableDAudio(const std::string &dhId)
 {
     DHLOGI("Disable audio device, dhId: %s.", dhId.c_str());
+    if (taskQueue_ == nullptr) {
+        DHLOGE("Task queue is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+
     json jParam = { { KEY_DEV_ID, devId_ }, { KEY_DH_ID, dhId } };
     auto task = GenerateTask(this, &DAudioSourceDev::TaskDisableDAudio, jParam.dump(), "",
         &DAudioSourceDev::OnDisableTaskResult);
@@ -221,7 +235,8 @@ int32_t DAudioSourceDev::CloseCtrlTrans(const AudioEvent &event, bool isSpk)
         DHLOGD("Ctrl already closed.");
         return DH_SUCCESS;
     }
-    if ((!isSpk && !speaker_->IsOpened()) || (isSpk && !mic_->IsOpened())) {
+    if ((!isSpk && (speaker_ == nullptr || !speaker_->IsOpened())) ||
+        (isSpk && (mic_ == nullptr || !mic_->IsOpened()))) {
         DHLOGI("No distributed audio device used, close ctrl trans.");
         auto task = GenerateTask(this, &DAudioSourceDev::TaskCloseCtrlChannel, event.content, "Close Ctrl Trans",
             &DAudioSourceDev::OnTaskResult);
@@ -233,6 +248,10 @@ int32_t DAudioSourceDev::CloseCtrlTrans(const AudioEvent &event, bool isSpk)
 int32_t DAudioSourceDev::HandleOpenCtrlTrans(const AudioEvent &event)
 {
     DHLOGI("Open control trans.");
+    if (taskQueue_ == nullptr) {
+        DHLOGE("Task queue is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskOpenCtrlChannel, event.content, "Open Ctrl Trans",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -242,6 +261,10 @@ int32_t DAudioSourceDev::HandleCloseCtrlTrans(const AudioEvent &event)
 {
     (void)event;
     DHLOGI("Close control trans.");
+    if (taskQueue_ == nullptr) {
+        DHLOGE("Task queue is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskCloseCtrlChannel, "", "Close Ctrl Trans",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -252,11 +275,11 @@ int32_t DAudioSourceDev::HandleCtrlTransClosed(const AudioEvent &event)
     DHLOGI("Control trans closed.");
     AudioEvent audioEvent = event;
     HandleCloseCtrlTrans(audioEvent);
-    if (speaker_->IsOpened()) {
+    if (speaker_ != nullptr && speaker_->IsOpened()) {
         audioEvent.type = SPEAKER_CLOSED;
         HandleDSpeakerClosed(audioEvent);
     }
-    if (mic_->IsOpened()) {
+    if (mic_ != nullptr && mic_->IsOpened()) {
         audioEvent.type = MIC_CLOSED;
         HandleDMicClosed(audioEvent);
     }
@@ -290,6 +313,10 @@ int32_t DAudioSourceDev::HandleNotifyRPC(const AudioEvent &event)
 int32_t DAudioSourceDev::HandleVolumeSet(const AudioEvent &event)
 {
     DHLOGI("Start handle volume set.");
+    if (taskQueue_ == nullptr) {
+        DHLOGE("Task queue is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskSetVolume, event.content, "set volume",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -298,6 +325,10 @@ int32_t DAudioSourceDev::HandleVolumeSet(const AudioEvent &event)
 int32_t DAudioSourceDev::HandleVolumeChange(const AudioEvent &event)
 {
     DHLOGI("Start handle volume change.");
+    if (taskQueue_ == nullptr) {
+        DHLOGE("Task queue is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeVolume, event.content, "volume change",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -306,6 +337,10 @@ int32_t DAudioSourceDev::HandleVolumeChange(const AudioEvent &event)
 int32_t DAudioSourceDev::HandleFocusChange(const AudioEvent &event)
 {
     DHLOGI("Start handle focus change.");
+    if (taskQueue_ == nullptr) {
+        DHLOGE("Task queue is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeFocus, event.content, "focus change",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -314,6 +349,10 @@ int32_t DAudioSourceDev::HandleFocusChange(const AudioEvent &event)
 int32_t DAudioSourceDev::HandleRenderStateChange(const AudioEvent &event)
 {
     DHLOGI("Start handle render state change.");
+    if (taskQueue_ == nullptr) {
+        DHLOGE("Task queue is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
     auto task = GenerateTask(this, &DAudioSourceDev::TaskChangeRenderState, event.content, "render state change",
         &DAudioSourceDev::OnTaskResult);
     return taskQueue_->Produce(task);
@@ -335,7 +374,7 @@ int32_t DAudioSourceDev::HandlePlayStatusChange(const AudioEvent &event)
     if (event.content == AUDIO_EVENT_RESTART) {
         ret = speaker_->Restart();
         if (ret != DH_SUCCESS) {
-            DHLOGE("Speaker restart  failed.");
+            DHLOGE("Speaker restart failed.");
         }
         return ret;
     } else if (event.content == AUDIO_EVENT_PAUSE) {
@@ -391,7 +430,8 @@ int32_t DAudioSourceDev::TaskEnableDAudio(const std::string &args)
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
     json jParam = json::parse(args, nullptr, false);
-    if (!CheckIsNum((std::string)jParam[KEY_DH_ID])) {
+    if (!JsonParamCheck(jParam, { KEY_DH_ID, KEY_ATTRS }) || !CheckIsNum((std::string)jParam[KEY_DH_ID])) {
+        DHLOGE("The keys or values is invalid.");
         return ERR_DH_AUDIO_NOT_SUPPORT;
     }
     int32_t dhId = std::stoi((std::string)jParam[KEY_DH_ID]);
@@ -432,10 +472,19 @@ void DAudioSourceDev::OnEnableTaskResult(int32_t resultCode, const std::string &
 {
     (void)funcName;
     DHLOGI("On enable task result.");
+    if (mgrCallback_ == nullptr) {
+        DHLOGE("DAudio source manager callback is null.");
+        return;
+    }
+
     if (result.length() > DAUDIO_MAX_JSON_LEN || result.empty()) {
         return;
     }
     json jParam = json::parse(result, nullptr, false);
+    if (!JsonParamCheck(jParam, { KEY_DEV_ID, KEY_DH_ID })) {
+        DHLOGE("Not found the keys.");
+        return;
+    }
     mgrCallback_->OnEnableAudioResult(jParam[KEY_DEV_ID], jParam[KEY_DH_ID], resultCode);
 }
 
@@ -486,10 +535,19 @@ void DAudioSourceDev::OnDisableTaskResult(int32_t resultCode, const std::string 
 {
     (void)funcName;
     DHLOGI("On disable task result.");
+    if (mgrCallback_ == nullptr) {
+        DHLOGE("DAudio source manager callback is null.");
+        return;
+    }
+
     if (result.length() > DAUDIO_MAX_JSON_LEN || result.empty()) {
         return;
     }
     json jParam = json::parse(result, nullptr, false);
+    if (!JsonParamCheck(jParam, { KEY_DEV_ID, KEY_DH_ID })) {
+        DHLOGE("Not found the keys.");
+        return;
+    }
     mgrCallback_->OnDisableAudioResult(jParam[KEY_DEV_ID], jParam[KEY_DH_ID], resultCode);
 }
 
