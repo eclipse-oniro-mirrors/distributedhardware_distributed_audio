@@ -82,6 +82,17 @@ HWTEST_F(AudioManagerInterfaceImplTest, LoadAdapter_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: ReleaseAudioManagerObject_001
+ * @tc.desc: Verify the ReleaseAudioManagerObject function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioManagerInterfaceImplTest, ReleaseAudioManagerObject_001, TestSize.Level1)
+{
+    EXPECT_EQ(HDF_SUCCESS, audioManagerInterfaceImpl_->ReleaseAudioManagerObject());
+}
+
+/**
  * @tc.name: LoadAdapter_002
  * @tc.desc: Verify the LoadAdapter and UnloadAdapter function.
  * @tc.type: FUNC
@@ -210,6 +221,20 @@ HWTEST_F(AudioManagerInterfaceImplTest, CreateAdapter_002, TestSize.Level1)
     uint32_t devId = static_cast<uint32_t>(PIN_OUT_DAUDIO_DEFAULT);
     sptr<IDAudioCallback> callback = new MockIDAudioCallback();
     EXPECT_EQ(DH_SUCCESS, audioManagerInterfaceImpl_->CreateAdapter(adpName, devId, callback));
+}
+
+/**
+ * @tc.name: SetDeviceObject_002
+ * @tc.desc: Verify the SetDeviceObject function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioManagerInterfaceImplTest, SetDeviceObject_002, TestSize.Level1)
+{
+    struct HdfDeviceObject deviceObject;
+    audioManagerInterfaceImpl_->SetDeviceObject(&deviceObject);
+    DAudioDevEvent event;
+    EXPECT_EQ(ERR_DH_AUDIO_HDF_FAIL, audioManagerInterfaceImpl_->NotifyFwk(event));
 }
 } // V1_0
 } // Audio

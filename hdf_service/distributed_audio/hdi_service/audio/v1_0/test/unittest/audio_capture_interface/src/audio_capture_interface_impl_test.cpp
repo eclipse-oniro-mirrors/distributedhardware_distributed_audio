@@ -35,11 +35,11 @@ void AudioCaptureInterfaceImplTest::TearDownTestCase(void) {}
 
 void AudioCaptureInterfaceImplTest::SetUp(void)
 {
-    std::string adpName_;
-    AudioDeviceDescriptor desc_;
-    AudioSampleAttributes attrs_;
-    sptr<IDAudioCallback> callback_;
-    audioCaptureInterfaceImpl_ = std::make_shared<AudioCaptureInterfaceImpl>(adpName_, desc_, attrs_, callback_);
+    std::string adpName;
+    AudioDeviceDescriptor desc;
+    AudioSampleAttributes attrs;
+    sptr<IDAudioCallback> callback;
+    audioCaptureInterfaceImpl_ = std::make_shared<AudioCaptureInterfaceImpl>(adpName, desc, attrs, callback);
 }
 
 void AudioCaptureInterfaceImplTest::TearDown(void)
@@ -70,6 +70,21 @@ HWTEST_F(AudioCaptureInterfaceImplTest, CaptureFrame_001, TestSize.Level1)
 {
     vector<int8_t> frame;
     uint64_t requestBytes = 0;
+    EXPECT_EQ(HDF_FAILURE, audioCaptureInterfaceImpl_->CaptureFrame(frame, requestBytes));
+}
+
+/**
+ * @tc.name: CaptureFrame_002
+ * @tc.desc: Verify the CaptureFrame function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioCaptureInterfaceImplTest, CaptureFrame_002, TestSize.Level1)
+{
+    vector<int8_t> frame;
+    uint64_t requestBytes = 0;
+    audioCaptureInterfaceImpl_->captureStatus_ = CAPTURE_STATUS_START;
+    audioCaptureInterfaceImpl_->audioExtCallback_ = nullptr;
     EXPECT_EQ(HDF_FAILURE, audioCaptureInterfaceImpl_->CaptureFrame(frame, requestBytes));
 }
 
@@ -153,6 +168,20 @@ HWTEST_F(AudioCaptureInterfaceImplTest, AudioDevDump_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: IsSupportsPauseAndResume_001
+ * @tc.desc: Verify the IsSupportsPauseAndResume function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioCaptureInterfaceImplTest, IsSupportsPauseAndResume_001, TestSize.Level1)
+{
+    bool supportPause = true;
+    bool supportResume = true;
+    EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->
+        IsSupportsPauseAndResume(supportPause, supportResume));
+}
+
+/**
  * @tc.name: CheckSceneCapability_001
  * @tc.desc: Verify the CheckSceneCapability function.
  * @tc.type: FUNC
@@ -190,6 +219,19 @@ HWTEST_F(AudioCaptureInterfaceImplTest, SetMute_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: GetMute_001
+ * @tc.desc: Verify the GetMute function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioCaptureInterfaceImplTest, GetMute_001, TestSize.Level1)
+{
+    bool mute = true;
+
+    EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->GetMute(mute));
+}
+
+/**
  * @tc.name: SetVolume_001
  * @tc.desc: Verify the SetVolume function.
  * @tc.type: FUNC
@@ -199,6 +241,19 @@ HWTEST_F(AudioCaptureInterfaceImplTest, SetVolume_001, TestSize.Level1)
 {
     float volume = 0;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->SetVolume(volume));
+}
+
+/**
+ * @tc.name: GetVolume_001
+ * @tc.desc: Verify the GetVolume function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioCaptureInterfaceImplTest, GetVolume_001, TestSize.Level1)
+{
+    float volume = 0;
+
+    EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->GetVolume(volume));
 }
 
 /**
@@ -347,6 +402,61 @@ HWTEST_F(AudioCaptureInterfaceImplTest, GetMmapPosition_001, TestSize.Level1)
     uint64_t frames = 0;
     AudioTimeStamp time;
     EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->GetMmapPosition(frames, time));
+}
+
+/**
+ * @tc.name: AddAudioEffect_001
+ * @tc.desc: Verify the AddAudioEffect function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioCaptureInterfaceImplTest, AddAudioEffect_001, TestSize.Level1)
+{
+    uint64_t effectid = 0;
+    EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->AddAudioEffect(effectid));
+}
+
+/**
+ * @tc.name: RemoveAudioEffect_001
+ * @tc.desc: Verify the RemoveAudioEffect function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioCaptureInterfaceImplTest, RemoveAudioEffect_001, TestSize.Level1)
+{
+    uint64_t effectid = 0;
+    EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->RemoveAudioEffect(effectid));
+}
+
+/**
+ * @tc.name: GetFrameBufferSize_001
+ * @tc.desc: Verify the GetFrameBufferSize function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioCaptureInterfaceImplTest, GetFrameBufferSize_001, TestSize.Level1)
+{
+    uint64_t bufferSize = 6;
+    EXPECT_EQ(HDF_SUCCESS, audioCaptureInterfaceImpl_->GetFrameBufferSize(bufferSize));
+}
+
+/**
+ * @tc.name: GetCaptureDesc_001
+ * @tc.desc: Verify the GetCaptureDesc function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioCaptureInterfaceImplTest, GetCaptureDesc_001, TestSize.Level1)
+{
+    desc_.portId = 0;
+    desc_.pins = PIN_NONE;
+    desc_.desc = "mic";
+    auto audioCaptureInterfaceImplTmp = std::make_shared<AudioCaptureInterfaceImpl>(adpName_, desc_, attrs_, callback_);
+    AudioDeviceDescriptor descriptorTmp = audioCaptureInterfaceImplTmp->GetCaptureDesc();
+
+    EXPECT_EQ(desc_.portId, descriptorTmp.portId);
+    EXPECT_EQ(desc_.pins, descriptorTmp.pins);
+    EXPECT_EQ(desc_.desc, descriptorTmp.desc);
 }
 } // V1_0
 } // Audio

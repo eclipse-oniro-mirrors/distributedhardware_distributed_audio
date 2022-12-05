@@ -41,6 +41,10 @@ public:
     void SetUp();
     void TearDown();
 
+    std::string adpName_;
+    AudioDeviceDescriptor desc_;
+    AudioSampleAttributes attrs_;
+    sptr<IDAudioCallback> callback_;
     std::shared_ptr<AudioCaptureInterfaceImpl> audioCaptureInterfaceImpl_ = nullptr;
 };
 } // V1_0
