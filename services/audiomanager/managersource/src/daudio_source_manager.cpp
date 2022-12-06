@@ -71,6 +71,9 @@ int32_t DAudioSourceManager::UnInit()
     {
         std::lock_guard<std::mutex> lock(devMapMtx_);
         for (auto iter = audioDevMap_.begin(); iter != audioDevMap_.end(); iter++) {
+            if (iter->second.dev == nullptr) {
+                continue;
+            }
             iter->second.dev->SleepAudioDev();
         }
         audioDevMap_.clear();
