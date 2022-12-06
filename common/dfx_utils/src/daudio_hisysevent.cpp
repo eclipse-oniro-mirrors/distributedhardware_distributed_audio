@@ -24,97 +24,76 @@ IMPLEMENT_SINGLE_INSTANCE(DAudioHisysevent);
 
 void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, const std::string &msg)
 {
-    int32_t res = OHOS::HiviewDFX::HiSysEvent::Write(
+    OHOS::HiviewDFX::HiSysEvent::Write(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "MSG", msg);
-    if (res != DH_SUCCESS) {
-        DHLOGE("Write HiSysEvent error, res: %d.", res);
-    }
 }
 
 void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, int32_t saId, const std::string &msg)
 {
-    int32_t res = OHOS::HiviewDFX::HiSysEvent::Write(
+    OHOS::HiviewDFX::HiSysEvent::Write(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "SAID", saId,
         "MSG", msg);
-    if (res != DH_SUCCESS) {
-        DHLOGE("Write HiSysEvent error, res: %d.", res);
-    }
 }
 
 void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, const std::string &devId,
     const std::string &dhId, const std::string &msg)
 {
-    int32_t res = OHOS::HiviewDFX::HiSysEvent::Write(
+    OHOS::HiviewDFX::HiSysEvent::Write(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "DEVID", GetAnonyString(devId),
         "DHID", GetAnonyString(dhId),
         "MSG", msg);
-    if (res != DH_SUCCESS) {
-        DHLOGE("Write HiSysEvent error, res:%d.", res);
-    }
 }
 
 void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, const std::string &msg)
 {
-    int32_t res = OHOS::HiviewDFX::HiSysEvent::Write(
+    OHOS::HiviewDFX::HiSysEvent::Write(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
         "MSG", msg);
-        if (res != DH_SUCCESS) {
-            DHLOGE("Write HiSysEvent error, res:%d.", res);
-        }
 }
 
 void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, int32_t saId, int32_t errorCode,
     const std::string &msg)
 {
-    int32_t res = OHOS::HiviewDFX::HiSysEvent::Write(
+    OHOS::HiviewDFX::HiSysEvent::Write(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
         "SAID", saId,
         "ERRCODE", errorCode,
         "MSG", msg);
-        if (res != DH_SUCCESS) {
-            DHLOGE("Write HiSysEvent error, res:%d.", res);
-        }
 }
 
 void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, int32_t errorCode, const std::string &msg)
 {
-    int32_t res = OHOS::HiviewDFX::HiSysEvent::Write(
+    OHOS::HiviewDFX::HiSysEvent::Write(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
         "ERRCODE", errorCode,
         "MSG", msg);
-    if (res != DH_SUCCESS) {
-        DHLOGE("Write HiSysEvent error, res:%d.", res);
-    }
 }
 
 void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, const std::string &devId,
     const std::string &dhId, int32_t errorCode, const std::string &msg)
 {
-    int32_t res = OHOS::HiviewDFX::HiSysEvent::Write(
+    OHOS::HiviewDFX::HiSysEvent::Write(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
         "DEVID", GetAnonyString(devId),
         "DHID", GetAnonyString(dhId),
         "ERRCODE", errorCode, "MSG", msg);
-    if (res != DH_SUCCESS) {
-        DHLOGE("Write HiSysEvent error, res:%d.", res);
-    }
 }
 } // namespace DistributedHardware
 } // namespace OHOS

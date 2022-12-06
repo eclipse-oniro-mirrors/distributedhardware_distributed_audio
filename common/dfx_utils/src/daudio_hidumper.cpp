@@ -152,10 +152,9 @@ int32_t DaudioHidumper::GetAbilityInfo(std::string &result)
     for (DHItem dhItem : abilityInfo) {
         if (dhItem.dhId == spkDefault) {
             result.append("spkAbilityInfo:").append(dhItem.attrs).append("      ");
-        } else if (dhItem.dhId == micDefault) {
+        }
+        if (dhItem.dhId == micDefault) {
             result.append("micAbilityInfo:").append(dhItem.attrs).append("      ");
-        } else {
-            continue;
         }
     }
     return DH_SUCCESS;

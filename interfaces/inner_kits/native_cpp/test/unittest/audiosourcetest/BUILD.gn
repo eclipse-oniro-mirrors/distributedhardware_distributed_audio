@@ -25,6 +25,10 @@ config("module_private_config") {
     "//third_party/json/include",
     "${fwk_common_path}/utils/include",
     "${fwk_utils_path}/include",
+    "//commonlibrary/c_utils/base/include",
+    "//utils/system/safwk/native/include",
+    "${fwk_utils_path}/include/log",
+    "${fwk_common_path}/log/include",
   ]
 
   include_dirs += [
@@ -45,6 +49,7 @@ ohos_unittest("AudioSourceTest") {
   sources = [
     "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/src/daudio_ipc_callback_test.cpp",
     "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/src/daudio_source_handler_test.cpp",
+    "${interfaces_path}/inner_kits/native_cpp/test/unittest/audiosourcetest/src/daudio_source_proxy_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
@@ -58,6 +63,7 @@ ohos_unittest("AudioSourceTest") {
   external_deps = [
     "c_utils:utils",
     "ipc:ipc_core",
+    "samgr:samgr_proxy",
   ]
 }
 

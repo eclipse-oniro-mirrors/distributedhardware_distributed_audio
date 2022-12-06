@@ -1,0 +1,97 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import("//build/ohos_var.gni")
+import("//build/test.gni")
+import(
+    "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+
+module_out_path = "distributed_audio/common/dfx_utils_test"
+
+config("module_private_config") {
+  visibility = [ ":*" ]
+
+  include_dirs = [
+    "include",
+    "${audio_control_path}/controlsource/include",
+    "${audio_hdi_proxy_path}/include",
+    "${audio_processor_path}/interface",
+    "${audio_processor_path}/encodeprocessor/include",
+    "${audio_processor_path}/decodeprocessor/include",
+    "${audio_transport_path}/interface",
+    "${audio_transport_path}/encodetransport/include",
+    "${audio_transport_path}/decodetransport/include",
+    "${audio_transport_path}/audioctrltransport/include",
+    "${audio_transport_path}/audioctrltransport/interface",
+    "${audio_transport_path}/audiochannel/interface",
+    "${audio_transport_path}/audiochannel/audiodatachannel/include",
+    "${audio_transport_path}/audiotransportstatus/include",
+    "${audio_transport_path}/audiotransportstatus/interface",
+    "${common_path}/include",
+    "${common_path}/dfx_utils/include",
+    "${distributedaudio_path}/audiohandler/include",
+    "${hdf_service_path}/audio_client/include",
+    "${hdf_service_path}/hdi_service/common/include",
+    "${interfaces_path}/inner_kits/native_cpp/audio_sink/include",
+    "${interfaces_path}/inner_kits/native_cpp/audio_source/include",
+    "${innerkits_path}/native_cpp/audio_source/include",
+    "${innerkits_path}/native_cpp/audio_sink/include",
+    "${services_path}/common/audioparam",
+    "${services_path}/common/taskProcessor/include",
+    "${services_path}/common/audiodata/include",
+    "${services_path}/common/audioeventcallback",
+    "${services_path}/audiomanager/managersource/include",
+    "${softbusadapter_path}/include",
+    "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+    "//commonlibrary/c_utils/base/include",
+    "//foundation/communication/dsoftbus/interfaces/kits/transport",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
+    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy/include",
+    "//foundation/multimedia/audio_framework/frameworks/native/common/include",
+    "//foundation/multinedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
+    "//third_party/json/include",
+    "//utils/system/safwk/native/include",
+    "${fwk_common_path}/utils/include",
+    "${mediastandardfwk_path}/audiocapturer/include",
+    "${mediastandardfwk_path}/audiocommon/include",
+    "${mediastandardfwk_path}/audiorenderer/include",
+    "${mediastandardfwk_path}/audiomanager/include",
+    "//drivers/peripheral/audio/interfaces/include",
+  ]
+}
+
+## UnitTest daudio_dfx_test
+ohos_unittest("DAudioDfxTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "${common_path}/dfx_utils/test/unittest/src/daudio_hidumper_test.cpp",
+    "${common_path}/dfx_utils/test/unittest/src/daudio_hisysevent_test.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${services_path}/audiomanager/servicesource:distributed_audio_source",
+    "${services_path}/common:distributed_audio_utils",
+    "//third_party/googletest:gmock",
+    "//third_party/googletest:gtest_main",
+  ]
+}
+
+group("daudio_dfx_test") {
+  testonly = true
+  deps = [ ":DAudioDfxTest" ]
+}

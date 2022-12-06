@@ -63,10 +63,6 @@ int32_t DAudioHandler::Initialize()
         return ret;
     }
     ret = QueryAudioInfo();
-    if (ret != DH_SUCCESS) {
-        DHLOGE("Failed to query audio information.");
-        return ret;
-    }
     GetSupportAudioInfo(audioInfos_, encoderInfos_, decoderInfos_);
     return DH_SUCCESS;
 }
