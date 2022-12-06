@@ -59,7 +59,99 @@ ohos_unittest("AudioAdapterHdiTest") {
   ]
 }
 
+ohos_unittest("AudioRenderInternalTest") {
+  module_out_path = module_output_path
+
+  configs = [ ":module_private_config" ]
+
+  sources = [ "audio_render_internal/audio_render_internal_test.cpp" ]
+
+  deps = [
+    "${hdf_service_path}/audio_client:daudio_client",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"unittest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fsigned-char",
+    "-fno-common",
+    "-fno-strict-aliasing",
+  ]
+}
+
+ohos_unittest("AudioCaptureInternalTest") {
+  module_out_path = module_output_path
+
+  configs = [ ":module_private_config" ]
+
+  sources = [ "audio_capture_internal/audio_capture_internal_test.cpp" ]
+
+  deps = [
+    "${hdf_service_path}/audio_client:daudio_client",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"unittest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fsigned-char",
+    "-fno-common",
+    "-fno-strict-aliasing",
+  ]
+}
+
+ohos_unittest("AudioAdapterInternalTest") {
+  module_out_path = module_output_path
+
+  configs = [ ":module_private_config" ]
+
+  sources = [ "audio_adapter_internal/audio_adapter_internal_test.cpp" ]
+
+  deps = [
+    "${hdf_service_path}/audio_client:daudio_client",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"unittest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fsigned-char",
+    "-fno-common",
+    "-fno-strict-aliasing",
+  ]
+}
+
 group("audio_adapter_hdi_test") {
   testonly = true
-  deps = [ ":AudioAdapterHdiTest" ]
+  deps = [
+    ":AudioAdapterHdiTest",
+    ":AudioRenderInternalTest",
+    ":AudioCaptureInternalTest",
+    ":AudioAdapterInternalTest",
+    ]
 }
