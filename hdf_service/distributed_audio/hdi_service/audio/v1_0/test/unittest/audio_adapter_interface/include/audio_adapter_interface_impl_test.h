@@ -17,8 +17,13 @@
 #define OHOS_AUDIO_ADAPTER_INTERFACE_IMPL_TEST_H
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
+#include <daudio_events.h>
+
+#include "audio_render_interface_impl.h"
 #include "audio_test_utils.h"
+
 #define private public
 #include "audio_adapter_interface_impl.h"
 #undef private

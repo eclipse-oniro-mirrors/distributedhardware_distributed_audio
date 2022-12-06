@@ -447,6 +447,23 @@ public:
         return DistributedHardware::DH_SUCCESS;
     }
 };
+
+class MockRevertIAudioParamCallback : public IAudioCallback {
+public:
+    MockRevertIAudioParamCallback() {}
+    ~MockRevertIAudioParamCallback() {}
+
+    int32_t RenderCallback(AudioCallbackType type, int8_t &reserved, int8_t &cookie) override
+    {
+        return DistributedHardware::ERR_DH_AUDIO_HDF_FAIL;
+    }
+
+    int32_t ParamCallback(AudioExtParamKey key, const std::string& condition, const std::string& value,
+        int8_t &reserved, int8_t &cookie) override
+    {
+        return DistributedHardware::ERR_DH_AUDIO_HDF_FAIL;
+    }
+};
 } // V1_0
 } // AudioExt
 } // Distributedaudio
