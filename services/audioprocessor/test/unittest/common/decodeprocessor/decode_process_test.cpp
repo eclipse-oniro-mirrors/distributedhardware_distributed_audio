@@ -40,7 +40,7 @@ public:
     void TearDown();
 
     std::shared_ptr<AudioProcessorCallbackTest> proCallback_;
-    std::shared_ptr<IAudioProcessor> decodeProc_;
+    std::shared_ptr<AudioDecoderProcessor> decodeProc_;
 };
 
 const AudioCommonParam LOC_COMPARA_DEC_TEST = {SAMPLE_RATE_48000, STEREO, SAMPLE_S16LE, AUDIO_CODEC_AAC};
@@ -231,9 +231,36 @@ HWTEST_F(DecodeProcessTest, decode_process_test_0010, TestSize.Level1)
 
     std::shared_ptr<AudioData> inputData = nullptr;
     EXPECT_NE(DH_SUCCESS, decodeProc_->FeedAudioProcessor(inputData));
+    decodeProc_->OnCodecDataDone(inputData);
+    AudioEvent event;
+    decodeProc_->OnCodecStateNotify(event);
 
     EXPECT_EQ(DH_SUCCESS, decodeProc_->StopAudioProcessor());
     EXPECT_EQ(DH_SUCCESS, decodeProc_->ReleaseAudioProcessor());
+}
+
+/**
+ * @tc.name: decode_process_test_0011
+ * @tc.desc: Verify feed audio processor function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(DecodeProcessTest, decode_process_test_0011, TestSize.Level1)
+{
+    EXPECT_EQ(DH_SUCCESS, decodeProc_->ConfigureAudioProcessor(LOC_COMPARA_DEC_TEST,
+        RMT_COMPARA_DEC_TEST, proCallback_));
+    decodeProc_ = std::make_shared<AudioDecoderProcessor>();
+    EXPECT_EQ(ERR_DH_AUDIO_BAD_VALUE, decodeProc_->ConfigureAudioProcessor(LOC_COMPARA_DEC_TEST,
+        RMT_COMPARA_DEC_TEST, nullptr));
+
+    decodeProc_->OnCodecDataDone(nullptr);
+    size_t bufLen = 4096;
+    std::shared_ptr<AudioData> inputData = std::make_shared<AudioData>(bufLen);
+    EXPECT_EQ(EOK, memset_s(inputData->Data(), inputData->Size(), 0, inputData->Size()));
+    decodeProc_->OnCodecDataDone(inputData);
+    AudioEvent event;
+    decodeProc_->OnCodecStateNotify(event);
+    EXPECT_EQ(ERR_DH_AUDIO_BAD_VALUE, decodeProc_->FeedAudioProcessor(inputData));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

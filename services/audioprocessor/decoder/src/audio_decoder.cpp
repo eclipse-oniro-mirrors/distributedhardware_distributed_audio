@@ -177,7 +177,7 @@ int32_t AudioDecoder::StopAudioCodec()
     StopInputThread();
     if (audioDecoder_ == nullptr) {
         DHLOGE("Decoder is null.");
-        return ERR_DH_AUDIO_BAD_VALUE;
+        return DH_SUCCESS;
     }
 
     bool isSuccess = true;
