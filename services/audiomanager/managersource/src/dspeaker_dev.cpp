@@ -335,7 +335,7 @@ int32_t DSpeakerDev::OnStateChange(const AudioEventType type)
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
         DHLOGE("Event callback is null");
-        return ERR_DH_AUDIO_SA_MICCALLBACK_NULL;
+        return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
     }
     cbObj->NotifyEvent(event);
     return DH_SUCCESS;

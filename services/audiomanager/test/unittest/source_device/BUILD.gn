@@ -42,8 +42,11 @@ config("module_private_config") {
     "${audio_processor_path}/interface",
     "${audio_transport_path}/interface",
     "${audio_transport_path}/audioctrltransport/interface",
+    "${audio_transport_path}/audiochannel/interface",
     "${audio_transport_path}/audiotransportstatus/include",
     "${audio_transport_path}/audiotransportstatus/interface",
+    "${audio_transport_path}/encodetransport/include",
+    "${audio_transport_path}/decodetransport/include",
     "${common_path}/include",
     "${common_path}/dfx_utils/include",
     "${distributedaudio_path}/audiohandler/include",
@@ -58,6 +61,7 @@ config("module_private_config") {
     "${services_path}/common/audiodata/include",
     "${services_path}/common/audioeventcallback",
     "${services_path}/audiomanager/managersource/include",
+    "${services_path}/audiomanager/test/unittest/audiomanagertestutils/include",
     "${softbusadapter_path}/include",
   ]
 }
@@ -78,7 +82,45 @@ ohos_unittest("DaudioSourceDevTest") {
   ]
 }
 
+## UnitTest daudio_source_dev_test
+ohos_unittest("DMicDevTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/dmic_dev_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${audio_transport_path}/decodetransport:distributed_audio_decode_transport",
+    "${services_path}/audiomanager/servicesource:distributed_audio_source",
+    "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
+    "//third_party/googletest:gmock",
+    "//third_party/googletest:gtest_main",
+  ]
+}
+
+## UnitTest daudio_source_dev_test
+ohos_unittest("DSpeakerDevTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/dspeaker_dev_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${audio_transport_path}/encodetransport:distributed_audio_encode_transport",
+    "${services_path}/audiomanager/servicesource:distributed_audio_source",
+    "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
+    "//third_party/googletest:gmock",
+    "//third_party/googletest:gtest_main",
+  ]
+}
+
 group("daudio_source_dev_test") {
   testonly = true
-  deps = [ ":DaudioSourceDevTest" ]
+  deps = [ 
+    ":DaudioSourceDevTest",
+    ":DMicDevTest",
+    ":DSpeakerDevTest",
+  ]
 }

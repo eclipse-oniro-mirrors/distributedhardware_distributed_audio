@@ -13,34 +13,30 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DAUDIO_SOURCE_MGR_TEST_H
-#define OHOS_DAUDIO_SOURCE_MGR_TEST_H
+#ifndef OHOS_DSPEAKER_DEV_TEST_H
+#define OHOS_DSPEAKER_DEV_TEST_H
 
 #include <gtest/gtest.h>
 
+#include "audio_manager_test_utils.h"
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
-#include "daudio_ipc_callback.h"
-#include "daudio_ipc_callback_proxy.h"
-#include "daudio_util.h"
 #define private public
-#include "daudio_source_manager.h"
+#include "dspeaker_dev.h"
 #undef private
 
 namespace OHOS {
 namespace DistributedHardware {
-class DAudioSourceMgrTest : public testing::Test {
+class DSpeakerDevTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
 
-    DAudioSourceManager sourceMgr;
-    sptr<DAudioIpcCallback> dAudioIpcCallback_ = nullptr;
-    sptr<IRemoteObject> remoteObject_ = nullptr;
-    sptr<DAudioIpcCallbackProxy> ipcCallbackProxy_ = nullptr;
+    std::shared_ptr<DSpeakerDev> spk_ = nullptr;
+    std::shared_ptr<IAudioEventCallback> eventCb_ = nullptr;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif // OHOS_DAUDIO_SOURCE_MGR_TEST_H
+#endif // OHOS_DSPEAKER_DEV_TEST_H
