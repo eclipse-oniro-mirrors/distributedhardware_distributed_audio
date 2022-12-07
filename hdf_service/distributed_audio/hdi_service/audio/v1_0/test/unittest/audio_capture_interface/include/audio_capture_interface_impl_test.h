@@ -21,6 +21,7 @@
 #include <v1_0/iaudio_capture.h>
 #include <v1_0/id_audio_manager.h>
 
+#include "audio_test_utils.h"
 #define private public
 #include "audio_capture_interface_impl.h"
 #undef private

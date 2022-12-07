@@ -464,6 +464,41 @@ public:
         return DistributedHardware::ERR_DH_AUDIO_HDF_FAIL;
     }
 };
+class MockRevertIDAudioCallback : public IDAudioCallback {
+public:
+    MockRevertIDAudioCallback() {}
+    ~MockRevertIDAudioCallback() {}
+
+    int32_t OpenDevice(const std::string &adpName, int32_t devId) override
+    {
+        return DistributedHardware::ERR_DH_AUDIO_HDF_FAIL;
+    }
+
+    int32_t CloseDevice(const std::string &adpName, int32_t devId) override
+    {
+        return DistributedHardware::ERR_DH_AUDIO_HDF_FAIL;
+    }
+
+    int32_t SetParameters(const std::string &adpNam, int32_t devId, const AudioParameter &param) override
+    {
+        return DistributedHardware::ERR_DH_AUDIO_HDF_FAIL;
+    }
+
+    int32_t NotifyEvent(const std::string &adpNam, int32_t devId, const DAudioEvent &event) override
+    {
+        return DistributedHardware::ERR_DH_AUDIO_HDF_FAIL;
+    }
+
+    int32_t WriteStreamData(const std::string &adpNam, int32_t devId, const AudioData &data) override
+    {
+        return DistributedHardware::ERR_DH_AUDIO_HDF_FAIL;
+    }
+
+    int32_t ReadStreamData(const std::string &adpNam, int32_t devId, AudioData &data) override
+    {
+        return DistributedHardware::ERR_DH_AUDIO_HDF_FAIL;
+    }
+};
 } // V1_0
 } // AudioExt
 } // Distributedaudio

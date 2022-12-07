@@ -72,6 +72,38 @@ HWTEST_F(AudioRenderInterfaceImplTest, RenderFrame_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: RenderFrame_002
+ * @tc.desc: Verify the RenderFrame function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, RenderFrame_002, TestSize.Level1)
+{
+    std::vector<int8_t> frame;
+    uint64_t replyBytes = 0;
+    audioRenderInterfaceImpl_->renderStatus_ = RENDER_STATUS_START;
+    audioRenderInterfaceImpl_->audioExtCallback_ = nullptr;
+    EXPECT_EQ(HDF_FAILURE, audioRenderInterfaceImpl_->RenderFrame(frame, replyBytes));
+    audioRenderInterfaceImpl_->audioExtCallback_ = new MockIDAudioCallback();
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->RenderFrame(frame, replyBytes));
+}
+
+/**
+ * @tc.name: RenderFrame_003
+ * @tc.desc: Verify the RenderFrame function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, RenderFrame_003, TestSize.Level1)
+{
+    std::vector<int8_t> frame;
+    uint64_t replyBytes = 0;
+    audioRenderInterfaceImpl_->renderStatus_ = RENDER_STATUS_START;
+    audioRenderInterfaceImpl_->audioExtCallback_ = new MockRevertIDAudioCallback();
+    EXPECT_EQ(HDF_FAILURE, audioRenderInterfaceImpl_->RenderFrame(frame, replyBytes));
+}
+
+/**
  * @tc.name: GetRenderPosition_001
  * @tc.desc: Verify the GetRenderPosition function.
  * @tc.type: FUNC
@@ -157,6 +189,18 @@ HWTEST_F(AudioRenderInterfaceImplTest, DrainBuffer_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: IsSupportsDrain_001
+ * @tc.desc: Verify the IsSupportsDrain function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, IsSupportsDrain_001, TestSize.Level1)
+{
+    bool support = true;
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->IsSupportsDrain(support));
+}
+
+/**
  * @tc.name: Start_001
  * @tc.desc: Verify the Start function.
  * @tc.type: FUNC
@@ -168,6 +212,32 @@ HWTEST_F(AudioRenderInterfaceImplTest, Start_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: Start_002
+ * @tc.desc: Verify the Start function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, Start_002, TestSize.Level1)
+{
+    audioRenderInterfaceImpl_->firstOpenFlag = false;
+    audioRenderInterfaceImpl_->audioExtCallback_ = new MockIDAudioCallback();
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->Start());
+}
+
+/**
+ * @tc.name: Start_003
+ * @tc.desc: Verify the Start function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, Start_003, TestSize.Level1)
+{
+    audioRenderInterfaceImpl_->firstOpenFlag = false;
+    audioRenderInterfaceImpl_->audioExtCallback_ = new MockRevertIDAudioCallback();
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->Start());
+}
+
+/**
  * @tc.name: Stop_001
  * @tc.desc: Verify the Stop function.
  * @tc.type: FUNC
@@ -175,6 +245,8 @@ HWTEST_F(AudioRenderInterfaceImplTest, Start_001, TestSize.Level1)
  */
 HWTEST_F(AudioRenderInterfaceImplTest, Stop_001, TestSize.Level1)
 {
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->Stop());
+    audioRenderInterfaceImpl_->audioExtCallback_ = new MockRevertIDAudioCallback();
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->Stop());
 }
 
@@ -233,6 +305,19 @@ HWTEST_F(AudioRenderInterfaceImplTest, AudioDevDump_001, TestSize.Level1)
     int32_t range = 0;
     int32_t fd = 0;
     EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->AudioDevDump(range, fd));
+}
+
+/**
+ * @tc.name: IsSupportsPauseAndResume_001
+ * @tc.desc: Verify the IsSupportsPauseAndResume function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioRenderInterfaceImplTest, IsSupportsPauseAndResume_001, TestSize.Level1)
+{
+    bool supportPause = true;
+    bool supportResume = true;
+    EXPECT_EQ(HDF_SUCCESS, audioRenderInterfaceImpl_->IsSupportsPauseAndResume(supportPause, supportResume));
 }
 
 /**

@@ -81,10 +81,27 @@ HWTEST_F(AudioCaptureInterfaceImplTest, CaptureFrame_001, TestSize.Level1)
  */
 HWTEST_F(AudioCaptureInterfaceImplTest, CaptureFrame_002, TestSize.Level1)
 {
-    vector<int8_t> frame;
+    vector<int8_t> frame{1, 1, 1, 1, 1};
     uint64_t requestBytes = 0;
     audioCaptureInterfaceImpl_->captureStatus_ = CAPTURE_STATUS_START;
     audioCaptureInterfaceImpl_->audioExtCallback_ = nullptr;
+    EXPECT_EQ(HDF_FAILURE, audioCaptureInterfaceImpl_->CaptureFrame(frame, requestBytes));
+    audioCaptureInterfaceImpl_->audioExtCallback_ = new MockIDAudioCallback();
+    EXPECT_NE(HDF_SUCCESS, audioCaptureInterfaceImpl_->CaptureFrame(frame, requestBytes));
+}
+
+/**
+ * @tc.name: CaptureFrame_003
+ * @tc.desc: Verify the CaptureFrame function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioCaptureInterfaceImplTest, CaptureFrame_003, TestSize.Level1)
+{
+    vector<int8_t> frame;
+    uint64_t requestBytes = 0;
+    audioCaptureInterfaceImpl_->captureStatus_ = CAPTURE_STATUS_START;
+    audioCaptureInterfaceImpl_->audioExtCallback_ = new MockRevertIDAudioCallback();
     EXPECT_EQ(HDF_FAILURE, audioCaptureInterfaceImpl_->CaptureFrame(frame, requestBytes));
 }
 

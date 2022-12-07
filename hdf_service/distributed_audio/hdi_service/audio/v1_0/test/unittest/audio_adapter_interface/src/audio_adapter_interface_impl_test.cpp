@@ -12,11 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include <thread>
+#include <chrono>
+
 #include "audio_adapter_interface_impl_test.h"
 #include "daudio_constants.h"
 
 using namespace testing::ext;
-
+using namespace OHOS::DistributedHardware;
 namespace OHOS {
 namespace HDI {
 namespace DistributedAudio {
@@ -59,6 +63,8 @@ HWTEST_F(AudioAdapterInterfaceImpTest, SetMicCallback_001, TestSize.Level1)
 {
     sptr<IDAudioCallback> micCallback = nullptr;
     AdapterTest_->SetMicCallback(micCallback);
+    micCallback = new MockIDAudioCallback();
+    AdapterTest_->SetMicCallback(micCallback);
 }
 
 /**
@@ -86,6 +92,11 @@ HWTEST_F(AudioAdapterInterfaceImpTest, CreateRender_001, TestSize.Level1)
     AdapterTest_->extSpeakerCallback_ = new MockIDAudioCallback();
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->CreateRender(devDesc, attrs, render));
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->DestroyRender(devDesc));
+
+    AdapterTest_->mapAudioDevice_.insert(std::make_pair(PIN_OUT_DAUDIO_DEFAULT, "hello"));
+    devDesc.pins = PIN_OUT_DAUDIO_DEFAULT;
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->CreateRender(devDesc, attrs, render));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->DestroyRender(devDesc));
 }
 
 /**
@@ -100,6 +111,11 @@ HWTEST_F(AudioAdapterInterfaceImpTest, CreateCapture_001, TestSize.Level1)
     AudioSampleAttributes attrs;
     sptr<IAudioCapture> capture = nullptr;
     AdapterTest_->extMicCallback_ = new MockIDAudioCallback();
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->CreateCapture(devDesc, attrs, capture));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->DestroyCapture(devDesc));
+
+    AdapterTest_->mapAudioDevice_.insert(std::make_pair(PIN_OUT_DAUDIO_DEFAULT, "hello"));
+    devDesc.pins = PIN_OUT_DAUDIO_DEFAULT;
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->CreateCapture(devDesc, attrs, capture));
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->DestroyCapture(devDesc));
 }
@@ -141,6 +157,19 @@ HWTEST_F(AudioAdapterInterfaceImpTest, GetPassthroughMode_001, TestSize.Level1)
     AudioPort port;
     AudioPortPassthroughMode mode = AudioPortPassthroughMode::PORT_PASSTHROUGH_LPCM;
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->GetPassthroughMode(port, mode));
+}
+
+/**
+ * @tc.name: GetDeviceStatus_001
+ * @tc.desc: Verify the GetDeviceStatus function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, GetDeviceStatus_001, TestSize.Level1)
+{
+    AudioDeviceStatus sta;
+
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->GetDeviceStatus(sta));
 }
 
 /**
@@ -206,6 +235,10 @@ HWTEST_F(AudioAdapterInterfaceImpTest, SetExtraParams_001, TestSize.Level1)
     std::string condition = "hello";
     std::string value = "world";
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->SetExtraParams(key, condition, value));
+    key = AudioExtParamKey::AUDIO_EXT_PARAM_KEY_VOLUME;
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->SetExtraParams(key, condition, value));
+    key = AudioExtParamKey::AUDIO_EXT_PARAM_KEY_LOWPOWER;
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->SetExtraParams(key, condition, value));
 }
 
 /**
@@ -290,6 +323,23 @@ HWTEST_F(AudioAdapterInterfaceImpTest, RegExtraParamObserver_002, TestSize.Level
 }
 
 /**
+ * @tc.name: GetAdapterDesc_002
+ * @tc.desc: Verify the GetAdapterDesc function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, GetAdapterDesc_002, TestSize.Level1)
+{
+    AdapterTest_->mapAudioDevice_.insert(std::make_pair(64, "hello"));
+    AudioPort port;
+    port.dir = PORT_OUT_IN;
+    port.portId = 64;
+    port.portName = "";
+    AdapterTest_->GetAdapterDesc();
+    EXPECT_EQ(PORT_OUT_IN, AdapterTest_->adpDescriptor_.ports[0].dir);
+}
+
+/**
  * @tc.name: GetDeviceCapabilitys_001
  * @tc.desc: Verify the GetDeviceCapabilitys function.
  * @tc.type: FUNC
@@ -369,6 +419,15 @@ HWTEST_F(AudioAdapterInterfaceImpTest, Notify_002, TestSize.Level1)
     event.content = "FOCUS_CHANGE";
     uint32_t devId = 64;
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->Notify(devId, event));
+    event.type = 11;
+    event.content = "RENDER_STATE_CHANG";
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->Notify(devId, event));
+    event.type = 7;
+    event.content = "CLOSE_MIC_RESULT";
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->Notify(devId, event));
+    event.type = 9;
+    event.content = "MIC_CLOSED_STATE";
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->Notify(devId, event));
 }
 
 /**
@@ -401,6 +460,25 @@ HWTEST_F(AudioAdapterInterfaceImpTest, AddAudioDevice_002, TestSize.Level1)
 }
 
 /**
+ * @tc.name: RemoveAudioDevice_001
+ * @tc.desc: Verify the RemoveAudioDevice function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, RemoveAudioDevice_001, TestSize.Level1)
+{
+    uint32_t devId = 64;
+    std::string caps;
+    AdapterTest_->mapAudioDevice_.insert(std::make_pair(64, "hello"));
+    AdapterTest_->spkPinInUse_ = 64;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->RemoveAudioDevice(devId));
+    AdapterTest_->mapAudioDevice_.insert(std::make_pair(64, "hello"));
+    AdapterTest_->spkPinInUse_ = 0;
+    AdapterTest_->micPinInUse_ = 64;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->RemoveAudioDevice(devId));
+}
+
+/**
  * @tc.name: OpenRenderDevice_001
  * @tc.desc: Verify the OpenRenderDevice function.
  * @tc.type: FUNC
@@ -412,6 +490,24 @@ HWTEST_F(AudioAdapterInterfaceImpTest, OpenRenderDevice_001, TestSize.Level1)
     AudioSampleAttributes attrs;
     AdapterTest_->extSpeakerCallback_ = new MockIDAudioCallback;
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->OpenRenderDevice(devDesc, attrs));
+    AdapterTest_->isSpkOpened_ = true;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->OpenRenderDevice(devDesc, attrs));
+}
+
+/**
+ * @tc.name: CloseRenderDevice_001
+ * @tc.desc: Verify the CloseRenderDevice function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, CloseRenderDevice_001, TestSize.Level1)
+{
+    AudioDeviceDescriptor devDesc;
+    AdapterTest_->spkPinInUse_  = 0;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->CloseRenderDevice(devDesc));
+    AdapterTest_->spkPinInUse_  = 1;
+    AdapterTest_->extSpeakerCallback_ = new MockIDAudioCallback;
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->CloseRenderDevice(devDesc));
 }
 
 /**
@@ -426,6 +522,51 @@ HWTEST_F(AudioAdapterInterfaceImpTest, OpenCaptureDevice_001, TestSize.Level1)
     AudioSampleAttributes attrs;
     AdapterTest_->extMicCallback_ = new MockIDAudioCallback();
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->OpenCaptureDevice(devDesc, attrs));
+    AdapterTest_->isMicOpened_ = true;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->OpenCaptureDevice(devDesc, attrs));
+}
+
+/**
+ * @tc.name: CloseCaptureDevicee_001
+ * @tc.desc: Verify the CloseCaptureDevice function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, CloseCaptureDevicee_001, TestSize.Level1)
+{
+    AudioDeviceDescriptor devDesc;
+    AdapterTest_->extMicCallback_ = new MockIDAudioCallback();
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->CloseCaptureDevice(devDesc));
+    AdapterTest_->micPinInUse_  = 1;
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->CloseCaptureDevice(devDesc));
+}
+
+/**
+ * @tc.name: GetVolumeGroup_001
+ * @tc.desc: Verify the GetVolumeGroup function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, GetVolumeGroup_001, TestSize.Level1)
+{
+    uint32_t devId = 88;
+
+    AdapterTest_->extMicCallback_ = new MockIDAudioCallback();
+    EXPECT_EQ(0, AdapterTest_->GetVolumeGroup(devId));
+}
+
+/**
+ * @tc.name: GetInterruptGroup_001
+ * @tc.desc: Verify the GetInterruptGroup function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, GetInterruptGroup_001, TestSize.Level1)
+{
+    uint32_t devId = 88;
+
+    AdapterTest_->extMicCallback_ = new MockIDAudioCallback();
+    EXPECT_EQ(0, AdapterTest_->GetInterruptGroup(devId));
 }
 
 /**
@@ -436,8 +577,21 @@ HWTEST_F(AudioAdapterInterfaceImpTest, OpenCaptureDevice_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, SetAudioVolume_001, TestSize.Level1)
 {
-    std::string condition;
-    std::string param;
+    std::string condition = "EVENT_TYPE=4;VOLUME_GROUP_ID=2;AUDIO_VOLUME_TYPE=1;";
+    std::string param = "1";
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->SetAudioVolume(condition, param));
+    AdapterTest_->extSpeakerCallback_ = new MockIDAudioCallback();
+    EXPECT_NE(HDF_SUCCESS, AdapterTest_->SetAudioVolume(condition, param));
+    std::string adpterName = "adbcef";
+    AudioDeviceDescriptor desc;
+    AudioSampleAttributes attrs;
+    sptr<IDAudioCallback> callback = new MockIDAudioCallback();
+
+    AdapterTest_->audioRender_ = new AudioRenderInterfaceImpl(adpterName, desc, attrs, callback);
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->SetAudioVolume(condition, param));
+    param = "0";
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->SetAudioVolume(condition, param));
+    param = "-66";
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->SetAudioVolume(condition, param));
 }
 
@@ -573,6 +727,19 @@ HWTEST_F(AudioAdapterInterfaceImpTest, getEventTypeFromCondition_001, TestSize.L
 }
 
 /**
+ * @tc.name: getEventTypeFromCondition_002
+ * @tc.desc: Verify the getEventTypeFromCondition function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, getEventTypeFromCondition_002, TestSize.Level1)
+{
+    std::string condition = "EVENT_TYPE=12;VOLUME_GROUP_ID=2;AUDIO_VOLUME_TYPE=1;";
+    auto actualValue = AdapterTest_->getEventTypeFromCondition(condition);
+    EXPECT_EQ(12, actualValue);
+}
+
+/**
  * @tc.name: HandleVolumeChangeEvent_001
  * @tc.desc: Verify the HandleVolumeChangeEvent function.
  * @tc.type: FUNC
@@ -580,7 +747,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, getEventTypeFromCondition_001, TestSize.L
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleVolumeChangeEvent_001, TestSize.Level1)
 {
-    DAudioEvent event = {DistributedHardware::HDF_AUDIO_EVENT_VOLUME_CHANGE,
+    DAudioEvent event = {HDF_AUDIO_EVENT_VOLUME_CHANGE,
         "VOLUME_CHANAGE;AUDIO_STREAM_TYPE=1;VOLUME_LEVEL=1;IS_UPDATEUI=1;VOLUME_GROUP_ID=1;"};
     std::string adpterName = "adbcef";
     AudioDeviceDescriptor desc;
@@ -604,8 +771,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleVolumeChangeEvent_001, TestSize.Lev
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleVolumeChangeEvent_002, TestSize.Level1)
 {
-    DAudioEvent event = {DistributedHardware::HDF_AUDIO_EVENT_VOLUME_CHANGE,
-        "V"};
+    DAudioEvent event = {HDF_AUDIO_EVENT_VOLUME_CHANGE, "V"};
     std::string adpterName = "adbcef";
     AudioDeviceDescriptor desc;
     AudioSampleAttributes attrs;
@@ -623,8 +789,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleVolumeChangeEvent_002, TestSize.Lev
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleVolumeChangeEvent_003, TestSize.Level1)
 {
-    DAudioEvent event = {DistributedHardware::HDF_AUDIO_EVENT_VOLUME_CHANGE,
-        "V"};
+    DAudioEvent event = {HDF_AUDIO_EVENT_VOLUME_CHANGE, "V"};
     std::string adpterName = "adbcef";
     AudioDeviceDescriptor desc;
     AudioSampleAttributes attrs;
@@ -642,7 +807,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleVolumeChangeEvent_003, TestSize.Lev
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleFocusChangeEvent_001, TestSize.Level1)
 {
-    DAudioEvent event = {DistributedHardware::HDF_AUDIO_EVENT_FOCUS_CHANGE,
+    DAudioEvent event = {HDF_AUDIO_EVENT_FOCUS_CHANGE,
         "INTERRUPT_EVENT;EVENT_TYPE=1;VOLUME_LEVEL=1;FORCE_TYPE=1;HINT_TYPE=1;"};
 
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->HandleFocusChangeEvent(event));
@@ -658,7 +823,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleFocusChangeEvent_001, TestSize.Leve
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleFocusChangeEvent_002, TestSize.Level1)
 {
-    DAudioEvent event = {DistributedHardware::HDF_AUDIO_EVENT_FOCUS_CHANGE,
+    DAudioEvent event = {HDF_AUDIO_EVENT_FOCUS_CHANGE,
         "INTERRUPT_EVENT;EVENT_TYPE=1;VOLUME_LEVEL=1;FORCE_TYPE=1;HINT_TYPE=1;"};
 
     AdapterTest_->paramCallback_ = new MockRevertIAudioParamCallback();
@@ -673,7 +838,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleFocusChangeEvent_002, TestSize.Leve
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleRenderStateChangeEvent_001, TestSize.Level1)
 {
-    DAudioEvent event = {DistributedHardware::HDF_AUDIO_EVENT_RENDER_STATE_CHANGE,
+    DAudioEvent event = {HDF_AUDIO_EVENT_RENDER_STATE_CHANGE,
         "RENDER_STATE_CHANGE_EVENT;STATE=0;"};
 
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->HandleRenderStateChangeEvent(event));
@@ -689,7 +854,7 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleRenderStateChangeEvent_001, TestSiz
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleRenderStateChangeEvent_002, TestSize.Level1)
 {
-    DAudioEvent event = {DistributedHardware::HDF_AUDIO_EVENT_RENDER_STATE_CHANGE,
+    DAudioEvent event = {HDF_AUDIO_EVENT_RENDER_STATE_CHANGE,
         "RENDER_STATE_CHANGE_EVENT;STATE=0;"};
 
     AdapterTest_->paramCallback_ = new MockRevertIAudioParamCallback();
@@ -704,7 +869,6 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleRenderStateChangeEvent_002, TestSiz
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleSANotifyEvent_001, TestSize.Level1)
 {
-    using namespace DistributedHardware;
     DAudioEvent event = {HDF_AUDIO_EVENT_OPEN_SPK_RESULT, "RENDER_STATE_CHANGE_EVENT"};
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleSANotifyEvent(event));
 }
@@ -717,7 +881,6 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleSANotifyEvent_001, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleSANotifyEvent_002, TestSize.Level1)
 {
-    using namespace DistributedHardware;
     DAudioEvent event = {HDF_AUDIO_EVENT_OPEN_SPK_RESULT, HDF_EVENT_RESULT_SUCCESS};
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleSANotifyEvent(event));
 }
@@ -730,7 +893,6 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleSANotifyEvent_002, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleSANotifyEvent_003, TestSize.Level1)
 {
-    using namespace DistributedHardware;
     DAudioEvent event = {HDF_AUDIO_EVENT_CLOSE_SPK_RESULT,
         HDF_EVENT_RESULT_SUCCESS};
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleSANotifyEvent(event));
@@ -746,7 +908,6 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleSANotifyEvent_003, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleSANotifyEvent_004, TestSize.Level1)
 {
-    using namespace DistributedHardware;
     DAudioEvent event = {HDF_AUDIO_EVENT_OPEN_MIC_RESULT,
         HDF_EVENT_RESULT_SUCCESS};
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleSANotifyEvent(event));
@@ -762,7 +923,6 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleSANotifyEvent_004, TestSize.Level1)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, HandleSANotifyEvent_005, TestSize.Level1)
 {
-    using namespace DistributedHardware;
     DAudioEvent event = {HDF_AUDIO_EVENT_CLOSE_MIC_RESULT, HDF_EVENT_RESULT_SUCCESS};
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleSANotifyEvent(event));
     DAudioEvent event1 = {HDF_AUDIO_EVENT_CLOSE_MIC_RESULT, "RENDER_STATE_CHANGE"};
@@ -781,6 +941,170 @@ HWTEST_F(AudioAdapterInterfaceImpTest, HandleSANotifyEvent_006, TestSize.Level1)
     DAudioEvent event = {-1, "ddd"};
     EXPECT_NE(HDF_SUCCESS, AdapterTest_->HandleSANotifyEvent(event));
 }
+
+/**
+ * @tc.name: WaitForSANotify_001
+ * @tc.desc: Verify the WaitForSANotify function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, WaitForSANotify_001, TestSize.Level1)
+{
+    int flag = 1;
+    std::thread th([&]() {
+        while (flag) {
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            AdapterTest_->spkNotifyFlag_ = true;
+            AdapterTest_->spkWaitCond_.notify_one();
+        }});
+    AudioDeviceEvent  event = EVENT_OPEN_SPK;
+    AdapterTest_->isSpkOpened_ = false;
+    EXPECT_EQ(ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL, AdapterTest_->WaitForSANotify(event));
+    AudioDeviceEvent  event1 = EVENT_CLOSE_SPK ;
+    AdapterTest_->isSpkOpened_ = true;
+    EXPECT_EQ(ERR_DH_AUDIO_HDF_CLOSE_DEVICE_FAIL, AdapterTest_->WaitForSANotify(event1));
+    flag = 0;
+    if (th.joinable()) {
+        th.join();
+    }
+}
+
+/**
+ * @tc.name: WaitForSANotify_002
+ * @tc.desc: Verify the WaitForSANotify function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, WaitForSANotify_002, TestSize.Level1)
+{
+    int flag = 1;
+    std::thread th([&]() {
+        while (flag) {
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            AdapterTest_->spkNotifyFlag_ = true;
+            AdapterTest_->spkWaitCond_.notify_one();
+        }});
+    AudioDeviceEvent  event = EVENT_OPEN_SPK;
+    AdapterTest_->isSpkOpened_ = true;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->WaitForSANotify(event));
+    flag = 0;
+    if (th.joinable()) {
+        th.join();
+    }
+}
+
+/**
+ * @tc.name: WaitForSANotify_003
+ * @tc.desc: Verify the WaitForSANotify function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, WaitForSANotify_003, TestSize.Level1)
+{
+    int flag = 1;
+    std::thread th([&]() {
+        while (flag) {
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            AdapterTest_->micNotifyFlag_ = true;
+            AdapterTest_->micWaitCond_.notify_one();
+        }});
+    AudioDeviceEvent  event = EVENT_OPEN_MIC;
+    EXPECT_EQ(ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL, AdapterTest_->WaitForSANotify(event));
+
+    AudioDeviceEvent  event1 = EVENT_CLOSE_MIC;
+    AdapterTest_->isMicOpened_ = true;
+    EXPECT_EQ(ERR_DH_AUDIO_HDF_CLOSE_DEVICE_FAIL, AdapterTest_->WaitForSANotify(event1));
+    flag = 0;
+    if (th.joinable()) {
+        th.join();
+    }
+}
+
+/**
+ * @tc.name: WaitForSANotify_004
+ * @tc.desc: Verify the WaitForSANotify function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, WaitForSANotify_004, TestSize.Level1)
+{
+    int flag = 1;
+    std::thread th([&]() {
+        while (flag) {
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+                AdapterTest_->micNotifyFlag_ = true;
+            AdapterTest_->micWaitCond_.notify_one();
+        }});
+    AudioDeviceEvent  event = EVENT_OPEN_MIC;
+    AdapterTest_->isMicOpened_ = true;;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->WaitForSANotify(event));
+    flag = 0;
+    if (th.joinable()) {
+        th.join();
+    }
+}
+
+/**
+ * @tc.name: WaitForSANotify_005
+ * @tc.desc: Verify the WaitForSANotify function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, WaitForSANotify_005, TestSize.Level1)
+{
+    AudioDeviceEvent  event = EVENT_DEV_CLOSED;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->WaitForSANotify(event));
+}
+
+/**
+ * @tc.name: HandleDeviceClosed_001
+ * @tc.desc: Verify the HandleDeviceClosed function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, HandleDeviceClosed_001, TestSize.Level1)
+{
+    DAudioEvent event = {HDF_AUDIO_EVENT_SPK_CLOSED, "gtest"};
+
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleDeviceClosed(event));
+    AdapterTest_->paramCallback_ = new MockIAudioParamCallback();
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleDeviceClosed(event));
+}
+
+/**
+ * @tc.name: HandleDeviceClosed_002
+ * @tc.desc: Verify the HandleDeviceClosed function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, HandleDeviceClosed_002, TestSize.Level1)
+{
+    DAudioEvent event = {HDF_AUDIO_EVENT_SPK_CLOSED, "gtest"};
+    DAudioEvent event1 = {HDF_AUDIO_EVENT_MIC_CLOSED, "gmock"};
+    AdapterTest_->paramCallback_ = nullptr;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleDeviceClosed(event));
+
+    AdapterTest_->isSpkOpened_ = true;
+    AdapterTest_->isMicOpened_ = true;
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleDeviceClosed(event));
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleDeviceClosed(event1));
+}
+
+/**
+ * @tc.name: HandleDeviceClosed_001
+ * @tc.desc: Verify the HandleDeviceClosed function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, HandleDeviceClosed_003, TestSize.Level1)
+{
+    DAudioEvent event = {HDF_AUDIO_EVENT_SPK_CLOSED, "gtest"};
+
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleDeviceClosed(event));
+    AdapterTest_->paramCallback_ = new MockRevertIAudioParamCallback();
+    EXPECT_EQ(HDF_SUCCESS, AdapterTest_->HandleDeviceClosed(event));
+}
+
 } // V1_0
 } // Audio
 } // Distributedaudio
