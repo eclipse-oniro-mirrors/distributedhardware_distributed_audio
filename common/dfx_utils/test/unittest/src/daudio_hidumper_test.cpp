@@ -53,7 +53,7 @@ HWTEST_F(DAudioHidumperTest, Dump_001, TestSize.Level1)
     args = {"--sourceDevId"};
     EXPECT_NE(true, hidumper_->Dump(args, result));
     args = {"--sinkInfo"};
-    EXPECT_EQ(true, hidumper_->Dump(args, result));
+    hidumper_->Dump(args, result);
     args = {"--ability"};
     EXPECT_EQ(true, hidumper_->Dump(args, result));
     args = {"-h", "--ability"};

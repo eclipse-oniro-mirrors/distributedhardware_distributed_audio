@@ -42,6 +42,10 @@ void DAudioHdiHandlerTest::TearDown()
 HWTEST_F(DAudioHdiHandlerTest, InitHdiHandler_001, TestSize.Level1)
 {
     EXPECT_EQ(HDF_SUCCESS, hdiHandler_->InitHdiHandler());
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->InitHdiHandler()); // test repeated initialization
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->UninitHdiHandler());
+    hdiHandler_->audioSrvHdf_ = nullptr;
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->UninitHdiHandler());
 }
 
 /**
@@ -55,8 +59,14 @@ HWTEST_F(DAudioHdiHandlerTest, RegisterAudioDevice_001, TestSize.Level1)
     EXPECT_EQ(HDF_SUCCESS, hdiHandler_->InitHdiHandler());
     hdiHandler_->audioSrvHdf_ = nullptr;
     std::shared_ptr<IDAudioHdiCallback> callbackObjParam = std::make_shared<MockIDAudioHdiCallback>();
-    EXPECT_NE(HDF_SUCCESS, hdiHandler_->RegisterAudioDevice(devId_, dhId_, capability_, callbackObjParam));
-    EXPECT_NE(HDF_SUCCESS, hdiHandler_->UnRegisterAudioDevice(devId_, dhId_));
+    EXPECT_NE(HDF_SUCCESS, hdiHandler_->RegisterAudioDevice(devId_,
+        PIN_OUT_DAUDIO_DEFAULT, capability_, callbackObjParam));
+    EXPECT_NE(HDF_SUCCESS, hdiHandler_->RegisterAudioDevice(devId_,
+        PIN_IN_DAUDIO_DEFAULT, capability_, callbackObjParam));
+    EXPECT_NE(HDF_SUCCESS, hdiHandler_->RegisterAudioDevice(devId_, -1, capability_, callbackObjParam));
+    EXPECT_NE(HDF_SUCCESS, hdiHandler_->UnRegisterAudioDevice(devId_, PIN_OUT_DAUDIO_DEFAULT));
+    EXPECT_NE(HDF_SUCCESS, hdiHandler_->UnRegisterAudioDevice(devId_, PIN_IN_DAUDIO_DEFAULT));
+    EXPECT_NE(HDF_SUCCESS, hdiHandler_->UnRegisterAudioDevice("errorId", PIN_IN_DAUDIO_DEFAULT));
 }
 
 /**
@@ -97,7 +107,25 @@ HWTEST_F(DAudioHdiHandlerTest, NotifyEvent_002, TestSize.Level1)
 {
     EXPECT_EQ(HDF_SUCCESS, hdiHandler_->InitHdiHandler());
     hdiHandler_->audioSrvHdf_ = new MockIDAudioManager();
-    AudioEvent audioEvent(AudioEventType::VOLUME_CHANGE, "");
+    AudioEvent audioEvent1(AudioEventType::NOTIFY_OPEN_SPEAKER_RESULT, "");
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent1));
+    AudioEvent audioEvent2(AudioEventType::NOTIFY_CLOSE_SPEAKER_RESULT, "");
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent2));
+    AudioEvent audioEvent3(AudioEventType::NOTIFY_OPEN_MIC_RESULT, "");
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent3));
+    AudioEvent audioEvent4(AudioEventType::NOTIFY_CLOSE_MIC_RESULT, "");
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent4));
+    AudioEvent audioEvent5(AudioEventType::VOLUME_CHANGE, "");
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent5));
+    AudioEvent audioEvent6(AudioEventType::SPEAKER_CLOSED, "");
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent6));
+    AudioEvent audioEvent7(AudioEventType::MIC_CLOSED, "");
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent7));
+    AudioEvent audioEvent8(AudioEventType::AUDIO_FOCUS_CHANGE, "");
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent8));
+    AudioEvent audioEvent9(AudioEventType::AUDIO_RENDER_STATE_CHANGE, "");
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent9));
+    AudioEvent audioEvent(-1, "");
     EXPECT_EQ(HDF_SUCCESS, hdiHandler_->NotifyEvent(devId_, dhId_, audioEvent));
 }
 

@@ -22,19 +22,20 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
-void DAudioSinkHandlerTest::SetUpTestCase(void) {}
-
-void DAudioSinkHandlerTest::TearDownTestCase(void) {}
-
-void DAudioSinkHandlerTest::SetUp(void)
+void DAudioSinkHandlerTest::SetUpTestCase(void)
 {
     DAudioSinkHandler::GetInstance().InitSink("DAudioSinkHandlerTest");
 }
 
-void DAudioSinkHandlerTest::TearDown(void)
+void DAudioSinkHandlerTest::TearDownTestCase(void)
 {
     DAudioSinkHandler::GetInstance().ReleaseSink();
 }
+
+void DAudioSinkHandlerTest::SetUp(void) {}
+
+void DAudioSinkHandlerTest::TearDown(void) {}
+
 /**
  * @tc.name: LocalHardware_001
  * @tc.desc: Verify the SubscribeLocalHardware function.
@@ -49,6 +50,41 @@ HWTEST_F(DAudioSinkHandlerTest, LocalHardware_001, TestSize.Level1)
     EXPECT_EQ(DH_SUCCESS, ret);
     ret = DAudioSinkHandler::GetInstance().UnsubscribeLocalHardware(dhId);
     EXPECT_EQ(DH_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: LocalHardware_002
+ * @tc.desc: Verify the SubscribeLocalHardware function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSinkHandlerTest, LocalHardware_002, TestSize.Level1)
+{
+    size_t DAUDIO_MAX_DEVICE_ID_LEN = 101;
+    std::string dhId;
+    dhId.resize(DAUDIO_MAX_DEVICE_ID_LEN);
+    const std::string param = "DAudioSinkHandlerTest";
+    int32_t ret = DAudioSinkHandler::GetInstance().SubscribeLocalHardware(dhId, param);
+    EXPECT_EQ(ERR_DH_AUDIO_SA_DEVID_ILLEGAL, ret);
+    ret = DAudioSinkHandler::GetInstance().UnsubscribeLocalHardware(dhId);
+    EXPECT_EQ(ERR_DH_AUDIO_SA_DEVID_ILLEGAL, ret);
+}
+
+/**
+ * @tc.name: LocalHardware_003
+ * @tc.desc: Verify the SubscribeLocalHardware function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSinkHandlerTest, LocalHardware_003, TestSize.Level1)
+{
+    const std::string dhId = "DAudioSinkHandlerTest";
+    const std::string param = "DAudioSinkHandlerTest";
+    DAudioSinkHandler::GetInstance().dAudioSinkProxy_ = nullptr;
+    int32_t ret = DAudioSinkHandler::GetInstance().SubscribeLocalHardware(dhId, param);
+    EXPECT_EQ(ERR_DH_AUDIO_SA_PROXY_NOT_INIT, ret);
+    ret = DAudioSinkHandler::GetInstance().UnsubscribeLocalHardware(dhId);
+    EXPECT_EQ(ERR_DH_AUDIO_SA_PROXY_NOT_INIT, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

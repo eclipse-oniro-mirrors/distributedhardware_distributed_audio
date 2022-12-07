@@ -67,10 +67,7 @@ bool DaudioHidumper::Dump(const std::vector<std::string> &args, std::string &res
         return true;
     }
 
-    if (ProcessDump(args[0], result) != DH_SUCCESS) {
-        return false;
-    }
-    return true;
+    return ProcessDump(args[0], result) == DH_SUCCESS;
 }
 
 int32_t DaudioHidumper::ProcessDump(const std::string &args, std::string &result)
@@ -87,26 +84,20 @@ int32_t DaudioHidumper::ProcessDump(const std::string &args, std::string &result
         return DH_SUCCESS;
     }
     result.clear();
-    int32_t ret = ERR_DH_AUDIO_BAD_VALUE;
     switch (hf) {
         case HidumpFlag::GET_SOURCE_DEVID: {
-            ret = GetSourceDevId(result);
-            break;
+            return GetSourceDevId(result);
         }
         case HidumpFlag::GET_SINK_INFO: {
-            ret = GetSinkInfo(result);
-            break;
+            return GetSinkInfo(result);
         }
         case HidumpFlag::GET_ABILITY: {
-            ret = GetAbilityInfo(result);
-            break;
+            return GetAbilityInfo(result);
         }
         default: {
-            ret = ShowIllegalInfomation(result);
-            break;
+            return ShowIllegalInfomation(result);
         }
     }
-    return ret;
 }
 
 int32_t DaudioHidumper::GetSourceDevId(std::string &result)

@@ -124,10 +124,6 @@ int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, const in
     }
 
     auto iter = mapAudioMgrCallback_.find(searchKey);
-    if (iter == mapAudioMgrCallback_.end()) {
-        DHLOGE("Can not find callback. devId: %s", GetAnonyString(devId).c_str());
-        return ERR_DH_AUDIO_HDI_CALLBACK_NOT_EXIST;
-    }
     int32_t res = audioSrvHdf_->RegisterAudioDevice(devId, dhId, capability, iter->second);
     if (res != HDF_SUCCESS) {
         DHLOGE("Call hdf proxy register failed, res: %d", res);

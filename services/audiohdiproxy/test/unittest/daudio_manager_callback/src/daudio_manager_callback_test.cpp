@@ -119,6 +119,36 @@ HWTEST_F(DAudioManagerCallbackTest, SetParameters_002, TestSize.Level1)
         .ext = "HDF_SUCCESS"
     };
     EXPECT_EQ(HDF_SUCCESS, manCallback_->SetParameters(adpName_, devId_, param));
+    param = {
+        .format = 1 << 1,
+        .channelCount = 2,
+        .sampleRate = 48000,
+        .period = 0,
+        .frameSize = 0,
+        .streamUsage = 1,
+        .ext = "HDF_SUCCESS"
+    };
+    EXPECT_EQ(HDF_SUCCESS, manCallback_->SetParameters(adpName_, devId_, param));
+    param = {
+        .format = 1 << 1 | 1 << 0,
+        .channelCount = 2,
+        .sampleRate = 48000,
+        .period = 0,
+        .frameSize = 0,
+        .streamUsage = 2,
+        .ext = "HDF_SUCCESS"
+    };
+    EXPECT_EQ(HDF_SUCCESS, manCallback_->SetParameters(adpName_, devId_, param));
+    param = {
+        .format = -1,
+        .channelCount = 2,
+        .sampleRate = 48000,
+        .period = 0,
+        .frameSize = 0,
+        .streamUsage = -1,
+        .ext = "HDF_SUCCESS"
+    };
+    EXPECT_NE(HDF_SUCCESS, manCallback_->SetParameters(adpName_, devId_, param));
     EXPECT_EQ(HDF_SUCCESS, manCallback_->CloseDevice(adpName_, devId_));
 }
 
@@ -149,7 +179,16 @@ HWTEST_F(DAudioManagerCallbackTest, NotifyEvent_002, TestSize.Level1)
     manCallback_->callback_ = std::make_shared<MockIDAudioHdiCallback>();
     EXPECT_EQ(HDF_SUCCESS, manCallback_->OpenDevice(adpName_, devId_));
     OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent event;
-    event.type = 64;
+    event.type = AudioEventHDF::AUDIO_EVENT_VOLUME_SET;
+    event.content = "HDF_SUCCESS";
+    EXPECT_EQ(HDF_SUCCESS, manCallback_->NotifyEvent(adpName_, devId_, event));
+    event.type = AudioEventHDF::AUDIO_EVENT_MUTE_SET;
+    event.content = "HDF_SUCCESS";
+    EXPECT_EQ(HDF_SUCCESS, manCallback_->NotifyEvent(adpName_, devId_, event));
+    event.type = AudioEventHDF::AUDIO_EVENT_CHANGE_PLAY_STATUS;
+    event.content = "HDF_SUCCESS";
+    EXPECT_EQ(HDF_SUCCESS, manCallback_->NotifyEvent(adpName_, devId_, event));
+    event.type = -1;
     event.content = "HDF_SUCCESS";
     EXPECT_EQ(HDF_SUCCESS, manCallback_->NotifyEvent(adpName_, devId_, event));
     EXPECT_EQ(HDF_SUCCESS, manCallback_->CloseDevice(adpName_, devId_));
@@ -193,6 +232,9 @@ HWTEST_F(DAudioManagerCallbackTest, WriteStreamData_002, TestSize.Level1)
     std::shared_ptr<OHOS::DistributedHardware::AudioData> audioData = std::make_shared<AudioData>(dataSize);
     data.data.assign(audioData->Data(), audioData->Data() + audioData->Capacity());
     EXPECT_EQ(HDF_SUCCESS, manCallback_->WriteStreamData(adpName_, devId_, data));
+    audioData = std::make_shared<AudioData>(3000);
+    data.data.assign(audioData->Data(), audioData->Data() + audioData->Capacity());
+    EXPECT_NE(HDF_SUCCESS, manCallback_->WriteStreamData(adpName_, devId_, data));
     EXPECT_EQ(HDF_SUCCESS, manCallback_->CloseDevice(adpName_, devId_));
 }
 
