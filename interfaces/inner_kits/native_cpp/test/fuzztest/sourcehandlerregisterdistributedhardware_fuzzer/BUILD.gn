@@ -18,7 +18,7 @@ import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AudioSourceHandlerRegisterDistributedHardwareFuzzTest") {
+ohos_fuzztest("SourceHandlerRegisterDistributedHardwareFuzzTest") {
   module_out_path = "distributed_audio/sourcehandlerregisterdistributedhardware"
   fuzz_config_file = "${innerkits_path}/native_cpp/test/fuzztest/sourcehandlerregisterdistributedhardware_fuzzer"
 
@@ -56,7 +56,7 @@ ohos_fuzztest("AudioSourceHandlerRegisterDistributedHardwareFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"AudioSourceHandlerRegisterDistributedHardwareFuzzTest\"",
+    "DH_LOG_TAG=\"SourceHandlerRegisterDistributedHardwareFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 }
@@ -64,6 +64,6 @@ ohos_fuzztest("AudioSourceHandlerRegisterDistributedHardwareFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":AudioSourceHandlerRegisterDistributedHardwareFuzzTest" ]
+  deps = [ ":SourceHandlerRegisterDistributedHardwareFuzzTest" ]
 }
 ###############################################################################

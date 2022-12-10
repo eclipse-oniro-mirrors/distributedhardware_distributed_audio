@@ -18,7 +18,7 @@ import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AudioSinkHandlerFinishStartSAFuzzTest") {
+ohos_fuzztest("SinkHandlerFinishStartSAFuzzTest") {
   module_out_path = "distributed_audio/sinkhandlerfinishstartsa"
   fuzz_config_file = "${innerkits_path}/native_cpp/test/fuzztest/sinkhandlerfinishstartsa_fuzzer"
 
@@ -52,7 +52,7 @@ ohos_fuzztest("AudioSinkHandlerFinishStartSAFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"AudioSinkHandlerFinishStartSAFuzzTest\"",
+    "DH_LOG_TAG=\"SinkHandlerFinishStartSAFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -65,6 +65,6 @@ ohos_fuzztest("AudioSinkHandlerFinishStartSAFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":AudioSinkHandlerFinishStartSAFuzzTest" ]
+  deps = [ ":SinkHandlerFinishStartSAFuzzTest" ]
 }
 ###############################################################################

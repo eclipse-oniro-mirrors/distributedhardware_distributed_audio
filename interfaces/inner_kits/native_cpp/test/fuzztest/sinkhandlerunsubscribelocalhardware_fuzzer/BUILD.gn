@@ -18,7 +18,7 @@ import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AudioSinkHandlerUnsubscribeLocalHardwareFuzzTest") {
+ohos_fuzztest("SinkHandlerUnsubscribeLocalHardwareFuzzTest") {
   module_out_path = "distributed_audio/sinkhandlerunsubscribelocalhardware"
   fuzz_config_file = "${innerkits_path}/native_cpp/test/fuzztest/sinkhandlerunsubscribelocalhardware_fuzzer"
 
@@ -52,7 +52,7 @@ ohos_fuzztest("AudioSinkHandlerUnsubscribeLocalHardwareFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"AudioSinkHandlerUnsubscribeLocalHardwareFuzzTest\"",
+    "DH_LOG_TAG=\"SinkHandlerUnsubscribeLocalHardwareFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 }
@@ -60,6 +60,6 @@ ohos_fuzztest("AudioSinkHandlerUnsubscribeLocalHardwareFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":AudioSinkHandlerUnsubscribeLocalHardwareFuzzTest" ]
+  deps = [ ":SinkHandlerUnsubscribeLocalHardwareFuzzTest" ]
 }
 ###############################################################################

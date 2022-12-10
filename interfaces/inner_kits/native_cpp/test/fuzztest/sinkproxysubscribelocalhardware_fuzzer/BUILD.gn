@@ -18,7 +18,7 @@ import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AudioSinkProxySubscribeLocalHardwareFuzzTest") {
+ohos_fuzztest("SinkProxySubscribeLocalHardwareFuzzTest") {
   module_out_path = "distributed_audio/sinkproxysubscribelocalhardware"
   fuzz_config_file = "${innerkits_path}/native_cpp/test/fuzztest/sinkproxysubscribelocalhardware_fuzzer"
 
@@ -51,7 +51,7 @@ ohos_fuzztest("AudioSinkProxySubscribeLocalHardwareFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"AudioSinkProxySubscribeLocalHardwareFuzzTest\"",
+    "DH_LOG_TAG=\"SinkProxySubscribeLocalHardwareFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -65,6 +65,6 @@ ohos_fuzztest("AudioSinkProxySubscribeLocalHardwareFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":AudioSinkProxySubscribeLocalHardwareFuzzTest" ]
+  deps = [ ":SinkProxySubscribeLocalHardwareFuzzTest" ]
 }
 ###############################################################################

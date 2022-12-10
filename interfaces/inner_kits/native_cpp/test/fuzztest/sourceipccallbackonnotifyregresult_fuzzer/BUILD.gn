@@ -18,7 +18,7 @@ import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AudioSourceIpcCallbackOnNotifyRegResultFuzzTest") {
+ohos_fuzztest("SourceIpcCallbackOnNotifyRegResultFuzzTest") {
   module_out_path = "distributed_audio/sourceipccallbackonnotifyregresult"
   fuzz_config_file = "${innerkits_path}/native_cpp/test/fuzztest/sourceipccallbackonnotifyregresult_fuzzer"
 
@@ -51,7 +51,7 @@ ohos_fuzztest("AudioSourceIpcCallbackOnNotifyRegResultFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"AudioSourceIpcCallbackOnNotifyRegResultFuzzTest\"",
+    "DH_LOG_TAG=\"SourceIpcCallbackOnNotifyRegResultFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -64,6 +64,6 @@ ohos_fuzztest("AudioSourceIpcCallbackOnNotifyRegResultFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":AudioSourceIpcCallbackOnNotifyRegResultFuzzTest" ]
+  deps = [ ":SourceIpcCallbackOnNotifyRegResultFuzzTest" ]
 }
 ###############################################################################

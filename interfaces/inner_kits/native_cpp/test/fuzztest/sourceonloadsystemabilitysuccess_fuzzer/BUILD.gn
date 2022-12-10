@@ -18,7 +18,7 @@ import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AudioSourceOnLoadSystemAbilitySuccessFuzzTest") {
+ohos_fuzztest("SourceOnLoadSystemAbilitySuccessFuzzTest") {
   module_out_path = "distributed_audio/sourceonloadsystemabilitysuccess"
   fuzz_config_file = "${innerkits_path}/native_cpp/test/fuzztest/sourceonloadsystemabilitysuccess_fuzzer"
 
@@ -51,7 +51,7 @@ ohos_fuzztest("AudioSourceOnLoadSystemAbilitySuccessFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"AudioSourceOnLoadSystemAbilitySuccessFuzzTest\"",
+    "DH_LOG_TAG=\"SourceOnLoadSystemAbilitySuccessFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -65,6 +65,6 @@ ohos_fuzztest("AudioSourceOnLoadSystemAbilitySuccessFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":AudioSourceOnLoadSystemAbilitySuccessFuzzTest" ]
+  deps = [ ":SourceOnLoadSystemAbilitySuccessFuzzTest" ]
 }
 ###############################################################################

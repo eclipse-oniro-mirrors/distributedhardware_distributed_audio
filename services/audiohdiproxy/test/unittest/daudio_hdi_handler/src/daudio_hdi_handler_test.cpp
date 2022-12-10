@@ -43,9 +43,6 @@ HWTEST_F(DAudioHdiHandlerTest, InitHdiHandler_001, TestSize.Level1)
 {
     EXPECT_EQ(HDF_SUCCESS, hdiHandler_->InitHdiHandler());
     EXPECT_EQ(HDF_SUCCESS, hdiHandler_->InitHdiHandler()); // test repeated initialization
-    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->UninitHdiHandler());
-    hdiHandler_->audioSrvHdf_ = nullptr;
-    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->UninitHdiHandler());
 }
 
 /**
@@ -139,6 +136,19 @@ HWTEST_F(DAudioHdiHandlerTest, UnRegisterAudioDevice_001, TestSize.Level1)
 {
     hdiHandler_->audioSrvHdf_ = nullptr;
     EXPECT_NE(HDF_SUCCESS, hdiHandler_->UnRegisterAudioDevice(devId_, dhId_));
+}
+
+/**
+ * @tc.name: UnInitHdiHandler_001
+ * @tc.desc: Verify the UnInitHdiHandler function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(DAudioHdiHandlerTest, UnInitHdiHandler_001, TestSize.Level1)
+{
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->UninitHdiHandler());
+    hdiHandler_->audioSrvHdf_ = nullptr;
+    EXPECT_EQ(HDF_SUCCESS, hdiHandler_->UninitHdiHandler());
 }
 } // DistributedHardware
 } // OHOS
