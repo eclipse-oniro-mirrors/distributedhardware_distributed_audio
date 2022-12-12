@@ -216,7 +216,7 @@ HWTEST_F(DSpeakerDevTest, Stop_001, TestSize.Level1)
     EXPECT_EQ(ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL, spk_->Stop());
 
     spk_->speakerTrans_ = std::make_shared<AudioEncodeTransport>(DEV_ID);
-    EXPECT_NE(DH_SUCCESS, spk_->Stop());
+    EXPECT_EQ(ERR_DH_AUDIO_NULLPTR, spk_->Stop());
 
     spk_->speakerTrans_ = std::make_shared<MockIAudioDataTransport>();
     EXPECT_EQ(DH_SUCCESS, spk_->Stop());

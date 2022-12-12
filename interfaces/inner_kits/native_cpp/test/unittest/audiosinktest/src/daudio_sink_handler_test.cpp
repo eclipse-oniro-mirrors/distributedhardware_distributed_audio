@@ -85,6 +85,12 @@ HWTEST_F(DAudioSinkHandlerTest, LocalHardware_003, TestSize.Level1)
     EXPECT_EQ(ERR_DH_AUDIO_SA_PROXY_NOT_INIT, ret);
     ret = DAudioSinkHandler::GetInstance().UnsubscribeLocalHardware(dhId);
     EXPECT_EQ(ERR_DH_AUDIO_SA_PROXY_NOT_INIT, ret);
+    wptr<IRemoteObject> remote = nullptr;
+    DAudioSinkHandler::GetInstance().OnRemoteSinkSvrDied(remote);
+    sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    sptr<IRemoteObject> remoteObject = samgr->GetSystemAbility(DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID);
+    wptr<IRemoteObject> remoteobject (remoteObject);
+    DAudioSinkHandler::GetInstance().OnRemoteSinkSvrDied(remoteobject);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

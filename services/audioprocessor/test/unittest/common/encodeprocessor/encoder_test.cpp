@@ -16,6 +16,10 @@
 #include <gtest/gtest.h>
 #include <memory>
 
+#define private public
+#include "audio_encoder.h"
+#undef private
+
 #include "audio_data.h"
 #include "audio_event.h"
 #include "encoder_callback_test.h"
@@ -138,6 +142,68 @@ HWTEST_F(EncoderTest, encode_test_004, TestSize.Level1)
     audioEncoder_->OnError(event);
     EXPECT_EQ(DH_SUCCESS, audioEncoder_->ConfigureAudioCodec(LOC_COMPARA_ENC_TEST, encodeCb_));
     EXPECT_EQ(DH_SUCCESS, audioEncoder_->ReleaseAudioCodec());
+}
+
+/**
+ * @tc.name: EncodeDone_001
+ * @tc.desc: Verify EncodeDone function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncoderTest, EncodeDone_001, TestSize.Level1)
+{
+    audioEncoder_ = std::make_shared<AudioEncoder>();
+    size_t bufLen = 4096;
+    AudioEvent event;
+    std::shared_ptr<AudioData> outputData = std::make_shared<AudioData>(bufLen);
+    std::shared_ptr<IAudioCodecCallback> encodeCb = std::make_shared<AudioEncoderCallbackTest>();
+    audioEncoder_->codecCallback_ = encodeCb;
+    EXPECT_EQ(DH_SUCCESS, audioEncoder_->EncodeDone(outputData));
+}
+
+/**
+ * @tc.name: EncodeDone_002
+ * @tc.desc: Verify EncodeDone function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncoderTest, EncodeDone_002, TestSize.Level1)
+{
+    audioEncoder_ = std::make_shared<AudioEncoder>();
+    size_t bufLen = 4096;
+    std::shared_ptr<AudioData> outputData = std::make_shared<AudioData>(bufLen);
+    std::shared_ptr<IAudioCodecCallback> callback = nullptr;
+    audioEncoder_->codecCallback_ = callback;
+    EXPECT_EQ(ERR_DH_AUDIO_BAD_VALUE, audioEncoder_->EncodeDone(outputData));
+}
+
+/**
+ * @tc.name: InitAudioDecoder_001
+ * @tc.desc: Verify InitAudioDecoder function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncoderTest, InitAudioDecoder_001, TestSize.Level1)
+{
+    AudioCommonParam codecParam;
+    audioEncoder_ = std::make_shared<AudioEncoder>();
+    EXPECT_EQ(DH_SUCCESS, audioEncoder_->InitAudioEncoder(codecParam));
+    EXPECT_EQ(DH_SUCCESS, audioEncoder_->SetEncoderFormat(codecParam));
+}
+
+/**
+ * @tc.name: ProcessData_001
+ * @tc.desc: Verify ProcessData function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(EncoderTest, ProcessData_001, TestSize.Level1)
+{
+    size_t bufLen = 4096;
+    std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(bufLen);
+    int32_t bufferIndex = 0;
+    audioEncoder_ = std::make_shared<AudioEncoder>();
+    EXPECT_EQ(ERR_DH_AUDIO_BAD_VALUE, audioEncoder_->ProcessData(audioData, bufferIndex));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

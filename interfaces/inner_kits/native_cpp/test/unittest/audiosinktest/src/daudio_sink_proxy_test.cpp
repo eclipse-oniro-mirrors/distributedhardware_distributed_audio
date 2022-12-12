@@ -73,10 +73,14 @@ HWTEST_F(DAudioSinkProxyTest, SubscribeLocalHardware_002, TestSize.Level1)
     std::string dhId;
     dhId.resize(DAUDIO_MAX_DEVICE_ID_LEN);
     const std::string param = "param";
+    const std::string devId = "devId";
+    const int32_t eventType = 1;
+    const std::string eventContent = "eventContent";
     int32_t ret = dAudioProxy->SubscribeLocalHardware(dhId, param);
     EXPECT_EQ(ERR_DH_AUDIO_SA_DEVID_ILLEGAL, ret);
     ret = dAudioProxy->UnsubscribeLocalHardware(dhId);
     EXPECT_EQ(ERR_DH_AUDIO_SA_DEVID_ILLEGAL, ret);
+    dAudioProxy->DAudioNotify(devId, dhId, eventType, eventContent);
 }
 
 /**
