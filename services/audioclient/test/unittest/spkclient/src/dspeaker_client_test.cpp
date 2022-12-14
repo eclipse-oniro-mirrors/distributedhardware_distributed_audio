@@ -65,6 +65,7 @@ HWTEST_F(DSpeakerClientTest, SetUp_001, TestSize.Level1)
 {
     AudioParam audioParam;
     EXPECT_NE(DH_SUCCESS, speakerClient_->SetUp(audioParam));
+    EXPECT_EQ(ERR_DH_AUDIO_SA_STATUS_ERR, speakerClient_->Release());
 }
 
 /**
@@ -88,6 +89,23 @@ HWTEST_F(DSpeakerClientTest, StartRender001, TestSize.Level1)
 HWTEST_F(DSpeakerClientTest, StopRender001, TestSize.Level1)
 {
     EXPECT_NE(DH_SUCCESS, speakerClient_->StopRender());
+    std::string args = "args";
+    AudioEvent event;
+    speakerClient_->PlayStatusChange(args);
+    speakerClient_->SetAudioParameters(event);
+    speakerClient_->SetMute(event);
+}
+
+/**
+ * @tc.name: OnDecodeTransDataDone_001
+ * @tc.desc: Verify the OnDecodeTransDataDone function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6G
+ */
+HWTEST_F(DSpeakerClientTest, OnDecodeTransDataDone001, TestSize.Level1)
+{
+    std::shared_ptr<AudioData> audioData = nullptr;
+    EXPECT_EQ(ERR_DH_AUDIO_CLIENT_PARAM_IS_NULL, speakerClient_->OnDecodeTransDataDone(audioData));
 }
 } // DistributedHardware
 } // OHOS

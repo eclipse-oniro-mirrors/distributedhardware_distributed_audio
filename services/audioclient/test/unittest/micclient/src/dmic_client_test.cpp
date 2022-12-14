@@ -99,7 +99,9 @@ HWTEST_F(DMicClientTest, StartCapture001, TestSize.Level1)
  */
 HWTEST_F(DMicClientTest, StopCapture001, TestSize.Level1)
 {
+    std::shared_ptr<AudioData> audioData = nullptr;
     EXPECT_NE(DH_SUCCESS, micClient_->StopCapture());
+    EXPECT_EQ(DH_SUCCESS, micClient_->OnDecodeTransDataDone(audioData));
 }
 } // DistributedHardware
 } // OHOS
