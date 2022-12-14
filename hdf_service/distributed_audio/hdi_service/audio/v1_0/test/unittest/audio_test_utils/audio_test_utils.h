@@ -16,6 +16,9 @@
 #ifndef OHOS_DAUDIO_TEST_UTILS_H
 #define OHOS_DAUDIO_TEST_UTILS_H
 
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
 #include <v1_0/iaudio_callback.h>
 #include <v1_0/iaudio_capture.h>
 #include <v1_0/iaudio_render.h>
@@ -464,6 +467,7 @@ public:
         return DistributedHardware::ERR_DH_AUDIO_HDF_FAIL;
     }
 };
+
 class MockRevertIDAudioCallback : public IDAudioCallback {
 public:
     MockRevertIDAudioCallback() {}
