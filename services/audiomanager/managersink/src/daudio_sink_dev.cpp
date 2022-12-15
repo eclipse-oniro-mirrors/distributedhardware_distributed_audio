@@ -291,8 +291,7 @@ int32_t DAudioSinkDev::TaskCloseCtrlChannel(const std::string &args)
 {
     (void)args;
     DHLOGI("Close ctrl channel.");
-    if (audioCtrlMgr_ == nullptr || !audioCtrlMgr_->IsOpened()) {
-        audioCtrlMgr_ = nullptr;
+    if (audioCtrlMgr_ == nullptr) {
         DHLOGI("Ctrl channel already closed.");
         return DH_SUCCESS;
     }

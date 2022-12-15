@@ -34,9 +34,8 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
-const std::string RMT_DEV_ID_TEST = "RemoteTest";
+const std::string RMT_DEV_ID_TEST = "RemoteDevIdTest";
 const std::string ROLE_TEST = "speaker";
-const std::string PEER_DEVID = "peerDevId";
 
 void EncodeTransportTest::SetUpTestCase(void)
 {
@@ -112,7 +111,7 @@ HWTEST_F(EncodeTransportTest, encode_transport_test_001, TestSize.Level1)
  */
 HWTEST_F(EncodeTransportTest, encode_transport_test_002, TestSize.Level1)
 {
-    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(PEER_DEVID);
+    encodeTrans_->audioChannel_ = std::make_shared<MockAudioDataChannel>(RMT_DEV_ID_TEST);
     encodeTrans_->context_ = std::make_shared<AudioTransportContext>();
     auto stateContext = std::shared_ptr<AudioTransportContext>(encodeTrans_->context_);
     encodeTrans_->context_->currentState_ =

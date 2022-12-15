@@ -44,6 +44,7 @@ int32_t AudioEncodeTransport::SetUp(const AudioParam &localParam, const AudioPar
     DHLOGI("SetUp success.");
     return DH_SUCCESS;
 }
+
 int32_t AudioEncodeTransport::Start()
 {
     DHLOGI("Start audio encode transport.");

@@ -100,6 +100,11 @@ int32_t AudioEncoder::InitAudioEncoder(const AudioCommonParam &codecParam)
 
 int32_t AudioEncoder::SetEncoderFormat(const AudioCommonParam &codecParam)
 {
+    if (audioEncoder_ == nullptr) {
+        DHLOGE("Encoder is null.");
+        return ERR_DH_AUDIO_BAD_VALUE;
+    }
+
     DHLOGI("Set encoder format, codec type %d, channel count %d, sample rate %d, sample format %d.",
         codecParam.codecType, codecParam.channelMask, codecParam.sampleRate, codecParam.bitFormat);
     cfgFormat_.PutIntValue("channel_count", codecParam.channelMask);

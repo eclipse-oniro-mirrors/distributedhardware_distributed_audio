@@ -49,7 +49,7 @@ int32_t AudioDecodeTransport::Start()
 {
     DHLOGI("Start audio decode transport.");
     if (context_ == nullptr) {
-        DHLOGE("Context_ is null.");
+        DHLOGE("Context is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     return context_->Start();
@@ -62,7 +62,7 @@ int32_t AudioDecodeTransport::Stop()
         audioChannel_->CloseSession();
     }
     if (context_ == nullptr) {
-        DHLOGE("Context_ is null.");
+        DHLOGE("Context is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     return context_->Stop();
@@ -72,7 +72,7 @@ int32_t AudioDecodeTransport::Pause()
 {
     DHLOGI("Pause.");
     if (context_ == nullptr) {
-        DHLOGE("Context_ is null.");
+        DHLOGE("Context is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     return context_->Pause();
@@ -88,7 +88,7 @@ int32_t AudioDecodeTransport::Restart(const AudioParam &localParam, const AudioP
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
     if (context_ == nullptr) {
-        DHLOGE("Context_ is null.");
+        DHLOGE("Context is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
     return context_->Restart(localParam, remoteParam);
@@ -216,7 +216,7 @@ int32_t AudioDecodeTransport::RegisterChannelListener(const std::string &role)
         return ERR_DH_AUDIO_TRANS_ERROR;
     }
     if (context_ == nullptr) {
-        DHLOGE("Register channel listener error. state context_ is null");
+        DHLOGE("Register channel listener error, state context is null");
         return ERR_DH_AUDIO_NULLPTR;
     }
     context_->SetAudioChannel(audioChannel_);
@@ -233,7 +233,7 @@ int32_t AudioDecodeTransport::RegisterProcessorListener(const AudioParam &localP
         return ret;
     }
     if (context_ == nullptr) {
-        DHLOGE("Register processor listener error. state context_ is null");
+        DHLOGE("Register processor listener error, state context is null");
         return ERR_DH_AUDIO_NULLPTR;
     }
     context_->SetAudioProcessor(processor_);

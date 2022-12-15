@@ -64,7 +64,7 @@ int32_t DAudioHandler::Initialize()
     }
     ret = QueryAudioInfo();
     GetSupportAudioInfo(audioInfos_, encoderInfos_, decoderInfos_);
-    return DH_SUCCESS;
+    return ret;
 }
 
 std::vector<DHItem> DAudioHandler::Query()
@@ -159,7 +159,6 @@ int32_t DAudioHandler::QueryAudioInfo()
     audioInfos_.sampleRates = OHOS::AudioStandard::AudioCapturer::GetSupportedSamplingRates();
     audioInfos_.formats = OHOS::AudioStandard::AudioCapturer::GetSupportedFormats();
     audioInfos_.channels = OHOS::AudioStandard::AudioCapturer::GetSupportedChannels();
-
     return DH_SUCCESS;
 }
 

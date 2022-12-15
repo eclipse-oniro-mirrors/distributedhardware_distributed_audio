@@ -16,9 +16,10 @@
 #include "daudio_source_dev_ctrl_manager_test.h"
 
 #include "accesstoken_kit.h"
-#include "audiocontrol_test_utils.h"
 #include "nativetoken_kit.h"
 #include "token_setproc.h"
+
+#include "audiocontrol_test_utils.h"
 
 using namespace testing::ext;
 

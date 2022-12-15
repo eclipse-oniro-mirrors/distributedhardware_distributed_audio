@@ -127,7 +127,7 @@ void DAudioSourceDevCtrlMgr::OnStateChange(int32_t type)
     switch (type) {
         case AudioEventType::CTRL_OPENED:
             isOpened_.store(true);
-            channelWaitCond_.notify_all();
+            channelWaitCond_.notify_one();
             break;
         case AudioEventType::CTRL_CLOSED:
             isOpened_.store(false);
