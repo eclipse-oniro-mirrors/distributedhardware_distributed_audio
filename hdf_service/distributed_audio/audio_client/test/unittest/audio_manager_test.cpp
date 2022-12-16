@@ -73,6 +73,7 @@ HWTEST_F(AudioManagerTest, LoadAdapterAbnormal, TestSize.Level1)
     struct AudioManagerContext managerContext;
     AudioAdapterDescriptor desc = {};
     AudioAdapter *adapter = nullptr;
+    struct AudioManager *manager = nullptr;
 
     int32_t ret = managerContext.instance_.LoadAdapter(nullptr, &desc, &adapter);
     EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
@@ -80,6 +81,7 @@ HWTEST_F(AudioManagerTest, LoadAdapterAbnormal, TestSize.Level1)
     EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
     ret = managerContext.instance_.LoadAdapter(&managerContext.instance_, &desc, nullptr);
     EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    managerContext.instance_.UnloadAdapter(manager, adapter);
 }
 } // DistributedHardware
 } // OHOS

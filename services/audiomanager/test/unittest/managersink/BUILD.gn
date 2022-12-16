@@ -30,6 +30,7 @@ config("module_private_config") {
     "${mediastandardfwk_path}/audiocommon/include",
     "${mediastandardfwk_path}/audiorenderer/include",
     "${mediastandardfwk_path}/audiomanager/include",
+    "${fwk_common_path}/utils/include",
   ]
 
   include_dirs += [
@@ -78,7 +79,27 @@ ohos_unittest("DaudioSinkDevTest") {
   ]
 }
 
+## UnitTest daudio_sink_manager_test
+ohos_unittest("DAudioSinkManagerTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "${services_path}/audiomanager/test/unittest/managersink/src/daudio_sink_manager_test.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "//third_party/googletest:gmock",
+    "//third_party/googletest:gtest_main",
+    "${services_path}/audiomanager/servicesink:distributed_audio_sink",
+  ]
+}
+
 group("manager_sink_test") {
   testonly = true
-  deps = [ ":DaudioSinkDevTest" ]
+  deps = [
+    ":DaudioSinkDevTest",
+    ":DAudioSinkManagerTest",
+  ]
 }

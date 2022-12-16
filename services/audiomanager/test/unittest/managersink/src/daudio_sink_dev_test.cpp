@@ -88,6 +88,20 @@ HWTEST_F(DAudioSinkDevTest, NotifyMicOpened_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: NotifyPlayStatusChange_001
+ * @tc.desc: Verify the NotifyPlayStatusChange function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSinkDevTest, NotifyPlayStatusChange_001, TestSize.Level1)
+{
+    AudioEvent event;
+    sinkDev_->speakerClient_ = nullptr;
+    EXPECT_EQ(ERR_DH_AUDIO_NULLPTR, sinkDev_->NotifyPlayStatusChange(event));
+    sinkDev_->NotifyEvent(event);
+}
+
+/**
  * @tc.name: TaskOpenCtrlChannel_001
  * @tc.desc: Verify the TaskOpenCtrlChannel function.
  * @tc.type: FUNC
