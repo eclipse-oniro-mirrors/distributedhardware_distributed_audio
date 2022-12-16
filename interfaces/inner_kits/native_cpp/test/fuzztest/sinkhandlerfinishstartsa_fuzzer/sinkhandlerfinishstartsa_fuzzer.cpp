@@ -27,7 +27,7 @@ namespace OHOS {
 namespace DistributedHardware {
 void SinkHandlerFinishStartSAFuzzTest(const uint8_t* data, size_t size)
 {
-    if (data == nullptr) {
+    if ((data == nullptr) || (size < (sizeof(int32_t)))) {
         return;
     }
     int32_t saId = *(reinterpret_cast<const int32_t*>(data));

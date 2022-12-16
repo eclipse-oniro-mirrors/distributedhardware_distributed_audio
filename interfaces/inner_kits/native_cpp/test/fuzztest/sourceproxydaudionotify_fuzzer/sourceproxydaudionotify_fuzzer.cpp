@@ -27,7 +27,7 @@ namespace OHOS {
 namespace DistributedHardware {
 void SourceProxyDAudioNotifyFuzzTest(const uint8_t* data, size_t size)
 {
-    if (data == nullptr) {
+    if ((data == nullptr) || (size < (sizeof(int32_t)))) {
         return;
     }
 
