@@ -20,6 +20,7 @@
 
 #include "daudio_test_utils.h"
 #include "iaudio_event_callback.h"
+#include "iaudio_data_transport.h"
 #define private public
 #include "dspeaker_client.h"
 #undef private

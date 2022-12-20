@@ -24,6 +24,7 @@
 
 #include "iaudio_channel.h"
 #include "iaudio_datatrans_callback.h"
+#include "daudio_errorcode.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -36,6 +37,35 @@ public:
 
     std::shared_ptr<IAudioDataTransCallback> transCallback_ = nullptr;
     std::shared_ptr<AudioDecodeTransport> decodeTrans_ = nullptr;
+};
+
+class MockIAudioChannel : public IAudioChannel {
+public:
+    int32_t CreateSession(const std::shared_ptr<IAudioChannelListener> &listener,
+        const std::string &sessionName) override
+    {
+        return DH_SUCCESS;
+    }
+    int32_t ReleaseSession() override
+    {
+        return ERR_DH_AUDIO_FAILED;
+    }
+    virtual int32_t OpenSession() override
+    {
+        return ERR_DH_AUDIO_FAILED;
+    }
+    virtual int32_t CloseSession() override
+    {
+        return DH_SUCCESS;
+    }
+    int32_t SendData(const std::shared_ptr<AudioData> &data) override
+    {
+        return DH_SUCCESS;
+    }
+    int32_t SendEvent(const AudioEvent &event) override
+    {
+        return DH_SUCCESS;
+    }
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -64,6 +64,7 @@ ohos_unittest("SpeakerClientTest") {
 
   deps = [
     "${services_path}/audiomanager/servicesink:distributed_audio_sink",
+    "${services_path}/common:distributed_audio_utils",
     "//third_party/googletest:gmock",
     "//third_party/googletest:gtest_main",
   ]

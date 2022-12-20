@@ -20,7 +20,6 @@
 #include "audio_data.h"
 #include "audio_event.h"
 #include "audio_param.h"
-#include "daudio_errorcode.h"
 #include "daudio_log.h"
 #include "daudio_util.h"
 #include "mock_audio_data_channel.h"
@@ -98,6 +97,8 @@ HWTEST_F(DecodeTransportTest, decode_transport_test_001, TestSize.Level1)
         }
     };
     EXPECT_NE(DH_SUCCESS, decodeTrans_->SetUp(testLocalParaEnc, testRemoteParaEnc, transCallback_, ROLE_TEST));
+    std::shared_ptr<IAudioDataTransCallback> callback = nullptr;
+    EXPECT_NE(DH_SUCCESS, decodeTrans_->SetUp(testLocalParaEnc, testRemoteParaEnc, callback, ROLE_TEST));
     EXPECT_EQ(DH_SUCCESS, decodeTrans_->Release());
 }
 
@@ -110,8 +111,11 @@ HWTEST_F(DecodeTransportTest, decode_transport_test_001, TestSize.Level1)
 HWTEST_F(DecodeTransportTest, decode_transport_test_002, TestSize.Level1)
 {
     EXPECT_NE(DH_SUCCESS, decodeTrans_->Start());
-    EXPECT_EQ(ERR_DH_AUDIO_NULLPTR, decodeTrans_->Stop());
+    EXPECT_EQ(DH_SUCCESS, decodeTrans_->Stop());
     EXPECT_EQ(DH_SUCCESS, decodeTrans_->Release());
+
+    decodeTrans_->audioChannel_ = std::make_shared<MockIAudioChannel>();
+    EXPECT_NE(DH_SUCCESS, decodeTrans_->Release());
 }
 
 /**
@@ -156,8 +160,28 @@ HWTEST_F(DecodeTransportTest, decode_transport_test_003, TestSize.Level1)
             0
         }
     };
-    EXPECT_EQ(ERR_DH_AUDIO_NULLPTR, decodeTrans_->Pause());
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, decodeTrans_->Restart(testLocalParaEnc, testRemoteParaEnc));
+    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION, decodeTrans_->Pause());
+    EXPECT_NE(ERR_DH_AUDIO_TRANS_ERROR, decodeTrans_->Restart(testLocalParaEnc, testRemoteParaEnc));
+}
+
+/**
+ * @tc.name: decode_transport_test_004
+ * @tc.desc: Verify the FeedAudioData function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(DecodeTransportTest, decode_transport_test_004, TestSize.Level1)
+{
+    std::shared_ptr<AudioData> audioData = nullptr;
+    AudioEvent event;
+    decodeTrans_->OnSessionOpened();
+    decodeTrans_->OnSessionClosed();
+    decodeTrans_->OnDataReceived(audioData);
+    decodeTrans_->OnEventReceived(event);
+    decodeTrans_->OnStateNotify(event);
+    decodeTrans_->OnAudioDataDone(audioData);
+
+    EXPECT_EQ(DH_SUCCESS, decodeTrans_->FeedAudioData(audioData));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

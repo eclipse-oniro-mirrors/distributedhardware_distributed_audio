@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+#include <thread>
+#include <chrono>
 #include "dspeaker_client_test.h"
 
 using namespace testing::ext;
@@ -52,7 +54,15 @@ void DSpeakerClientTest::TearDown()
  */
 HWTEST_F(DSpeakerClientTest, OnStateChange_001, TestSize.Level1)
 {
+    AudioStandard::VolumeEvent event;
+    event.volume = 1;
+    event.updateUi = 1;
+    event.volumeGroupId = 1;
+
+    speakerClient_->OnVolumeKeyEvent(event);
     EXPECT_EQ(DH_SUCCESS, speakerClient_->OnStateChange(AudioEventType::DATA_CLOSED));
+    EXPECT_NE(DH_SUCCESS, speakerClient_->OnStateChange(AudioEventType::SPEAKER_OPENED));
+    EXPECT_EQ(ERR_DH_AUDIO_CLIENT_STATE_IS_INVALID, speakerClient_->OnStateChange(AudioEventType::EVENT_UNKNOWN));
 }
 
 /**
@@ -94,6 +104,17 @@ HWTEST_F(DSpeakerClientTest, StopRender001, TestSize.Level1)
     speakerClient_->PlayStatusChange(args);
     speakerClient_->SetAudioParameters(event);
     speakerClient_->SetMute(event);
+
+    args = "restart";
+    speakerClient_->PlayStatusChange(args);
+
+    if (speakerClient_->renderDataThread_.joinable()) {
+        speakerClient_->isRenderReady_.store(false);
+        speakerClient_->renderDataThread_.join();
+    }
+    event.content = "AUDIO_VOLUME_TYPE=2;";
+    auto ret = speakerClient_->SetAudioParameters(event);
+    EXPECT_NE(DH_SUCCESS, ret);
 }
 
 /**
@@ -106,6 +127,12 @@ HWTEST_F(DSpeakerClientTest, OnDecodeTransDataDone001, TestSize.Level1)
 {
     std::shared_ptr<AudioData> audioData = nullptr;
     EXPECT_EQ(ERR_DH_AUDIO_CLIENT_PARAM_IS_NULL, speakerClient_->OnDecodeTransDataDone(audioData));
+    for (size_t i = 0; i < 6; i++) {
+        std::shared_ptr<AudioData> data = std::make_shared<AudioData>(4096);
+        speakerClient_->dataQueue_.push(data);
+    }
+    audioData = std::make_shared<AudioData>(4096);
+    EXPECT_EQ(DH_SUCCESS, speakerClient_->OnDecodeTransDataDone(audioData));
 }
 } // DistributedHardware
 } // OHOS
