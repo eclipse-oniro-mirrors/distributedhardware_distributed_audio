@@ -24,6 +24,7 @@ group("daudio_manager_test") {
     "${services_path}/audiomanager/test/unittest/sourcemanager:daudio_source_mgr_test",
     "${common_path}/dfx_utils/test/unittest:DAudioDfxTest",
     "${services_path}/audiomanager/test/unittest/servicesink:DaudioSinkServiceTest",
+    "${services_path}/audiomanager/test/unittest/servicesource:DaudioSourceServiceTest",
     "${services_path}/common/test/unittest/audiodata:audio_data_test",
   ]
 }
