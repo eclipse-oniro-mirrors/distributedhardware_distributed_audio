@@ -28,6 +28,7 @@
 #include "iaudio_datatrans_callback.h"
 
 using json = nlohmann::json;
+
 namespace OHOS {
 namespace DistributedHardware {
 class DSpeakerDev : public IDAudioHdiCallback,

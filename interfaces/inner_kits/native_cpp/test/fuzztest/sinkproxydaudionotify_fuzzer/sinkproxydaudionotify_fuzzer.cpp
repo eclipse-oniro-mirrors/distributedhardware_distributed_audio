@@ -35,7 +35,7 @@ void SinkProxyDAudioNotifyFuzzTest(const uint8_t* data, size_t size)
     std::string dhId(reinterpret_cast<const char*>(data), size);
     int32_t eventType = *(reinterpret_cast<const int32_t*>(data));
     std::string eventContent(reinterpret_cast<const char*>(data), size);
-    
+
     sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgr == nullptr) {
         return;

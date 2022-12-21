@@ -495,7 +495,7 @@ int32_t DAudioSourceDev::TaskDisableDAudio(const std::string &args)
         return ERR_DH_AUDIO_SA_PARAM_INVALID;
     }
     json jParam = json::parse(args, nullptr, false);
-    if (!CheckIsNum((std::string)jParam[KEY_DH_ID])) {
+    if (!JsonParamCheck(jParam, { KEY_DH_ID }) || !CheckIsNum((std::string)jParam[KEY_DH_ID])) {
         return ERR_DH_AUDIO_NOT_SUPPORT;
     }
     int32_t dhId = std::stoi((std::string)jParam[KEY_DH_ID]);
@@ -868,21 +868,6 @@ void DAudioSourceDev::to_json(json &j, const AudioParam &param)
         { KEY_CHANNELS, param.comParam.channelMask },       { KEY_CONTENT_TYPE, param.renderOpts.contentType },
         { KEY_STREAM_USAGE, param.renderOpts.streamUsage }, { KEY_SOURCE_TYPE, param.captureOpts.sourceType },
     };
-}
-
-bool DAudioSourceDev::JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key)
-{
-    if (jParam.is_discarded()) {
-        DHLOGE("Json parameter is invalid.");
-        return false;
-    }
-    for (auto it = key.begin(); it != key.end(); it++) {
-        if (!jParam.contains(*it)) {
-            DHLOGE("Json parameter not contain param(%s).", (*it).c_str());
-            return false;
-        }
-    }
-    return true;
 }
 
 bool DAudioSourceDev::CheckIsNum(const std::string &jsonString)

@@ -15,10 +15,11 @@
 
 #include "daudio_util.h"
 
+#include <cstddef>
 #include <iomanip>
+#include <map>
 #include <random>
 #include <sstream>
-#include <cstddef>
 #include <sys/time.h>
 
 #include "softbus_bus_center.h"
@@ -32,11 +33,29 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+using JsonTypeCheckFunc = bool (*)(const nlohmann::json &jsonObj, const std::string &key);
 constexpr int32_t WORD_WIDTH_8 = 8;
 constexpr int32_t WORD_WIDTH_4 = 4;
 constexpr size_t INT32_SHORT_ID_LENGTH = 20;
 constexpr size_t INT32_MIN_ID_LENGTH = 3;
 constexpr size_t INT32_PLAINTEXT_LENGTH = 4;
+
+std::map<std::string, JsonTypeCheckFunc> typeCheckMap = {
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_TYPE, &DistributedHardware::IsInt32),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_EVENT_CONTENT, &DistributedHardware::IsString),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_DH_ID, &DistributedHardware::IsString),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_DEV_ID, &DistributedHardware::IsString),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_RESULT, &DistributedHardware::IsInt32),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_EVENT_TYPE, &DistributedHardware::IsInt32),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_AUDIO_PARAM, &DistributedHardware::IsAudioParam),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_ATTRS, &DistributedHardware::IsString),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_SAMPLING_RATE, &DistributedHardware::IsInt32),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_CHANNELS, &DistributedHardware::IsInt32),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_FORMAT, &DistributedHardware::IsInt32),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_SOURCE_TYPE, &DistributedHardware::IsInt32),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_CONTENT_TYPE, &DistributedHardware::IsInt32),
+    std::map<std::string, JsonTypeCheckFunc>::value_type(KEY_STREAM_USAGE, &DistributedHardware::IsInt32),
+};
 
 int32_t GetLocalDeviceNetworkId(std::string &networkId)
 {
@@ -148,6 +167,50 @@ int32_t GetAudioParamInt(const std::string &params, const std::string &key, int3
     int32_t ret = GetAudioParamStr(params, key, val);
     value = std::stoi(val);
     return ret;
+}
+
+bool JsonParamCheck(const nlohmann::json& jsonObj, const std::initializer_list<std::string> &keys)
+{
+    if (jsonObj.is_discarded()) {
+        DHLOGE("Json parameter is invalid.");
+        return false;
+    }
+
+    for (auto it = keys.begin(); it != keys.end(); it++) {
+        if (!jsonObj.contains(*it)) {
+            DHLOGE("Json parameter not contain param(%s).", (*it).c_str());
+            return false;
+        }
+
+        auto iter = typeCheckMap.find(*it);
+        if (iter == typeCheckMap.end()) {
+            DHLOGE("Check is not supported yet, key %s.", (*it).c_str());
+            return false;
+        }
+        JsonTypeCheckFunc &func = iter->second;
+        bool res = (*func)(jsonObj, *it);
+        if (!res) {
+            DHLOGE("The key %s value format in json is illegal.", (*it).c_str());
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IsString(const nlohmann::json& jsonObj, const std::string& key)
+{
+    return jsonObj[key].is_string();
+}
+
+bool IsInt32(const nlohmann::json& jsonObj, const std::string& key)
+{
+    return jsonObj[key].is_number_integer() && INT32_MIN <= jsonObj[key] && jsonObj[key] <= INT32_MAX;
+}
+
+bool IsAudioParam(const nlohmann::json& jsonObj, const std::string& key)
+{
+    return JsonParamCheck(jsonObj[key],
+        { KEY_SAMPLING_RATE, KEY_CHANNELS, KEY_FORMAT, KEY_SOURCE_TYPE, KEY_CONTENT_TYPE, KEY_STREAM_USAGE });
 }
 } // namespace DistributedHardware
 } // namespace OHOS

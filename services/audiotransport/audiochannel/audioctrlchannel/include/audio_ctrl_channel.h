@@ -23,6 +23,7 @@
 #include "softbus_adapter.h"
 
 using json = nlohmann::json;
+
 namespace OHOS {
 namespace DistributedHardware {
 class AudioCtrlChannel : public IAudioChannel,

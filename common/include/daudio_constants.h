@@ -89,7 +89,7 @@ const std::string AUDIO_EVENT_RESTART = "restart";
 const std::string AUDIO_EVENT_PAUSE = "pause";
 
 constexpr const char *KEY_TYPE = "type";
-constexpr const char *KEY_CONTENT = "content";
+constexpr const char *KEY_EVENT_CONTENT = "content";
 constexpr const char *KEY_DH_ID = "dhId";
 constexpr const char *KEY_DEV_ID = "devId";
 constexpr const char *KEY_RESULT = "result";

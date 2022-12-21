@@ -15,8 +15,6 @@
 
 #include "daudio_sink_dev.h"
 
-#include "nlohmann/json.hpp"
-
 #include "daudio_constants.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
@@ -27,7 +25,6 @@
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DAudioSinkDev"
 
-using json = nlohmann::json;
 namespace OHOS {
 namespace DistributedHardware {
 DAudioSinkDev::DAudioSinkDev(const std::string &devId) : devId_(devId)
@@ -540,21 +537,6 @@ int32_t DAudioSinkDev::from_json(const json &j, AudioParam &audioParam)
     j.at(KEY_CONTENT_TYPE).get_to(audioParam.renderOpts.contentType);
     j.at(KEY_STREAM_USAGE).get_to(audioParam.renderOpts.streamUsage);
     return DH_SUCCESS;
-}
-
-bool DAudioSinkDev::JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key)
-{
-    if (jParam.is_discarded()) {
-        DHLOGE("Json parameter is invalid.");
-        return false;
-    }
-    for (auto it = key.begin(); it != key.end(); it++) {
-        if (!jParam.contains(*it)) {
-            DHLOGE("Json parameter not contain param(%s).", (*it).c_str());
-            return false;
-        }
-    }
-    return true;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

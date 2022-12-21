@@ -28,6 +28,7 @@
 #include "idaudio_hdi_callback.h"
 
 using json = nlohmann::json;
+
 namespace OHOS {
 namespace DistributedHardware {
 class DMicDev : public IDAudioHdiCallback,

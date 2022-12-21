@@ -33,6 +33,7 @@
 #include "task_queue.h"
 
 using json = nlohmann::json;
+
 namespace OHOS {
 namespace DistributedHardware {
 class DAudioSourceDev : public IAudioEventCallback, public std::enable_shared_from_this<DAudioSourceDev> {
@@ -95,7 +96,6 @@ private:
     int32_t CloseCtrlTrans(const AudioEvent &event, bool isSpk);
     AudioEventType getEventTypeFromArgs(const std::string &args);
     void to_json(json &j, const AudioParam &param);
-    bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);
     bool CheckIsNum(const std::string &jsonString);
 
 private:

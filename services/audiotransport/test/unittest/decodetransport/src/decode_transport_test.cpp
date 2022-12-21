@@ -111,7 +111,7 @@ HWTEST_F(DecodeTransportTest, decode_transport_test_001, TestSize.Level1)
 HWTEST_F(DecodeTransportTest, decode_transport_test_002, TestSize.Level1)
 {
     EXPECT_NE(DH_SUCCESS, decodeTrans_->Start());
-    EXPECT_EQ(DH_SUCCESS, decodeTrans_->Stop());
+    EXPECT_EQ(ERR_DH_AUDIO_NULLPTR, decodeTrans_->Stop());
     EXPECT_EQ(DH_SUCCESS, decodeTrans_->Release());
 
     decodeTrans_->audioChannel_ = std::make_shared<MockIAudioChannel>();
@@ -126,7 +126,7 @@ HWTEST_F(DecodeTransportTest, decode_transport_test_002, TestSize.Level1)
  */
 HWTEST_F(DecodeTransportTest, decode_transport_test_003, TestSize.Level1)
 {
-        AudioParam testLocalParaEnc = {
+    AudioParam testLocalParaEnc = {
         {
             SAMPLE_RATE_48000,
             STEREO,
@@ -160,7 +160,7 @@ HWTEST_F(DecodeTransportTest, decode_transport_test_003, TestSize.Level1)
             0
         }
     };
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ILLEGAL_OPERATION, decodeTrans_->Pause());
+    EXPECT_EQ(ERR_DH_AUDIO_NULLPTR, decodeTrans_->Pause());
     EXPECT_NE(ERR_DH_AUDIO_TRANS_ERROR, decodeTrans_->Restart(testLocalParaEnc, testRemoteParaEnc));
 }
 

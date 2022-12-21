@@ -142,7 +142,7 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct ::
     }
     int32_t ret = context->proxy_->LoadAdapter(descriptor, adapterProxy);
     if (ret != DH_SUCCESS) {
-        DHLOGE("Failed to load the adapter..");
+        DHLOGE("Failed to load the adapter.");
         *adapter = nullptr;
         return ret;
     }

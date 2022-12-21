@@ -23,7 +23,6 @@
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "AudioCtrlChannel"
 
-using json = nlohmann::json;
 namespace OHOS {
 namespace DistributedHardware {
 int32_t AudioCtrlChannel::CreateSession(const std::shared_ptr<IAudioChannelListener> &listener,
@@ -138,7 +137,7 @@ int32_t AudioCtrlChannel::SendEvent(const AudioEvent &audioEvent)
     DHLOGI("Send event, sessionId: %d.", sessionId_);
     json jAudioEvent;
     jAudioEvent[KEY_TYPE] = audioEvent.type;
-    jAudioEvent[KEY_CONTENT] = audioEvent.content;
+    jAudioEvent[KEY_EVENT_CONTENT] = audioEvent.content;
     std::string message = jAudioEvent.dump();
     int ret = SendMsg(message);
     if (ret != DH_SUCCESS) {
@@ -255,17 +254,13 @@ void AudioCtrlChannel::OnStreamReceived(int32_t sessionId, const StreamData *dat
 
 int from_audioEventJson(const json &j, AudioEvent &audioEvent)
 {
-    if (j.is_discarded()) {
-        DHLOGE("Json data is discarded.");
+    if (!JsonParamCheck(j, {KEY_TYPE, KEY_EVENT_CONTENT})) {
+        DHLOGE("Json data is illegal.");
         return ERR_DH_AUDIO_TRANS_NULL_VALUE;
     }
 
-    if (!j.contains(KEY_TYPE) || !j.contains(KEY_CONTENT)) {
-        DHLOGE("Some key values do not exist in json data.");
-        return ERR_DH_AUDIO_TRANS_NULL_VALUE;
-    }
     j.at(KEY_TYPE).get_to(audioEvent.type);
-    j.at(KEY_CONTENT).get_to(audioEvent.content);
+    j.at(KEY_EVENT_CONTENT).get_to(audioEvent.content);
     return DH_SUCCESS;
 }
 } // namespace DistributedHardware

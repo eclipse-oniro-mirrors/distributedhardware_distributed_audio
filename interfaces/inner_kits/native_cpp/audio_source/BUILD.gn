@@ -22,6 +22,7 @@ ohos_shared_library("distributed_audio_source_sdk") {
     "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
     "//commonlibrary/c_utils/base/include",
     "${fwk_common_path}/utils/include",
+    "//third_party/json/include",
   ]
 
   include_dirs += [

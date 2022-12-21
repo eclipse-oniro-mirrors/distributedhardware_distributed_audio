@@ -78,7 +78,6 @@ private:
     int32_t NotifyPlayStatusChange(const AudioEvent &audioEvent);
     void NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result);
     int32_t from_json(const json &j, AudioParam &audioParam);
-    bool JsonParamCheck(const json &jParam, const std::initializer_list<std::string> &key);
 
     std::shared_ptr<DSpeakerClient> speakerClient_;
     std::shared_ptr<DMicClient> micClient_;
