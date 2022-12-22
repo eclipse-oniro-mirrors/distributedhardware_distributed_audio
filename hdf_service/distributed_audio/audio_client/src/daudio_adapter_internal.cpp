@@ -82,11 +82,7 @@ static int32_t CreateRenderInternal(struct AudioAdapter *adapter, const struct :
         .portId = desc->portId,
         .pins = static_cast<AudioPortPin>(desc->pins),
     };
-    if (desc->desc == nullptr) {
-        descHal.desc = "";
-    } else {
-        descHal.desc = desc->desc;
-    }
+    descHal.desc = desc->desc == nullptr ? "" : desc->desc;
 
     AudioSampleAttributes attrsHal;
     SetAudioSampleAttributesHAL(attrs, attrsHal);
@@ -154,10 +150,7 @@ static int32_t CreateCaptureInternal(struct AudioAdapter *adapter, const struct 
         .portId = desc->portId,
         .pins = static_cast<AudioPortPin>(desc->pins),
     };
-    descHal.desc = "";
-    if (desc->desc != nullptr) {
-        descHal.desc = desc->desc;
-    }
+    descHal.desc = desc->desc == nullptr ? "" : desc->desc;
     AudioSampleAttributes attrsHal;
     SetAudioSampleAttributesHAL(attrs, attrsHal);
     sptr<IAudioCapture> captureProxy = nullptr;
