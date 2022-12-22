@@ -46,6 +46,9 @@ HWTEST_F(AudioCtrlChannelTest, CreateSession_001, TestSize.Level1)
     std::shared_ptr<IAudioChannelListener> listener = nullptr;
     EXPECT_NE(DH_SUCCESS, ctrlChannel_->CreateSession(listener, CTRL_SESSION_NAME));
     EXPECT_EQ(DH_SUCCESS, ctrlChannel_->ReleaseSession());
+    listener = std::make_shared<MockIAudioChannelListener>();
+    EXPECT_NE(DH_SUCCESS, ctrlChannel_->CreateSession(listener, CTRL_SESSION_NAME));
+    EXPECT_EQ(DH_SUCCESS, ctrlChannel_->ReleaseSession());
 }
 
 /**
@@ -58,6 +61,21 @@ HWTEST_F(AudioCtrlChannelTest, OpenSession_002, TestSize.Level1)
 {
     EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, ctrlChannel_->OpenSession());
     EXPECT_EQ(DH_SUCCESS, ctrlChannel_->CloseSession());
+    ctrlChannel_->sessionId_ = 1;
+    EXPECT_EQ(DH_SUCCESS, ctrlChannel_->CloseSession());
+}
+
+/**
+ * @tc.name: OpenSession_002
+ * @tc.desc: Verify the OpenSession function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(AudioCtrlChannelTest, SendData_002, TestSize.Level1)
+{
+    size_t capacity = 2;
+    std::shared_ptr<AudioData> data = std::make_shared<AudioData>(capacity);
+    EXPECT_EQ(DH_SUCCESS, ctrlChannel_->SendData(data));
 }
 
 /**
@@ -133,6 +151,12 @@ HWTEST_F(AudioCtrlChannelTest, OnSessionClosed_001, TestSize.Level1)
     int32_t sessionId = 0;
 
     ctrlChannel_->OnSessionClosed(sessionId);
+    ctrlChannel_->sessionId_ = 1;
+    ctrlChannel_->OnSessionClosed(sessionId);
+    listener = std::make_shared<MockIAudioChannelListener>();
+    ctrlChannel_->channelListener_ = listener;
+    AudioEvent event;
+    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, ctrlChannel_->SendEvent(event));
 }
 
 /**
@@ -150,6 +174,14 @@ HWTEST_F(AudioCtrlChannelTest, OnBytesReceived_001, TestSize.Level1)
     uint8_t *data = nullptr;
     int32_t dataLen = 0;
     ctrlChannel_->OnBytesReceived(sessionId, data, dataLen);
+    listener = nullptr;
+    ctrlChannel_->channelListener_ = listener;
+    ctrlChannel_->OnBytesReceived(sessionId, data, dataLen);
+
+    StreamData *datas;
+    StreamData *ext;
+    StreamFrameInfo *streamFrameInfo;
+    ctrlChannel_->OnStreamReceived(sessionId, datas, ext, streamFrameInfo);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
