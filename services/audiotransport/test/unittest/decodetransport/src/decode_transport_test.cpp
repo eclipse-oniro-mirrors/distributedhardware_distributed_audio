@@ -161,7 +161,7 @@ HWTEST_F(DecodeTransportTest, decode_transport_test_003, TestSize.Level1)
         }
     };
     EXPECT_EQ(ERR_DH_AUDIO_NULLPTR, decodeTrans_->Pause());
-    EXPECT_NE(ERR_DH_AUDIO_TRANS_ERROR, decodeTrans_->Restart(testLocalParaEnc, testRemoteParaEnc));
+    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, decodeTrans_->Restart(testLocalParaEnc, testRemoteParaEnc));
 }
 
 /**
