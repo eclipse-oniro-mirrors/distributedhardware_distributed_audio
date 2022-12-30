@@ -27,7 +27,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 int32_t AudioDecodeTransport::SetUp(const AudioParam &localParam, const AudioParam &remoteParam,
-    const std::shared_ptr<IAudioDataTransCallback> &callback, const std::string &role)
+    const std::shared_ptr<IAudioDataTransCallback> &callback, const PortCapType capType)
 {
     if (callback == nullptr) {
         DHLOGE("The parameter is empty.");
@@ -36,11 +36,12 @@ int32_t AudioDecodeTransport::SetUp(const AudioParam &localParam, const AudioPar
     dataTransCallback_ = callback;
     context_ = std::make_shared<AudioTransportContext>();
     context_->SetTransportStatus(TRANSPORT_STATE_STOP);
-    int32_t ret = InitAudioDecodeTransport(localParam, remoteParam, role);
+    int32_t ret = InitAudioDecodeTransport(localParam, remoteParam, capType);
     if (ret != DH_SUCCESS) {
         DHLOGE("Init audio encode transport, ret: %d.", ret);
         return ret;
     }
+    capType_ = capType;
     DHLOGI("SetUp success.");
     return DH_SUCCESS;
 }
@@ -48,11 +49,21 @@ int32_t AudioDecodeTransport::SetUp(const AudioParam &localParam, const AudioPar
 int32_t AudioDecodeTransport::Start()
 {
     DHLOGI("Start audio decode transport.");
-    if (context_ == nullptr) {
-        DHLOGE("Context is null.");
+    if (audioChannel_ == nullptr || context_ == nullptr) {
+        DHLOGE("Audio channel or context is null.");
         return ERR_DH_AUDIO_NULLPTR;
     }
-    return context_->Start();
+    if (capType_ == CAP_MIC && audioChannel_->OpenSession() != DH_SUCCESS) {
+        DHLOGE("Audio channel open session failed.");
+        return ERR_DH_AUDIO_TRANS_SESSION_NOT_OPEN;
+    }
+    int32_t ret = context_->Start();
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Context start failed ret: %d.", ret);
+        audioChannel_->CloseSession();
+        return ret;
+    }
+    return DH_SUCCESS;
 }
 
 int32_t AudioDecodeTransport::Stop()
@@ -185,9 +196,9 @@ void AudioDecodeTransport::OnStateNotify(const AudioEvent &event)
 }
 
 int32_t AudioDecodeTransport::InitAudioDecodeTransport(const AudioParam &localParam,
-    const AudioParam &remoteParam, const std::string &role)
+    const AudioParam &remoteParam, const PortCapType capType)
 {
-    int32_t ret = RegisterChannelListener(role);
+    int32_t ret = RegisterChannelListener(capType);
     if (ret != DH_SUCCESS) {
         DHLOGE("Register channel listener failed, ret: %d.", ret);
         audioChannel_ = nullptr;
@@ -204,11 +215,11 @@ int32_t AudioDecodeTransport::InitAudioDecodeTransport(const AudioParam &localPa
     return DH_SUCCESS;
 }
 
-int32_t AudioDecodeTransport::RegisterChannelListener(const std::string &role)
+int32_t AudioDecodeTransport::RegisterChannelListener(const PortCapType capType)
 {
     DHLOGI("Register Channel Listener.");
     audioChannel_ = std::make_shared<AudioDataChannel>(peerDevId_);
-    int32_t result = (role == "speaker") ?
+    int32_t result = (capType == CAP_SPK) ?
         audioChannel_->CreateSession(shared_from_this(), DATA_SPEAKER_SESSION_NAME) :
         audioChannel_->CreateSession(shared_from_this(), DATA_MIC_SESSION_NAME);
     if (result != DH_SUCCESS) {

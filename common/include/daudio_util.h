@@ -32,10 +32,10 @@ int64_t GetNowTimeUs();
 int32_t GetAudioParamStr(const std::string &params, const std::string &key, std::string &value);
 int32_t GetAudioParamBool(const std::string &params, const std::string &key, bool &value);
 int32_t GetAudioParamInt(const std::string &params, const std::string &key, int32_t &value);
-bool JsonParamCheck(const nlohmann::json& jsonObj, const std::initializer_list<std::string> &key);
-bool IsString(const nlohmann::json& jsonObj, const std::string& key);
-bool IsInt32(const nlohmann::json& jsonObj, const std::string& key);
-bool IsAudioParam(const nlohmann::json& jsonObj, const std::string& key);
+bool JsonParamCheck(const json &jsonObj, const std::initializer_list<std::string> &key);
+bool IsString(const json &jsonObj, const std::string &key);
+bool IsInt32(const json &jsonObj, const std::string &key);
+bool IsAudioParam(const json &jsonObj, const std::string &key);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DAUDIO_UTIL_H

@@ -127,7 +127,7 @@ bool DAudioSinkDevCtrlMgr::IsOpened()
 
 void DAudioSinkDevCtrlMgr::OnEventReceived(const AudioEvent &event)
 {
-    DHLOGI("Received event.");
+    DHLOGI("Received event type %d.", event.type);
     auto callback = audioEventCallback_.lock();
     if (callback == nullptr) {
         DHLOGE("Callback is nullptr.");

@@ -33,7 +33,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-using JsonTypeCheckFunc = bool (*)(const nlohmann::json &jsonObj, const std::string &key);
+using JsonTypeCheckFunc = bool (*)(const json &jsonObj, const std::string &key);
 constexpr int32_t WORD_WIDTH_8 = 8;
 constexpr int32_t WORD_WIDTH_4 = 4;
 constexpr size_t INT32_SHORT_ID_LENGTH = 20;
@@ -169,7 +169,7 @@ int32_t GetAudioParamInt(const std::string &params, const std::string &key, int3
     return ret;
 }
 
-bool JsonParamCheck(const nlohmann::json& jsonObj, const std::initializer_list<std::string> &keys)
+bool JsonParamCheck(const json &jsonObj, const std::initializer_list<std::string> &keys)
 {
     if (jsonObj.is_discarded()) {
         DHLOGE("Json parameter is invalid.");
@@ -197,17 +197,17 @@ bool JsonParamCheck(const nlohmann::json& jsonObj, const std::initializer_list<s
     return true;
 }
 
-bool IsString(const nlohmann::json& jsonObj, const std::string& key)
+bool IsString(const json &jsonObj, const std::string &key)
 {
     return jsonObj[key].is_string();
 }
 
-bool IsInt32(const nlohmann::json& jsonObj, const std::string& key)
+bool IsInt32(const json &jsonObj, const std::string &key)
 {
     return jsonObj[key].is_number_integer() && INT32_MIN <= jsonObj[key] && jsonObj[key] <= INT32_MAX;
 }
 
-bool IsAudioParam(const nlohmann::json& jsonObj, const std::string& key)
+bool IsAudioParam(const json &jsonObj, const std::string &key)
 {
     return JsonParamCheck(jsonObj[key],
         { KEY_SAMPLING_RATE, KEY_CHANNELS, KEY_FORMAT, KEY_SOURCE_TYPE, KEY_CONTENT_TYPE, KEY_STREAM_USAGE });

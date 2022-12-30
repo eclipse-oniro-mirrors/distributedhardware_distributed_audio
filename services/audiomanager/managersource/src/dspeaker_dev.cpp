@@ -172,7 +172,7 @@ int32_t DSpeakerDev::SetUp()
         speakerTrans_ = std::make_shared<AudioEncodeTransport>(devId_);
     }
 
-    int32_t ret = speakerTrans_->SetUp(param_, param_, shared_from_this(), "speaker");
+    int32_t ret = speakerTrans_->SetUp(param_, param_, shared_from_this(), CAP_SPK);
     if (ret != DH_SUCCESS) {
         DHLOGE("Speaker trans set up failed. ret:%d", ret);
         return ret;

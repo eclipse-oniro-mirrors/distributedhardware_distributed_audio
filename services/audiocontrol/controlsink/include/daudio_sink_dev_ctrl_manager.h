@@ -41,8 +41,6 @@ public:
     int32_t SendAudioEvent(const AudioEvent &event);
 
 private:
-    static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
-
     std::string devId_;
     std::weak_ptr<IAudioEventCallback> audioEventCallback_;
     std::shared_ptr<IAudioCtrlTransport> audioCtrlTrans_ = nullptr;

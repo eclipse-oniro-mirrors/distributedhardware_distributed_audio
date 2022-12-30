@@ -32,7 +32,7 @@ using namespace testing::ext;
 namespace OHOS {
 namespace DistributedHardware {
 const std::string RMT_DEV_ID_TEST = "RemoteTest";
-const std::string ROLE_TEST = "speaker";
+const PortCapType ROLE_TEST = CAP_SPK;
 
 void DecodeTransportTest::SetUpTestCase(void)
 {

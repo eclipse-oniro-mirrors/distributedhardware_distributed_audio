@@ -68,21 +68,22 @@ private:
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
     static constexpr size_t DATA_QUEUE_MAX_SIZE = 3;
     static constexpr size_t FRAME_SIZE = 4096;
-    std::string devId_;
-    std::set<int32_t> enabledPorts_;
-    std::mutex dataQueueMtx_;
-    std::queue<std::shared_ptr<AudioData>> dataQueue_;
-    int32_t curPort_ = 0;
 
+    std::string devId_;
     std::weak_ptr<IAudioEventCallback> audioEventCallback_;
+    std::mutex dataQueueMtx_;
+    std::mutex channelWaitMutex_;
+    std::condition_variable channelWaitCond_;
+    int32_t curPort_ = 0;
+    std::atomic<bool> isTransReady_ = false;
+    std::atomic<bool> isOpened_ = false;
     std::shared_ptr<IAudioDataTransport> micTrans_ = nullptr;
+    std::queue<std::shared_ptr<AudioData>> dataQueue_;
+    std::set<int32_t> enabledPorts_;
 
     // Mic capture parameters
     AudioParamHDF paramHDF_;
     AudioParam param_;
-
-    std::atomic<bool> isTransReady_ = false;
-    std::atomic<bool> isOpened_ = false;
 };
 } // DistributedHardware
 } // OHOS

@@ -27,7 +27,7 @@ public:
     IAudioDataTransport() = default;
     virtual ~IAudioDataTransport() = default;
     virtual int32_t SetUp(const AudioParam &localParam, const AudioParam &remoteParam,
-        const std::shared_ptr<IAudioDataTransCallback> &callback, const std::string &role) = 0;
+        const std::shared_ptr<IAudioDataTransCallback> &callback, const PortCapType capType) = 0;
     virtual int32_t Start() = 0;
     virtual int32_t Stop() = 0;
     virtual int32_t Release() = 0;

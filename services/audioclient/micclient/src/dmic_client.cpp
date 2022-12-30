@@ -40,12 +40,9 @@ int32_t DMicClient::OnStateChange(const AudioEventType type)
     event.content = "";
     switch (type) {
         case AudioEventType::DATA_OPENED: {
-            isChannelReady_ = true;
             isBlocking_.store(true);
             isCaptureReady_.store(true);
             captureDataThread_ = std::thread(&DMicClient::CaptureThreadRunning, this);
-            std::unique_lock<std::mutex> lck(channelWaitMutex_);
-            channelWaitCond_.notify_all();
             event.type = AudioEventType::MIC_OPENED;
             break;
         }
@@ -92,7 +89,7 @@ int32_t DMicClient::SetUp(const AudioParam &param)
     }
 
     micTrans_ = std::make_shared<AudioEncodeTransport>(devId_);
-    int32_t ret = micTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), "mic");
+    int32_t ret = micTrans_->SetUp(audioParam_, audioParam_, shared_from_this(), CAP_MIC);
     if (ret != DH_SUCCESS) {
         DHLOGE("Mic trans setup failed.");
         return ret;
@@ -152,18 +149,6 @@ int32_t DMicClient::StartCapture()
         micTrans_->Release();
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret, "daudio mic trans start failed.");
         return ret;
-    }
-    DHLOGI("Wait for channel session opened.");
-    std::unique_lock<std::mutex> chLck(channelWaitMutex_);
-    auto status = channelWaitCond_.wait_for(chLck, std::chrono::seconds(CHANNEL_WAIT_SECONDS),
-        [this]() { return isChannelReady_; });
-    if (!status) {
-        DHLOGI("Open channel session timeout(%ds).", CHANNEL_WAIT_SECONDS);
-        micTrans_->Stop();
-        micTrans_->Release();
-        DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_TRANS_TIMEOUT,
-            "daudio open channel failed.");
-        return ERR_DH_AUDIO_CLIENT_TRANS_TIMEOUT;
     }
     clientStatus_ = CLIENT_STATUS_START;
     return DH_SUCCESS;

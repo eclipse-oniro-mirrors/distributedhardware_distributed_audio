@@ -171,7 +171,7 @@ int32_t DMicDev::SetUp()
     if (micTrans_ == nullptr) {
         micTrans_ = std::make_shared<AudioDecodeTransport>(devId_);
     }
-    int32_t ret = micTrans_->SetUp(param_, param_, shared_from_this(), "mic");
+    int32_t ret = micTrans_->SetUp(param_, param_, shared_from_this(), CAP_MIC);
     if (ret != DH_SUCCESS) {
         DHLOGE("Mic trans set up failed. ret: %d.", ret);
         return ret;
@@ -191,6 +191,14 @@ int32_t DMicDev::Start()
         DHLOGE("Mic trans start failed, ret: %d.", ret);
         return ret;
     }
+
+    std::unique_lock<std::mutex> lck(channelWaitMutex_);
+    auto status = channelWaitCond_.wait_for(lck, std::chrono::seconds(CHANNEL_WAIT_SECONDS),
+        [this]() { return isTransReady_.load(); });
+    if (!status) {
+        DHLOGE("Wait channel open timeout(%ds).", CHANNEL_WAIT_SECONDS);
+        return ERR_DH_AUDIO_SA_MIC_CHANNEL_WAIT_TIMEOUT;
+    }
     isOpened_.store(true);
     return DH_SUCCESS;
 }
@@ -204,6 +212,7 @@ int32_t DMicDev::Stop()
     }
 
     isOpened_.store(false);
+    isTransReady_.store(false);
     int32_t ret = micTrans_->Stop();
     if (ret != DH_SUCCESS) {
         DHLOGE("Stop mic trans failed, ret: %d.", ret);
@@ -274,6 +283,7 @@ int32_t DMicDev::OnStateChange(const AudioEventType type)
     switch (type) {
         case AudioEventType::DATA_OPENED:
             isTransReady_.store(true);
+            channelWaitCond_.notify_one();
             event.type = AudioEventType::MIC_OPENED;
             break;
         case AudioEventType::DATA_CLOSED:

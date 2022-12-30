@@ -42,6 +42,7 @@ public:
 
     void NotifyEvent(const AudioEvent &audioEvent) override;
 
+private:
     int32_t TaskOpenCtrlChannel(const std::string &args);
     int32_t TaskCloseCtrlChannel(const std::string &args);
     int32_t TaskOpenDSpeaker(const std::string &args);
@@ -56,7 +57,6 @@ public:
     int32_t TaskSetMute(const std::string &args);
     void OnTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
 
-private:
     int32_t NotifyOpenCtrlChannel(const AudioEvent &audioEvent);
     int32_t NotifyCloseCtrlChannel(const AudioEvent &audioEvent);
     int32_t NotifyCtrlOpened(const AudioEvent &audioEvent);
@@ -79,18 +79,17 @@ private:
     void NotifySourceDev(const AudioEventType type, const std::string dhId, const int32_t result);
     int32_t from_json(const json &j, AudioParam &audioParam);
 
-    std::shared_ptr<DSpeakerClient> speakerClient_;
-    std::shared_ptr<DMicClient> micClient_;
-    std::shared_ptr<DAudioSinkDevCtrlMgr> audioCtrlMgr_;
+private:
+    std::mutex taskQueueMutex_;
+    std::mutex rpcWaitMutex_;
+    std::condition_variable rpcWaitCond_;
     std::string devId_;
     std::string spkDhId_;
     std::string micDhId_;
-
-    std::mutex rpcWaitMutex_;
-    std::condition_variable rpcWaitCond_;
-
-    std::mutex taskQueueMutex_;
-    std::shared_ptr<TaskQueue> taskQueue_;
+    std::shared_ptr<TaskQueue> taskQueue_ = nullptr;
+    std::shared_ptr<DSpeakerClient> speakerClient_ = nullptr;
+    std::shared_ptr<DMicClient> micClient_ = nullptr;
+    std::shared_ptr<DAudioSinkDevCtrlMgr> audioCtrlMgr_ = nullptr;
 
     using DAudioSinkDevFunc = int32_t (DAudioSinkDev::*)(const AudioEvent &audioEvent);
     std::map<AudioEventType, DAudioSinkDevFunc> memberFuncMap_;

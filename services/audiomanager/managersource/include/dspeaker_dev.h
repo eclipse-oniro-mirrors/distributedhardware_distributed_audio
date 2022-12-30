@@ -69,20 +69,18 @@ private:
 
 private:
     std::string devId_;
-    std::set<int32_t> enabledPorts_;
-    int32_t curPort_ = 0;
-
     std::weak_ptr<IAudioEventCallback> audioEventCallback_;
+    std::mutex channelWaitMutex_;
+    std::condition_variable channelWaitCond_;
+    std::atomic<bool> isTransReady_ = false;
+    std::atomic<bool> isOpened_ = false;
+    int32_t curPort_ = 0;
     std::shared_ptr<IAudioDataTransport> speakerTrans_ = nullptr;
+    std::set<int32_t> enabledPorts_;
 
     // Speaker render parameters
     AudioParamHDF paramHDF_;
     AudioParam param_;
-
-    std::atomic<bool> isTransReady_ = false;
-    std::atomic<bool> isOpened_ = false;
-    std::mutex channelWaitMutex_;
-    std::condition_variable channelWaitCond_;
 };
 } // DistributedHardware
 } // OHOS
