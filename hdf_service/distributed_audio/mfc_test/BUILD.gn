@@ -6,7 +6,7 @@ ohos_executable("audio_test_distributed_fifo") {
   include_dirs = [
     "./include",
     "//drivers/peripheral/audio/interfaces/include",
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client/include",
+    "//foundation/distributedhardware/distributed_audio/services/hdfaudioclient/include",
     "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/hdi_service/common/include",
   ]
 
@@ -16,7 +16,7 @@ ohos_executable("audio_test_distributed_fifo") {
 
   deps = [
     "$hdf_uhdf_path/utils:libhdf_utils",
-    "//foundation/distributedhardware/distributed_audio/hdf_service/distributed_audio/audio_client:daudio_client",
+    "//foundation/distributedhardware/distributed_audio/services/hdfaudioclient:daudio_client",
   ]
 
   external_deps = [

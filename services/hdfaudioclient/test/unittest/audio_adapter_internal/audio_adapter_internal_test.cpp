@@ -20,7 +20,7 @@
 #include "daudio_adapter_internal.h"
 #include "audio_adapter_internal_test.h"
 #include "audio_adapter.h"
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 #include "daudio_log.h"
 
 #include "audio_types.h"
@@ -61,7 +61,7 @@ HWTEST_F(AudioAdapterTest, InitAllPortsInternal_001, TestSize.Level1)
     struct AudioAdapterContext adapterContext;
     struct AudioAdapter *adapter = nullptr;
     int32_t ret = adapterContext.instance_.InitAllPorts(adapter);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -76,7 +76,7 @@ HWTEST_F(AudioAdapterTest, InitAllPortsInternal_002, TestSize.Level1)
     struct AudioAdapter *adapter = new AudioAdapter;
     int32_t ret = adapterContext.instance_.InitAllPorts(adapter);
     delete adapter;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -93,7 +93,7 @@ HWTEST_F(AudioAdapterTest, CreateRenderInternal_001, TestSize.Level1)
     const struct ::AudioSampleAttributes *attrs = nullptr;
     struct AudioRender **render = nullptr;
     int32_t ret = adapterContext.instance_.CreateRender(adapter, desc, attrs, render);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -110,7 +110,7 @@ HWTEST_F(AudioAdapterTest, CreateRenderInternal_002, TestSize.Level1)
     const struct ::AudioSampleAttributes *attrs = new ::AudioSampleAttributes;
     struct AudioRender *render = new AudioRender;
     int32_t ret = adapterContext1.instance_.CreateRender(adapter, desc, attrs, &render);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     adapterContext->adapterName_ = "adapterName";
@@ -133,7 +133,7 @@ HWTEST_F(AudioAdapterTest, DestroyRenderInternal_001, TestSize.Level1)
     struct AudioAdapter *adapter = nullptr;
     struct AudioRender *render = nullptr;
     int32_t ret = adapterContext.instance_.DestroyRender(adapter, render);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -148,7 +148,7 @@ HWTEST_F(AudioAdapterTest, DestroyRenderInternal_002, TestSize.Level1)
     struct AudioAdapter *adapter = new AudioAdapter;
     struct AudioRender *render = new AudioRender;
     int32_t ret = adapterContext1.instance_.DestroyRender(adapter, render);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     adapterContext->adapterName_ = "adapterName";
@@ -171,7 +171,7 @@ HWTEST_F(AudioAdapterTest, CreateCaptureInternal_001, TestSize.Level1)
     const struct ::AudioSampleAttributes *attrs = nullptr;
     struct AudioCapture **capture = nullptr;
     int32_t ret = adapterContext.instance_.CreateCapture(adapter, desc, attrs, capture);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -188,7 +188,7 @@ HWTEST_F(AudioAdapterTest, CreateCaptureInternal_002, TestSize.Level1)
     const struct ::AudioSampleAttributes *attrs = new ::AudioSampleAttributes;
     struct AudioCapture *capture = new AudioCapture;
     int32_t ret = adapterContext1.instance_.CreateCapture(adapter, desc, attrs, &capture);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     adapterContext->adapterName_ = "adapterName";
@@ -211,7 +211,7 @@ HWTEST_F(AudioAdapterTest, DestroyCaptureInternal_001, TestSize.Level1)
     struct AudioAdapter *adapter = nullptr;
     struct AudioCapture *capture = nullptr;
     int32_t ret = adapterContext.instance_.DestroyCapture(adapter, capture);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -226,7 +226,7 @@ HWTEST_F(AudioAdapterTest, DestroyCaptureInternal_002, TestSize.Level1)
     struct AudioAdapter *adapter = new AudioAdapter;
     struct AudioCapture *capture = new AudioCapture;
     int32_t ret = adapterContext1.instance_.DestroyCapture(adapter, capture);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     adapterContext->adapterName_ = "adapterName";
@@ -248,7 +248,7 @@ HWTEST_F(AudioAdapterTest, GetPassthroughModeInternal_001, TestSize.Level1)
     const struct ::AudioPort *port = nullptr;
     enum ::AudioPortPassthroughMode *mode = nullptr;
     int32_t ret = adapterContext.instance_.GetPassthroughMode(adapter, port, mode);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -264,7 +264,7 @@ HWTEST_F(AudioAdapterTest, GetPassthroughModeInternal_002, TestSize.Level1)
     struct ::AudioPort *port = new ::AudioPort;
     enum ::AudioPortPassthroughMode *mode = new ::AudioPortPassthroughMode;
     int32_t ret = adapterContext1.instance_.GetPassthroughMode(adapter, port, mode);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     port->dir = AudioPortDirection::PORT_OUT;
@@ -290,7 +290,7 @@ HWTEST_F(AudioAdapterTest, GetPortCapabilityInternal_001, TestSize.Level1)
     const struct ::AudioPort *port = nullptr;
     struct ::AudioPortCapability *capability = nullptr;
     int32_t ret = adapterContext1.instance_.GetPortCapability(adapter, port, capability);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     adapterContext->adapterName_ = "adapterName";
@@ -314,7 +314,7 @@ HWTEST_F(AudioAdapterTest, ReleaseAudioRouteInternal_001, TestSize.Level1)
     struct AudioAdapter *adapter = nullptr;
     int32_t routeHandle = 0;
     int32_t ret = adapterContext.instance_.ReleaseAudioRoute(adapter, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -329,7 +329,7 @@ HWTEST_F(AudioAdapterTest, ReleaseAudioRouteInternal_002, TestSize.Level1)
     struct AudioAdapter *adapter = new AudioAdapter;
     int32_t routeHandle = 0;
     int32_t ret = adapterContext1.instance_.ReleaseAudioRoute(adapter, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     adapterContext->adapterName_ = "adapterName";
@@ -349,7 +349,7 @@ HWTEST_F(AudioAdapterTest, SetPassthroughModeInternal_001, TestSize.Level1)
     struct AudioAdapter *adapter = nullptr;
     const struct ::AudioPort *port = nullptr;
     int32_t ret = adapterContext.instance_.SetPassthroughMode(adapter, port, PORT_PASSTHROUGH_LPCM);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -364,7 +364,7 @@ HWTEST_F(AudioAdapterTest, SetPassthroughModeInternal_002, TestSize.Level1)
     struct AudioAdapter *adapter = new AudioAdapter;
     struct ::AudioPort *port = new ::AudioPort;
     int32_t ret = adapterContext1.instance_.SetPassthroughMode(adapter, port, PORT_PASSTHROUGH_LPCM);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     port->dir = AudioPortDirection::PORT_OUT;
@@ -390,7 +390,7 @@ HWTEST_F(AudioAdapterTest, UpdateAudioRouteInternal_001, TestSize.Level1)
     const struct ::AudioRoute *route = nullptr;
     int32_t *routeHandle = nullptr;
     int32_t ret = adapterContext1.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     adapterContext->adapterName_ = "adapterName";
@@ -419,7 +419,7 @@ HWTEST_F(AudioAdapterTest, UpdateAudioRouteInternal_002, TestSize.Level1)
     route->sinksNum = 0;
     int32_t *routeHandle = new int32_t(0);
     int32_t ret = adapterContext.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -441,16 +441,16 @@ HWTEST_F(AudioAdapterTest, UpdateAudioRouteInternal_003, TestSize.Level1)
     int32_t *routeHandle = new int32_t(0);
 
     int32_t ret = adapterContext.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     node->type = static_cast<enum AudioPortType>(1);
     ret = adapterContext.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     node->type = static_cast<enum AudioPortType>(2);
     ret = adapterContext.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     node->type = static_cast<enum AudioPortType>(3);
     ret = adapterContext.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -466,7 +466,7 @@ HWTEST_F(AudioAdapterTest, SetExtraParamsInternal_001, TestSize.Level1)
     const char *condition = nullptr;
     const char *value = nullptr;
     int32_t ret = adapterContext.instance_.SetExtraParams(adapter, AUDIO_EXT_PARAM_KEY_NONE, condition, value);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -484,7 +484,7 @@ HWTEST_F(AudioAdapterTest, SetExtraParamsInternal_002, TestSize.Level1)
     const char *condition = t_condition.c_str();
     const char *value = t_value.c_str();
     int32_t ret = adapterContext1.instance_.SetExtraParams(adapter, AUDIO_EXT_PARAM_KEY_NONE, condition, value);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     adapterContext->adapterName_ = "adapterName";
@@ -506,7 +506,7 @@ HWTEST_F(AudioAdapterTest, GetExtraParamsInternal_001, TestSize.Level1)
     char *value = nullptr;
     int32_t length = 0;
     int32_t ret = adapterContext.instance_.GetExtraParams(adapter, AUDIO_EXT_PARAM_KEY_NONE, condition, value, length);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -525,7 +525,7 @@ HWTEST_F(AudioAdapterTest, GetExtraParamsInternal_002, TestSize.Level1)
     char *value = new char;
     int32_t length = 0;
     int32_t ret = adapterContext1.instance_.GetExtraParams(adapter, AUDIO_EXT_PARAM_KEY_NONE, condition, value, length);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
     auto adapterContext = std::make_unique<AudioAdapterContext>();
     adapterContext->proxy_ = new MockIAudioAdapter();
     adapterContext->adapterName_ = "adapterName";
@@ -556,7 +556,7 @@ HWTEST_F(AudioAdapterTest, RegExtraParamObserverInternal_001, TestSize.Level1)
     cookie = &callback1;
     adapterContext->instance_.RegExtraParamObserver(&adapterContext->instance_,
         callback1, cookie);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 } // DistributedHardware
 } // OHOS

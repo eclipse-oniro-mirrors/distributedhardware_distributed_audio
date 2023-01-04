@@ -19,7 +19,7 @@
 
 #include "distributed_audio_client.h"
 #include "audio_manager.h"
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 #include "daudio_log.h"
 
 #define HDF_LOG_TAG HDF_AUDIO_UT
@@ -55,11 +55,11 @@ HWTEST_F(AudioManagerTest, GetAllAdaptersAbnormal, TestSize.Level1)
     AudioAdapterDescriptor *descs = nullptr;
 
     int32_t ret = managerContext.instance_.GetAllAdapters(nullptr, &descs, &size);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
     ret = managerContext.instance_.GetAllAdapters(&managerContext.instance_, nullptr, &size);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
     ret = managerContext.instance_.GetAllAdapters(&managerContext.instance_, &descs, nullptr);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -76,11 +76,11 @@ HWTEST_F(AudioManagerTest, LoadAdapterAbnormal, TestSize.Level1)
     struct AudioManager *manager = nullptr;
 
     int32_t ret = managerContext.instance_.LoadAdapter(nullptr, &desc, &adapter);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
     ret = managerContext.instance_.LoadAdapter(&managerContext.instance_, nullptr, &adapter);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
     ret = managerContext.instance_.LoadAdapter(&managerContext.instance_, &desc, nullptr);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
     managerContext.instance_.UnloadAdapter(manager, adapter);
 }
 } // DistributedHardware

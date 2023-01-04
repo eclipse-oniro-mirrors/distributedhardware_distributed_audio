@@ -51,7 +51,7 @@ ohos_shared_library("distributed_audio_source") {
     "${common_path}/include",
     "${common_path}/dfx_utils/include",
     "${distributedaudio_path}/audiohandler/include",
-    "${hdf_service_path}/audio_client/include",
+    "${services_path}/hdfaudioclient/include",
     "${hdf_service_path}/hdi_service/common/include",
     "${interfaces_path}/inner_kits/native_cpp/audio_sink/include",
     "${interfaces_path}/inner_kits/native_cpp/audio_source/include",
@@ -89,7 +89,7 @@ ohos_shared_library("distributed_audio_source") {
     "${audio_transport_path}/encodetransport:distributed_audio_encode_transport",
     "${distributedaudio_path}/audiohandler:distributed_audio_handler",
     "${hdf_interfaces_path}/audioext/v1_0:libdaudioext_proxy_1.0",
-    "${hdf_service_path}/audio_client:daudio_client",
+    "${services_path}/hdfaudioclient:daudio_client",
     "${services_path}/common:distributed_audio_utils",
   ]
 

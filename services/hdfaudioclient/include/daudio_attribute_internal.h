@@ -23,7 +23,7 @@
 #include "audio_types.h"
 #include <v1_0/audio_types.h>
 
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 #include "daudio_log.h"
 
 #undef DH_LOG_TAG
@@ -52,12 +52,12 @@ int32_t AudioAttributeInternal<T>::GetFrameSize(AudioHandle handle, uint64_t *si
 {
     if (handle == nullptr || size == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetFrameSize(*size);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->GetFrameSize(*size);
 }
 
 template<typename T>
@@ -65,12 +65,12 @@ int32_t AudioAttributeInternal<T>::GetFrameCount(AudioHandle handle, uint64_t *c
 {
     if (handle == nullptr || count == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetFrameCount(*count);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->GetFrameCount(*count);
 }
 
 template<typename T>
@@ -79,7 +79,7 @@ int32_t AudioAttributeInternal<T>::SetSampleAttributes(AudioHandle handle,
 {
     if (handle == nullptr || attrs == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
@@ -90,7 +90,7 @@ int32_t AudioAttributeInternal<T>::SetSampleAttributes(AudioHandle handle,
     };
     DHLOGD("AttrsHal.format = %u", attrsHal.format);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetSampleAttributes(attrsHal);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->SetSampleAttributes(attrsHal);
 }
 
 template<typename T>
@@ -98,13 +98,13 @@ int32_t AudioAttributeInternal<T>::GetSampleAttributes(AudioHandle handle, struc
 {
     if (handle == nullptr || attrs == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     DHLOGD("Get sample attributes.");
     T *context = reinterpret_cast<T *>(handle);
     if (context == nullptr || context->proxy_ == nullptr) {
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     AudioSampleAttributes attrsHal;
@@ -127,12 +127,12 @@ int32_t AudioAttributeInternal<T>::GetCurrentChannelId(AudioHandle handle, uint3
 {
     if (handle == nullptr || channelId == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetCurrentChannelId(*channelId);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->GetCurrentChannelId(*channelId);
 }
 
 template<typename T>
@@ -140,13 +140,13 @@ int32_t AudioAttributeInternal<T>::SetExtraParams(AudioHandle handle, const char
 {
     if (handle == nullptr || keyValueList == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     std::string keyValueListHal(keyValueList);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetExtraParams(keyValueListHal);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->SetExtraParams(keyValueListHal);
 }
 
 template<typename T>
@@ -154,18 +154,18 @@ int32_t AudioAttributeInternal<T>::GetExtraParams(AudioHandle handle, char *keyV
 {
     if (handle == nullptr || keyValueList == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     if (listLenth <= 0) {
         DHLOGE("The parameter is invalid.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     if (context == nullptr || context->proxy_ == nullptr) {
         DHLOGE("The context is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     std::string keyValueListHal(keyValueList);
@@ -178,7 +178,7 @@ int32_t AudioAttributeInternal<T>::GetExtraParams(AudioHandle handle, char *keyV
     }
     if (strcpy_s(keyValueList, listLenth, keyValueListHal.c_str()) != EOK) {
         DHLOGE("Strcpy_s keyValueList failed.");
-        return ERR_DH_AUDIO_HDF_FAIL;
+        return ERR_DH_AUDIO_HDI_CALL_FAILED;
     }
     return DH_SUCCESS;
 }
@@ -189,13 +189,13 @@ int32_t AudioAttributeInternal<T>::ReqMmapBuffer(AudioHandle handle, int32_t req
 {
     if (handle == nullptr || desc == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     if (context == nullptr || context->proxy_ == nullptr) {
         DHLOGE("The context is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     AudioMmapBufferDescriptor descHal;
@@ -208,7 +208,7 @@ int32_t AudioAttributeInternal<T>::ReqMmapBuffer(AudioHandle handle, int32_t req
     desc->memoryAddress = mmap(0, descHal.totalBufferFrames, PROT_READ | PROT_WRITE, MAP_SHARED, descHal.memoryFd, 0);
     if (desc->memoryAddress == MAP_FAILED) {
         DHLOGE("Request mmap buffer mmap error!");
-        return ERR_DH_AUDIO_HDF_FAILURE;
+        return ERR_DH_AUDIO_HDI_CALL_FAILED;
     }
     desc->memoryFd = descHal.memoryFd;
     desc->totalBufferFrames = descHal.totalBufferFrames;
@@ -223,14 +223,14 @@ int32_t AudioAttributeInternal<T>::GetMmapPosition(AudioHandle handle, uint64_t 
 {
     if (handle == nullptr || frames == nullptr || time == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
     DHLOGD("Get mmap position.");
 
     T *context = reinterpret_cast<T *>(handle);
     if (context == nullptr || context->proxy_ == nullptr) {
         DHLOGE("The context is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     AudioTimeStamp timeHal;

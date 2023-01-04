@@ -17,7 +17,7 @@
 
 #include <v1_0/iaudio_callback.h>
 
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -52,7 +52,7 @@ int32_t AudioRenderCallbackImpl::RenderCallback(AudioCallbackType type, int8_t &
         callback_(static_cast<::AudioCallbackType>(type), static_cast<void *>(&reserved), cookie_);
         return DH_SUCCESS;
     } else {
-        return ERR_DH_AUDIO_HDF_FAILURE;
+        return ERR_DH_AUDIO_HDI_CALL_FAILED;
     }
 }
 

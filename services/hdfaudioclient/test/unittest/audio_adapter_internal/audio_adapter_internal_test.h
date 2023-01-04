@@ -17,7 +17,7 @@
 
 #include "daudio_adapter_internal.h"
 #include "audio_adapter.h"
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 #include "daudio_log.h"
 
 #include "audio_types.h"

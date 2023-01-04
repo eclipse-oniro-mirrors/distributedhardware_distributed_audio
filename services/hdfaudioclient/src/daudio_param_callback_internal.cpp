@@ -20,7 +20,7 @@
 #include <v1_0/iaudio_callback.h>
 #include <v1_0/audio_types.h>
 
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 
 #define HDF_LOG_TAG HDF_AUDIO
 namespace OHOS {
@@ -63,7 +63,7 @@ int32_t AudioParamCallbackImpl::ParamCallback(AudioExtParamKey key, const std::s
             value.c_str(), static_cast<void *>(&reserved), cookie_);
         return DH_SUCCESS;
     } else {
-        return ERR_DH_AUDIO_HDF_FAILURE;
+        return ERR_DH_AUDIO_HDI_CALL_FAILED;
     }
 }
 } // namespace DistributedHardware

@@ -76,7 +76,7 @@ config("module_private_config") {
     "${audio_control_path}/controlsource/include",
     "${audio_hdi_proxy_path}/include",
     "${distributedaudio_path}/audiohandler/include",
-    "${hdf_service_path}/audio_client/include",
+    "${services_path}/hdfaudioclient/include",
     "${hdf_service_path}/hdi_service/common/include",
     "${interfaces_path}/inner_kits/native_cpp/audio_sink/include",
     "${interfaces_path}/inner_kits/native_cpp/audio_source/include",

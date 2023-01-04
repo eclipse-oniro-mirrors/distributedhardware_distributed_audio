@@ -8,8 +8,7 @@ ohos_shared_library("daudio_client") {
 
   include_dirs += [
     "./include",
-    "${hdf_service_path}/hdi_service/common/include/",
-    "${hdf_service_path}/hdi_service/common/log/include/",
+    "${common_path}/include",
   ]
 
   sources = [
@@ -38,9 +37,7 @@ ohos_shared_library("daudio_client") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  install_images = [ chipset_base_dir ]
+  subsystem_name = "distributedhardware"
 
-  subsystem_name = "hdf"
-
-  part_name = "drivers_peripheral_distributed_audio"
+  part_name = "distributed_audio"
 }

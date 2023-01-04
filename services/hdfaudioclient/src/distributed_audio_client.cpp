@@ -20,7 +20,7 @@
 #include <v1_0/audio_types.h>
 
 #include "audio_types.h"
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 #include "daudio_log.h"
 
 #undef DH_LOG_TAG
@@ -39,13 +39,13 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
         ::AudioPort *audioPorts = (::AudioPort *)malloc(desc.ports.size() * sizeof(AudioPort));
         if (audioPorts == nullptr) {
             DHLOGE("Audio ports is nullptr.");
-            return ERR_DH_AUDIO_HDF_FAILURE;
+            return ERR_DH_AUDIO_HDI_CALL_FAILED;
         }
         char* adapterName = reinterpret_cast<char *>(calloc(desc.adapterName.length() + 1, sizeof(char)));
         if (adapterName == nullptr) {
             DHLOGE("Calloc failed.");
             free(audioPorts);
-            return ERR_DH_AUDIO_HDF_FAILURE;
+            return ERR_DH_AUDIO_HDI_CALL_FAILED;
         }
         if (strcpy_s(adapterName, desc.adapterName.length() + 1, desc.adapterName.c_str()) != EOK) {
             DHLOGI("Strcpy_s adapter name failed.");
@@ -62,7 +62,7 @@ static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
             char* portName = reinterpret_cast<char *>(calloc(port.portName.length() + 1, sizeof(char)));
             if (portName == nullptr) {
                 DHLOGE("Calloc failed.");
-                return ERR_DH_AUDIO_HDF_FAILURE;
+                return ERR_DH_AUDIO_HDI_CALL_FAILED;
             }
             if (strcpy_s(portName, port.portName.length() + 1, port.portName.c_str()) != EOK) {
                 DHLOGI("Strcpy_s port name failed.");
@@ -85,7 +85,7 @@ static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct ::Aud
     DHLOGI("Get all adapters.");
     if (manager == nullptr || descs == nullptr || size == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     AudioManagerContext *context = reinterpret_cast<AudioManagerContext *>(manager);
@@ -94,7 +94,7 @@ static int32_t GetAllAdaptersInternal(struct AudioManager *manager, struct ::Aud
     std::vector<AudioAdapterDescriptor> descriptors;
     if (context->proxy_ == nullptr) {
         DHLOGE("The context or proxy for the context is nullptr.");
-        return ERR_DH_AUDIO_HDF_NULLPTR;
+        return ERR_DH_AUDIO_HDI_NULLPTR;
     }
     int32_t ret = context->proxy_->GetAllAdapters(descriptors);
     if (ret != DH_SUCCESS) {
@@ -119,7 +119,7 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct ::
     DHLOGI("Load adapter.");
     if (manager == nullptr || desc == nullptr || desc->adapterName == nullptr || adapter == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
     AudioManagerContext *context = reinterpret_cast<AudioManagerContext *>(manager);
     std::string adpName = desc->adapterName;
@@ -138,7 +138,7 @@ static int32_t LoadAdapterInternal(struct AudioManager *manager, const struct ::
     sptr<IAudioAdapter> adapterProxy = nullptr;
     if (context->proxy_ == nullptr) {
         DHLOGE("The context or proxy for the context is nullptr.");
-        return ERR_DH_AUDIO_HDF_NULLPTR;
+        return ERR_DH_AUDIO_HDI_NULLPTR;
     }
     int32_t ret = context->proxy_->LoadAdapter(descriptor, adapterProxy);
     if (ret != DH_SUCCESS) {

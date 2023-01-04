@@ -19,7 +19,7 @@
 
 #include "daudio_render_internal.h"
 #include "audio_render.h"
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 #include "daudio_log.h"
 
 #define HDF_LOG_TAG HDF_AUDIO_UT
@@ -54,7 +54,7 @@ HWTEST_F(AudioRenderTest, GetLatencyInternal_001, TestSize.Level1)
     struct AudioRender *render = nullptr;
     uint32_t *ms = nullptr;
     int32_t ret = renderContext.instance_.GetLatency(render, ms);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -71,7 +71,7 @@ HWTEST_F(AudioRenderTest, GetLatencyInternal_002, TestSize.Level1)
     int32_t ret = renderContext.instance_.GetLatency(render, ms);
     delete render;
     delete ms;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -88,7 +88,7 @@ HWTEST_F(AudioRenderTest, RenderFrameInternal_001, TestSize.Level1)
     uint64_t requestBytes = 0;
     uint64_t *replyBytes = nullptr;
     int32_t ret = renderContext.instance_.RenderFrame(render, frame, requestBytes, replyBytes);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -109,7 +109,7 @@ HWTEST_F(AudioRenderTest, RenderFrameInternal_002, TestSize.Level1)
     int32_t ret = renderContext.instance_.RenderFrame(render, frame, requestBytes, replyBytes);
     delete render;
     delete replyBytes;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -125,7 +125,7 @@ HWTEST_F(AudioRenderTest, GetRenderPositionInternal_001, TestSize.Level1)
     uint64_t *frames = nullptr;
     struct ::AudioTimeStamp *time = nullptr;
     int32_t ret = renderContext.instance_.GetRenderPosition(render, frames, time);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -144,7 +144,7 @@ HWTEST_F(AudioRenderTest, GetRenderPositionInternal_002, TestSize.Level1)
     delete render;
     delete frames;
     delete time;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -159,7 +159,7 @@ HWTEST_F(AudioRenderTest, SetRenderSpeedInternal_001, TestSize.Level1)
     struct AudioRender *render = nullptr;
     float speed = 0.0;
     int32_t ret = renderContext.instance_.SetRenderSpeed(render, speed);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -175,7 +175,7 @@ HWTEST_F(AudioRenderTest, SetRenderSpeedInternal_002, TestSize.Level1)
     float speed = 0.0;
     int32_t ret = renderContext.instance_.SetRenderSpeed(render, speed);
     delete render;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -190,7 +190,7 @@ HWTEST_F(AudioRenderTest, GetRenderSpeedInternal_001, TestSize.Level1)
     struct AudioRender *render = nullptr;
     float *speed = nullptr;
     int32_t ret = renderContext.instance_.GetRenderSpeed(render, speed);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -207,7 +207,7 @@ HWTEST_F(AudioRenderTest, GetRenderSpeedInternal_002, TestSize.Level1)
     int32_t ret = renderContext.instance_.GetRenderSpeed(render, speed);
     delete render;
     delete speed;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -221,7 +221,7 @@ HWTEST_F(AudioRenderTest, SetChannelModeInternal_001, TestSize.Level1)
     struct AudioRenderContext renderContext;
     struct AudioRender *render = nullptr;
     int32_t ret = renderContext.instance_.SetChannelMode(render, AUDIO_CHANNEL_NORMAL);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -236,7 +236,7 @@ HWTEST_F(AudioRenderTest, SetChannelModeInternal_002, TestSize.Level1)
     struct AudioRender *render = new AudioRender;
     int32_t ret = renderContext.instance_.SetChannelMode(render, AUDIO_CHANNEL_NORMAL);
     delete render;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -251,7 +251,7 @@ HWTEST_F(AudioRenderTest, GetChannelModeInternal_001, TestSize.Level1)
     struct AudioRender *render = nullptr;
     enum ::AudioChannelMode *mode = nullptr;
     int32_t ret = renderContext.instance_.GetChannelMode(render, mode);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -268,7 +268,7 @@ HWTEST_F(AudioRenderTest, GetChannelModeInternal_002, TestSize.Level1)
     int32_t ret = renderContext.instance_.GetChannelMode(render, mode);
     delete render;
     delete mode;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -284,7 +284,7 @@ HWTEST_F(AudioRenderTest, RegCallbackInternal_001, TestSize.Level1)
     ::RenderCallback callback = nullptr;
     void *cookie = nullptr;
     int32_t ret = renderContext.instance_.RegCallback(render, callback, cookie);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -299,7 +299,7 @@ HWTEST_F(AudioRenderTest, DrainBufferInternal_001, TestSize.Level1)
     struct AudioRender *render = nullptr;
     enum ::AudioDrainNotifyType *type = nullptr;
     int32_t ret = renderContext.instance_.DrainBuffer(render, type);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -316,7 +316,7 @@ HWTEST_F(AudioRenderTest, DrainBufferInternal_002, TestSize.Level1)
     int32_t ret = renderContext.instance_.DrainBuffer(render, type);
     delete render;
     delete type;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 } // DistributedHardware
 } // OHOS

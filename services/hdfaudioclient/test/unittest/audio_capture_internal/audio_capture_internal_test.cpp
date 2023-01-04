@@ -19,7 +19,7 @@
 
 #include "daudio_capture_internal.h"
 #include "audio_capture.h"
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 #include "daudio_log.h"
 
 #define HDF_LOG_TAG HDF_AUDIO_UT
@@ -55,7 +55,7 @@ HWTEST_F(AudioCaptureTest, GetCapturePositionInternal_001, TestSize.Level1)
     uint64_t *frames = nullptr;
     struct ::AudioTimeStamp *time = nullptr;
     int32_t ret = captureContext.instance_.GetCapturePosition(capture, frames, time);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -73,7 +73,7 @@ HWTEST_F(AudioCaptureTest, GetCapturePositionInternal_002, TestSize.Level1)
     int32_t ret = captureContext.instance_.GetCapturePosition(capture, frames, time);
     delete capture;
     delete time;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 
 /**
@@ -90,7 +90,7 @@ HWTEST_F(AudioCaptureTest, CaptureFrameInternal_001, TestSize.Level1)
     uint64_t requestBytes = 0;
     uint64_t *replyBytes = nullptr;
     int32_t ret = captureContext.instance_.CaptureFrame(capture, frame, requestBytes, replyBytes);
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_INVALID_PARAM, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
 }
 
 /**
@@ -110,7 +110,7 @@ HWTEST_F(AudioCaptureTest, CaptureFrameInternal_002, TestSize.Level1)
     int32_t ret = captureContext.instance_.CaptureFrame(capture, frame, requestBytes, replyBytes);
     delete capture;
     delete replyBytes;
-    EXPECT_EQ(ERR_DH_AUDIO_HDF_NULLPTR, ret);
+    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
 }
 } // DistributedHardware
 } // OHOS

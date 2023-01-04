@@ -18,7 +18,7 @@
 
 #include "audio_types.h"
 
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "AudioVolumeInternal"
@@ -41,12 +41,12 @@ int32_t AudioVolumeInternal<T>::SetMute(AudioHandle handle, bool mute)
 {
     if (handle == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetMute(mute);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->SetMute(mute);
 }
 
 template<typename T>
@@ -54,12 +54,12 @@ int32_t AudioVolumeInternal<T>::GetMute(AudioHandle handle, bool *mute)
 {
     if (handle == nullptr || mute == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetMute(*mute);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->GetMute(*mute);
 }
 
 template<typename T>
@@ -67,12 +67,12 @@ int32_t AudioVolumeInternal<T>::SetVolume(AudioHandle handle, float volume)
 {
     if (handle == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetVolume(volume);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->SetVolume(volume);
 }
 
 template<typename T>
@@ -80,12 +80,12 @@ int32_t AudioVolumeInternal<T>::GetVolume(AudioHandle handle, float *volume)
 {
     if (handle == nullptr || volume == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetVolume(*volume);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->GetVolume(*volume);
 }
 
 template<typename T>
@@ -93,12 +93,12 @@ int32_t AudioVolumeInternal<T>::GetGainThreshold(AudioHandle handle, float *min,
 {
     if (handle == nullptr || min == nullptr || max == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetGainThreshold(*min, *max);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->GetGainThreshold(*min, *max);
 }
 
 template<typename T>
@@ -106,12 +106,12 @@ int32_t AudioVolumeInternal<T>::SetGain(AudioHandle handle, float gain)
 {
     if (handle == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->SetGain(gain);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->SetGain(gain);
 }
 
 template<typename T>
@@ -119,12 +119,12 @@ int32_t AudioVolumeInternal<T>::GetGain(AudioHandle handle, float *gain)
 {
     if (handle == nullptr || gain == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     T *context = reinterpret_cast<T *>(handle);
     return (context == nullptr || context->proxy_ == nullptr) ?
-        ERR_DH_AUDIO_HDF_INVALID_PARAM : context->proxy_->GetGain(*gain);
+        ERR_DH_AUDIO_HDI_INVALID_PARAM : context->proxy_->GetGain(*gain);
 }
 } // DistributedHardware
 } // OHOS

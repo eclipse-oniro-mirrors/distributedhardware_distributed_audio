@@ -19,7 +19,7 @@
 
 #include "daudio_attribute_internal.h"
 #include "daudio_control_internal.h"
-#include "daudio_errcode.h"
+#include "daudio_errorcode.h"
 #include "daudio_log.h"
 #include "daudio_scene_internal.h"
 #include "daudio_volume_internal.h"
@@ -37,12 +37,12 @@ static int32_t GetCapturePositionInternal(struct AudioCapture *capture, uint64_t
 {
     if (capture == nullptr || frames == nullptr || time == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
     AudioCaptureContext *context = reinterpret_cast<AudioCaptureContext *>(capture);
     if (context->proxy_ == nullptr) {
         DHLOGE("The context or proxy for the context is nullptr.");
-        return ERR_DH_AUDIO_HDF_NULLPTR;
+        return ERR_DH_AUDIO_HDI_NULLPTR;
     }
     AudioTimeStamp timeHal;
     int32_t ret = context->proxy_->GetCapturePosition(*frames, timeHal);
@@ -60,13 +60,13 @@ static int32_t CaptureFrameInternal(struct AudioCapture *capture, void *frame, u
 {
     if (capture == nullptr || frame == nullptr || requestBytes == 0 || replyBytes == nullptr) {
         DHLOGE("The parameter is empty.");
-        return ERR_DH_AUDIO_HDF_INVALID_PARAM;
+        return ERR_DH_AUDIO_HDI_INVALID_PARAM;
     }
 
     AudioCaptureContext *context = reinterpret_cast<AudioCaptureContext *>(capture);
     if (context->proxy_ == nullptr) {
         DHLOGE("The context or proxy for the context is nullptr.");
-        return ERR_DH_AUDIO_HDF_NULLPTR;
+        return ERR_DH_AUDIO_HDI_NULLPTR;
     }
     int8_t *uframe = reinterpret_cast<int8_t *>(frame);
     std::vector<int8_t> frameHal;
@@ -79,7 +79,7 @@ static int32_t CaptureFrameInternal(struct AudioCapture *capture, void *frame, u
     ret = memcpy_s(uframe, requestBytes, frameHal.data(), requestBytes);
     if (ret != EOK) {
         DHLOGE("Copy capture frame failed, error code %d.", ret);
-        return ERR_DH_AUDIO_HDF_FAILURE;
+        return ERR_DH_AUDIO_HDI_CALL_FAILED;
     }
     return DH_SUCCESS;
 }

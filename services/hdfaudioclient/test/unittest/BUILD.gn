@@ -15,7 +15,7 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
 
-module_output_path = "distributed_audio/hdf_service/audio_client"
+module_output_path = "distributed_audio/hdfaudioclient"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -23,9 +23,8 @@ config("module_private_config") {
   include_dirs = [ "//drivers/peripheral/audio/interfaces/include" ]
 
   include_dirs += [
-    "${hdf_service_path}/hdi_service/common/log/include",
-    "${hdf_service_path}/hdi_service/common/include/",
-    "${hdf_service_path}/audio_client/include",
+    "${common_path}/include",
+    "${services_path}/hdfaudioclient/include",
     "audio_adapter_internal/",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
@@ -39,7 +38,7 @@ ohos_unittest("AudioAdapterHdiTest") {
   sources = [ "audio_manager_test.cpp" ]
 
   deps = [
-    "${hdf_service_path}/audio_client:daudio_client",
+    "${services_path}/hdfaudioclient:daudio_client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -68,7 +67,7 @@ ohos_unittest("AudioRenderInternalTest") {
   sources = [ "audio_render_internal/audio_render_internal_test.cpp" ]
 
   deps = [
-    "${hdf_service_path}/audio_client:daudio_client",
+    "${services_path}/hdfaudioclient:daudio_client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -97,7 +96,7 @@ ohos_unittest("AudioCaptureInternalTest") {
   sources = [ "audio_capture_internal/audio_capture_internal_test.cpp" ]
 
   deps = [
-    "${hdf_service_path}/audio_client:daudio_client",
+    "${services_path}/hdfaudioclient:daudio_client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -126,7 +125,7 @@ ohos_unittest("AudioAdapterInternalTest") {
   sources = [ "audio_adapter_internal/audio_adapter_internal_test.cpp" ]
 
   deps = [
-    "${hdf_service_path}/audio_client:daudio_client",
+    "${services_path}/hdfaudioclient:daudio_client",
     "${hdf_interfaces_path}/audio/v1_0:libdaudio_proxy_1.0",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
