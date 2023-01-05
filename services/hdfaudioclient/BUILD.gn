@@ -22,7 +22,7 @@ ohos_shared_library("daudio_client") {
 
   public_deps = [
     "${hdf_interfaces_path}/audio/v1_0:libdaudio_proxy_1.0",
-    "${hdf_service_path}/hdi_service/common:libdaudio_hdf_utils",
+    "${services_path}/common:distributed_audio_utils",
   ]
 
   external_deps = [
