@@ -72,7 +72,7 @@ int32_t DAudioSourceDev::AwakeAudioDev()
 void DAudioSourceDev::SleepAudioDev()
 {
     if (taskQueue_ == nullptr) {
-        DHLOGE("Task queue already stop.");
+        DHLOGI("Task queue already stop.");
         return;
     }
     taskQueue_->Stop();

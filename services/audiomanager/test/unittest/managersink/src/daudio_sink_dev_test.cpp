@@ -16,6 +16,7 @@
 #include "daudio_sink_dev_test.h"
 
 #include "audio_event.h"
+#include "daudio_constants.h"
 #include "daudio_errorcode.h"
 
 using namespace testing::ext;
@@ -47,6 +48,7 @@ HWTEST_F(DAudioSinkDevTest, NotifyCtrlOpened_001, TestSize.Level1)
 {
     AudioEvent event;
     EXPECT_EQ(DH_SUCCESS, sinkDev_->NotifyCtrlOpened(event));
+    sinkDev_->NotifyEvent(event);
 }
 
 /**
@@ -96,9 +98,27 @@ HWTEST_F(DAudioSinkDevTest, NotifyMicOpened_001, TestSize.Level1)
 HWTEST_F(DAudioSinkDevTest, NotifyPlayStatusChange_001, TestSize.Level1)
 {
     AudioEvent event;
-    sinkDev_->speakerClient_ = nullptr;
     EXPECT_EQ(ERR_DH_AUDIO_NULLPTR, sinkDev_->NotifyPlayStatusChange(event));
-    sinkDev_->NotifyEvent(event);
+
+    EXPECT_EQ(DH_SUCCESS, sinkDev_->AwakeAudioDev());
+    EXPECT_EQ(DH_SUCCESS, sinkDev_->NotifyPlayStatusChange(event));
+    sinkDev_->SleepAudioDev();
+}
+
+/**
+ * @tc.name: TaskPlayStatusChange_001
+ * @tc.desc: Verify the TaskPlayStatusChange function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSinkDevTest, TaskPlayStatusChange_001, TestSize.Level1)
+{
+    sinkDev_->speakerClient_ = nullptr;
+    EXPECT_EQ(ERR_DH_AUDIO_NULLPTR, sinkDev_->TaskPlayStatusChange(""));
+
+    std::string devId = "devid";
+    sinkDev_->speakerClient_ = std::make_shared<DSpeakerClient>(devId, sinkDev_);
+    EXPECT_EQ(DH_SUCCESS, sinkDev_->TaskPlayStatusChange(AUDIO_EVENT_PAUSE));
 }
 
 /**

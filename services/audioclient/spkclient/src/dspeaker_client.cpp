@@ -83,34 +83,35 @@ int32_t DSpeakerClient::Release()
 {
     DHLOGI("Release spk client.");
     std::lock_guard<std::mutex> lck(devMtx_);
-    if ((clientStatus_ != CLIENT_STATUS_READY && clientStatus_ != CLIENT_STATUS_STOP) || speakerTrans_ == nullptr) {
-        DHLOGE("Speaker status is wrong or spk is null, %d.", (int32_t)clientStatus_);
+    if (clientStatus_ != CLIENT_STATUS_READY && clientStatus_ != CLIENT_STATUS_STOP) {
+        DHLOGE("Speaker status %d is wrong.", (int32_t)clientStatus_);
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
-    int32_t ret = speakerTrans_->Stop();
-    if (ret != DH_SUCCESS) {
-        DHLOGE("Speaker trans stop failed.");
-        return ret;
+    bool isSucess = true;
+    if (speakerTrans_ != nullptr) {
+        if (speakerTrans_->Stop() != DH_SUCCESS) {
+            DHLOGE("Speaker trans stop failed.");
+            isSucess = false;
+        }
+        if (speakerTrans_->Release() != DH_SUCCESS) {
+            DHLOGE("Speaker trans release failed.");
+            isSucess = false;
+        }
+        speakerTrans_ = nullptr;
     }
-    ret = speakerTrans_->Release();
-    if (ret != DH_SUCCESS) {
-        DHLOGE("Speaker trans release failed.");
-        return ret;
-    }
-    speakerTrans_ = nullptr;
 
-    ret = AudioStandard::AudioSystemManager::GetInstance()->UnregisterVolumeKeyEventCallback(getpid());
+    int32_t ret = AudioStandard::AudioSystemManager::GetInstance()->UnregisterVolumeKeyEventCallback(getpid());
     if (ret != DH_SUCCESS) {
-        DHLOGE("Failed to unregister volume key event callback.");
-        return ret;
+        DHLOGE("Failed to unregister volume key event callback, error code %d.", ret);
+        isSucess = false;
     }
-    if (!audioRenderer_->Release()) {
+    if (audioRenderer_ != nullptr && !audioRenderer_->Release()) {
         DHLOGE("Audio renderer release failed.");
-        return ERR_DH_AUDIO_CLIENT_RENDER_RELEASE_FAILED;
+        isSucess = false;
+        audioRenderer_ = nullptr;
     }
-    audioRenderer_ = nullptr;
     clientStatus_ = CLIENT_STATUS_IDLE;
-    return DH_SUCCESS;
+    return isSucess ? DH_SUCCESS : ERR_DH_AUDIO_CLIENT_RENDER_RELEASE_FAILED;
 }
 
 int32_t DSpeakerClient::StartRender()
@@ -145,10 +146,10 @@ int32_t DSpeakerClient::StopRender()
             "daudio renderer is not start or spk status wrong.");
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
-    if (audioRenderer_ == nullptr || speakerTrans_ == nullptr) {
-        DHLOGE("Audio renderer or speaker trans is nullptr.");
+    if (audioRenderer_ == nullptr) {
+        DHLOGE("Audio renderer is nullptr.");
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL,
-            "daudio renderer or speaker trans is nullptr.");
+            "daudio renderer is nullptr.");
         return ERR_DH_AUDIO_CLIENT_RENDER_OR_TRANS_IS_NULL;
     }
     isRenderReady_.store(false);
@@ -169,7 +170,7 @@ int32_t DSpeakerClient::StopRender()
 void DSpeakerClient::PlayThreadRunning()
 {
     DHLOGI("Start the renderer thread.");
-    while (isRenderReady_.load()) {
+    while (audioRenderer_ != nullptr && isRenderReady_.load()) {
         std::shared_ptr<AudioData> audioData = nullptr;
         {
             std::unique_lock<std::mutex> spkLck(dataQueueMtx_);
@@ -393,12 +394,13 @@ void DSpeakerClient::Pause()
     if (renderDataThread_.joinable()) {
         renderDataThread_.join();
     }
-    int32_t ret = speakerTrans_->Pause();
-    if (ret != DH_SUCCESS) {
+    if (speakerTrans_ == nullptr || speakerTrans_->Pause() != DH_SUCCESS) {
         DHLOGE("Speaker trans Pause failed.");
     }
 
-    audioRenderer_->Flush();
+    if (audioRenderer_ != nullptr) {
+        audioRenderer_->Flush();
+    }
     clientStatus_ = CLIENT_STATUS_START;
     isRenderReady_.store(true);
 }
@@ -406,8 +408,7 @@ void DSpeakerClient::Pause()
 void DSpeakerClient::ReStart()
 {
     DHLOGI("ReStart");
-    int32_t ret = speakerTrans_->Restart(audioParam_, audioParam_);
-    if (ret != DH_SUCCESS) {
+    if (speakerTrans_ == nullptr || speakerTrans_->Restart(audioParam_, audioParam_) != DH_SUCCESS) {
         DHLOGE("Speaker trans Restart failed.");
     }
     isRenderReady_.store(true);

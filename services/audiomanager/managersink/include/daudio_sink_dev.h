@@ -55,6 +55,7 @@ private:
     int32_t TaskRenderStateChange(const std::string &args);
     int32_t TaskSetVolume(const std::string &args);
     int32_t TaskSetMute(const std::string &args);
+    int32_t TaskPlayStatusChange(const std::string &args);
     void OnTaskResult(int32_t resultCode, const std::string &result, const std::string &funcName);
 
     int32_t NotifyOpenCtrlChannel(const AudioEvent &audioEvent);
