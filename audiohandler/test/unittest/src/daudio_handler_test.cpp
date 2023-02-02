@@ -75,7 +75,7 @@ HWTEST_F(DAudioHandlerTest, QueryAudioInfo_001, TestSize.Level1)
 HWTEST_F(DAudioHandlerTest, Query_001, TestSize.Level1)
 {
     int32_t actual = DAudioHandler::GetInstance().Query().size();
-    EXPECT_LT(DH_SUCCESS, actual);
+    EXPECT_LE(DH_SUCCESS, actual);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

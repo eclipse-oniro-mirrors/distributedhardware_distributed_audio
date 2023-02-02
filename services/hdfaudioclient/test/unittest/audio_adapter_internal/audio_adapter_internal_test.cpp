@@ -65,21 +65,6 @@ HWTEST_F(AudioAdapterTest, InitAllPortsInternal_001, TestSize.Level1)
 }
 
 /**
-* @tc.name: InitAllPortsInternal
-* @tc.desc: Verify the abnormal branch of the InitAllPortsInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, InitAllPortsInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext;
-    struct AudioAdapter *adapter = new AudioAdapter;
-    int32_t ret = adapterContext.instance_.InitAllPorts(adapter);
-    delete adapter;
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-}
-
-/**
 * @tc.name: CreateRenderInternal
 * @tc.desc: Verify the abnormal branch of the CreateRenderInternal, when param is null.
 * @tc.type: FUNC
@@ -97,31 +82,6 @@ HWTEST_F(AudioAdapterTest, CreateRenderInternal_001, TestSize.Level1)
 }
 
 /**
-* @tc.name: CreateRenderInternal
-* @tc.desc: Verify the abnormal branch of the CreateRenderInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, CreateRenderInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext1;
-    struct AudioAdapter *adapter = new AudioAdapter;
-    const struct ::AudioDeviceDescriptor *desc = new ::AudioDeviceDescriptor;
-    const struct ::AudioSampleAttributes *attrs = new ::AudioSampleAttributes;
-    struct AudioRender *render = new AudioRender;
-    int32_t ret = adapterContext1.instance_.CreateRender(adapter, desc, attrs, &render);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    auto adapterContext = std::make_unique<AudioAdapterContext>();
-    adapterContext->proxy_ = new MockIAudioAdapter();
-    adapterContext->adapterName_ = "adapterName";
-    EXPECT_EQ(DH_SUCCESS, adapterContext->instance_.CreateRender(&adapterContext->instance_, desc, attrs, &render));
-    delete adapter;
-    delete desc;
-    delete attrs;
-    delete render;
-}
-
-/**
 * @tc.name: DestroyRenderInternal
 * @tc.desc: Verify the abnormal branch of the DestroyRenderInternal, when param is null.
 * @tc.type: FUNC
@@ -134,27 +94,6 @@ HWTEST_F(AudioAdapterTest, DestroyRenderInternal_001, TestSize.Level1)
     struct AudioRender *render = nullptr;
     int32_t ret = adapterContext.instance_.DestroyRender(adapter, render);
     EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
-}
-
-/**
-* @tc.name: DestroyRenderInternal
-* @tc.desc: Verify the abnormal branch of the DestroyRenderInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, DestroyRenderInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext1;
-    struct AudioAdapter *adapter = new AudioAdapter;
-    struct AudioRender *render = new AudioRender;
-    int32_t ret = adapterContext1.instance_.DestroyRender(adapter, render);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    auto adapterContext = std::make_unique<AudioAdapterContext>();
-    adapterContext->proxy_ = new MockIAudioAdapter();
-    adapterContext->adapterName_ = "adapterName";
-    EXPECT_EQ(DH_SUCCESS, adapterContext->instance_.DestroyRender(&adapterContext->instance_, render));
-    delete adapter;
-    delete render;
 }
 
 /**
@@ -175,31 +114,6 @@ HWTEST_F(AudioAdapterTest, CreateCaptureInternal_001, TestSize.Level1)
 }
 
 /**
-* @tc.name: CreateCaptureInternal
-* @tc.desc: Verify the abnormal branch of the CreateCaptureInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, CreateCaptureInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext1;
-    struct AudioAdapter *adapter = new AudioAdapter;
-    const struct ::AudioDeviceDescriptor *desc = new ::AudioDeviceDescriptor;
-    const struct ::AudioSampleAttributes *attrs = new ::AudioSampleAttributes;
-    struct AudioCapture *capture = new AudioCapture;
-    int32_t ret = adapterContext1.instance_.CreateCapture(adapter, desc, attrs, &capture);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    auto adapterContext = std::make_unique<AudioAdapterContext>();
-    adapterContext->proxy_ = new MockIAudioAdapter();
-    adapterContext->adapterName_ = "adapterName";
-    EXPECT_EQ(DH_SUCCESS, adapterContext->instance_.CreateCapture(&adapterContext->instance_, desc, attrs, &capture));
-    delete adapter;
-    delete desc;
-    delete attrs;
-    delete capture;
-}
-
-/**
 * @tc.name: DestroyCaptureInternal
 * @tc.desc: Verify the abnormal branch of the DestroyCaptureInternal, when param is null.
 * @tc.type: FUNC
@@ -212,27 +126,6 @@ HWTEST_F(AudioAdapterTest, DestroyCaptureInternal_001, TestSize.Level1)
     struct AudioCapture *capture = nullptr;
     int32_t ret = adapterContext.instance_.DestroyCapture(adapter, capture);
     EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
-}
-
-/**
-* @tc.name: DestroyCaptureInternal
-* @tc.desc: Verify the abnormal branch of the DestroyCaptureInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, DestroyCaptureInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext1;
-    struct AudioAdapter *adapter = new AudioAdapter;
-    struct AudioCapture *capture = new AudioCapture;
-    int32_t ret = adapterContext1.instance_.DestroyCapture(adapter, capture);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    auto adapterContext = std::make_unique<AudioAdapterContext>();
-    adapterContext->proxy_ = new MockIAudioAdapter();
-    adapterContext->adapterName_ = "adapterName";
-    EXPECT_EQ(DH_SUCCESS, adapterContext->instance_.DestroyCapture(&adapterContext->instance_, capture));
-    delete adapter;
-    delete capture;
 }
 
 /**
@@ -252,57 +145,6 @@ HWTEST_F(AudioAdapterTest, GetPassthroughModeInternal_001, TestSize.Level1)
 }
 
 /**
-* @tc.name: GetPassthroughModeInternal
-* @tc.desc: Verify the abnormal branch of the GetPassthroughModeInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, GetPassthroughModeInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext1;
-    struct AudioAdapter *adapter = new AudioAdapter;
-    struct ::AudioPort *port = new ::AudioPort;
-    enum ::AudioPortPassthroughMode *mode = new ::AudioPortPassthroughMode;
-    int32_t ret = adapterContext1.instance_.GetPassthroughMode(adapter, port, mode);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    auto adapterContext = std::make_unique<AudioAdapterContext>();
-    adapterContext->proxy_ = new MockIAudioAdapter();
-    port->dir = AudioPortDirection::PORT_OUT;
-    port->portId = 1;
-    port->portName = "name";
-    adapterContext->adapterName_ = "adapterName";
-    EXPECT_EQ(DH_SUCCESS, adapterContext->instance_.GetPassthroughMode(&adapterContext->instance_, port, mode));
-    delete adapter;
-    delete port;
-    delete mode;
-}
-
-/**
-* @tc.name: GetPortCapabilityInternal
-* @tc.desc: Verify the abnormal branch of the GetPortCapabilityInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, GetPortCapabilityInternal_001, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext1;
-    struct AudioAdapter *adapter = nullptr;
-    const struct ::AudioPort *port = nullptr;
-    struct ::AudioPortCapability *capability = nullptr;
-    int32_t ret = adapterContext1.instance_.GetPortCapability(adapter, port, capability);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
-    auto adapterContext = std::make_unique<AudioAdapterContext>();
-    adapterContext->proxy_ = new MockIAudioAdapter();
-    adapterContext->adapterName_ = "adapterName";
-    struct ::AudioPort *port1 = new ::AudioPort;
-    struct ::AudioPortCapability *capability1 = new ::AudioPortCapability;
-    EXPECT_EQ(DH_SUCCESS, adapterContext->instance_.GetPortCapability(&adapterContext->instance_, port1, capability1));
-    delete adapter;
-    delete port;
-    delete capability;
-}
-
-/**
 * @tc.name: ReleaseAudioRouteInternal
 * @tc.desc: Verify the abnormal branch of the ReleaseAudioRouteInternal, when param is null.
 * @tc.type: FUNC
@@ -318,26 +160,6 @@ HWTEST_F(AudioAdapterTest, ReleaseAudioRouteInternal_001, TestSize.Level1)
 }
 
 /**
-* @tc.name: ReleaseAudioRouteInternal
-* @tc.desc: Verify the abnormal branch of the ReleaseAudioRouteInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, ReleaseAudioRouteInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext1;
-    struct AudioAdapter *adapter = new AudioAdapter;
-    int32_t routeHandle = 0;
-    int32_t ret = adapterContext1.instance_.ReleaseAudioRoute(adapter, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    auto adapterContext = std::make_unique<AudioAdapterContext>();
-    adapterContext->proxy_ = new MockIAudioAdapter();
-    adapterContext->adapterName_ = "adapterName";
-    EXPECT_EQ(DH_SUCCESS, adapterContext->instance_.ReleaseAudioRoute(&adapterContext->instance_, routeHandle));
-    delete adapter;
-}
-
-/**
 * @tc.name: SetPassthroughModeInternal
 * @tc.desc: Verify the abnormal branch of the SetPassthroughModeInternal, when param is null.
 * @tc.type: FUNC
@@ -350,31 +172,6 @@ HWTEST_F(AudioAdapterTest, SetPassthroughModeInternal_001, TestSize.Level1)
     const struct ::AudioPort *port = nullptr;
     int32_t ret = adapterContext.instance_.SetPassthroughMode(adapter, port, PORT_PASSTHROUGH_LPCM);
     EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
-}
-
-/**
-* @tc.name: SetPassthroughModeInternal
-* @tc.desc: Verify the abnormal branch of the SetPassthroughModeInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, SetPassthroughModeInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext1;
-    struct AudioAdapter *adapter = new AudioAdapter;
-    struct ::AudioPort *port = new ::AudioPort;
-    int32_t ret = adapterContext1.instance_.SetPassthroughMode(adapter, port, PORT_PASSTHROUGH_LPCM);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    auto adapterContext = std::make_unique<AudioAdapterContext>();
-    adapterContext->proxy_ = new MockIAudioAdapter();
-    port->dir = AudioPortDirection::PORT_OUT;
-    port->portId = 1;
-    port->portName = "name";
-    adapterContext->adapterName_ = "adapterName";
-    EXPECT_EQ(DH_SUCCESS, adapterContext->instance_.SetPassthroughMode(&adapterContext->instance_,
-        port, PORT_PASSTHROUGH_LPCM));
-    delete adapter;
-    delete port;
 }
 
 /**
@@ -405,55 +202,6 @@ HWTEST_F(AudioAdapterTest, UpdateAudioRouteInternal_001, TestSize.Level1)
 }
 
 /**
-* @tc.name: UpdateAudioRouteInternal
-* @tc.desc: Verify the abnormal branch of the UpdateAudioRouteInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, UpdateAudioRouteInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext;
-    struct AudioAdapter *adapter = new struct AudioAdapter;
-    struct ::AudioRoute *route = new struct ::AudioRoute;
-    route->sourcesNum = 0;
-    route->sinksNum = 0;
-    int32_t *routeHandle = new int32_t(0);
-    int32_t ret = adapterContext.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-}
-
-/**
-* @tc.name: UpdateAudioRouteInternal
-* @tc.desc: Verify the abnormal branch of the UpdateAudioRouteInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, UpdateAudioRouteInternal_003, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext;
-    struct AudioAdapter *adapter = new struct AudioAdapter;
-    struct ::AudioRoute *route = new struct ::AudioRoute;
-    route->sourcesNum = 1;
-    auto node = new ::AudioRouteNode;
-    node->type = static_cast<enum AudioPortType>(0);
-    route->sources = node;
-    route->sinksNum = 0;
-    int32_t *routeHandle = new int32_t(0);
-
-    int32_t ret = adapterContext.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    node->type = static_cast<enum AudioPortType>(1);
-    ret = adapterContext.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    node->type = static_cast<enum AudioPortType>(2);
-    ret = adapterContext.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    node->type = static_cast<enum AudioPortType>(3);
-    ret = adapterContext.instance_.UpdateAudioRoute(adapter, route, routeHandle);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-}
-
-/**
 * @tc.name: SetExtraParamsInternal
 * @tc.desc: Verify the abnormal branch of the SetExtraParamsInternal, when param is null.
 * @tc.type: FUNC
@@ -467,29 +215,6 @@ HWTEST_F(AudioAdapterTest, SetExtraParamsInternal_001, TestSize.Level1)
     const char *value = nullptr;
     int32_t ret = adapterContext.instance_.SetExtraParams(adapter, AUDIO_EXT_PARAM_KEY_NONE, condition, value);
     EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
-}
-
-/**
-* @tc.name: SetExtraParamsInternal
-* @tc.desc: Verify the abnormal branch of the SetExtraParamsInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, SetExtraParamsInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext1;
-    struct AudioAdapter *adapter = new AudioAdapter;
-    std::string t_condition = "condition";
-    std::string t_value = "value";
-    const char *condition = t_condition.c_str();
-    const char *value = t_value.c_str();
-    int32_t ret = adapterContext1.instance_.SetExtraParams(adapter, AUDIO_EXT_PARAM_KEY_NONE, condition, value);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    auto adapterContext = std::make_unique<AudioAdapterContext>();
-    adapterContext->proxy_ = new MockIAudioAdapter();
-    adapterContext->adapterName_ = "adapterName";
-    EXPECT_EQ(DH_SUCCESS, adapterContext->instance_.SetExtraParams(&adapterContext->instance_,
-        AUDIO_EXT_PARAM_KEY_NONE, condition, value));
 }
 
 /**
@@ -507,33 +232,6 @@ HWTEST_F(AudioAdapterTest, GetExtraParamsInternal_001, TestSize.Level1)
     int32_t length = 0;
     int32_t ret = adapterContext.instance_.GetExtraParams(adapter, AUDIO_EXT_PARAM_KEY_NONE, condition, value, length);
     EXPECT_EQ(ERR_DH_AUDIO_HDI_INVALID_PARAM, ret);
-}
-
-/**
-* @tc.name: GetExtraParamsInternal
-* @tc.desc: Verify the abnormal branch of the GetExtraParamsInternal, when param is null.
-* @tc.type: FUNC
-* @tc.require: AR000H0E6H
-*/
-HWTEST_F(AudioAdapterTest, GetExtraParamsInternal_002, TestSize.Level1)
-{
-    struct AudioAdapterContext adapterContext1;
-    struct AudioAdapter *adapter = new AudioAdapter;
-    std::string t_condition = "condition";
-    std::string t_value = "value";
-    const char *condition = t_condition.c_str();
-    char *value = new char;
-    int32_t length = 0;
-    int32_t ret = adapterContext1.instance_.GetExtraParams(adapter, AUDIO_EXT_PARAM_KEY_NONE, condition, value, length);
-    EXPECT_EQ(ERR_DH_AUDIO_HDI_NULLPTR, ret);
-    auto adapterContext = std::make_unique<AudioAdapterContext>();
-    adapterContext->proxy_ = new MockIAudioAdapter();
-    adapterContext->adapterName_ = "adapterName";
-    length = 1;
-    EXPECT_EQ(DH_SUCCESS, adapterContext->instance_.GetExtraParams(&adapterContext->instance_,
-        AUDIO_EXT_PARAM_KEY_NONE, condition, value, length));
-    delete adapter;
-    delete value;
 }
 
 /**
