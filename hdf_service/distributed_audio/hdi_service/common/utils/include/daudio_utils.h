@@ -40,7 +40,7 @@ int32_t GetDevTypeByDHId(int32_t dhId);
 uint32_t CalculateFrameSize(uint32_t sampleRate, uint32_t channelCount,
     int32_t format, uint32_t timeInterval, bool isMMAP);
 
-int32_t CalculateSampleNum(int32_t sampleRate, int32_t timems);
+int32_t CalculateSampleNum(uint32_t sampleRate, uint32_t timems);
 
 int64_t GetCurNano();
 

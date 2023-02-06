@@ -188,7 +188,7 @@ int32_t AudioEncodeTransport::RegisterChannelListener(const PortCapType capType)
 int32_t AudioEncodeTransport::RegisterProcessorListener(const AudioParam &localParam, const AudioParam &remoteParam)
 {
     DHLOGI("Register processor listener.");
-    if (localParam.renderOpts.renderFlags == 1 || localParam.captureOpts.capturerFlags == 1) {
+    if (localParam.renderOpts.renderFlags == MMAP_FLAG || localParam.captureOpts.capturerFlags == MMAP_FLAG) {
         DHLOGE("Encode trans low-latency mode. renderFlags: %d, captureFlags: %d",
             localParam.renderOpts.renderFlags, localParam.captureOpts.capturerFlags);
         processor_ = std::make_shared<AudioLowlatencyProcessor>();

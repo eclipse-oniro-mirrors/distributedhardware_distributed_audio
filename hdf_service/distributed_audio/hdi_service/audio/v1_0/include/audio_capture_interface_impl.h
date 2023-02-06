@@ -41,7 +41,7 @@ typedef enum {
 
 class AudioCaptureInterfaceImpl : public IAudioCapture {
 public:
-    AudioCaptureInterfaceImpl(const std::string adpName, const AudioDeviceDescriptor &desc,
+    AudioCaptureInterfaceImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
         const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
     ~AudioCaptureInterfaceImpl() override;
 

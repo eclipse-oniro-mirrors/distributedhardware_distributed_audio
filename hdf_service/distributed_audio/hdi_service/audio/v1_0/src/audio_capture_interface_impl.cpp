@@ -33,7 +33,7 @@ namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-AudioCaptureInterfaceImpl::AudioCaptureInterfaceImpl(const std::string adpName, const AudioDeviceDescriptor &desc,
+AudioCaptureInterfaceImpl::AudioCaptureInterfaceImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
     const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback)
     : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
 {

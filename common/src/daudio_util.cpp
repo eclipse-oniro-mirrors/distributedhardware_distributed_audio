@@ -214,7 +214,7 @@ bool IsAudioParam(const json &jsonObj, const std::string &key)
         { KEY_SAMPLING_RATE, KEY_CHANNELS, KEY_FORMAT, KEY_SOURCE_TYPE, KEY_CONTENT_TYPE, KEY_STREAM_USAGE });
 }
 
-int32_t CalculateSampleNum(int32_t sampleRate, int32_t timems)
+int32_t CalculateSampleNum(uint32_t sampleRate, uint32_t timems)
 {
     return sampleRate * timems / AUDIO_MS_PER_SECOND;
 }

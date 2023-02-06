@@ -33,7 +33,7 @@ namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-AudioRenderInterfaceImpl::AudioRenderInterfaceImpl(const std::string adpName, const AudioDeviceDescriptor &desc,
+AudioRenderInterfaceImpl::AudioRenderInterfaceImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
     const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback)
     : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
 {
@@ -353,7 +353,7 @@ int32_t AudioRenderInterfaceImpl::GetExtraParams(std::string &keyValueList)
     return HDF_SUCCESS;
 }
 
-int32_t AudioRenderInterfaceImpl::ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescriptor &desc)
+int32_t AudioRenderInterfaceImpl::ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescriptor &desc)
 {
     DHLOGI("Request mmap buffer, not support yet.");
     (void)reqSize;

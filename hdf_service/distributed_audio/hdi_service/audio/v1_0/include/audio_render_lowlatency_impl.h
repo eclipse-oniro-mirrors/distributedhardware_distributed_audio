@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,15 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_AUDIO_RENDER_INTERFACE_IMPL_H
-#define OHOS_AUDIO_RENDER_INTERFACE_IMPL_H
+#ifndef OHOS_AUDIO_RENDER_LOWLATENCY_IMPL_H
+#define OHOS_AUDIO_RENDER_LOWLATENCY_IMPL_H
 
 #include <mutex>
 #include <string>
 #include <cmath>
 
+#include "ashmem.h"
+#include "audio_render_interface_impl.h"
 #include <v1_0/audio_types.h>
 #include <v1_0/iaudio_render.h>
 #include <v1_0/id_audio_manager.h>
@@ -33,22 +35,11 @@ using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
-
-constexpr uint32_t DURATION_FRAMES = 100;
-constexpr uint32_t CUR_FRAME_INIT_VALUE = 0;
-typedef enum {
-    RENDER_STATUS_OPEN = 0,
-    RENDER_STATUS_CLOSE,
-    RENDER_STATUS_START,
-    RENDER_STATUS_STOP,
-    RENDER_STATUS_PAUSE,
-} AudioRenderStatus;
-
-class AudioRenderInterfaceImpl : public IAudioRender {
+class AudioRenderLowLatencyImpl : public IAudioRender {
 public:
-    AudioRenderInterfaceImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
+    AudioRenderLowLatencyImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
         const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
-    ~AudioRenderInterfaceImpl() override;
+    ~AudioRenderLowLatencyImpl() override;
 
     int32_t GetLatency(uint32_t &ms) override;
     int32_t RenderFrame(const std::vector<int8_t> &frame, uint64_t &replyBytes) override;
@@ -96,9 +87,13 @@ public:
     uint32_t GetVolumeInner();
     uint32_t GetMaxVolumeInner();
     uint32_t GetMinVolumeInner();
+    int32_t GetAshmemInfo(int &fd, int &ashememLength, int &lengthPerTrans);
+
 private:
     float GetFadeRate(uint32_t currentIndex, const uint32_t durationIndex);
     int32_t FadeInProcess(const uint32_t durationFrame, int8_t* frameData, const size_t frameLength);
+    int32_t InitAshmem(int32_t ashmemLength);
+    void UnInitAshmem();
 
 private:
     std::string adapterName_;
@@ -106,6 +101,8 @@ private:
     AudioSampleAttributes devAttrs_;
 
     uint32_t timeInterval_ = 5;
+    uint32_t minTimeInterval_ = 30;
+    uint32_t maxTimeInterval_ = 80;
     float renderSpeed_ = 0;
     std::mutex volMtx_;
     uint32_t vol_ = 0;
@@ -117,11 +114,14 @@ private:
     AudioRenderStatus renderStatus_ = RENDER_STATUS_CLOSE;
     sptr<IDAudioCallback> audioExtCallback_ = nullptr;
     sptr<IAudioCallback> renderCallback_ = nullptr;
-    bool firstOpenFlag = true;
+    OHOS::sptr<OHOS::Ashmem> ashmem_;
+    int32_t ashmemLength_;
+    int32_t lengthPerTrans_;
+    int fd_;
 };
 } // V1_0
 } // Audio
 } // Distributedaudio
 } // HDI
 } // OHOS
-#endif // OHOS_AUDIO_RENDER_INTERFACE_IMPL_H
+#endif // OHOS_AUDIO_RENDER_LOWLATENCY_IMPL_H
