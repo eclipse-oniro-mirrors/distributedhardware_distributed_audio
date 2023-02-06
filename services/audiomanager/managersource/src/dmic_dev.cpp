@@ -147,8 +147,9 @@ int32_t DMicDev::SetParameters(const std::string &devId, const int32_t dhId, con
     param_.comParam.channelMask = paramHDF_.channelMask;
     param_.comParam.bitFormat = paramHDF_.bitFormat;
     param_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
+    param_.comParam.frameSize = paramHDF_.frameSize;
     param_.captureOpts.sourceType = SOURCE_TYPE_MIC;
-    param_.captureOpts.capturerFlags = 0;
+    param_.captureOpts.capturerFlags = paramHDF_.capturerFlags;
     return DH_SUCCESS;
 }
 
@@ -254,7 +255,7 @@ int32_t DMicDev::ReadStreamData(const std::string &devId, const int32_t dhId, st
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     if (dataQueue_.empty()) {
         DHLOGI("Data queue is empty.");
-        data = std::make_shared<AudioData>(FRAME_SIZE);
+        data = std::make_shared<AudioData>(param_.comParam.frameSize);
     } else {
         data = dataQueue_.front();
         dataQueue_.pop();

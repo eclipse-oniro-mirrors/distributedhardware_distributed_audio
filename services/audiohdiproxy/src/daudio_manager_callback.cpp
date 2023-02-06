@@ -90,6 +90,9 @@ int32_t DAudioManagerCallback::GetAudioParamHDF(const AudioParameter& param, Aud
         case AUDIO_IN_RINGTONE:
             paramHDF.streamUsage = StreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE;
             break;
+        case AUDIO_MMAP_NOIRQ:
+            paramHDF.streamUsage = StreamUsage::STREAM_USAGE_MMAP;
+            break;
         default:
             DHLOGE("Stream usage [%zu] does not support conversion.", param.streamUsage);
             return HDF_FAILURE;
@@ -97,9 +100,12 @@ int32_t DAudioManagerCallback::GetAudioParamHDF(const AudioParameter& param, Aud
     paramHDF.frameSize = param.frameSize;
     paramHDF.period = param.period;
     paramHDF.ext = param.ext;
+    paramHDF.renderFlags = param.renderFlags;
+    paramHDF.capturerFlags = param.capturerFlags;
     DHLOGI("HDF Param: sample rate %d, channel %d, bit format %d, stream usage %d, frame size %zu, " +
-        "period %zu, ext {%s}.", paramHDF.sampleRate, paramHDF.channelMask, paramHDF.bitFormat,
-        paramHDF.streamUsage, paramHDF.frameSize, paramHDF.period, paramHDF.ext.c_str());
+        "period %zu, renderFlags %d, capturerFlags %d, ext {%s}.", paramHDF.sampleRate, paramHDF.channelMask,
+        paramHDF.bitFormat, paramHDF.streamUsage, paramHDF.frameSize, paramHDF.period, paramHDF.renderFlags,
+        paramHDF.capturerFlags, paramHDF.ext.c_str());
     return HDF_SUCCESS;
 }
 
@@ -165,12 +171,13 @@ int32_t DAudioManagerCallback::WriteStreamData(const std::string &adpName, int32
         DHLOGE("Register hdi callback is nullptr.");
         return HDF_FAILURE;
     }
-    if (data.data.size() != DEFAULT_AUDIO_DATA_SIZE) {
-        DHLOGE("Audio data size is not support.");
+    DHLOGI("Audio data param frameSize is %d.", data.param.frameSize);
+    if (data.param.frameSize == 0 || data.param.frameSize > DEFAULT_AUDIO_DATA_SIZE) {
+        DHLOGE("Audio data param frameSize is 0. or > 4096");
         return HDF_FAILURE;
     }
 
-    std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(DEFAULT_AUDIO_DATA_SIZE);
+    std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(data.param.frameSize);
     int32_t ret = memcpy_s(audioData->Data(), audioData->Capacity(), data.data.data(), data.data.size());
     if (ret != EOK) {
         DHLOGE("Copy audio data failed, error code %d.", ret);
@@ -193,7 +200,10 @@ int32_t DAudioManagerCallback::ReadStreamData(const std::string &adpName, int32_
         return HDF_FAILURE;
     }
 
-    std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(DEFAULT_AUDIO_DATA_SIZE);
+    DHLOGI("ReadStreamData Audio data parameter frame[sampleRate: %d," +
+        "channelCount: %d, format: %d, frameSize: %d].", data.param.sampleRate,
+        data.param.channelCount, data.param.format, data.param.frameSize);
+    std::shared_ptr<AudioData> audioData = nullptr;
     int32_t ret = callback_->ReadStreamData(adpName, devId, audioData);
     if (ret != DH_SUCCESS) {
         DHLOGE("Read stream data failed.");

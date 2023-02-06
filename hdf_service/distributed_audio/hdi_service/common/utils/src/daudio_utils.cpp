@@ -15,16 +15,19 @@
 
 #include "daudio_utils.h"
 
+#include <ctime>
+
 #include "daudio_constants.h"
 #include "daudio_errcode.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+constexpr size_t INT32_SHORT_ID_LENGTH = 20;
+constexpr size_t INT32_PLAINTEXT_LENGTH = 4;
+constexpr size_t INT32_MIN_ID_LENGTH = 3;
+
 std::string GetAnonyString(const std::string &value)
 {
-    constexpr size_t INT32_SHORT_ID_LENGTH = 20;
-    constexpr size_t INT32_PLAINTEXT_LENGTH = 4;
-    constexpr size_t INT32_MIN_ID_LENGTH = 3;
     std::string res;
     std::string tmpStr("******");
     size_t strLen = value.length();
@@ -100,6 +103,46 @@ int32_t GetDevTypeByDHId(int32_t dhId)
         return AUDIO_DEVICE_TYPE_SPEAKER;
     }
     return AUDIO_DEVICE_TYPE_UNKNOWN;
+}
+
+uint32_t CalculateFrameSize(uint32_t sampleRate, uint32_t channelCount,
+    int32_t format, uint32_t timeInterval, bool isMMAP)
+{
+    return isMMAP ? sampleRate * channelCount * format * timeInterval / AUDIO_MS_PER_SECOND : DEFAULT_AUDIO_DATA_SIZE;
+}
+
+int32_t CalculateSampleNum(int32_t sampleRate, int32_t timems)
+{
+    return sampleRate * timems / AUDIO_MS_PER_SECOND;
+}
+
+int64_t GetCurNano()
+{
+    int64_t result = -1;
+    struct timespec time;
+    clockid_t clockId = CLOCK_MONOTONIC;
+    int ret = clock_gettime(clockId, &time);
+    if (ret < 0) {
+        return result;
+    }
+    result = (time.tv_sec * AUDIO_NS_PER_SECOND) + time.tv_nsec;
+    return result;
+}
+
+int32_t AbsoluteSleep(int64_t nanoTime)
+{
+    int32_t ret = -1;
+    if (nanoTime <= 0) {
+        return ret;
+    }
+    struct timespec time;
+    time.tv_sec = nanoTime / AUDIO_NS_PER_SECOND;
+    time.tv_nsec = nanoTime - (time.tv_sec * AUDIO_NS_PER_SECOND);
+
+    clockid_t clockId = CLOCK_MONOTONIC;
+    ret = clock_nanosleep(clockId, TIMER_ABSTIME, &time, nullptr);
+
+    return ret;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

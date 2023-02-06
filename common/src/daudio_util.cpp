@@ -15,6 +15,7 @@
 
 #include "daudio_util.h"
 
+#include <ctime>
 #include <cstddef>
 #include <iomanip>
 #include <map>
@@ -211,6 +212,45 @@ bool IsAudioParam(const json &jsonObj, const std::string &key)
 {
     return JsonParamCheck(jsonObj[key],
         { KEY_SAMPLING_RATE, KEY_CHANNELS, KEY_FORMAT, KEY_SOURCE_TYPE, KEY_CONTENT_TYPE, KEY_STREAM_USAGE });
+}
+
+int32_t CalculateSampleNum(int32_t sampleRate, int32_t timems)
+{
+    return sampleRate * timems / AUDIO_MS_PER_SECOND;
+}
+
+int64_t GetCurNano()
+{
+    int64_t result = -1;
+    struct timespec time;
+    clockid_t clockId = CLOCK_MONOTONIC;
+    int ret = clock_gettime(clockId, &time);
+    if (ret < 0) {
+        DHLOGE("GetCurNanoTime fail, ret: %d", ret);
+        return result;
+    }
+    result = (time.tv_sec * AUDIO_NS_PER_SECOND) + time.tv_nsec;
+    return result;
+}
+
+int32_t AbsoluteSleep(int64_t nanoTime)
+{
+    int32_t ret = -1;
+    if (nanoTime <= 0) {
+        DHLOGE("AbsoluteSleep invalid sleep time : %d ns", nanoTime);
+        return ret;
+    }
+    struct timespec time;
+    time.tv_sec = nanoTime / AUDIO_NS_PER_SECOND;
+    time.tv_nsec = nanoTime - (time.tv_sec * AUDIO_NS_PER_SECOND);
+
+    clockid_t clockId = CLOCK_MONOTONIC;
+    ret = clock_nanosleep(clockId, TIMER_ABSTIME, &time, nullptr);
+    if (ret != 0) {
+        DHLOGE("AbsoluteSleep may failed, ret is : %d", ret);
+    }
+
+    return ret;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

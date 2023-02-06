@@ -100,9 +100,12 @@ constexpr const char *KEY_ATTRS = "attrs";
 constexpr const char *KEY_SAMPLING_RATE = "samplingRate";
 constexpr const char *KEY_CHANNELS = "channels";
 constexpr const char *KEY_FORMAT = "format";
+constexpr const char *KEY_FRAMESIZE = "frameSize";
 constexpr const char *KEY_SOURCE_TYPE = "sourceType";
 constexpr const char *KEY_CONTENT_TYPE = "contentType";
 constexpr const char *KEY_STREAM_USAGE = "streamUsage";
+constexpr const char *KEY_RENDER_FLAGS = "renderFlags";
+constexpr const char *KEY_CAPTURE_FLAGS = "capturerFlags";
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DAUDIO_CONSTANTS_H

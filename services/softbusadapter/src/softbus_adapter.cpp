@@ -178,7 +178,7 @@ int32_t SoftbusAdapter::SendSoftbusStream(int32_t sessionId, const std::shared_p
     }
     std::lock_guard<std::mutex> lck(dataQueueMtx_);
     while (audioDataQueue_.size() >= DATA_QUEUE_MAX_SIZE) {
-        DHLOGE("Softbus data queue overflow.");
+        DHLOGE("Softbus data queue overflow. data queue size: %d", audioDataQueue_.size());
         audioDataQueue_.pop();
     }
     auto data = std::make_shared<SoftbusStreamData>(audioData, sessionId);

@@ -66,8 +66,10 @@ int32_t DMicClient::OnStateChange(const AudioEventType type)
 
 int32_t DMicClient::SetUp(const AudioParam &param)
 {
-    DHLOGI("Set up mic client, param: {sampleRate: %d, bitFormat: %d, channelMask: %d, sourceType: %d}.",
-        param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.captureOpts.sourceType);
+    DHLOGI("Set up mic client, param: {sampleRate: %d, bitFormat: %d," +
+        "channelMask: %d, sourceType: %d, capturerFlags: %d, frameSize: %d}.",
+        param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.captureOpts.sourceType,
+        param.captureOpts.capturerFlags, param.comParam.frameSize);
     audioParam_ = param;
     AudioStandard::AudioCapturerOptions capturerOptions = {
         {
@@ -158,12 +160,12 @@ void DMicClient::CaptureThreadRunning()
 {
     DHLOGI("Start the capturer thread.");
     while (isCaptureReady_.load()) {
-        std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(DEFAULT_AUDIO_DATA_SIZE);
+        std::shared_ptr<AudioData> audioData = std::make_shared<AudioData>(audioParam_.comParam.frameSize);
         size_t bytesRead = 0;
         bool errorFlag = false;
-        while (bytesRead < DEFAULT_AUDIO_DATA_SIZE) {
+        while (bytesRead < audioParam_.comParam.frameSize) {
             int32_t len = audioCapturer_->Read(*(audioData->Data() + bytesRead),
-                DEFAULT_AUDIO_DATA_SIZE - bytesRead, isBlocking_.load());
+                audioParam_.comParam.frameSize - bytesRead, isBlocking_.load());
             if (len >= 0) {
                 bytesRead += static_cast<size_t>(len);
             } else {

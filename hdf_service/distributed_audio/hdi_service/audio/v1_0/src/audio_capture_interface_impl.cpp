@@ -22,6 +22,7 @@
 
 #include "daudio_constants.h"
 #include "daudio_log.h"
+#include "daudio_utils.h"
 
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "AudioCaptureInterfaceImpl"
@@ -36,6 +37,7 @@ AudioCaptureInterfaceImpl::AudioCaptureInterfaceImpl(const std::string adpName, 
     const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback)
     : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
 {
+    devAttrs_.frameSize = CalculateFrameSize(attrs.sampleRate, attrs.channelCount, attrs.format, timeInterval_, false);
     DHLOGD("Distributed audio capture constructed, id(%d).", desc.pins);
 }
 
@@ -54,8 +56,8 @@ int32_t AudioCaptureInterfaceImpl::GetCapturePosition(uint64_t &frames, AudioTim
 
 int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<int8_t> &frame, uint64_t requestBytes)
 {
-    DHLOGI("Capture frame[samplerate: %d, channelmask: %d, bitformat: %d].", devAttrs_.sampleRate,
-        devAttrs_.channelCount, devAttrs_.format);
+    DHLOGI("Capture frame[sampleRate: %d, channelCount: %d, format: %d, frameSize: %d].", devAttrs_.sampleRate,
+        devAttrs_.channelCount, devAttrs_.format, devAttrs_.frameSize);
 
     std::lock_guard<std::mutex> captureLck(captureMtx_);
     if (captureStatus_ != CAPTURE_STATUS_START) {
@@ -70,11 +72,11 @@ int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<int8_t> &frame, uint
     }
     int32_t ret = audioExtCallback_->ReadStreamData(adapterName_, devDesc_.pins, audioData);
     if (ret != HDF_SUCCESS) {
-        DHLOGE("Write stream data failed.");
+        DHLOGE("Read stream data failed.");
         return HDF_FAILURE;
     }
 
-    frame.resize(AUDIO_DATA_SIZE_DEFAULT);
+    frame.resize(devAttrs_.frameSize);
     ret = memcpy_s(frame.data(), frame.size(), audioData.data.data(), audioData.data.size());
     if (ret != EOK) {
         DHLOGE("Copy capture frame failed, error code %d.", ret);

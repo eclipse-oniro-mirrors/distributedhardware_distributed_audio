@@ -144,6 +144,11 @@ private:
     uint32_t spkPinInUse_ = 0;
     uint32_t micPinInUse_ = 0;
     uint32_t streamMuteStatus_ = 0;
+    uint32_t timeInterval_ = 5;
+
+    // mmap param
+    int32_t renderFlags_ = 0;
+    int32_t capturerFlags_ = 0;
 
     const std::string NOT_MUTE_STATUS = "0";
     const std::string IS_MUTE_STATUS = "1";

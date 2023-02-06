@@ -22,6 +22,7 @@
 #include "daudio_constants.h"
 #include "daudio_events.h"
 #include "daudio_log.h"
+#include "daudio_utils.h"
 
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "AudioRenderInterfaceImpl"
@@ -36,6 +37,7 @@ AudioRenderInterfaceImpl::AudioRenderInterfaceImpl(const std::string adpName, co
     const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback)
     : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
 {
+    devAttrs_.frameSize = CalculateFrameSize(attrs.sampleRate, attrs.channelCount, attrs.format, timeInterval_, false);
     DHLOGD("Distributed audio render constructed, id(%d).", desc.pins);
 }
 
@@ -84,8 +86,8 @@ int32_t AudioRenderInterfaceImpl::FadeInProcess(const uint32_t durationFrame,
 
 int32_t AudioRenderInterfaceImpl::RenderFrame(const std::vector<int8_t> &frame, uint64_t &replyBytes)
 {
-    DHLOGI("Render frame[samplerate: %d, channelmask: %d, bitformat: %d].", devAttrs_.sampleRate,
-        devAttrs_.channelCount, devAttrs_.format);
+    DHLOGI("Render frame[sampleRate: %d, channelCount: %d, format: %d, frameSize: %d].", devAttrs_.sampleRate,
+        devAttrs_.channelCount, devAttrs_.format, devAttrs_.frameSize);
 
     std::lock_guard<std::mutex> renderLck(renderMtx_);
     if (renderStatus_ != RENDER_STATUS_START) {
@@ -93,7 +95,7 @@ int32_t AudioRenderInterfaceImpl::RenderFrame(const std::vector<int8_t> &frame, 
         return HDF_FAILURE;
     }
 
-    AudioParameter param = { devAttrs_.format, devAttrs_.channelCount, devAttrs_.sampleRate };
+    AudioParameter param = { devAttrs_.format, devAttrs_.channelCount, devAttrs_.sampleRate, 0, devAttrs_.frameSize};
     AudioData data = { param, frame };
     FadeInProcess(DURATION_FRAMES, data.data.data(), frame.size());
     if (audioExtCallback_ == nullptr) {

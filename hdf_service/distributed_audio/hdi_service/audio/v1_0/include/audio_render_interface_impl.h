@@ -105,6 +105,7 @@ private:
     AudioDeviceDescriptor devDesc_;
     AudioSampleAttributes devAttrs_;
 
+    uint32_t timeInterval_ = 5;
     float renderSpeed_ = 0;
     std::mutex volMtx_;
     uint32_t vol_ = 0;

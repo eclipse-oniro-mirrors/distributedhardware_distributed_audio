@@ -32,9 +32,10 @@ DSpeakerClient::~DSpeakerClient()
 
 int32_t DSpeakerClient::SetUp(const AudioParam &param)
 {
-    DHLOGI("Set up spk client: {sampleRate: %d, bitFormat: %d, channelMask: %d, contentType: %d, streamUsage: %d}.",
-        param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.renderOpts.contentType,
-        param.renderOpts.streamUsage);
+    DHLOGI("Set up spk client: {sampleRate: %d, bitFormat: %d, channelMask: %d," +
+        "frameSize: %d, contentType: %d, renderFlags: %d, streamUsage: %d}.",
+        param.comParam.sampleRate, param.comParam.bitFormat, param.comParam.channelMask, param.comParam.frameSize,
+        param.renderOpts.contentType, param.renderOpts.renderFlags, param.renderOpts.streamUsage);
     audioParam_ = param;
     AudioStandard::AudioRendererOptions rendererOptions = {
         {

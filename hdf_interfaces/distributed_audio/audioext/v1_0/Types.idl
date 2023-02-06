@@ -6,6 +6,8 @@ struct AudioParameter {
     unsigned int period;
     unsigned int frameSize;
     unsigned int streamUsage;
+    int renderFlags;
+    int capturerFlags;
     String ext;
 };
 struct AudioData {

@@ -18,6 +18,9 @@
 
 #include <string>
 
+#define AUDIO_MS_PER_SECOND 1000
+#define AUDIO_US_PER_SECOND 1000000
+#define AUDIO_NS_PER_SECOND ((int64_t)1000000000)
 namespace OHOS {
 namespace DistributedHardware {
 std::string GetAnonyString(const std::string &value);
@@ -33,6 +36,15 @@ int32_t GetAudioParamBool(const std::string &params, const std::string &key, boo
 int32_t SetAudioParamStr(std::string &params, const std::string &key, const std::string &value);
 
 int32_t GetDevTypeByDHId(int32_t dhId);
+
+uint32_t CalculateFrameSize(uint32_t sampleRate, uint32_t channelCount,
+    int32_t format, uint32_t timeInterval, bool isMMAP);
+
+int32_t CalculateSampleNum(int32_t sampleRate, int32_t timems);
+
+int64_t GetCurNano();
+
+int32_t AbsoluteSleep(int64_t nanoTime);
 } // DistributedHardware
 } // OHOS
 #endif

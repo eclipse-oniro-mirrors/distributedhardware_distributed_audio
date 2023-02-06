@@ -24,8 +24,8 @@ namespace OHOS {
 namespace DistributedHardware {
 class AudioTransportContext : public std::enable_shared_from_this<AudioTransportContext> {
 public:
-    explicit AudioTransportContext();
-    ~AudioTransportContext();
+    AudioTransportContext() = default;
+    ~AudioTransportContext() = default;
     void SetTransportStatus(TransportStateType stateType);
     int32_t GetTransportStatusType();
     void SetAudioChannel(std::shared_ptr<IAudioChannel> &audioChannel);

@@ -24,16 +24,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-AudioTransportContext::AudioTransportContext()
-{
-    DHLOGI("AudioTransportContext constructed");
-}
-
-AudioTransportContext::~AudioTransportContext()
-{
-    DHLOGI("AudioTransportContext deconstructed");
-}
-
 void AudioTransportContext::SetTransportStatus(TransportStateType stateType)
 {
     DHLOGI("Set transport status in state %d", stateType);

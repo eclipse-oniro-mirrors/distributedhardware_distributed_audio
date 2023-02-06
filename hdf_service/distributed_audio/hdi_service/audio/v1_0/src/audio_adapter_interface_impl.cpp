@@ -96,7 +96,10 @@ int32_t AudioAdapterInterfaceImpl::CreateRender(const AudioDeviceDescriptor &des
             return HDF_FAILURE;
         }
     }
-    audioRender_ = new AudioRenderInterfaceImpl(adpDescriptor_.adapterName, desc, attrs, extSpeakerCallback_);
+    if (attrs.type != AUDIO_MMAP_NOIRQ) {
+        renderFlags_ = 0;
+        audioRender_ = new AudioRenderInterfaceImpl(adpDescriptor_.adapterName, desc, attrs, extSpeakerCallback_);
+    }
     if (audioRender_ == nullptr) {
         DHLOGE("Create render failed.");
         return HDF_FAILURE;
@@ -420,6 +423,9 @@ int32_t AudioAdapterInterfaceImpl::OpenRenderDevice(const AudioDeviceDescriptor 
     renderParam_.channelCount = attrs.channelCount;
     renderParam_.sampleRate = attrs.sampleRate;
     renderParam_.streamUsage = attrs.type;
+    renderParam_.frameSize = CalculateFrameSize(attrs.sampleRate, attrs.channelCount, attrs.format,
+        timeInterval_, renderFlags_ == 1);
+    renderParam_.renderFlags = renderFlags_;
 
     int32_t ret = extSpeakerCallback_->SetParameters(adpDescriptor_.adapterName, desc.pins, renderParam_);
     if (ret != HDF_SUCCESS) {
@@ -480,6 +486,9 @@ int32_t AudioAdapterInterfaceImpl::OpenCaptureDevice(const AudioDeviceDescriptor
     captureParam_.channelCount = attrs.channelCount;
     captureParam_.sampleRate = attrs.sampleRate;
     captureParam_.streamUsage = attrs.type;
+    captureParam_.frameSize = CalculateFrameSize(attrs.sampleRate, attrs.channelCount,
+        attrs.format, timeInterval_, capturerFlags_ == 1);
+    captureParam_.capturerFlags = capturerFlags_;
 
     int32_t ret = extMicCallback_->SetParameters(adpDescriptor_.adapterName, desc.pins, captureParam_);
     if (ret != HDF_SUCCESS) {

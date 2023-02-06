@@ -73,6 +73,7 @@ typedef enum {
     STREAM_USAGE_MEDIA = 1,
     STREAM_USAGE_VOICE_COMMUNICATION = 2,
     STREAM_USAGE_VOICE_ASSISTANT = 4,
+    STREAM_USAGE_MMAP = 5,
     STREAM_USAGE_NOTIFICATION_RINGTONE = 6
 } StreamUsage;
 
@@ -81,6 +82,7 @@ typedef struct AudioCommonParam {
     AudioChannel channelMask = MONO;
     AudioSampleFormat bitFormat = SAMPLE_U8;
     AudioCodecType codecType = AUDIO_CODEC_AAC;
+    uint32_t frameSize = 0;
 } AudioCommonParam;
 
 
@@ -102,6 +104,8 @@ typedef struct AudioParamHDF {
     StreamUsage streamUsage = STREAM_USAGE_UNKNOWN;
     uint32_t frameSize = 0;
     uint32_t period = 0;
+    int32_t renderFlags = 0;
+    int32_t capturerFlags = 0;
     std::string ext;
 } AudioParamHDF;
 

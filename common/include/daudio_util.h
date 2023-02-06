@@ -22,6 +22,9 @@
 
 using json = nlohmann::json;
 
+#define AUDIO_MS_PER_SECOND 1000
+#define AUDIO_US_PER_SECOND 1000000
+#define AUDIO_NS_PER_SECOND ((int64_t)1000000000)
 namespace OHOS {
 namespace DistributedHardware {
 int32_t GetLocalDeviceNetworkId(std::string &networkId);
@@ -36,6 +39,9 @@ bool JsonParamCheck(const json &jsonObj, const std::initializer_list<std::string
 bool IsString(const json &jsonObj, const std::string &key);
 bool IsInt32(const json &jsonObj, const std::string &key);
 bool IsAudioParam(const json &jsonObj, const std::string &key);
+int32_t CalculateSampleNum(int32_t sampleRate, int32_t timems);
+int64_t GetCurNano();
+int32_t AbsoluteSleep(int64_t nanoTime);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DAUDIO_UTIL_H

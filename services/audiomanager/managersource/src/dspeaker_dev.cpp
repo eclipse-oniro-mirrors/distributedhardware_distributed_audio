@@ -137,9 +137,9 @@ int32_t DSpeakerDev::CloseDevice(const std::string &devId, const int32_t dhId)
 int32_t DSpeakerDev::SetParameters(const std::string &devId, const int32_t dhId, const AudioParamHDF &param)
 {
     DHLOGI("Set speaker parameters {samplerate: %d, channelmask: %d, format: %d, streamusage: %d, period: %d, "
-        "framesize: %d, ext{%s}}.",
+        "framesize: %d, renderFlags: %d, ext{%s}}.",
         param.sampleRate, param.channelMask, param.bitFormat, param.streamUsage, param.period, param.frameSize,
-        param.ext.c_str());
+        param.renderFlags, param.ext.c_str());
     curPort_ = dhId;
     paramHDF_ = param;
 
@@ -147,7 +147,9 @@ int32_t DSpeakerDev::SetParameters(const std::string &devId, const int32_t dhId,
     param_.comParam.channelMask = paramHDF_.channelMask;
     param_.comParam.bitFormat = paramHDF_.bitFormat;
     param_.comParam.codecType = AudioCodecType::AUDIO_CODEC_AAC;
+    param_.comParam.frameSize = paramHDF_.frameSize;
     param_.renderOpts.contentType = CONTENT_TYPE_MUSIC;
+    param_.renderOpts.renderFlags = paramHDF_.renderFlags;
     param_.renderOpts.streamUsage = paramHDF_.streamUsage;
     return DH_SUCCESS;
 }

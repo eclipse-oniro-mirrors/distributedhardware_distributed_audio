@@ -82,6 +82,7 @@ private:
     std::string adapterName_;
     AudioDeviceDescriptor devDesc_;
     AudioSampleAttributes devAttrs_;
+    uint32_t timeInterval_ = 5;
 
     std::mutex captureMtx_;
     AudioCaptureStatus captureStatus_ = CAPTURE_STATUS_CLOSE;
