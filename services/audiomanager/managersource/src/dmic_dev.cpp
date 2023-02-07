@@ -263,6 +263,29 @@ int32_t DMicDev::ReadStreamData(const std::string &devId, const int32_t dhId, st
     return DH_SUCCESS;
 }
 
+int32_t DMicDev::ReadMmapPosition(const std::string &devId, const int32_t dhId, uint64_t &frames, uint64_t &timeStamp)
+{
+    DHLOGI("Read mmap position.");
+    (void)devId;
+    (void)dhId;
+    (void)frames;
+    (void)timeStamp;
+    return DH_SUCCESS;
+}
+
+int32_t DMicDev::RefreshAshmemInfo(const std::string &adpName, int32_t devId,
+    int32_t fd, int32_t ashmemLength, int32_t lengthPerTrans)
+{
+    DHLOGI("Refresh ashmem info.");
+    (void)adpName;
+    (void)devId;
+    (void)fd;
+    (void)ashmemLength;
+    (void)lengthPerTrans;
+    return DH_SUCCESS;
+}
+
+
 AudioParam DMicDev::GetAudioParam() const
 {
     return param_;
