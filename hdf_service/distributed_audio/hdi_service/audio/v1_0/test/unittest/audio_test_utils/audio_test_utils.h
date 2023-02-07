@@ -207,7 +207,7 @@ public:
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescriptor &desc) override
+    int32_t ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescriptor &desc) override
     {
         return DistributedHardware::DH_SUCCESS;
     }
