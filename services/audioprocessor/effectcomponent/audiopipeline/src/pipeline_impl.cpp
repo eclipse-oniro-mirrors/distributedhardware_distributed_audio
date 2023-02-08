@@ -23,8 +23,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-PipelineImpl::PipelineImpl(PipeType pipeType, std::shared_ptr<IElement> sourceNode)
-    : pipeType_(pipeType), sourceNode_(sourceNode)
+PipelineImpl::PipelineImpl(PipeType pipeType)
+    : pipeType_(pipeType)
 {
     DHLOGI("Pipeline is construct, type: %d.", pipeType_);
 }
@@ -32,6 +32,7 @@ PipelineImpl::PipelineImpl(PipeType pipeType, std::shared_ptr<IElement> sourceNo
 int32_t PipelineImpl::Init(const std::string config)
 {
     DHLOGI("Init pipeline.");
+
     if (sourceNode_ == nullptr) {
         DHLOGE("Source node is null.");
         return ERR_DH_AUDIO_NULLPTR;
@@ -78,6 +79,28 @@ int32_t PipelineImpl::FeedData(std::shared_ptr<AudioData> &inData, std::shared_p
         return ERR_DH_AUDIO_NULLPTR;
     }
     return sourceNode_->PushData(inData, outData);
+}
+
+int32_t PipelineImpl::BuildPipeStream(const std::list<ElementType> &config)
+{
+    auto elemFac = ElementFactory();
+    std::shared_ptr<DownStreamElement> currentNode = elemFac.CreateElement(ElementType::SOURCE);
+    if (currentNode == nullptr) {
+        DHLOGE("Create source element node failed.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    sourceNode_ = currentNode;
+
+    for (auto iter = ++config.begin(); iter != config.end(); iter++) {
+        auto elemNode = elemFac.CreateElement(*iter);
+        if (currentNode == nullptr) {
+            DHLOGE("Current pipe stream contains null node.");
+            return ERR_DH_AUDIO_NULLPTR;
+        }
+        currentNode->AddDownStream(elemNode);
+        currentNode = elemNode;
+    }
+    return DH_SUCCESS;
 }
 } // DistributedHardware
 } // OHOS

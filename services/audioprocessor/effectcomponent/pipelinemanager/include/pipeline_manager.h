@@ -41,7 +41,7 @@ private:
     PipelineManager() = default;
     ~PipelineManager() = default;
     int32_t GeneratePipeId();
-    std::shared_ptr<DownStreamElement> BuildPipeStream(const std::list<ElementType> &config);
+    bool CheckPipeConfig(const std::list<ElementType> &config);
 
 private:
     std::map<int32_t, std::shared_ptr<IPipeline>> mapPipelines_;

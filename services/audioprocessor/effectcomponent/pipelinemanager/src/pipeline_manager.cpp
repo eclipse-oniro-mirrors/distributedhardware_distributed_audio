@@ -31,12 +31,22 @@ int32_t PipelineManager::CreatePipeline(const PipeType &pipeType,
     const std::list<ElementType> &config, std::shared_ptr<IPipeline> &pipe)
 {
     DHLOGI("Pipeline is creating, type: %d", static_cast<int32_t>(pipeType));
-    std::shared_ptr<IElement> pipeHead = BuildPipeStream(config);
-    if (pipeHead == nullptr) {
-        DHLOGE("Pipeline's source node is null.");
+    if (CheckPipeConfig(config) != true) {
+        DHLOGE("Pipeline config error.");
         return ERR_PIPE_ID;
     }
-    pipe = std::make_shared<PipelineImpl>(pipeType, pipeHead);
+    auto pipeImpl = std::make_shared<PipelineImpl>(pipeType);
+    if (pipeImpl == nullptr) {
+        DHLOGE("Creating pipeline failed.");
+        return ERR_PIPE_ID;
+    }
+    int32_t ret = pipeImpl->BuildPipeStream(config);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Build pipe stream failed.");
+        return ERR_PIPE_ID;
+    }
+
+    pipe = pipeImpl;
     int32_t pipeId = GeneratePipeId();
     if (pipeId == ERR_PIPE_ID) {
         DHLOGE("Pipeline ID generated error.");
@@ -69,23 +79,16 @@ int32_t PipelineManager::GeneratePipeId()
     return pipeId;
 }
 
-std::shared_ptr<DownStreamElement> PipelineManager::BuildPipeStream(const std::list<ElementType> &config)
+bool PipelineManager::CheckPipeConfig(const std::list<ElementType> &config)
 {
-    auto eleFac = ElementFactory();
-    std::shared_ptr<DownStreamElement> currentNode = nullptr;
-    std::shared_ptr<DownStreamElement> headNode = nullptr;
-
-    for (auto iter = config.begin(); iter != config.end(); iter++) {
-        auto elemIns = eleFac.CreateElement(*iter);
-        if (*iter == ElementType::SOURCE) {
-            currentNode = elemIns;
-            headNode = elemIns;
-            continue;
-        }
-        currentNode->AddDownStream(elemIns);
-        currentNode = elemIns;
+    DHLOGI("Checking pipeline's configure.");
+    if (config.front() != ElementType::SOURCE) {
+        return false;
     }
-    return headNode;
+    if (config.back() != ElementType::REF_SINK && config.back() != ElementType::MIC_SINK) {
+        return false;
+    }
+    return true;
 }
 } // DistributedHardware
 } // OHOS

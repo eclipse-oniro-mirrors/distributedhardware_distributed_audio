@@ -17,7 +17,7 @@
 #define PIPELINE_IMPL_H
 
 #include <string>
-#include <vector>
+#include <list>
 
 #include "audio_data.h"
 #include "element_factory.h"
@@ -28,16 +28,14 @@ namespace OHOS {
 namespace DistributedHardware {
 class PipelineImpl : public IPipeline {
 public:
-    PipelineImpl(PipeType pipeType, std::shared_ptr<IElement> sourceNode);
+    PipelineImpl(PipeType pipeType);
     ~PipelineImpl() = default;
     virtual int32_t Init(const std::string config) override;
     virtual int32_t StartUp() override;
     virtual int32_t ShutDown() override;
     virtual int32_t Release() override;
     virtual int32_t FeedData(std::shared_ptr<AudioData> &inData, std::shared_ptr<AudioData> &outData) override;
-
-private:
-    int32_t BuildProcessChain();
+    int32_t BuildPipeStream(const std::list<ElementType> &config);
 
 private:
     PipeType pipeType_;
