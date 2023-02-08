@@ -37,22 +37,33 @@ public:
         return 0;
     }
 
-    int32_t SetParameters(const std::string &adpNam, int32_t devId, const AudioParameter &param) override
+    int32_t SetParameters(const std::string &adpName, int32_t devId, const AudioParameter &param) override
     {
         return 0;
     }
 
-    int32_t NotifyEvent(const std::string &adpNam, int32_t devId, const DAudioEvent &event) override
+    int32_t NotifyEvent(const std::string &adpName, int32_t devId, const DAudioEvent &event) override
     {
         return 0;
     }
 
-    int32_t WriteStreamData(const std::string &adpNam, int32_t devId, const AudioData &data) override
+    int32_t WriteStreamData(const std::string &adpName, int32_t devId, const AudioData &data) override
     {
         return 0;
     }
 
-    int32_t ReadStreamData(const std::string &adpNam, int32_t devId, AudioData &data) override
+    int32_t ReadStreamData(const std::string &adpName, int32_t devId, AudioData &data) override
+    {
+        return 0;
+    }
+
+    int32_t ReadMmapPosition(const std::string &adpName, int32_t devId, uint64_t &frames, uint64_t &timeStamp) override
+    {
+        return 0;
+    }
+
+    int32_t RefreshAshmemInfo(const std::string &adpName, int32_t devId, int fd,
+        int32_t ashmemLength, int32_t lengthPerTrans) override
     {
         return 0;
     }

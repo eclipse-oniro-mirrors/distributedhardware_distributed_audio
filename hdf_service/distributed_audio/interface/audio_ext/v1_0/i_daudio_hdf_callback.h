@@ -29,6 +29,10 @@ public:
     virtual int32_t NotifyEvent(int32_t devId, int32_t dhId, struct DAudioEvent &event) = 0;
     virtual int32_t WriteStreamData(int32_t devId, int32_t dhId, struct AudioStreamData &data) = 0;
     virtual struct AudioStreamData* ReadStreamData(int32_t devId, int32_t dhId) = 0;
+    virtual int32_t ReadMmapPosition(int32_t devId, int32_t dhId,
+        uint64_t &frames, uint64_t &timeStamp) = 0;
+    virtual int32_t RefreshAshmemInfo(int32_t devId, int32_t dhId,
+        int32_t fd, int32_t ashmemLength, int32_t lengthPerTrans) = 0;
 } // namespace DistributedHardware
 } // namespace OHOS
 } // HDF_I_DAUDIO_HDF_CALLBACK_H

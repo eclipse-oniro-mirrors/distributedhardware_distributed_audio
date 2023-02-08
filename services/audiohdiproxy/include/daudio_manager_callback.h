@@ -32,17 +32,23 @@ public:
 
     int32_t CloseDevice(const std::string &adpName, int32_t devId) override;
 
-    int32_t SetParameters(const std::string &adpNam, int32_t devId,
+    int32_t SetParameters(const std::string &adpName, int32_t devId,
         const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter &param) override;
 
-    int32_t NotifyEvent(const std::string &adpNam, int32_t devId,
+    int32_t NotifyEvent(const std::string &adpName, int32_t devId,
         const OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent &event) override;
 
-    int32_t WriteStreamData(const std::string &adpNam, int32_t devId,
+    int32_t WriteStreamData(const std::string &adpName, int32_t devId,
         const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData &data) override;
 
     int32_t ReadStreamData(const std::string &adpName, int32_t devId,
         OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData &data) override;
+
+    int32_t ReadMmapPosition(const std::string &adpName, int32_t devId,
+        uint64_t &frames, uint64_t &timeStamp) override;
+
+    int32_t RefreshAshmemInfo(const std::string &adpName, int32_t devId,
+        int fd, int32_t ashmemLength, int32_t lengthPerTrans) override;
 
 private:
     int32_t GetAudioParamHDF(const OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter& param,

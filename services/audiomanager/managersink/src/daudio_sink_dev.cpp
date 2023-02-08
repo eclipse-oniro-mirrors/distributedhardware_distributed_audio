@@ -388,6 +388,10 @@ int32_t DAudioSinkDev::TaskOpenDSpeaker(const std::string &args)
         return ret;
     }
 
+    if (audioParam.renderOpts.renderFlags == 1) {
+        DHLOGI("dsink dev low-latency mode");
+    }
+
     if (speakerClient_ == nullptr) {
         speakerClient_ = std::make_shared<DSpeakerClient>(devId_, shared_from_this());
     }

@@ -205,11 +205,6 @@ int32_t AudioAttributeInternal<T>::ReqMmapBuffer(AudioHandle handle, int32_t req
         return ret;
     }
 
-    desc->memoryAddress = mmap(0, descHal.totalBufferFrames, PROT_READ | PROT_WRITE, MAP_SHARED, descHal.memoryFd, 0);
-    if (desc->memoryAddress == MAP_FAILED) {
-        DHLOGE("Request mmap buffer mmap error!");
-        return ERR_DH_AUDIO_HDI_CALL_FAILED;
-    }
     desc->memoryFd = descHal.memoryFd;
     desc->totalBufferFrames = descHal.totalBufferFrames;
     desc->transferFrameSize = descHal.transferFrameSize;

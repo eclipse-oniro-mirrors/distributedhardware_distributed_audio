@@ -150,6 +150,12 @@ int32_t DAudioManagerCallback::NotifyEvent(const std::string& adpName, int32_t d
         case AudioEventHDF::AUDIO_EVENT_CHANGE_PLAY_STATUS:
             newEvent.type = AudioEventType::CHANGE_PLAY_STATUS;
             break;
+        case AudioEventHDF::AUDIO_EVENT_MMAP_START:
+            newEvent.type = AudioEventType::MMAP_START;
+            break;
+        case AudioEventHDF::AUDIO_EVENT_MMAP_STOP:
+            newEvent.type = AudioEventType::MMAP_STOP;
+            break;
         default:
             DHLOGE("Unsupport event tpye.");
             break;
@@ -211,6 +217,42 @@ int32_t DAudioManagerCallback::ReadStreamData(const std::string &adpName, int32_
     }
     data.data.assign(audioData->Data(), audioData->Data()+audioData->Capacity());
     DHLOGI("Read stream data success.");
+    return HDF_SUCCESS;
+}
+
+int32_t DAudioManagerCallback::ReadMmapPosition(const std::string &adpName, int32_t devId,
+    uint64_t &frames, uint64_t &timeStamp)
+{
+    DHLOGI("Read mmap position.");
+    if (callback_ == nullptr) {
+        DHLOGE("Register hdi callback is nullptr.");
+        return HDF_FAILURE;
+    }
+
+    int32_t ret = callback_->ReadMmapPosition(adpName, devId, frames, timeStamp);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Read mmap postion failed.");
+        return HDF_FAILURE;
+    }
+    DHLOGI("Read mmap position success.");
+    return HDF_SUCCESS;
+}
+
+int32_t DAudioManagerCallback::RefreshAshmemInfo(const std::string &adpName, int32_t devId,
+    int fd, int32_t ashmemLength, int32_t lengthPerTrans)
+{
+    DHLOGI("Refresh ashmem info.");
+    if (callback_ == nullptr) {
+        DHLOGE("Register hdi callback is nullptr.");
+        return HDF_FAILURE;
+    }
+
+    int32_t ret = callback_->RefreshAshmemInfo(adpName, devId, fd, ashmemLength, lengthPerTrans);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("RefreshAshmemInfo failed.");
+        return HDF_FAILURE;
+    }
+    DHLOGI("RefreshAshmemInfo success.");
     return HDF_SUCCESS;
 }
 } // DistributedHardware

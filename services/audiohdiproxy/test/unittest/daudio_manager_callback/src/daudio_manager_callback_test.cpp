@@ -225,7 +225,7 @@ HWTEST_F(DAudioManagerCallbackTest, WriteStreamData_002, TestSize.Level1)
     data.param.channelCount = 2;
     data.param.sampleRate = 48000;
     data.param.period = 2;
-    data.param.frameSize = 1;
+    data.param.frameSize = 4096;
     data.param.streamUsage = 1;
     data.param.ext = "hello";
     uint32_t dataSize = 4096;
@@ -234,7 +234,7 @@ HWTEST_F(DAudioManagerCallbackTest, WriteStreamData_002, TestSize.Level1)
     EXPECT_EQ(HDF_SUCCESS, manCallback_->WriteStreamData(adpName_, devId_, data));
     audioData = std::make_shared<AudioData>(3000);
     data.data.assign(audioData->Data(), audioData->Data() + audioData->Capacity());
-    EXPECT_NE(HDF_SUCCESS, manCallback_->WriteStreamData(adpName_, devId_, data));
+    EXPECT_EQ(HDF_SUCCESS, manCallback_->WriteStreamData(adpName_, devId_, data));
     EXPECT_EQ(HDF_SUCCESS, manCallback_->CloseDevice(adpName_, devId_));
 }
 

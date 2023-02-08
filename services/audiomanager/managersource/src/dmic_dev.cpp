@@ -153,7 +153,7 @@ int32_t DMicDev::SetParameters(const std::string &devId, const int32_t dhId, con
     return DH_SUCCESS;
 }
 
-int32_t DMicDev::NotifyEvent(const std::string &devId, int32_t dhId, const AudioEvent &event)
+int32_t DMicDev::NotifyEvent(const std::string &devId, const int32_t dhId, const AudioEvent &event)
 {
     DHLOGI("Notify mic event.");
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
@@ -262,6 +262,29 @@ int32_t DMicDev::ReadStreamData(const std::string &devId, const int32_t dhId, st
     }
     return DH_SUCCESS;
 }
+
+int32_t DMicDev::ReadMmapPosition(const std::string &devId, const int32_t dhId, uint64_t &frames, uint64_t &timeStamp)
+{
+    DHLOGI("Read mmap position.");
+    (void)devId;
+    (void)dhId;
+    (void)frames;
+    (void)timeStamp;
+    return DH_SUCCESS;
+}
+
+int32_t DMicDev::RefreshAshmemInfo(const std::string &devId, const int32_t dhId,
+    int32_t fd, int32_t ashmemLength, int32_t lengthPerTrans)
+{
+    DHLOGI("Refresh ashmem info.");
+    (void)devId;
+    (void)dhId;
+    (void)fd;
+    (void)ashmemLength;
+    (void)lengthPerTrans;
+    return DH_SUCCESS;
+}
+
 
 AudioParam DMicDev::GetAudioParam() const
 {
