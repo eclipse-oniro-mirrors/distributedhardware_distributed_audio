@@ -26,7 +26,6 @@
 
 #include "audio_capture_interface_impl.h"
 #include "audio_render_interface_impl.h"
-#include "audio_render_lowlatency_impl.h"
 
 namespace OHOS {
 namespace HDI {

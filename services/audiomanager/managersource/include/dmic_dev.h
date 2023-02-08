@@ -48,9 +48,6 @@ public:
     int32_t WriteStreamData(const std::string &devId, int32_t dhId, std::shared_ptr<AudioData> &data) override;
     int32_t ReadStreamData(const std::string &devId, int32_t dhId, std::shared_ptr<AudioData> &data) override;
     int32_t NotifyEvent(const std::string &devId, int32_t dhId, const AudioEvent &event) override;
-    int32_t ReadMmapPosition(const std::string &devId, int32_t dhId, uint64_t &frames, uint64_t &timeStamp) override;
-    int32_t RefreshAshmemInfo(const std::string &adpName, int32_t devId,
-        int32_t fd, int32_t ashmemLength, int32_t lengthPerTrans) override;
 
     int32_t SetUp();
     int32_t Start();
@@ -70,6 +67,7 @@ private:
 private:
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
     static constexpr size_t DATA_QUEUE_MAX_SIZE = 3;
+    static constexpr size_t FRAME_SIZE = 4096;
 
     std::string devId_;
     std::weak_ptr<IAudioEventCallback> audioEventCallback_;

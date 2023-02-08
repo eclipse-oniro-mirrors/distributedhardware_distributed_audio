@@ -52,8 +52,6 @@ DAudioSourceDev::DAudioSourceDev(const std::string &devId, const std::shared_ptr
     memberFuncMap_[AUDIO_FOCUS_CHANGE] = &DAudioSourceDev::HandleFocusChange;
     memberFuncMap_[AUDIO_RENDER_STATE_CHANGE] = &DAudioSourceDev::HandleRenderStateChange;
     memberFuncMap_[CHANGE_PLAY_STATUS] = &DAudioSourceDev::HandlePlayStatusChange;
-    memberFuncMap_[MMAP_START] = &DAudioSourceDev::HandleMmapStart;
-    memberFuncMap_[MMAP_STOP] = &DAudioSourceDev::HandleMmapStop;
 
     eventNotifyMap_[NOTIFY_OPEN_SPEAKER_RESULT] = EVENT_NOTIFY_OPEN_SPK;
     eventNotifyMap_[NOTIFY_CLOSE_SPEAKER_RESULT] = EVENT_NOTIFY_CLOSE_SPK;
@@ -389,28 +387,6 @@ int32_t DAudioSourceDev::HandlePlayStatusChange(const AudioEvent &event)
         DHLOGE("Play status error.");
         return ERR_DH_AUDIO_FAILED;
     }
-}
-
-int32_t DAudioSourceDev::HandleMmapStart(const AudioEvent &event)
-{
-    DHLOGI("Mmap start, content: %s.", event.content.c_str());
-    if (speaker_ == nullptr) {
-        DHLOGE("Mmap start, speaker is nullptr.");
-        return ERR_DH_AUDIO_NULLPTR;
-    }
-    speaker_->MmapStart();
-    return DH_SUCCESS;
-}
-
-int32_t DAudioSourceDev::HandleMmapStop(const AudioEvent &event)
-{
-    DHLOGI("Mmap stop, content: %s.", event.content.c_str());
-    if (speaker_ == nullptr) {
-        DHLOGE("Mmap stop, speaker is nullptr.");
-        return ERR_DH_AUDIO_NULLPTR;
-    }
-    speaker_->MmapStop();
-    return DH_SUCCESS;
 }
 
 int32_t DAudioSourceDev::WaitForRPC(const AudioEventType type)

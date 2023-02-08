@@ -62,9 +62,6 @@ typedef enum {
     AUDIO_DECODER_ERR = 62,
 
     CHANGE_PLAY_STATUS = 71,
-
-    MMAP_START = 81,
-    MMAP_STOP = 82,
 } AudioEventType;
 
 typedef enum {
