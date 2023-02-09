@@ -23,6 +23,11 @@ public:
     DAudioTestUtils() = default;
     ~DAudioTestUtils() = default;
     void DoAudioTest();
+
+private:
+    void LocalCapture();
+    void LocalRender();
+    void LocalEchoCancel();
 };
 } // namespace DistributedHardware
 } // namespace OHOS

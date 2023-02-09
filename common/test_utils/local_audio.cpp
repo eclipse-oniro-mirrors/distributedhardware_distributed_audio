@@ -40,227 +40,15 @@ constexpr int32_t INT32_SIZE = 4;
 using namespace std;
 namespace OHOS {
 namespace DistributedHardware {
-int32_t LocalAudio::InitCapture()
+int32_t AudioObject::CmdReadInt()
 {
-    int32_t res = InputAudioInfo(cInfo_);
-    if (res != DH_SUCCESS) {
-        return res;
-    }
-
-    capturerOpts_.streamInfo.samplingRate = (OHOS::AudioStandard::AudioSamplingRate)cInfo_.sampleRate;
-    capturerOpts_.streamInfo.channels = (OHOS::AudioStandard::AudioChannel)cInfo_.channel;
-    capturerOpts_.streamInfo.format = (OHOS::AudioStandard::AudioSampleFormat)cInfo_.format;
-    capturerOpts_.capturerInfo.sourceType = OHOS::AudioStandard::SourceType::SOURCE_TYPE_MIC;
-    capturerOpts_.streamInfo.encoding = OHOS::AudioStandard::AudioEncodingType::ENCODING_PCM;
-    capturerOpts_.capturerInfo.capturerFlags = 0;
-    capturer_ = OHOS::AudioStandard::AudioCapturer::Create(capturerOpts_);
-    cout << "Create local audio capturer success." << endl;
-    return DH_SUCCESS;
-}
-
-void LocalAudio::ReleaseCapture()
-{
-    while (captureThread_.joinable()) {
-        captureThread_.join();
-    }
-    if (capturer_ == nullptr) {
-        return;
-    }
-    capturer_->Release();
-}
-
-int32_t LocalAudio::CaptureFrame()
-{
-    if (capturer_ == nullptr) {
-        return ERR_DH_AUDIO_NULLPTR;
-    }
-    cout << "Input capture time(s): ";
-    cin >> cInfo_.period;
+    int32_t cmd = 0;
+    cin >> cmd;
     cout << endl;
-    if (cInfo_.period <= 0 || cInfo_.period >= CAPTURE_TIME_MAX) {
-        cout << "Capture time is invalid." << endl;
-        return ERR_DH_AUDIO_FAILED;
-    }
-    cInfo_.frames = FRAME_PER_SEC * cInfo_.period;
-    cInfo_.size = cInfo_.sampleRate * cInfo_.channel * BIT_FORMAT_16 * cInfo_.period;
-    micData_ = std::make_unique<AudioBuffer>(cInfo_);
-    capturer_->Start();
-    captureThread_ = std::thread(&LocalAudio::CaptureThread, this);
-    usleep(MILLISECONDS_PER_SECOND * MICROSECONDS_PER_MILLISECOND * (cInfo_.period + SECOND_ONE));
-    int32_t res = micData_->WirteBufferToFile(DEFAULT_MIC_PATH);
-    cout << "Save mic file in: " << DEFAULT_MIC_PATH << endl;
-    if (res != DH_SUCCESS) {
-        cout << "Write audio file failed." << endl;
-    }
-    capturer_->Stop();
-
-    cout << "Local audio capture frame end." << endl;
-    return DH_SUCCESS;
+    return cmd;
 }
 
-void LocalAudio::CaptureThread()
-{
-    if (capturer_ == nullptr || micData_ == nullptr) {
-        return;
-    }
-    cInfo_.sizePerFrame = cInfo_.sampleRate * cInfo_.channel * BIT_FORMAT_16 / FRAME_PER_SEC;
-    int32_t playIndex = 0;
-    uint8_t *base = micData_->Data();
-    auto data = std::make_unique<AudioBuffer>(cInfo_.sizePerFrame);
-    while (playIndex < cInfo_.frames) {
-        int32_t readOffSet = 0;
-        while (readOffSet < cInfo_.sizePerFrame) {
-            int32_t len = capturer_->Read(*(data->Data() + readOffSet), cInfo_.sizePerFrame - readOffSet, true);
-            readOffSet += len;
-        }
-        memcpy_s(base, micData_->Size(), data->Data(), data->Size());
-        base += cInfo_.sizePerFrame;
-        playIndex++;
-    }
-}
-
-int32_t LocalAudio::InitRender()
-{
-    cout << "Create local audio render." << endl;
-    cout << "Input file path: ";
-    cin >> rInfo_.filePath;
-    cout << endl;
-    size_t pos = rInfo_.filePath.find(".wav");
-    if (pos != string::npos) {
-        int32_t res = ReadWavFile(rInfo_.filePath);
-        if (res != DH_SUCCESS) {
-            return res;
-        }
-    }
-    pos = rInfo_.filePath.find(".pcm");
-    if (pos != string::npos) {
-        int32_t res = ReadPcmFile(rInfo_.filePath);
-        if (res != DH_SUCCESS) {
-            return res;
-        }
-    }
-    rInfo_.sizePerFrame = rInfo_.sampleRate * rInfo_.channel * BIT_FORMAT_16 / FRAME_PER_SEC;
-    rInfo_.frames = rInfo_.size / rInfo_.sizePerFrame;
-    rInfo_.period = rInfo_.frames / FRAME_PER_SEC;
-
-    rendererOpts_.streamInfo.samplingRate = (OHOS::AudioStandard::AudioSamplingRate)rInfo_.sampleRate;
-    rendererOpts_.streamInfo.channels = (OHOS::AudioStandard::AudioChannel)rInfo_.channel;
-    rendererOpts_.streamInfo.format = (OHOS::AudioStandard::AudioSampleFormat)rInfo_.format;
-    rendererOpts_.streamInfo.encoding = OHOS::AudioStandard::AudioEncodingType::ENCODING_PCM;
-    rendererOpts_.rendererInfo.contentType = OHOS::AudioStandard::ContentType::CONTENT_TYPE_MUSIC;
-    rendererOpts_.rendererInfo.streamUsage = OHOS::AudioStandard::StreamUsage::STREAM_USAGE_MEDIA;
-    rendererOpts_.rendererInfo.rendererFlags = 0;
-    renderer_ = OHOS::AudioStandard::AudioRenderer::Create(rendererOpts_);
-    cout << "Create local audio render success." << endl;
-    return DH_SUCCESS;
-}
-
-int32_t LocalAudio::RenderFrame()
-{
-    if (renderer_ == nullptr) {
-        return ERR_DH_AUDIO_NULLPTR;
-    }
-    renderer_->Start();
-    renderThread_ = std::thread(&LocalAudio::RenderThread, this);
-
-    usleep(MILLISECONDS_PER_SECOND * MICROSECONDS_PER_MILLISECOND * (rInfo_.period + SECOND_ONE));
-    cout << "Local audio render frame end." << endl;
-    return DH_SUCCESS;
-}
-
-void LocalAudio::ReleaseRender()
-{
-    while (renderThread_.joinable()) {
-        renderThread_.join();
-    }
-    if (renderer_ == nullptr) {
-        return;
-    }
-    renderer_->Stop();
-    renderer_->Release();
-}
-
-void LocalAudio::RenderThread()
-{
-    if (renderer_ == nullptr || spkData_ == nullptr) {
-        return;
-    }
-
-    int32_t playIndex = 0;
-    uint8_t *base = spkData_->Data();
-    auto data = std::make_unique<AudioBuffer>(rInfo_.sizePerFrame);
-    while (playIndex < rInfo_.frames) {
-        memcpy_s(data->Data(), data->Size(), base, rInfo_.sizePerFrame);
-        int32_t writeOffSet = 0;
-        while (writeOffSet < rInfo_.sizePerFrame) {
-            int32_t writeLen = renderer_->Write(data->Data() + writeOffSet, rInfo_.sizePerFrame - writeOffSet);
-            writeOffSet += writeLen;
-        }
-        base += rInfo_.sizePerFrame;
-        playIndex++;
-    }
-    cout << "Render frame number is: " << rInfo_.frames << endl;
-}
-
-int32_t LocalAudio::ReadWavFile(const std::string &path)
-{
-    cout << "Read wav file: " << path << endl;
-    FILE *fd = fopen(path.c_str(), "rb");
-    if (fd == nullptr) {
-        cout << "File not exist." << endl;
-        return ERR_DH_AUDIO_FAILED;
-    }
-
-    constexpr int32_t WAV_OFFSET_4 = 4;
-    constexpr int32_t WAV_OFFSET_22 = 22;
-    constexpr int32_t WAV_OFFSET_24 = 24;
-    constexpr int32_t WAV_OFFSET_44 = 44;
-
-    rewind(fd);
-    fseek(fd, WAV_OFFSET_4, SEEK_SET);
-    rInfo_.size = ReadInt32(fd) - WAV_SIZE_OFFSET;
-    fseek(fd, WAV_OFFSET_22, SEEK_SET);
-    rInfo_.channel = ReadInt16(fd);
-    fseek(fd, WAV_OFFSET_24, SEEK_SET);
-    rInfo_.sampleRate = ReadInt32(fd);
-    rInfo_.format = (int32_t)OHOS::AudioStandard::AudioSampleFormat::SAMPLE_S16LE;
-    cout << "======================================" << endl
-        << path << " information:" << endl
-        << "channels: " << rInfo_.channel << endl
-        << "sample_rate: " << rInfo_.sampleRate << endl
-        << "length: " << rInfo_.size << endl
-        << "======================================" << endl;
-
-    spkData_ = std::make_unique<AudioBuffer>(rInfo_);
-    fseek(fd, WAV_OFFSET_44, SEEK_SET);
-    fread(spkData_->Data(), 1, rInfo_.size, fd);
-    fclose(fd);
-    return DH_SUCCESS;
-}
-
-int32_t LocalAudio::ReadPcmFile(const std::string &path)
-{
-    cout << "Read pcm file: " << path << endl;
-    FILE *fd = fopen(path.c_str(), "rb");
-    if (fd == nullptr) {
-        cout << "File not exist." << endl;
-        return ERR_DH_AUDIO_FAILED;
-    }
-    fseek(fd, 0, SEEK_END);
-    rInfo_.size = ftell(fd);
-    rewind(fd);
-
-    int32_t res = InputAudioInfo(rInfo_);
-    if (res != DH_SUCCESS) {
-        return res;
-    }
-    spkData_ = std::make_unique<AudioBuffer>(rInfo_);
-    fread(spkData_->Data(), 1, rInfo_.size, fd);
-    fclose(fd);
-    return DH_SUCCESS;
-}
-
-int32_t LocalAudio::InputAudioInfo(AudioBufferInfo &info)
+int32_t AudioObject::ReadAudioInfo(AudioBufferInfo &info)
 {
     constexpr int32_t cmd1 = 1;
     constexpr int32_t cmd2 = 2;
@@ -296,15 +84,209 @@ int32_t LocalAudio::InputAudioInfo(AudioBufferInfo &info)
     return DH_SUCCESS;
 }
 
-int32_t LocalAudio::CmdReadInt()
+int32_t AudioCaptureObj::Init(const AudioBufferInfo &info)
 {
-    int32_t cmd = 0;
-    cin >> cmd;
-    cout << endl;
-    return cmd;
+    info_ = info;
+    opts_.streamInfo.samplingRate = (OHOS::AudioStandard::AudioSamplingRate)info.sampleRate;
+    opts_.streamInfo.channels = (OHOS::AudioStandard::AudioChannel)info.channel;
+    opts_.streamInfo.format = (OHOS::AudioStandard::AudioSampleFormat)info.format;
+    opts_.capturerInfo.sourceType = OHOS::AudioStandard::SourceType::SOURCE_TYPE_MIC;
+    opts_.streamInfo.encoding = OHOS::AudioStandard::AudioEncodingType::ENCODING_PCM;
+    opts_.capturerInfo.capturerFlags = 0;
+    capturer_ = OHOS::AudioStandard::AudioCapturer::Create(opts_);
+    cout << "Create local audio capturer success." << endl;
+    return DH_SUCCESS;
 }
 
-int32_t LocalAudio::ReadInt32(FILE *fd)
+void AudioCaptureObj::Release()
+{
+    while (runThread_.joinable()) {
+        runThread_.join();
+    }
+    if (capturer_ == nullptr) {
+        return;
+    }
+    capturer_->Release();
+}
+
+int32_t AudioCaptureObj::CaptureFrame(const int32_t time)
+{
+    if (capturer_ == nullptr) {
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+
+    AudioBufferInfo info = info_;
+    info.period = time;
+    if (info.period <= 0 || info.period >= CAPTURE_TIME_MAX) {
+        cout << "Capture time is invalid." << endl;
+        return ERR_DH_AUDIO_FAILED;
+    }
+    info.frames = FRAME_PER_SEC * info.period;
+    info.size = info.sampleRate * info.channel * BIT_FORMAT_16 * info.period;
+    data_ = std::make_unique<AudioBuffer>(info);
+
+    capturer_->Start();
+    runThread_ = std::thread(&AudioCaptureObj::RunThread, this);
+    usleep(MILLISECONDS_PER_SECOND * MICROSECONDS_PER_MILLISECOND * (info.period + SECOND_ONE));
+    int32_t res = data_->WirteBufferToFile(DEFAULT_MIC_PATH);
+    cout << "Save mic file in: " << DEFAULT_MIC_PATH << endl;
+    if (res != DH_SUCCESS) {
+        cout << "Write audio file failed." << endl;
+    }
+    capturer_->Stop();
+
+    cout << "Local audio capture frame end." << endl;
+    return DH_SUCCESS;
+}
+
+void AudioCaptureObj::RunThread()
+{
+    if (capturer_ == nullptr || data_ == nullptr) {
+        return;
+    }
+
+    info_.sizePerFrame = info_.sampleRate * info_.channel * BIT_FORMAT_16 / FRAME_PER_SEC;
+    int32_t playIndex = 0;
+    uint8_t *base = data_->Data();
+    auto data = std::make_unique<AudioBuffer>(info_.sizePerFrame);
+    while (playIndex < info_.frames) {
+        int32_t readOffSet = 0;
+        while (readOffSet < info_.sizePerFrame) {
+            int32_t len = capturer_->Read(*(data->Data() + readOffSet), info_.sizePerFrame - readOffSet, true);
+            readOffSet += len;
+        }
+        memcpy_s(base, data_->Size(), data->Data(), data->Size());
+        base += info_.sizePerFrame;
+        playIndex++;
+    }
+}
+
+int32_t AudioRenderObj::Init(const AudioBufferInfo &info)
+{
+    cout << "Create local audio render." << endl;
+
+    info_ = info;
+    info_.sizePerFrame = info_.sampleRate * info_.channel * BIT_FORMAT_16 / FRAME_PER_SEC;
+    info_.frames = info_.size / info_.sizePerFrame;
+    info_.period = info_.frames / FRAME_PER_SEC;
+
+    opts_.streamInfo.samplingRate = (OHOS::AudioStandard::AudioSamplingRate)info_.sampleRate;
+    opts_.streamInfo.channels = (OHOS::AudioStandard::AudioChannel)info_.channel;
+    opts_.streamInfo.format = (OHOS::AudioStandard::AudioSampleFormat)info_.format;
+    opts_.streamInfo.encoding = OHOS::AudioStandard::AudioEncodingType::ENCODING_PCM;
+    opts_.rendererInfo.contentType = OHOS::AudioStandard::ContentType::CONTENT_TYPE_MUSIC;
+    opts_.rendererInfo.streamUsage = OHOS::AudioStandard::StreamUsage::STREAM_USAGE_MEDIA;
+    opts_.rendererInfo.rendererFlags = 0;
+    render_ = OHOS::AudioStandard::AudioRenderer::Create(opts_);
+    cout << "Create local audio render success." << endl;
+    return DH_SUCCESS;
+}
+
+void AudioRenderObj::Release()
+{
+    while (runThread_.joinable()) {
+        runThread_.join();
+    }
+    if (render_ == nullptr) {
+        return;
+    }
+    render_->Stop();
+    render_->Release();
+}
+
+int32_t AudioRenderObj::RenderFrame()
+{
+    if (render_ == nullptr) {
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    render_->Start();
+    runThread_ = std::thread(&AudioRenderObj::RunThread, this);
+
+    usleep(MILLISECONDS_PER_SECOND * MICROSECONDS_PER_MILLISECOND * (info_.period + SECOND_ONE));
+    cout << "Local audio render frame end." << endl;
+    return DH_SUCCESS;
+}
+
+void AudioRenderObj::RunThread()
+{
+    if (render_ == nullptr || data_ == nullptr) {
+        return;
+    }
+
+    int32_t playIndex = 0;
+    uint8_t *base = data_->Data();
+    auto data = std::make_unique<AudioBuffer>(info_.sizePerFrame);
+    while (playIndex < info_.frames) {
+        memcpy_s(data->Data(), data->Size(), base, info_.sizePerFrame);
+        int32_t writeOffSet = 0;
+        while (writeOffSet < info_.sizePerFrame) {
+            int32_t writeLen = render_->Write(data->Data() + writeOffSet, info_.sizePerFrame - writeOffSet);
+            writeOffSet += writeLen;
+        }
+        base += info_.sizePerFrame;
+        playIndex++;
+    }
+    cout << "Render frame number is: " << info_.frames << endl;
+}
+
+int32_t AudioRenderObj::ReadWavFile(const std::string &path, AudioBufferInfo &info)
+{
+    FILE *fd = fopen(path.c_str(), "rb");
+    if (fd == nullptr) {
+        cout << "File not exist." << endl;
+        return ERR_DH_AUDIO_FAILED;
+    }
+
+    constexpr int32_t WAV_OFFSET_4 = 4;
+    constexpr int32_t WAV_OFFSET_22 = 22;
+    constexpr int32_t WAV_OFFSET_24 = 24;
+    constexpr int32_t WAV_OFFSET_44 = 44;
+
+    rewind(fd);
+    fseek(fd, WAV_OFFSET_4, SEEK_SET);
+    info.size = ReadInt32(fd) - WAV_SIZE_OFFSET;
+    fseek(fd, WAV_OFFSET_22, SEEK_SET);
+    info.channel = ReadInt16(fd);
+    fseek(fd, WAV_OFFSET_24, SEEK_SET);
+    info.sampleRate = ReadInt32(fd);
+    info.format = (int32_t)OHOS::AudioStandard::AudioSampleFormat::SAMPLE_S16LE;
+    cout << "======================================" << endl
+        << path << " information:" << endl
+        << "channels: " << info.channel << endl
+        << "sample_rate: " << info.sampleRate << endl
+        << "length: " << info.size << endl
+        << "======================================" << endl;
+
+    data_ = std::make_unique<AudioBuffer>(info);
+    fseek(fd, WAV_OFFSET_44, SEEK_SET);
+    fread(data_->Data(), 1, info.size, fd);
+    fclose(fd);
+
+    return DH_SUCCESS;
+}
+
+int32_t AudioRenderObj::ReadPcmFile(const std::string &path, AudioBufferInfo &info)
+{
+    FILE *fd = fopen(path.c_str(), "rb");
+    if (fd == nullptr) {
+        cout << "File not exist." << endl;
+        return ERR_DH_AUDIO_FAILED;
+    }
+    fseek(fd, 0, SEEK_END);
+    info.size = ftell(fd);
+    rewind(fd);
+
+    int32_t res = ReadAudioInfo(info);
+    if (res != DH_SUCCESS) {
+        return res;
+    }
+    data_ = std::make_unique<AudioBuffer>(info);
+    fread(data_->Data(), 1, info.size, fd);
+    fclose(fd);
+    return DH_SUCCESS;
+}
+
+int32_t AudioRenderObj::ReadInt32(FILE *fd)
 {
     char tmp[INT32_SIZE];
     fread(tmp, INT8_SIZE, INT32_SIZE, fd);
@@ -313,7 +295,7 @@ int32_t LocalAudio::ReadInt32(FILE *fd)
     return res;
 }
 
-int32_t LocalAudio::ReadInt16(FILE *fd)
+int32_t AudioRenderObj::ReadInt16(FILE *fd)
 {
     char tmp[INT16_SIZE];
     fread(tmp, INT8_SIZE, INT16_SIZE, fd);

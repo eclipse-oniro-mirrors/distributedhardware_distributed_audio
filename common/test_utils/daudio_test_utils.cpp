@@ -16,13 +16,12 @@
 #include "daudio_test_utils.h"
 
 #include <iostream>
+#include <string>
 
+#include "daudio_errorcode.h"
 #include "local_audio.h"
 
 using namespace std;
-
-namespace OHOS {
-namespace DistributedHardware {
 
 const string CMD_QUIT = "quit";
 const string CMD_QUIT_EXT = "0";
@@ -30,6 +29,8 @@ const string CMD_LOCAL_CAPTURE = "lcap";
 const string CMD_LOCAL_CAPTURE_EXT = "20";
 const string CMD_LOCAL_RENDER = "lren";
 const string CMD_LOCAL_RENDER_EXT = "21";
+namespace OHOS {
+namespace DistributedHardware {
 
 void DAudioTestUtils::DoAudioTest()
 {
@@ -46,19 +47,63 @@ void DAudioTestUtils::DoAudioTest()
         }
 
         if (cmd == CMD_LOCAL_CAPTURE || cmd == CMD_LOCAL_CAPTURE_EXT) {
-            LocalAudio capture;
-            capture.InitCapture();
-            capture.CaptureFrame();
-            capture.ReleaseCapture();
+            LocalCapture();
         }
 
         if (cmd == CMD_LOCAL_RENDER || cmd == CMD_LOCAL_RENDER_EXT) {
-            LocalAudio render;
-            render.InitRender();
-            render.RenderFrame();
-            render.ReleaseRender();
+            LocalRender();
         }
     }
+}
+
+void DAudioTestUtils::LocalCapture()
+{
+    AudioCaptureObj capture;
+    AudioBufferInfo info;
+    int32_t res = capture.ReadAudioInfo(info);
+    if (res != DH_SUCCESS) {
+        return;
+    }
+    capture.Init(info);
+    int32_t time = 0;
+    cout << "Input capture time(s): ";
+    cin >> time;
+    cout << endl;
+    capture.CaptureFrame(time);
+    capture.Release();
+}
+
+void DAudioTestUtils::LocalRender()
+{
+    AudioRenderObj render;
+    string path;
+    AudioBufferInfo info;
+
+    cout << "Input file path: ";
+    cin >> path;
+    cout << endl;
+
+    size_t pos = path.find(".wav");
+    if (pos != string::npos) {
+        if (render.ReadWavFile(path, info) != DH_SUCCESS) {
+            return;
+        }
+    }
+    pos = path.find(".pcm");
+    if (pos != string::npos) {
+        if (render.ReadPcmFile(path, info) != DH_SUCCESS) {
+            return;
+        }
+    }
+
+    render.Init(info);
+    render.RenderFrame();
+    render.Release();
+}
+
+void DAudioTestUtils::LocalEchoCancel()
+{
+    return;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

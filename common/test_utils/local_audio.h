@@ -25,40 +25,54 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-class LocalAudio {
+class AudioObject {
 public:
-    LocalAudio() = default;
-    ~LocalAudio() = default;
+    AudioObject() = default;
+    ~AudioObject() = default;
+    virtual int32_t Init(const AudioBufferInfo &info) = 0;
+    virtual void Release() = 0;
+    virtual void RunThread() = 0;
+    int32_t ReadAudioInfo(AudioBufferInfo &info);
 
-    int32_t InitCapture();
-    void ReleaseCapture();
-    int32_t CaptureFrame();
-    int32_t InitRender();
-    void ReleaseRender();
-    int32_t RenderFrame();
+protected:
+    AudioBufferInfo info_;
+    std::thread runThread_;
+    std::unique_ptr<AudioBuffer> data_ = nullptr;
 
 private:
-    void CaptureThread();
-    void RenderThread();
-    int32_t ReadWavFile(const std::string &path);
-    int32_t ReadPcmFile(const std::string &path);
     int32_t CmdReadInt();
+};
+
+class AudioCaptureObj : public AudioObject {
+public:
+    int32_t Init(const AudioBufferInfo &info) override;
+    void Release() override;
+    void RunThread() override;
+    int32_t CaptureFrame(const int32_t time);
+
+private:
+    OHOS::AudioStandard::AudioCapturerOptions opts_;
+    std::unique_ptr<OHOS::AudioStandard::AudioCapturer> capturer_ = nullptr;
+};
+
+
+class AudioRenderObj : public AudioObject {
+public:
+    int32_t Init(const AudioBufferInfo &info) override;
+    void Release() override;
+    void RunThread() override;
+    int32_t RenderFrame();
+    int32_t ReadWavFile(const std::string &path, AudioBufferInfo &info);
+    int32_t ReadPcmFile(const std::string &path, AudioBufferInfo &info);
+
+private:
     int32_t ReadInt32(FILE *fd);
     int32_t ReadInt16(FILE *fd);
-    int32_t InputAudioInfo(AudioBufferInfo &info);
 
-    AudioBufferInfo cInfo_;
-    AudioBufferInfo rInfo_;
-    std::thread captureThread_;
-    std::thread renderThread_;
-
-    OHOS::AudioStandard::AudioCapturerOptions capturerOpts_;
-    OHOS::AudioStandard::AudioRendererOptions rendererOpts_;
-    std::unique_ptr<OHOS::AudioStandard::AudioCapturer> capturer_ = nullptr;
-    std::unique_ptr<OHOS::AudioStandard::AudioRenderer> renderer_ = nullptr;
-    std::unique_ptr<AudioBuffer> micData_ = nullptr;
-    std::unique_ptr<AudioBuffer> spkData_ = nullptr;
+    OHOS::AudioStandard::AudioRendererOptions opts_;
+    std::unique_ptr<OHOS::AudioStandard::AudioRenderer> render_ = nullptr;
 };
+
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_LOCAL_AUDIO_H
