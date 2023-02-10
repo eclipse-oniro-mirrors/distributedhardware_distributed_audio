@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -379,7 +379,7 @@ public:
         return DistributedHardware::DH_SUCCESS;
     }
 
-    int32_t ReqMmapBuffer(int32_t reqSize, const AudioMmapBufferDescriptor &desc) override
+    int32_t ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescriptor &desc) override
     {
         return DistributedHardware::DH_SUCCESS;
     }

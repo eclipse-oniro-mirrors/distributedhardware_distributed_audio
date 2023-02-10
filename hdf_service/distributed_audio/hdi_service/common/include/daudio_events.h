@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,6 +61,8 @@ typedef enum AudioExtParamEvent {
     HDF_AUDIO_EVENT_CHANGE_PLAY_STATUS = 13,
     HDF_AUDIO_EVENT_MMAP_START = 14,
     HDF_AUDIO_EVENT_MMAP_STOP = 15,
+    HDF_AUDIO_EVENT_MMAP_START_MIC = 16,
+    HDF_AUDIO_EVENT_MMAP_STOP_MIC = 17,
 } EXT_PARAM_EVENT;
 
 typedef enum AudioVolumeEvent {

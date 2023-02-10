@@ -13,14 +13,19 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_AUDIO_CAPTURE_INTERFACE_IMPL_H
-#define OHOS_AUDIO_CAPTURE_INTERFACE_IMPL_H
+#ifndef OHOS_AUDIO_CAPTURE_LOWLATENCY_IMPL_H
+#define OHOS_AUDIO_CAPTURE_LOWLATENCY_IMPL_H
 
+#include <cmath>
 #include <mutex>
 #include <string>
 
+#include <v1_0/audio_types.h>
 #include <v1_0/iaudio_capture.h>
 #include <v1_0/id_audio_manager.h>
+
+#include "ashmem.h"
+#include "audio_capture_interface_impl.h"
 
 namespace OHOS {
 namespace HDI {
@@ -29,21 +34,14 @@ namespace Audio {
 namespace V1_0 {
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter;
+using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
 
-typedef enum {
-    CAPTURE_STATUS_OPEN = 0,
-    CAPTURE_STATUS_CLOSE,
-    CAPTURE_STATUS_START,
-    CAPTURE_STATUS_STOP,
-    CAPTURE_STATUS_PAUSE,
-} AudioCaptureStatus;
-
-class AudioCaptureInterfaceImpl : public IAudioCapture {
+class AudioCaptureLowLatencyImpl : public IAudioCapture {
 public:
-    AudioCaptureInterfaceImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
+    AudioCaptureLowLatencyImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
         const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
-    ~AudioCaptureInterfaceImpl() override;
+    ~AudioCaptureLowLatencyImpl() override;
 
     int32_t CaptureFrame(std::vector<int8_t> &frame, uint64_t requestBytes) override;
     int32_t GetCapturePosition(uint64_t &frames, AudioTimeStamp &time) override;
@@ -77,20 +75,30 @@ public:
     int32_t AudioDevDump(int32_t range, int32_t fd) override;
     int32_t IsSupportsPauseAndResume(bool &supportPause, bool &supportResume) override;
     const AudioDeviceDescriptor &GetCaptureDesc();
+    int32_t GetAshmemInfo(int &fd, int &ashememLength, int &lengthPerTrans);
 
+private:
+    int32_t InitAshmem(int32_t ashmemLength);
+    void UnInitAshmem();
 private:
     std::string adapterName_;
     AudioDeviceDescriptor devDesc_;
     AudioSampleAttributes devAttrs_;
     uint32_t timeInterval_ = 5;
+    uint32_t minTimeInterval_ = 30;
+    uint32_t maxTimeInterval_ = 80;
 
     std::mutex captureMtx_;
     AudioCaptureStatus captureStatus_ = CAPTURE_STATUS_CLOSE;
     sptr<IDAudioCallback> audioExtCallback_ = nullptr;
+    OHOS::sptr<OHOS::Ashmem> ashmem_ = nullptr;
+    int32_t ashmemLength_;
+    int32_t lengthPerTrans_;
+    int32_t fd_;
 };
 } // V1_0
 } // Audio
 } // Distributedaudio
 } // HDI
 } // OHOS
-#endif // OHOS_AUDIO_CAPTURE_INTERFACE_IMPL_H
+#endif // OHOS_AUDIO_CAPTURE_LOWLATENCY_IMPL_H
