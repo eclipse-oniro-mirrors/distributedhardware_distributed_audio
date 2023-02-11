@@ -76,7 +76,7 @@ int32_t AudioObject::ReadAudioInfo(AudioBufferInfo &info)
     info.format = (int32_t)OHOS::AudioStandard::AudioSampleFormat::SAMPLE_S16LE;
 
     cout << "======================================" << endl
-    <<" information:" << endl
+    << "information:" << endl
     << "sample_rate: " << info.sampleRate << endl
     << "channels: " << info.channel << endl
     << "format: " << info.format << endl
@@ -86,6 +86,7 @@ int32_t AudioObject::ReadAudioInfo(AudioBufferInfo &info)
 
 int32_t AudioCaptureObj::Init(const AudioBufferInfo &info)
 {
+    cout << "Create local audio capturer." << endl;
     info_ = info;
     opts_.streamInfo.samplingRate = (OHOS::AudioStandard::AudioSamplingRate)info.sampleRate;
     opts_.streamInfo.channels = (OHOS::AudioStandard::AudioChannel)info.channel;
@@ -106,6 +107,7 @@ void AudioCaptureObj::Release()
     if (capturer_ == nullptr) {
         return;
     }
+    capturer_->Stop();
     capturer_->Release();
 }
 
@@ -115,19 +117,18 @@ int32_t AudioCaptureObj::CaptureFrame(const int32_t time)
         return ERR_DH_AUDIO_NULLPTR;
     }
 
-    AudioBufferInfo info = info_;
-    info.period = time;
-    if (info.period <= 0 || info.period >= CAPTURE_TIME_MAX) {
+    info_.period = time;
+    if (info_.period <= 0 || info_.period >= CAPTURE_TIME_MAX) {
         cout << "Capture time is invalid." << endl;
         return ERR_DH_AUDIO_FAILED;
     }
-    info.frames = FRAME_PER_SEC * info.period;
-    info.size = info.sampleRate * info.channel * BIT_FORMAT_16 * info.period;
-    data_ = std::make_unique<AudioBuffer>(info);
+
+    info_.size = info_.sampleRate * info_.channel * BIT_FORMAT_16 * info_.period;
+    data_ = std::make_unique<AudioBuffer>(info_);
 
     capturer_->Start();
     runThread_ = std::thread(&AudioCaptureObj::RunThread, this);
-    usleep(MILLISECONDS_PER_SECOND * MICROSECONDS_PER_MILLISECOND * (info.period + SECOND_ONE));
+    usleep(MILLISECONDS_PER_SECOND * MICROSECONDS_PER_MILLISECOND * (info_.period + SECOND_ONE));
     int32_t res = data_->WirteBufferToFile(DEFAULT_MIC_PATH);
     cout << "Save mic file in: " << DEFAULT_MIC_PATH << endl;
     if (res != DH_SUCCESS) {
@@ -139,12 +140,45 @@ int32_t AudioCaptureObj::CaptureFrame(const int32_t time)
     return DH_SUCCESS;
 }
 
+int32_t AudioCaptureObj::StartCaptureFrame(const int32_t time)
+{
+    if (capturer_ == nullptr) {
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+
+    info_.period = time;
+    if (info_.period <= 0 || info_.period >= CAPTURE_TIME_MAX) {
+        cout << "Capture time is invalid." << endl;
+        return ERR_DH_AUDIO_FAILED;
+    }
+
+    info_.size = info_.sampleRate * info_.channel * BIT_FORMAT_16 * info_.period;
+    data_ = std::make_unique<AudioBuffer>(info_);
+
+    capturer_->Start();
+    runThread_ = std::thread(&AudioCaptureObj::RunThread, this);
+    return DH_SUCCESS;
+}
+
+int32_t AudioCaptureObj::StopCaptureFrame()
+{
+    usleep(MILLISECONDS_PER_SECOND * MICROSECONDS_PER_MILLISECOND * (info_.period + SECOND_ONE));
+    int32_t res = data_->WirteBufferToFile(DEFAULT_MIC_PATH);
+    cout << "Save mic file in: " << DEFAULT_MIC_PATH << endl;
+    if (res != DH_SUCCESS) {
+        cout << "Write audio file failed." << endl;
+    }
+
+    return DH_SUCCESS;
+}
+
 void AudioCaptureObj::RunThread()
 {
     if (capturer_ == nullptr || data_ == nullptr) {
         return;
     }
 
+    info_.frames = FRAME_PER_SEC * info_.period;
     info_.sizePerFrame = info_.sampleRate * info_.channel * BIT_FORMAT_16 / FRAME_PER_SEC;
     int32_t playIndex = 0;
     uint8_t *base = data_->Data();
@@ -159,6 +193,7 @@ void AudioCaptureObj::RunThread()
         base += info_.sizePerFrame;
         playIndex++;
     }
+    cout << "Capture frame number is: " << info_.frames << endl;
 }
 
 int32_t AudioRenderObj::Init(const AudioBufferInfo &info)
@@ -197,6 +232,7 @@ void AudioRenderObj::Release()
 int32_t AudioRenderObj::RenderFrame()
 {
     if (render_ == nullptr) {
+        cout << "Render is null" << endl;
         return ERR_DH_AUDIO_NULLPTR;
     }
     render_->Start();
@@ -204,6 +240,23 @@ int32_t AudioRenderObj::RenderFrame()
 
     usleep(MILLISECONDS_PER_SECOND * MICROSECONDS_PER_MILLISECOND * (info_.period + SECOND_ONE));
     cout << "Local audio render frame end." << endl;
+    return DH_SUCCESS;
+}
+
+int32_t AudioRenderObj::StartRenderFrame()
+{
+    if (render_ == nullptr) {
+        cout << "Render is null" << endl;
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    render_->Start();
+    runThread_ = std::thread(&AudioRenderObj::RunThread, this);
+    return DH_SUCCESS;
+}
+
+int32_t AudioRenderObj::StopRenderFrame()
+{
+    usleep(MILLISECONDS_PER_SECOND * MICROSECONDS_PER_MILLISECOND * (info_.period + SECOND_ONE));
     return DH_SUCCESS;
 }
 

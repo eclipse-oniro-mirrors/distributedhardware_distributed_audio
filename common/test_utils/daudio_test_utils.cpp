@@ -18,6 +18,7 @@
 #include <iostream>
 #include <string>
 
+#include "aec_test.h"
 #include "daudio_errorcode.h"
 #include "local_audio.h"
 
@@ -29,6 +30,8 @@ const string CMD_LOCAL_CAPTURE = "lcap";
 const string CMD_LOCAL_CAPTURE_EXT = "20";
 const string CMD_LOCAL_RENDER = "lren";
 const string CMD_LOCAL_RENDER_EXT = "21";
+const string CMD_AEC_TEST = "aec";
+const string CMD_AEC_TEST_EXT = "22";
 namespace OHOS {
 namespace DistributedHardware {
 
@@ -48,16 +51,24 @@ void DAudioTestUtils::DoAudioTest()
 
         if (cmd == CMD_LOCAL_CAPTURE || cmd == CMD_LOCAL_CAPTURE_EXT) {
             LocalCapture();
+            continue;
         }
 
         if (cmd == CMD_LOCAL_RENDER || cmd == CMD_LOCAL_RENDER_EXT) {
             LocalRender();
+            continue;
+        }
+
+        if (cmd == CMD_AEC_TEST || cmd == CMD_AEC_TEST_EXT) {
+            LocalEchoCancel();
+            continue;
         }
     }
 }
 
 void DAudioTestUtils::LocalCapture()
 {
+    cout << "[LocalCapture]" << endl;
     AudioCaptureObj capture;
     AudioBufferInfo info;
     int32_t res = capture.ReadAudioInfo(info);
@@ -75,6 +86,7 @@ void DAudioTestUtils::LocalCapture()
 
 void DAudioTestUtils::LocalRender()
 {
+    cout << "[LocalRender]" << endl;
     AudioRenderObj render;
     string path;
     AudioBufferInfo info;
@@ -103,7 +115,11 @@ void DAudioTestUtils::LocalRender()
 
 void DAudioTestUtils::LocalEchoCancel()
 {
-    return;
+    cout << "[LocalEchoCancel]" << endl;
+    AecTest echoCancel;
+    echoCancel.Init();
+    echoCancel.Process();
+    echoCancel.Release();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -49,6 +49,8 @@ public:
     void Release() override;
     void RunThread() override;
     int32_t CaptureFrame(const int32_t time);
+    int32_t StartCaptureFrame(const int32_t time);
+    int32_t StopCaptureFrame();
 
 private:
     OHOS::AudioStandard::AudioCapturerOptions opts_;
@@ -64,6 +66,12 @@ public:
     int32_t RenderFrame();
     int32_t ReadWavFile(const std::string &path, AudioBufferInfo &info);
     int32_t ReadPcmFile(const std::string &path, AudioBufferInfo &info);
+    int32_t GetPeriod()
+    {
+        return info_.period;
+    }
+    int32_t StartRenderFrame();
+    int32_t StopRenderFrame();
 
 private:
     int32_t ReadInt32(FILE *fd);

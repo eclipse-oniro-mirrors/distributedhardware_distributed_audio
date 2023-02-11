@@ -27,6 +27,7 @@ ohos_executable("daudio_test_bin") {
         "audio_buffer.cpp",
         "daudio_test_utils.cpp",
         "local_audio.cpp",
+        "aec_test.cpp",
     ]
 
     deps = [
