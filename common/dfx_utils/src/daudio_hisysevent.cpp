@@ -24,7 +24,7 @@ IMPLEMENT_SINGLE_INSTANCE(DAudioHisysevent);
 
 void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, const std::string &msg)
 {
-    OHOS::HiviewDFX::HiSysEvent::Write(
+    HiSysEventWrite(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
@@ -33,7 +33,7 @@ void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, const
 
 void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, int32_t saId, const std::string &msg)
 {
-    OHOS::HiviewDFX::HiSysEvent::Write(
+    HiSysEventWrite(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
@@ -44,7 +44,7 @@ void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, int32
 void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, const std::string &devId,
     const std::string &dhId, const std::string &msg)
 {
-    OHOS::HiviewDFX::HiSysEvent::Write(
+    HiSysEventWrite(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
@@ -55,7 +55,7 @@ void DAudioHisysevent::SysEventWriteBehavior(const std::string &eventName, const
 
 void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, const std::string &msg)
 {
-    OHOS::HiviewDFX::HiSysEvent::Write(
+    HiSysEventWrite(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
@@ -65,7 +65,7 @@ void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, const st
 void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, int32_t saId, int32_t errorCode,
     const std::string &msg)
 {
-    OHOS::HiviewDFX::HiSysEvent::Write(
+    HiSysEventWrite(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
@@ -76,7 +76,7 @@ void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, int32_t 
 
 void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, int32_t errorCode, const std::string &msg)
 {
-    OHOS::HiviewDFX::HiSysEvent::Write(
+    HiSysEventWrite(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
@@ -87,7 +87,7 @@ void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, int32_t 
 void DAudioHisysevent::SysEventWriteFault(const std::string &eventName, const std::string &devId,
     const std::string &dhId, int32_t errorCode, const std::string &msg)
 {
-    OHOS::HiviewDFX::HiSysEvent::Write(
+    HiSysEventWrite(
         OHOS::HiviewDFX::HiSysEvent::Domain::DISTRIBUTED_AUDIO,
         eventName,
         OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
