@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -166,6 +166,59 @@ int32_t DMicDev::NotifyEvent(const std::string &devId, const int32_t dhId, const
     return DH_SUCCESS;
 }
 
+int32_t DMicDev::MmapStart()
+{
+    if (ashmem_ == nullptr || micTrans_ == nullptr) {
+        DHLOGE("Ashmem or trans is null.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    std::lock_guard<std::mutex> lock(writeAshmemtMutex_);
+    isEnqueueRunning_.store(true);
+    enqueueDataThread_ = std::thread(&DMicDev::EnqueueThread, this);
+    return DH_SUCCESS;
+}
+
+void DMicDev::EnqueueThread()
+{
+    writeIndex_ = 0;
+    DHLOGI("lengthPerRead length: %d", lengthPerTrans_);
+    int64_t startTime = GetCurNano();
+    uint64_t writeCount = 0;
+    while (isEnqueueRunning_.load()) {
+        std::shared_ptr<AudioData> audioData = nullptr;
+        {
+            std::unique_lock<std::mutex> micLck(dataQueueMtx_);
+                dataQueueCond_.wait_for(micLck, std::chrono::milliseconds(CHANNEL_WAIT_SECONDS),
+                    [this]() { return !dataQueue_.empty(); });
+                if (dataQueue_.empty()) {
+                    continue;
+                }
+                audioData = dataQueue_.front();
+                dataQueue_.pop();
+        }
+        bool writeRet = ashmem_->WriteToAshmem(audioData->Data(), audioData->Size(), writeIndex_);
+        if (!writeRet) {
+            DHLOGE("Write daTa to ashmem failed.");
+        }
+        writeIndex_ += lengthPerTrans_;
+        if (writeIndex_ >= ashmemLength_) {
+            writeIndex_ = 0;
+        }
+        writeCount++;
+        AbsoluteSleep(startTime + writeCount * periodNanoSec_);
+    }
+}
+
+int32_t DMicDev::MmapStop()
+{
+    std::lock_guard<std::mutex> lock(writeAshmemtMutex_);
+    isEnqueueRunning_.store(false);
+    if (enqueueDataThread_.joinable()) {
+        enqueueDataThread_.join();
+    }
+    return DH_SUCCESS;
+}
+
 int32_t DMicDev::SetUp()
 {
     DHLOGI("Set up mic device.");
@@ -276,12 +329,23 @@ int32_t DMicDev::ReadMmapPosition(const std::string &devId, const int32_t dhId, 
 int32_t DMicDev::RefreshAshmemInfo(const std::string &devId, const int32_t dhId,
     int32_t fd, int32_t ashmemLength, int32_t lengthPerTrans)
 {
-    DHLOGI("Refresh ashmem info.");
-    (void)devId;
-    (void)dhId;
-    (void)fd;
-    (void)ashmemLength;
-    (void)lengthPerTrans;
+    DHLOGI("RefreshAshmemInfo: fd: %d, ashmemLength: %d, lengthPerTrans: %d", fd, ashmemLength, lengthPerTrans);
+    if (param_.captureOpts.capturerFlags == CAPTURE_MMAP_FLAG) {
+        DHLOGI("Dmic dev low-latency mode");
+        if (ashmem_ != nullptr) {
+            return DH_SUCCESS;
+        }
+        ashmem_ = new Ashmem(fd, ashmemLength);
+        ashmemLength_ = ashmemLength;
+        lengthPerTrans_ = lengthPerTrans;
+        DHLOGI("Create ashmem success. fd: %d, ashmem length: %d, lengthPerTrans: %d",
+            fd, ashmemLength_, lengthPerTrans_);
+        bool mapRet = ashmem_->MapReadAndWriteAshmem();
+        if (!mapRet) {
+            DHLOGE("Mmap ashmem failed");
+            return ERR_DH_AUDIO_NULLPTR;
+        }
+    }
     return DH_SUCCESS;
 }
 

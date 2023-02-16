@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,6 +54,8 @@ DAudioSourceDev::DAudioSourceDev(const std::string &devId, const std::shared_ptr
     memberFuncMap_[CHANGE_PLAY_STATUS] = &DAudioSourceDev::HandlePlayStatusChange;
     memberFuncMap_[MMAP_START] = &DAudioSourceDev::HandleMmapStart;
     memberFuncMap_[MMAP_STOP] = &DAudioSourceDev::HandleMmapStop;
+    memberFuncMap_[MMAP_START_MIC] = &DAudioSourceDev::HandleMicMmapStart;
+    memberFuncMap_[MMAP_STOP_MIC] = &DAudioSourceDev::HandleMicMmapStop;
 
     eventNotifyMap_[NOTIFY_OPEN_SPEAKER_RESULT] = EVENT_NOTIFY_OPEN_SPK;
     eventNotifyMap_[NOTIFY_CLOSE_SPEAKER_RESULT] = EVENT_NOTIFY_CLOSE_SPK;
@@ -410,6 +412,32 @@ int32_t DAudioSourceDev::HandleMmapStop(const AudioEvent &event)
         return ERR_DH_AUDIO_NULLPTR;
     }
     speaker_->MmapStop();
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSourceDev::HandleMicMmapStart(const AudioEvent &event)
+{
+    DHLOGI("Mmap start, content: %s.", event.content.c_str());
+    if (mic_ == nullptr) {
+        DHLOGE("Mmap start, mic is nullptr.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    if (mic_->MmapStart() != DH_SUCCESS) {
+        return ERR_DH_AUDIO_FAILED;
+    }
+    return DH_SUCCESS;
+}
+
+int32_t DAudioSourceDev::HandleMicMmapStop(const AudioEvent &event)
+{
+    DHLOGI("Mmap stop, content: %s.", event.content.c_str());
+    if (mic_ == nullptr) {
+        DHLOGE("Mmap stop, mic is nullptr.");
+        return ERR_DH_AUDIO_NULLPTR;
+    }
+    if (mic_->MmapStop() != DH_SUCCESS) {
+        return ERR_DH_AUDIO_FAILED;
+    }
     return DH_SUCCESS;
 }
 

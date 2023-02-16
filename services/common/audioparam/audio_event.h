@@ -65,6 +65,8 @@ typedef enum {
 
     MMAP_START = 81,
     MMAP_STOP = 82,
+    MMAP_START_MIC = 83,
+    MMAP_STOP_MIC = 84,
 } AudioEventType;
 
 typedef enum {
@@ -84,6 +86,8 @@ typedef enum {
     AUDIO_EVENT_CHANGE_PLAY_STATUS = 13,
     AUDIO_EVENT_MMAP_START = 14,
     AUDIO_EVENT_MMAP_STOP = 15,
+    AUDIO_EVENT_MIC_MMAP_START = 16,
+    AUDIO_EVENT_MIC_MMAP_STOP = 17,
 } AudioEventHDF;
 class AudioEvent {
 public:
