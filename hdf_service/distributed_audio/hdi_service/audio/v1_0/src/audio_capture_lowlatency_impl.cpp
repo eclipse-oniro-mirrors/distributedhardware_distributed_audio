@@ -56,7 +56,7 @@ int32_t AudioCaptureLowLatencyImpl::InitAshmem(int32_t ashmemLength)
         DHLOGE("Create ashmem failed.");
         return HDF_FAILURE;
     }
-    if (ashmem_->MapReadAndWriteAshmem()) {
+    if (!ashmem_->MapReadAndWriteAshmem()) {
         DHLOGE("Mmap ashmem failed.");
         return HDF_FAILURE;
     }
