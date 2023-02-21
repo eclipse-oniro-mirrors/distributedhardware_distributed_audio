@@ -18,20 +18,26 @@
 #include <iostream>
 #include <string>
 
-#include "aec_test.h"
+#include "audio_buffer.h"
+#include "cycle_test.h"
 #include "daudio_errorcode.h"
 #include "local_audio.h"
+#include "hdf_audio.h"
 
 using namespace std;
 
 const string CMD_QUIT = "quit";
 const string CMD_QUIT_EXT = "0";
-const string CMD_LOCAL_CAPTURE = "lcap";
+const string CMD_LOCAL_CAPTURE = "lmic";
 const string CMD_LOCAL_CAPTURE_EXT = "20";
-const string CMD_LOCAL_RENDER = "lren";
+const string CMD_LOCAL_RENDER = "lspk";
 const string CMD_LOCAL_RENDER_EXT = "21";
-const string CMD_AEC_TEST = "aec";
-const string CMD_AEC_TEST_EXT = "22";
+const string CMD_CYCLE_TEST = "cycle";
+const string CMD_CYCLE_TEST_EXT = "22";
+const string CMD_HDF_CAPTURE = "hmic";
+const string CMD_HDF_CAPTURE_EXT = "23";
+const string CMD_HDF_RENDER = "hspk";
+const string CMD_HDF_RENDER_EXT = "24";
 namespace OHOS {
 namespace DistributedHardware {
 
@@ -59,8 +65,18 @@ void DAudioTestUtils::DoAudioTest()
             continue;
         }
 
-        if (cmd == CMD_AEC_TEST || cmd == CMD_AEC_TEST_EXT) {
-            LocalEchoCancel();
+        if (cmd == CMD_CYCLE_TEST || cmd == CMD_CYCLE_TEST_EXT) {
+            AudioCycleTest();
+            continue;
+        }
+
+        if (cmd == CMD_HDF_CAPTURE || cmd == CMD_HDF_CAPTURE_EXT) {
+            HDFCapture();
+            continue;
+        }
+
+        if (cmd == CMD_HDF_RENDER || cmd == CMD_HDF_RENDER_EXT) {
+            HDFRender();
             continue;
         }
     }
@@ -75,12 +91,17 @@ void DAudioTestUtils::LocalCapture()
     if (res != DH_SUCCESS) {
         return;
     }
-    capture.Init(info);
-    int32_t time = 0;
+    res = capture.Init(info);
+    if (res != DH_SUCCESS) {
+        return;
+    }
     cout << "Input capture time(s): ";
-    cin >> time;
+    cin >> time_;
     cout << endl;
-    capture.CaptureFrame(time);
+    capture.CaptureFrame(time_);
+    capture.Start();
+    capture.Stop();
+    capture.SaveAudioData("/data/mic.pcm");
     capture.Release();
 }
 
@@ -88,38 +109,99 @@ void DAudioTestUtils::LocalRender()
 {
     cout << "[LocalRender]" << endl;
     AudioRenderObj render;
-    string path;
     AudioBufferInfo info;
 
     cout << "Input file path: ";
-    cin >> path;
+    cin >> path_;
     cout << endl;
 
-    size_t pos = path.find(".wav");
+    size_t pos = path_.find(".wav");
     if (pos != string::npos) {
-        if (render.ReadWavFile(path, info) != DH_SUCCESS) {
+        if (render.ReadWavFile(path_, info) != DH_SUCCESS) {
             return;
         }
     }
-    pos = path.find(".pcm");
+    pos = path_.find(".pcm");
     if (pos != string::npos) {
-        if (render.ReadPcmFile(path, info) != DH_SUCCESS) {
+        if (render.ReadPcmFile(path_, info) != DH_SUCCESS) {
             return;
         }
     }
 
-    render.Init(info);
-    render.RenderFrame();
+    int32_t res = render.Init(info);
+    if (res != DH_SUCCESS) {
+        return;
+    }
+    render.Start();
+    render.Stop();
     render.Release();
 }
 
-void DAudioTestUtils::LocalEchoCancel()
+void DAudioTestUtils::AudioCycleTest()
 {
-    cout << "[LocalEchoCancel]" << endl;
-    AecTest echoCancel;
-    echoCancel.Init();
-    echoCancel.Process();
-    echoCancel.Release();
+    cout << "[CycleTest]" << endl;
+    CycleTest test;
+    int32_t res = test.Init();
+    if (res != DH_SUCCESS) {
+        return;
+    }
+    test.Process();
+    test.Release();
+}
+
+void DAudioTestUtils::HDFCapture()
+{
+    cout << "[HDFCapture]" << endl;
+    HDFAudioCaptureObj capture;
+    AudioBufferInfo info;
+    int32_t res = capture.ReadAudioInfo(info);
+    if (res != DH_SUCCESS) {
+        return;
+    }
+    res = capture.Init(info);
+    if (res != DH_SUCCESS) {
+        return;
+    }
+    cout << "Input capture time(s): ";
+    cin >> time_;
+    cout << endl;
+    capture.CaptureFrame(time_);
+    capture.Start();
+    capture.Stop();
+    capture.SaveAudioData("/data/mic.pcm");
+    capture.Release();
+}
+
+void DAudioTestUtils::HDFRender()
+{
+    cout << "[HDFRender]" << endl;
+    HDFAudioRenderObj render;
+    AudioBufferInfo info;
+
+    cout << "Input file path: ";
+    cin >> path_;
+    cout << endl;
+
+    size_t pos = path_.find(".wav");
+    if (pos != string::npos) {
+        if (render.ReadWavFile(path_, info) != DH_SUCCESS) {
+            return;
+        }
+    }
+    pos = path_.find(".pcm");
+    if (pos != string::npos) {
+        if (render.ReadPcmFile(path_, info) != DH_SUCCESS) {
+            return;
+        }
+    }
+
+    int32_t res = render.Init(info);
+    if (res != DH_SUCCESS) {
+        return;
+    }
+    render.Start();
+    render.Stop();
+    render.Release();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

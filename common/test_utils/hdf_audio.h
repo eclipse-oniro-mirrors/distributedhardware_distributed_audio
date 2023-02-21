@@ -13,37 +13,23 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_LOCAL_AUDIO_H
-#define OHOS_LOCAL_AUDIO_H
+#ifndef OHOS_HDF_AUDIO_H
+#define OHOS_HDF_AUDIO_H
 
 #include <thread>
 
+#include "audio_types.h"
 #include "audio_capturer.h"
 #include "audio_renderer.h"
-#include "audio_info.h"
 #include "audio_base.h"
+#include "audio_buffer.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class AudioCaptureObj : public AudioObject {
+class HDFAudioCaptureObj : public AudioObject {
 public:
-    AudioCaptureObj();
-    ~AudioCaptureObj() override = default;
-    int32_t Init(const AudioBufferInfo &info) override;
-    void Release() override;
-    void RunThread() override;
-    void Start() override;
-    void Stop() override;
-    int32_t CaptureFrame(const int32_t time) override;
-private:
-    OHOS::AudioStandard::AudioCapturerOptions opts_;
-    std::unique_ptr<OHOS::AudioStandard::AudioCapturer> capturer_ = nullptr;
-};
-
-class AudioRenderObj : public AudioObject {
-public:
-    AudioRenderObj();
-    ~AudioRenderObj() override = default;
+    HDFAudioCaptureObj();
+    ~HDFAudioCaptureObj() override = default;
     int32_t Init(const AudioBufferInfo &info) override;
     void Release() override;
     void RunThread() override;
@@ -52,10 +38,25 @@ public:
     int32_t CaptureFrame(const int32_t time) override;
 private:
 
-    OHOS::AudioStandard::AudioRendererOptions opts_;
-    std::unique_ptr<OHOS::AudioStandard::AudioRenderer> render_ = nullptr;
+    struct AudioDeviceDescriptor captureDesc_;
+    struct AudioSampleAttributes captureAttr_;
 };
 
+class HDFAudioRenderObj : public AudioObject {
+public:
+    HDFAudioRenderObj();
+    ~HDFAudioRenderObj() override = default;
+    int32_t Init(const AudioBufferInfo &info) override;
+    void Release() override;
+    void RunThread() override;
+    void Start() override;
+    void Stop() override;
+    int32_t CaptureFrame(const int32_t time) override;;
+private:
+
+    struct AudioDeviceDescriptor renderDesc_;
+    struct AudioSampleAttributes renderAttr_;
+};
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif // OHOS_LOCAL_AUDIO_H
+#endif // OHOS_HDF_AUDIO_H

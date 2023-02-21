@@ -14,6 +14,8 @@
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
 import("//foundation/distributedhardware/distributed_audio/distributedaudio.gni")
+import("//drivers/hdf_core/adapter/uhdf2/uhdf.gni")
+import("//drivers/peripheral/adapter/base/hidl_adapter.gni")
 
 ohos_executable("daudio_test_bin") {
     include_dirs = [
@@ -21,13 +23,16 @@ ohos_executable("daudio_test_bin") {
         "//foundation/multimedia/audio_framework/frameworks/native/common/include",
         "//foundation/multinedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
         "${common_path}/include",
+        "//drivers/peripheral/audio/interfaces/include",
     ]
 
     sources = [
         "audio_buffer.cpp",
         "daudio_test_utils.cpp",
         "local_audio.cpp",
-        "aec_test.cpp",
+        "cycle_test.cpp",
+        "hdf_audio.cpp",
+        "audio_base.cpp"
     ]
 
     deps = [

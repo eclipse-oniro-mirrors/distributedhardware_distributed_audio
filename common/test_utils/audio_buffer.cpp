@@ -21,9 +21,12 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+
+constexpr int32_t MAX_SIZE = 3840 * 50 * 6000;
+
 AudioBuffer::AudioBuffer(const int32_t size)
 {
-    if (size > 0) {
+    if (size > 0 && size < MAX_SIZE) {
         data_ = new (std::nothrow) uint8_t[size] {0};
         if (data_ != nullptr) {
             param_.size = size;
@@ -36,7 +39,7 @@ AudioBuffer::AudioBuffer(const int32_t size)
 
 AudioBuffer::AudioBuffer(const AudioBufferInfo &info)
 {
-    if (info.size > 0) {
+    if (info.size > 0 && info.size < MAX_SIZE) {
         param_ = info;
         data_ = new (std::nothrow) uint8_t[info.size] { 0 };
     }
@@ -67,9 +70,13 @@ int32_t AudioBuffer::WirteBufferToFile(const std::string &path)
         return ERR_DH_AUDIO_FAILED;
     }
 
-    FILE *fp = fopen(path.c_str(), "wb");
-    fwrite(data_, sizeof(uint8_t), param_.size, fp);
-    fclose(fp);
+    FILE *fd = fopen(path.c_str(), "wb");
+    if (fd == nullptr) {
+        std::cout << "Open file failed." << std::endl;
+        return ERR_DH_AUDIO_FAILED;
+    }
+    fwrite(data_, sizeof(uint8_t), param_.size, fd);
+    fclose(fd);
     return DH_SUCCESS;
 }
 } // namespace DistributedHardware

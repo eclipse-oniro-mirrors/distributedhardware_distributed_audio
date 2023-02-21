@@ -40,6 +40,10 @@ public:
 
     int32_t Size() const;
     uint8_t *Data() const;
+    AudioBufferInfo GetInfo()
+    {
+        return param_;
+    }
 
     int32_t WirteBufferToFile(const std::string &path);
 

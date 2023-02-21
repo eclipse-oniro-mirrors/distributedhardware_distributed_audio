@@ -13,30 +13,39 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DAUDIO_TEST_UTILS_H
-#define OHOS_DAUDIO_TEST_UTILS_H
+#ifndef OHOS_CYCLE_TEST_H
+#define OHOS_CYCLE_TEST_H
 
-#include <string>
+#include <memory>
+#include "audio_base.h"
+#include "audio_buffer.h"
+
 namespace OHOS {
 namespace DistributedHardware {
-class DAudioTestUtils {
+typedef enum {
+    MODE_INVALID = 0,
+    MODE_LR_LC = 1,
+    MODE_HR_HC = 2,
+} CYCLE_MODE;
+class CycleTest {
 public:
-    DAudioTestUtils() = default;
-    ~DAudioTestUtils() = default;
-    void DoAudioTest();
+    CycleTest() = default;
+    ~CycleTest() = default;
+
+    int32_t Init();
+    int32_t Process();
+    void Release();
+private:
+    void GetMode();
 
 private:
-    void LocalCapture();
-    void LocalRender();
-    void AudioCycleTest();
-    void HDFCapture();
-    void HDFRender();
-
-private:
-    int32_t time_ = 0;
-    std::string path_;
+    CYCLE_MODE mode_ = MODE_INVALID;
+    std::string spkFile_;
+    std::string micFile_;
+    std::unique_ptr<AudioObject> render_;
+    std::unique_ptr<AudioObject> capture_;
+    AudioBufferInfo info_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-
-#endif // OHOS_DAUDIO_TEST_UTILS_H
+#endif // OHOS_CYCLE_TEST_H
