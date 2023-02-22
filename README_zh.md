@@ -8,7 +8,7 @@
 
 ![](figures/distributedaudio_arch.png)
 
-**分布式音频接口(DistributedAudioSDK)**：为分布式硬件管理框架提供分布式音频初始化、释放、使能、去使能能力，以及音频设备配置参数能力。
+**分布式音频框架实现(DistributedAudioFwkImpl)**：为分布式硬件管理框架提供分布式音频初始化、释放、使能、去使能能力，以及音频设备配置参数能力。
 
 **分布式音频主控端管理模块(DAudioSourceManager)**：管理和创建主控端Fwk层分布式音频设备实体。
 
