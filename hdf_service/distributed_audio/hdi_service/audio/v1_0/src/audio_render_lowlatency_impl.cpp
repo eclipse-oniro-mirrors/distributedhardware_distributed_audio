@@ -50,6 +50,10 @@ AudioRenderLowLatencyImpl::~AudioRenderLowLatencyImpl()
 int32_t AudioRenderLowLatencyImpl::InitAshmem(int32_t ashmemLength)
 {
     std::string memory_name = "Render ShareMemory";
+    if (ashmemLength < DAUDIO_MIN_ASHMEM_LEN || ashmemLength > DAUDIO_MAX_ASHMEM_LEN) {
+        DHLOGE("Init ashmem failed. length is illegal");
+        return HDF_FAILURE;
+    }
     ashmem_ = OHOS::Ashmem::CreateAshmem(memory_name.c_str(), ashmemLength);
     if (ashmem_ == nullptr) {
         DHLOGE("Create ashmem failed.");
@@ -394,12 +398,29 @@ int32_t AudioRenderLowLatencyImpl::ReqMmapBuffer(int32_t reqSize, AudioMmapBuffe
     desc.transferFrameSize = CalculateSampleNum(devAttrs_.sampleRate, timeInterval_);
     lengthPerTrans_ = desc.transferFrameSize * devAttrs_.channelCount * devAttrs_.format;
     desc.isShareable = false;
+    ret = audioExtCallback_->RefreshAshmemInfo(adapterName_, devDesc_.pins, fd_, ashmemLength_, lengthPerTrans_);
+    if (ret != HDF_SUCCESS) {
+        DHLOGE("Refresh ashmem info failed.");
+        return HDF_FAILURE;
+    }
     return HDF_SUCCESS;
 }
 
 int32_t AudioRenderLowLatencyImpl::GetMmapPosition(uint64_t &frames, AudioTimeStamp &time)
 {
     DHLOGI("Get mmap position.");
+    (void)time;
+    if (audioExtCallback_ == nullptr) {
+        DHLOGE("Callback is nullptr.");
+        return HDF_FAILURE;
+    }
+    uint64_t timeStamp;
+    int32_t ret = audioExtCallback_->ReadMmapPosition(adapterName_, devDesc_.pins, frames, timeStamp);
+    if (ret != HDF_SUCCESS) {
+        DHLOGE("Read mmap position failed.");
+        return HDF_FAILURE;
+    }
+    DHLOGI("Read mmap position. frames: %d, timeStamp: %d", frames, timeStamp);
     return HDF_SUCCESS;
 }
 

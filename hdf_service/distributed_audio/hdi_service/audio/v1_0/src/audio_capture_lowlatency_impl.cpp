@@ -51,6 +51,10 @@ AudioCaptureLowLatencyImpl::~AudioCaptureLowLatencyImpl()
 int32_t AudioCaptureLowLatencyImpl::InitAshmem(int32_t ashmemLength)
 {
     std::string memory_name = "Capture ShareMemory";
+    if (ashmemLength < DAUDIO_MIN_ASHMEM_LEN || ashmemLength > DAUDIO_MAX_ASHMEM_LEN) {
+        DHLOGE("Init ashmem failed. length is illegal");
+        return HDF_FAILURE;
+    }
     ashmem_ = OHOS::Ashmem::CreateAshmem(memory_name.c_str(), ashmemLength);
     if (ashmem_ == nullptr) {
         DHLOGE("Create ashmem failed.");

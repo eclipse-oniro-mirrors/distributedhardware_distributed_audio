@@ -69,6 +69,9 @@ constexpr int32_t DEFAULT_AUDIO_DATA_SIZE = 4096;
 
 constexpr uint32_t AUDIO_DEFAULT_MAX_VOLUME_LEVEL = 15;
 constexpr uint32_t AUDIO_DEFAULT_MIN_VOLUME_LEVEL = 0;
+
+constexpr uint32_t DAUDIO_MAX_ASHMEM_LEN = 100000;
+constexpr uint32_t DAUDIO_MIN_ASHMEM_LEN = 10;
 } // DistributeHardware
 } // OHOS
 #endif // OHOS_DAUDIO_CONSTANTS_H
