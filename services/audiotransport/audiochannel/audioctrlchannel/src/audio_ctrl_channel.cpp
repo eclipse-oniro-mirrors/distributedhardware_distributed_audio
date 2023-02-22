@@ -205,7 +205,7 @@ void AudioCtrlChannel::OnSessionClosed(int32_t sessionId)
 void AudioCtrlChannel::OnBytesReceived(int32_t sessionId, const void *data, uint32_t dataLen)
 {
     DHLOGI("On bytes received, sessionId: %d, dataLen: %d.", sessionId, dataLen);
-    if (sessionId < 0 || data == nullptr || dataLen <= 0) {
+    if (sessionId < 0 || data == nullptr || dataLen == 0 || dataLen > MSG_MAX_SIZE) {
         DHLOGE("Param check failed");
         return;
     }
@@ -215,13 +215,13 @@ void AudioCtrlChannel::OnBytesReceived(int32_t sessionId, const void *data, uint
         return;
     }
 
-    uint8_t *buf = reinterpret_cast<uint8_t *>(calloc(dataLen + 1, sizeof(uint8_t)));
+    uint8_t *buf = reinterpret_cast<uint8_t *>(calloc(dataLen + STR_TERM_LEN, sizeof(uint8_t)));
     if (buf == nullptr) {
         DHLOGE("Malloc memory failed.");
         return;
     }
 
-    if (memcpy_s(buf, dataLen + 1, reinterpret_cast<const uint8_t *>(data), dataLen) != EOK) {
+    if (memcpy_s(buf, dataLen + STR_TERM_LEN, reinterpret_cast<const uint8_t *>(data), dataLen) != EOK) {
         DHLOGE("Received bytes data copy failed.");
         free(buf);
         return;

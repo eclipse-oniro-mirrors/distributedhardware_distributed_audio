@@ -254,7 +254,7 @@ void SoftbusAdapter::OnBytesReceived(int32_t sessionId, const void *data, uint32
     if (data == nullptr) {
         DHLOGE("Bytes data is null.");
         return;
-    } else if (dataLen <= 0 || dataLen > DAUDIO_MAX_RECV_DATA_LEN) {
+    } else if (dataLen == 0 || dataLen > DAUDIO_MAX_RECV_DATA_LEN) {
         DHLOGE("Stream data length is illegal, dataLen: %d.", dataLen);
         return;
     }

@@ -20,6 +20,7 @@
 #include <v1_0/audio_types.h>
 
 #include "audio_types.h"
+#include "daudio_constants.h"
 #include "daudio_errorcode.h"
 #include "daudio_log.h"
 
@@ -31,48 +32,92 @@ namespace DistributedHardware {
 using OHOS::HDI::DistributedAudio::Audio::V1_0::IAudioAdapter;
 using OHOS::HDI::DistributedAudio::Audio::V1_0::AudioAdapterDescriptor;
 
+static int32_t InitDescriptorPort(const AudioAdapterDescriptor &desc, ::AudioAdapterDescriptor &descInternal)
+{
+    DHLOGI("Init audio adapter descriptor port.");
+    ::AudioPort *audioPorts = (::AudioPort *)malloc(desc.ports.size() * sizeof(AudioPort));
+    if (audioPorts == nullptr) {
+        DHLOGE("Audio ports is nullptr.");
+        return ERR_DH_AUDIO_HDI_NULLPTR;
+    }
+    descInternal.ports = audioPorts;
+
+    bool isSuccess = true;
+    uint32_t cpyPortNum = 0;
+    constexpr uint32_t maxPortNameLen = 1000;
+    for (auto port : desc.ports) {
+        if (port.portName.length() >= maxPortNameLen) {
+            DHLOGE("Audio port name length is too long.");
+            continue;
+        }
+        char* portName = reinterpret_cast<char *>(calloc(port.portName.length() + STR_TERM_LEN, sizeof(char)));
+        if (portName == nullptr) {
+            DHLOGE("Calloc failed.");
+            isSuccess = false;
+            break;
+        }
+        if (strcpy_s(portName, port.portName.length() + STR_TERM_LEN, port.portName.c_str()) != EOK) {
+            DHLOGI("Strcpy_s port name failed.");
+            free(portName);
+            continue;
+        }
+        audioPorts->dir = static_cast<::AudioPortDirection>(port.dir);
+        audioPorts->portId = port.portId;
+        audioPorts->portName = portName;
+        audioPorts++;
+        cpyPortNum++;
+    }
+    if (isSuccess) {
+        return DH_SUCCESS;
+    }
+
+    for (uint32_t i = 0; i < cpyPortNum; i++) {
+        if (descInternal.ports[i].portName != nullptr) {
+            free(const_cast<char *>(descInternal.ports[i].portName));
+        }
+    }
+    free(descInternal.ports);
+    descInternal.ports = nullptr;
+    return ERR_DH_AUDIO_HDI_CALL_FAILED;
+}
+
 static int32_t InitAudioAdapterDescriptor(AudioManagerContext *context,
     std::vector<AudioAdapterDescriptor> &descriptors)
 {
-    DHLOGI("Init audio adapters descriptor, size is: %zd.", descriptors.size());
+    DHLOGI("Init audio adapters descriptor, size is: %zu.", descriptors.size());
+    constexpr uint32_t maxAdapterNameLen = 1000;
+    constexpr uint32_t maxPortNum = 100;
+    constexpr uint32_t minPortNum = 1;
     for (auto desc : descriptors) {
-        ::AudioPort *audioPorts = (::AudioPort *)malloc(desc.ports.size() * sizeof(AudioPort));
-        if (audioPorts == nullptr) {
-            DHLOGE("Audio ports is nullptr.");
-            return ERR_DH_AUDIO_HDI_CALL_FAILED;
-        }
-        char* adapterName = reinterpret_cast<char *>(calloc(desc.adapterName.length() + 1, sizeof(char)));
-        if (adapterName == nullptr) {
-            DHLOGE("Calloc failed.");
-            free(audioPorts);
-            return ERR_DH_AUDIO_HDI_CALL_FAILED;
-        }
-        if (strcpy_s(adapterName, desc.adapterName.length() + 1, desc.adapterName.c_str()) != EOK) {
-            DHLOGI("Strcpy_s adapter name failed.");
-            free(adapterName);
-            free(audioPorts);
+        if (desc.ports.size() < minPortNum || desc.ports.size() > maxPortNum) {
+            DHLOGE("The descriptor ports size: %zu.", desc.ports.size());
             continue;
         }
+        if (desc.adapterName.length() >= maxAdapterNameLen) {
+            DHLOGE("Audio adapter name length is too long.");
+            continue;
+        }
+        char* adapterName = reinterpret_cast<char *>(calloc(desc.adapterName.length() + STR_TERM_LEN, sizeof(char)));
+        if (adapterName == nullptr) {
+            DHLOGE("Calloc failed.");
+            return ERR_DH_AUDIO_HDI_NULLPTR;
+        }
+        if (strcpy_s(adapterName, desc.adapterName.length() + STR_TERM_LEN, desc.adapterName.c_str()) != EOK) {
+            DHLOGI("Strcpy_s adapter name failed.");
+            free(adapterName);
+            continue;
+        }
+
         ::AudioAdapterDescriptor descInternal = {
             .adapterName = adapterName,
             .portNum = desc.ports.size(),
-            .ports = audioPorts,
         };
-        for (auto port : desc.ports) {
-            char* portName = reinterpret_cast<char *>(calloc(port.portName.length() + 1, sizeof(char)));
-            if (portName == nullptr) {
-                DHLOGE("Calloc failed.");
-                return ERR_DH_AUDIO_HDI_CALL_FAILED;
-            }
-            if (strcpy_s(portName, port.portName.length() + 1, port.portName.c_str()) != EOK) {
-                DHLOGI("Strcpy_s port name failed.");
-                free(portName);
-                continue;
-            }
-            audioPorts->dir = static_cast<::AudioPortDirection>(port.dir);
-            audioPorts->portId = port.portId;
-            audioPorts->portName = portName;
-            audioPorts++;
+        int32_t ret = InitDescriptorPort(desc, descInternal);
+        if (ret != DH_SUCCESS) {
+            DHLOGE("Init audio adapter descriptor port fail.");
+            free(adapterName);
+            descInternal.adapterName = nullptr;
+            return ret;
         }
         context->descriptors_.push_back(descInternal);
     }
@@ -189,6 +234,7 @@ static void UnloadAdapterInternal(struct AudioManager *manager, struct AudioAdap
 
 void AudioManagerContext::ClearDescriptors()
 {
+    DHLOGI("Clear descriptors enter.");
     for (auto &desc : descriptors_) {
         if (desc.adapterName != nullptr) {
             free(const_cast<char *>(desc.adapterName));
@@ -201,6 +247,7 @@ void AudioManagerContext::ClearDescriptors()
         free(desc.ports);
     }
     descriptors_.clear();
+    DHLOGI("Clear descriptors end.");
 }
 
 AudioManagerContext::AudioManagerContext()

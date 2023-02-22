@@ -56,6 +56,7 @@ constexpr uint32_t SAMPLE_RATE_DEFAULT = 48000;
 constexpr uint32_t CHANNEL_COUNT_DEFAULT = 2;
 constexpr uint32_t SAMPLE_FORMAT_DEFAULT = 1;
 
+constexpr uint32_t STR_TERM_LEN = 1;
 constexpr uint32_t DAUDIO_MAX_SESSION_NAME_LEN = 50;
 constexpr uint32_t DAUDIO_MAX_DEVICE_ID_LEN = 100;
 constexpr uint32_t DAUDIO_MAX_TASKQUEUE_LEN = 100;
