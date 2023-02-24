@@ -64,6 +64,7 @@ HWTEST_F(AudioRenderLowlatencyImplTest, InitAshmem_001, TestSize.Level1)
     int lengthPerTrans = 1024;
     const std::vector<int8_t> frame;
     AudioTimeStamp time;
+    audioRenderlatencyImpl_->audioExtCallback_ = new MockIDAudioCallback();
     EXPECT_EQ(HDF_SUCCESS, audioRenderlatencyImpl_->InitAshmem(ashmemLength));
     audioRenderlatencyImpl_->UnInitAshmem();
     EXPECT_EQ(HDF_SUCCESS, audioRenderlatencyImpl_->GetRenderPosition(replyBytes, time));
@@ -226,6 +227,7 @@ HWTEST_F(AudioRenderLowlatencyImplTest, ReqMmapBuffer_002, TestSize.Level1)
         .streamId = 1,
     };
     audioRenderlatencyImpl_->devAttrs_ = renderAttr;
+    audioRenderlatencyImpl_->audioExtCallback_ = new MockIDAudioCallback();
     EXPECT_EQ(HDF_SUCCESS, audioRenderlatencyImpl_->ReqMmapBuffer(reqSize, desc));
     audioRenderlatencyImpl_->UnInitAshmem();
 }
