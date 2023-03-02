@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -171,6 +171,9 @@ int32_t DSpeakerClient::StopRender()
 void DSpeakerClient::PlayThreadRunning()
 {
     DHLOGI("Start the renderer thread.");
+    if (pthread_setname_np(pthread_self(), RENDERTHREAD) != DH_SUCCESS) {
+        DHLOGE("Render data thread setname failed.");
+    }
     while (audioRenderer_ != nullptr && isRenderReady_.load()) {
         std::shared_ptr<AudioData> audioData = nullptr;
         {

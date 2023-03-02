@@ -23,6 +23,8 @@
 using namespace std;
 namespace OHOS {
 namespace DistributedHardware {
+static constexpr const char* RENDER_RUN_THREAD = "localSpkRunTh";
+static constexpr const char* CAPTURE_RUN_THREAD = "localMicRunTh";
 AudioCaptureObj::AudioCaptureObj()
 {
     opts_.capturerInfo.sourceType = OHOS::AudioStandard::SourceType::SOURCE_TYPE_MIC;
@@ -100,6 +102,9 @@ void AudioCaptureObj::RunThread()
         return;
     }
 
+    if (pthread_setname_np(pthread_self(), CAPTURE_RUN_THREAD) != DH_SUCCESS) {
+        cout << "Local capture run thread setname failed."<< endl;
+    }
     int32_t playIndex = 0;
     uint8_t *base = data_->Data();
     auto data = std::make_unique<AudioBuffer>(info_.sizePerFrame);
@@ -188,6 +193,9 @@ void AudioRenderObj::RunThread()
         return;
     }
 
+    if (pthread_setname_np(pthread_self(), RENDER_RUN_THREAD) != DH_SUCCESS) {
+        cout << "Local render run thread setname failed."<< endl;
+    }
     int32_t playIndex = 0;
     uint8_t *base = data_->Data();
     auto data = std::make_unique<AudioBuffer>(info_.sizePerFrame);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -78,6 +78,7 @@ private:
     static constexpr size_t DATA_QUEUE_MAX_SIZE = 3;
     static constexpr int64_t periodNanoSec_ = 5000000;
     static constexpr int32_t CAPTURE_MMAP_FLAG = 1;
+    static constexpr const char* ENQUEUE_THREAD = "micEnqueueTh";
 
     std::string devId_;
     std::weak_ptr<IAudioEventCallback> audioEventCallback_;

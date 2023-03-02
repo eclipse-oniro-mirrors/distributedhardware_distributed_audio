@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -227,6 +227,9 @@ int32_t SoftbusAdapter::OnSoftbusSessionOpened(int32_t sessionId, int32_t result
         DHLOGI("Start softbus send thread.");
         isSessionOpened_.store(true);
         sendDataThread_ = std::thread(&SoftbusAdapter::SendAudioData, this);
+        if (pthread_setname_np(sendDataThread_.native_handle(), SENDDATA_THREAD) != DH_SUCCESS) {
+            DHLOGE("Send data thread setname failed.");
+        }
     }
     mapListenersI_.insert(std::make_pair(sessionId, listener));
     listener->OnSessionOpened(sessionId, result);

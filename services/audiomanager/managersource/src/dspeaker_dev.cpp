@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -176,6 +176,9 @@ int32_t DSpeakerDev::MmapStart()
     }
     isEnqueueRunning_.store(true);
     enqueueDataThread_ = std::thread(&DSpeakerDev::EnqueueThread, this);
+    if (pthread_setname_np(enqueueDataThread_.native_handle(), ENQUEUE_THREAD) != DH_SUCCESS) {
+        DHLOGE("Enqueue data thread setname failed.");
+    }
     return DH_SUCCESS;
 }
 

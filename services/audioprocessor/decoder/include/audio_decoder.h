@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -72,6 +72,7 @@ private:
     constexpr static int32_t SAMPLE_RATE_MIN = 8000;
     constexpr static int32_t SAMPLE_RATE_MAX = 96000;
     const static std::string DECODE_MIME_AAC;
+    static constexpr const char* DECODE_THREAD = "decodeThread";
 
     std::mutex mtxData_;
     std::mutex mtxCnt_;

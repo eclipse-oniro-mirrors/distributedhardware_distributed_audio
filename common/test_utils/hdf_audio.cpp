@@ -38,6 +38,8 @@ static struct AudioRender *g_audioRender;
 static bool g_micInUse = false;
 static bool g_spkInUse = false;
 static void *g_handle = nullptr;
+static constexpr const char* RENDER_RUN_THREAD = "hdfSpkRunTh";
+static constexpr const char* CAPTURE_RUN_THREAD = "hdfMicRunTh";
 
 static int32_t GetAudioManager()
 {
@@ -200,6 +202,9 @@ void HDFAudioCaptureObj::RunThread()
         return;
     }
 
+    if (pthread_setname_np(pthread_self(), CAPTURE_RUN_THREAD) != DH_SUCCESS) {
+        cout << "Hdf capture run thread setname failed." << endl;
+    }
     int32_t playIndex = 0;
     uint64_t size = 0;
     uint8_t *base = data_->Data();
@@ -298,6 +303,9 @@ void HDFAudioRenderObj::RunThread()
         return;
     }
 
+    if (pthread_setname_np(pthread_self(), RENDER_RUN_THREAD) != DH_SUCCESS) {
+        cout << "Hdf render run thread setname failed."<< endl;
+    }
     int32_t playIndex = 0;
     int32_t offset = 65535;
     uint64_t size = 0;

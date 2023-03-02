@@ -1,5 +1,5 @@
  /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -78,6 +78,7 @@ private:
 
 private:
     static constexpr size_t DATA_QUEUE_MAX_SIZE = 500;
+    static constexpr const char* SENDDATA_THREAD = "sendDataThread";
     std::mutex listenerMtx_;
     std::mutex sessSetMtx_;
     std::mutex dataQueueMtx_;

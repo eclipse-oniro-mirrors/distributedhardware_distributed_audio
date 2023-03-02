@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,6 +82,9 @@ void DAudioSinkManager::OnSinkDevReleased(const std::string &devId)
         devClearThread_.join();
     }
     devClearThread_ = std::thread(&DAudioSinkManager::ClearAudioDev, this, devId);
+    if (pthread_setname_np(devClearThread_.native_handle(), DEVCLEAR_THREAD) != DH_SUCCESS) {
+        DHLOGE("Dev clear thread setname failed.");
+    }
 }
 
 int32_t DAudioSinkManager::HandleDAudioNotify(const std::string &devId, const std::string &dhId,

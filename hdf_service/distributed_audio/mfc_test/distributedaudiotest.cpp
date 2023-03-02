@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2022-2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -49,6 +49,9 @@ AudioAdapter *g_adapter = nullptr;
 AudioRender *g_render = nullptr;
 AudioCapture *g_capture = nullptr;
 AudioAdapterDescriptor *g_devices = nullptr;
+
+static constexpr const char* PLAY_THREAD = "playThread";
+static constexpr const char* CAPTURE_THREAD = "captureThread";
 
 int32_t g_deviceNum = 0;
 int32_t g_frameNum = 0;
@@ -234,6 +237,9 @@ static void Play()
     if (g_render == nullptr) {
         std::cout << "SPK device is null." << std::endl;
         return;
+    }
+    if (pthread_setname_np(pthread_self(), PLAY_THREAD) != DH_SUCCESS) {
+        std::cout << "Play thread setname failed." << std::endl;
     }
     std::cout << "Playing thread started." << std::endl;
     g_render->control.Start((AudioHandle)g_render);
@@ -426,6 +432,9 @@ static void Capture()
     if (g_capture == nullptr) {
         std::cout << "MIC device is null." << std::endl;
         return;
+    }
+    if (pthread_setname_np(pthread_self(), CAPTURE_THREAD) != DH_SUCCESS) {
+        std::cout << "Capture thread setname failed." << std::endl;
     }
     std::cout << "Capturing thread started." << std::endl;
     g_capture->control.Start((AudioHandle)g_capture);

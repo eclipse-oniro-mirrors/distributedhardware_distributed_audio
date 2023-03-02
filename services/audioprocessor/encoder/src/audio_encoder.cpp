@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -166,6 +166,9 @@ void AudioEncoder::StartInputThread()
 {
     DHLOGI("Start input thread.");
     encodeThread_ = std::thread(&AudioEncoder::InputEncodeAudioData, this);
+    if (pthread_setname_np(encodeThread_.native_handle(), ENCODE_THREAD) != DH_SUCCESS) {
+        DHLOGE("Encode thread setname failed.");
+    }
     isEncoderRunning_.store(true);
 }
 

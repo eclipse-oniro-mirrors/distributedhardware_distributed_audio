@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +29,9 @@ void TaskQueue::Start()
     taskQueueReady_ = true;
     isQuitTaskQueue_ = false;
     mainThreadLoop_ = std::thread(&TaskQueue::Run, this);
+    if (pthread_setname_np(mainThreadLoop_.native_handle(), MAIN_THREAD_LOOP) != DH_SUCCESS) {
+        DHLOGE("Main thread loop setname failed.");
+    }
     while (!mainThreadLoop_.joinable()) {
     }
     DHLOGI("Start task queue success.");
