@@ -39,7 +39,6 @@ ohos_shared_library("distributed_audio_utils") {
     "${common_path}/dfx_utils/src/daudio_hisysevent.cpp",
     "${common_path}/dfx_utils/src/daudio_hitrace.cpp",
     "${common_path}/src/daudio_log.cpp",
-    "${common_path}/src/daudio_sa_process_state.cpp",
     "${common_path}/src/daudio_util.cpp",
   ]
 

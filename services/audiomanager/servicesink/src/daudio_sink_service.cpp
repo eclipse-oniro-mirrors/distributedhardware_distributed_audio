@@ -26,7 +26,6 @@
 #include "daudio_errorcode.h"
 #include "daudio_hisysevent.h"
 #include "daudio_log.h"
-#include "daudio_sa_process_state.h"
 #include "daudio_sink_manager.h"
 #include "daudio_util.h"
 
@@ -84,7 +83,17 @@ int32_t DAudioSinkService::ReleaseSink()
     DHLOGI("Release sink service.");
     DAudioSinkManager::GetInstance().UnInit();
     DHLOGI("Audio sink service process exit.");
-    SetSinkProcessExit();
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityMgr == nullptr) {
+        DHLOGE("Failed to get systemabilitymanager.");
+        return ERR_DH_AUDIO_BAD_VALUE;
+    }
+    int32_t ret = systemAbilityMgr->UnloadSystemAbility(DISTRIBUTED_HARDWARE_AUDIO_SINK_SA_ID);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Sink systemabilitymgr unloadsystemability failed, ret: %d", ret);
+        return ERR_DH_AUDIO_BAD_VALUE;
+    }
+    DHLOGI("Sink systemabilitymgr unloadsystemability successfully!");
     return DH_SUCCESS;
 }
 

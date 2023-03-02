@@ -26,7 +26,6 @@
 #include "daudio_errorcode.h"
 #include "daudio_hisysevent.h"
 #include "daudio_log.h"
-#include "daudio_sa_process_state.h"
 #include "daudio_source_manager.h"
 #include "daudio_util.h"
 
@@ -84,7 +83,17 @@ int32_t DAudioSourceService::ReleaseSource()
     DAudioHisysevent::GetInstance().SysEventWriteBehavior(DAUDIO_EXIT, "daudio source sa exit success.");
     DAudioSourceManager::GetInstance().UnInit();
     DHLOGI("Audio source service process exit.");
-    SetSourceProcessExit();
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityMgr == nullptr) {
+        DHLOGE("Failed to get systemabilitymanager.");
+        return ERR_DH_AUDIO_BAD_VALUE;
+    }
+    int32_t ret = systemAbilityMgr->UnloadSystemAbility(DISTRIBUTED_HARDWARE_AUDIO_SOURCE_SA_ID);
+    if (ret != DH_SUCCESS) {
+        DHLOGE("Source systemabilitymgr unloadsystemability failed, ret: %d", ret);
+        return ERR_DH_AUDIO_BAD_VALUE;
+    }
+    DHLOGI("Source systemabilitymgr unloadsystemability successfully!");
     return DH_SUCCESS;
 }
 
