@@ -71,7 +71,7 @@ private:
     std::shared_ptr<IAudioProcessor> processor_ = nullptr;
     std::shared_ptr<AudioTransportContext> context_ = nullptr;
     std::string peerDevId_;
-    PortCapType capType_;
+    PortCapType capType_ = CAP_UNKNOWN;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

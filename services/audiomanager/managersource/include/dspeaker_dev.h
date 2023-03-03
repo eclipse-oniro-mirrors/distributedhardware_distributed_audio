@@ -101,9 +101,9 @@ private:
     int32_t ashmemLength_ = -1;
     int32_t lengthPerTrans_ = -1;
     std::atomic<bool> isEnqueueRunning_ = false;
-    uint64_t readNum_;
-    int32_t readIndex_;
-    uint64_t readTimeStamp_;
+    uint64_t readNum_ = 0;
+    int32_t readIndex_ = 0;
+    uint64_t readTimeStamp_ = 0;
     std::thread enqueueDataThread_;
 };
 } // DistributedHardware

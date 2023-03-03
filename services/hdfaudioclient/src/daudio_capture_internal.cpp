@@ -81,6 +81,7 @@ static int32_t CaptureFrameInternal(struct AudioCapture *capture, void *frame, u
         DHLOGE("Copy capture frame failed, error code %d.", ret);
         return ERR_DH_AUDIO_HDI_CALL_FAILED;
     }
+    *replyBytes = requestBytes;
     return DH_SUCCESS;
 }
 

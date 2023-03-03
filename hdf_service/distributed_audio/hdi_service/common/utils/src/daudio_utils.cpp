@@ -111,7 +111,7 @@ uint32_t CalculateFrameSize(uint32_t sampleRate, uint32_t channelCount,
     return isMMAP ? sampleRate * channelCount * format * timeInterval / AUDIO_MS_PER_SECOND : DEFAULT_AUDIO_DATA_SIZE;
 }
 
-int32_t CalculateSampleNum(uint32_t sampleRate, uint32_t timems)
+uint32_t CalculateSampleNum(uint32_t sampleRate, uint32_t timems)
 {
     return sampleRate * timems / AUDIO_MS_PER_SECOND;
 }

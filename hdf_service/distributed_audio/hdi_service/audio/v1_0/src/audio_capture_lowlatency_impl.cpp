@@ -280,8 +280,8 @@ int32_t AudioCaptureLowLatencyImpl::GetExtraParams(std::string &keyValueList)
 int32_t AudioCaptureLowLatencyImpl::ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescriptor &desc)
 {
     DHLOGI("Request mmap buffer.");
-    int32_t minSize = CalculateSampleNum(devAttrs_.sampleRate, minTimeInterval_);
-    int32_t maxSize = CalculateSampleNum(devAttrs_.sampleRate, maxTimeInterval_);
+    uint32_t minSize = CalculateSampleNum(devAttrs_.sampleRate, minTimeInterval_);
+    uint32_t maxSize = CalculateSampleNum(devAttrs_.sampleRate, maxTimeInterval_);
     int32_t realSize = reqSize;
     if (reqSize < minSize) {
         realSize = minSize;
@@ -298,7 +298,7 @@ int32_t AudioCaptureLowLatencyImpl::ReqMmapBuffer(int32_t reqSize, AudioMmapBuff
         return HDF_FAILURE;
     }
     desc.memoryFd = fd_;
-    desc.transferFrameSize = CalculateSampleNum(devAttrs_.sampleRate, timeInterval_);
+    desc.transferFrameSize = static_cast<int32_t>(CalculateSampleNum(devAttrs_.sampleRate, timeInterval_));
     lengthPerTrans_ = desc.transferFrameSize * devAttrs_.channelCount * devAttrs_.format;
     desc.isShareable = false;
     ret = audioExtCallback_->RefreshAshmemInfo(adapterName_, devDesc_.pins, fd_, ashmemLength_, lengthPerTrans_);

@@ -104,10 +104,10 @@ private:
     AudioRenderStatus renderStatus_ = RENDER_STATUS_CLOSE;
     sptr<IDAudioCallback> audioExtCallback_ = nullptr;
     sptr<IAudioCallback> renderCallback_ = nullptr;
-    OHOS::sptr<OHOS::Ashmem> ashmem_;
-    int32_t ashmemLength_;
-    int32_t lengthPerTrans_;
-    int fd_;
+    OHOS::sptr<OHOS::Ashmem> ashmem_ = nullptr;
+    int32_t ashmemLength_ = 0;
+    int32_t lengthPerTrans_ = 0;
+    int fd_ = 0;
 };
 } // V1_0
 } // Audio

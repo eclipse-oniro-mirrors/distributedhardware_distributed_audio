@@ -81,7 +81,7 @@ private:
     std::queue<std::shared_ptr<AudioData>> dataQueue_;
     std::string peerDevId_;
     AudioParam audioParam_;
-    PortCapType capType_;
+    PortCapType capType_ = CAP_UNKNOWN;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

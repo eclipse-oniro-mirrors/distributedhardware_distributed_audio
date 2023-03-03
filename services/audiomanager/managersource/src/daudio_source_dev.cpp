@@ -302,8 +302,7 @@ int32_t DAudioSourceDev::HandleNotifyRPC(const AudioEvent &event)
     }
 
     rpcResult_ = (jParam[KEY_RESULT] == DH_SUCCESS) ? true : false;
-    DHLOGI("Notify RPC event: %d, result: %d.", (int32_t)event.type, (int32_t)rpcResult_);
-    DHLOGI("Notify event, eventType: %d.", event.type);
+    DHLOGI("Notify RPC event: %d, result: %d.", event.type, rpcResult_);
     std::map<AudioEventType, uint8_t>::iterator iter = eventNotifyMap_.find(event.type);
     if (iter == eventNotifyMap_.end()) {
         DHLOGE("Invalid eventType.");
