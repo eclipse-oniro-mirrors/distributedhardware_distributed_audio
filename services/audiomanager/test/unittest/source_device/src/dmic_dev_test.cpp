@@ -209,7 +209,7 @@ HWTEST_F(DMicDevTest, Start_002, TestSize.Level1)
 HWTEST_F(DMicDevTest, Stop_001, TestSize.Level1)
 {
     mic_->micTrans_ = nullptr;
-    EXPECT_EQ(ERR_DH_AUDIO_SA_MIC_TRANS_NULL, mic_->Stop());
+    EXPECT_EQ(DH_SUCCESS, mic_->Stop());
 
     mic_->micTrans_ = std::make_shared<AudioDecodeTransport>(DEV_ID);
     EXPECT_EQ(DH_SUCCESS, mic_->Stop());
@@ -243,7 +243,7 @@ HWTEST_F(DMicDevTest, Stop_002, TestSize.Level1)
 HWTEST_F(DMicDevTest, Release_001, TestSize.Level1)
 {
     mic_->micTrans_ = nullptr;
-    EXPECT_EQ(ERR_DH_AUDIO_SA_MIC_TRANS_NULL, mic_->Release());
+    EXPECT_EQ(DH_SUCCESS, mic_->Release());
 
     mic_->micTrans_ = std::make_shared<AudioDecodeTransport>(DEV_ID);
     EXPECT_EQ(DH_SUCCESS, mic_->Release());

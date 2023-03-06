@@ -429,7 +429,7 @@ HWTEST_F(DAudioSourceDevTest, TaskCloseDSpeaker_002, TestSize.Level1)
     EXPECT_EQ(ERR_DH_AUDIO_SA_PARAM_INVALID, sourceDev_->TaskCloseDSpeaker(""));
 
     json jParam_spk = { { KEY_DH_ID, DH_ID_SPK } };
-    EXPECT_NE(DH_SUCCESS, sourceDev_->TaskCloseDSpeaker(jParam_spk.dump()));
+    EXPECT_EQ(DH_SUCCESS, sourceDev_->TaskCloseDSpeaker(jParam_spk.dump()));
 }
 
 /**
@@ -474,7 +474,7 @@ HWTEST_F(DAudioSourceDevTest, TaskCloseDMic_002, TestSize.Level1)
     EXPECT_EQ(ERR_DH_AUDIO_FAILED, sourceDev_->TaskCloseDMic(ARGS));
 
     json jParam_mic = { { KEY_DH_ID, DH_ID_MIC } };
-    EXPECT_NE(DH_SUCCESS, sourceDev_->TaskCloseDMic(jParam_mic.dump()));
+    EXPECT_EQ(DH_SUCCESS, sourceDev_->TaskCloseDMic(jParam_mic.dump()));
 }
 
 /**

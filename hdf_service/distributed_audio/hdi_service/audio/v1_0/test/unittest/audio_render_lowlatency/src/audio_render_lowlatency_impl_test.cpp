@@ -61,7 +61,6 @@ HWTEST_F(AudioRenderLowlatencyImplTest, InitAshmem_001, TestSize.Level1)
     float speed = 0.0;
     uint64_t replyBytes = 0;
     int32_t ashmemLength = 1024;
-    int lengthPerTrans = 1024;
     const std::vector<int8_t> frame;
     AudioTimeStamp time;
     audioRenderlatencyImpl_->audioExtCallback_ = new MockIDAudioCallback();

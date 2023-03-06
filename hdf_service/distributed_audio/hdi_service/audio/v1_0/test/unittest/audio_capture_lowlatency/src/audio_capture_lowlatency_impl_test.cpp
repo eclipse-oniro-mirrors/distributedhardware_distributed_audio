@@ -82,9 +82,6 @@ HWTEST_F(AudioCaptureLowlatencyImplTest, InitAshmem_002, TestSize.Level1)
  */
 HWTEST_F(AudioCaptureLowlatencyImplTest, Start_001, TestSize.Level1)
 {
-    int fd = 1;
-    int ashmemLength = 1024;
-    int lengthPerTrans = 1024;
     uint64_t frames = 0;
     AudioTimeStamp time;
     std::vector<int8_t> frame;
@@ -164,6 +161,7 @@ HWTEST_F(AudioCaptureLowlatencyImplTest, ReqMmapBuffer_002, TestSize.Level1)
         .streamId = 1,
     };
     audioCapturelatencyImpl_->devAttrs_ = captureAttr;
+    audioCapturelatencyImpl_->audioExtCallback_ = new MockIDAudioCallback();
     EXPECT_EQ(HDF_SUCCESS, audioCapturelatencyImpl_->ReqMmapBuffer(reqSize, desc));
     audioCapturelatencyImpl_->UnInitAshmem();
 }

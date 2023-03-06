@@ -213,7 +213,7 @@ HWTEST_F(DSpeakerDevTest, Start_003, TestSize.Level1)
 HWTEST_F(DSpeakerDevTest, Stop_001, TestSize.Level1)
 {
     spk_->speakerTrans_ = nullptr;
-    EXPECT_EQ(ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL, spk_->Stop());
+    EXPECT_EQ(DH_SUCCESS, spk_->Stop());
     EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, spk_->SetUp());
     EXPECT_EQ(DH_SUCCESS, spk_->Stop());
 
@@ -292,7 +292,7 @@ HWTEST_F(DSpeakerDevTest, Restart_001, TestSize.Level1)
 HWTEST_F(DSpeakerDevTest, Release_001, TestSize.Level1)
 {
     spk_->speakerTrans_ = nullptr;
-    EXPECT_EQ(ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL, spk_->Release());
+    EXPECT_EQ(DH_SUCCESS, spk_->Release());
 
     spk_->speakerTrans_ = std::make_shared<AudioEncodeTransport>(DEV_ID);
     EXPECT_EQ(DH_SUCCESS, spk_->Release());
