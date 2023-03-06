@@ -190,17 +190,19 @@ void DMicDev::EnqueueThread()
     while (isEnqueueRunning_.load()) {
         std::shared_ptr<AudioData> audioData = nullptr;
         {
-            std::unique_lock<std::mutex> micLck(dataQueueMtx_);
-                dataQueueCond_.wait_for(micLck, std::chrono::milliseconds(CHANNEL_WAIT_SECONDS),
-                    [this]() { return !dataQueue_.empty(); });
-                if (dataQueue_.empty()) {
-                    continue;
-                }
+            std::lock_guard<std::mutex> lock(dataQueueMtx_);
+            if (dataQueue_.empty()) {
+                DHLOGI("Data queue is empty.");
+                audioData = std::make_shared<AudioData>(param_.comParam.frameSize);
+            } else {
                 audioData = dataQueue_.front();
                 dataQueue_.pop();
+            }
         }
         bool writeRet = ashmem_->WriteToAshmem(audioData->Data(), audioData->Size(), writeIndex_);
-        if (!writeRet) {
+        if (writeRet) {
+            DHLOGI("Write to ashmem success! write index: %d, writeLength: %d", writeIndex_, lengthPerTrans_);
+        } else {
             DHLOGE("Write daTa to ashmem failed.");
         }
         writeIndex_ += lengthPerTrans_;
@@ -265,7 +267,7 @@ int32_t DMicDev::Stop()
     DHLOGI("Stop mic device.");
     if (micTrans_ == nullptr) {
         DHLOGE("Mic trans is null.");
-        return ERR_DH_AUDIO_SA_MIC_TRANS_NULL;
+        return DH_SUCCESS;
     }
 
     isOpened_.store(false);
@@ -280,9 +282,15 @@ int32_t DMicDev::Stop()
 int32_t DMicDev::Release()
 {
     DHLOGI("Release mic device.");
+    if (ashmem_ != nullptr) {
+        ashmem_->UnmapAshmem();
+        ashmem_->CloseAshmem();
+        ashmem_ = nullptr;
+        DHLOGI("UnInitAshmem success.");
+    }
     if (micTrans_ == nullptr) {
         DHLOGE("Mic trans is null.");
-        return ERR_DH_AUDIO_SA_MIC_TRANS_NULL;
+        return DH_SUCCESS;
     }
 
     int32_t ret = micTrans_->Release();
@@ -401,11 +409,11 @@ int32_t DMicDev::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioDa
     }
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     while (dataQueue_.size() > DATA_QUEUE_MAX_SIZE) {
-        DHLOGD("Data queue overflow.");
+        DHLOGI("Data queue overflow. buf len: %d", dataQueue_.size());
         dataQueue_.pop();
     }
     dataQueue_.push(audioData);
-    DHLOGD("Push new mic data, buf len: %d", dataQueue_.size());
+    DHLOGI("Push new mic data, buf len: %d", dataQueue_.size());
     return DH_SUCCESS;
 }
 } // DistributedHardware

@@ -25,7 +25,7 @@ ohos_shared_library("distributed_audio_sink") {
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
     "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/multimedia/audio_framework/frameworks/native/common/include",
-    "//foundation/multinedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
+    "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocapturer/include",
     "//third_party/json/include",
     "//utils/system/safwk/native/include",
     "${fwk_common_path}/utils/include",

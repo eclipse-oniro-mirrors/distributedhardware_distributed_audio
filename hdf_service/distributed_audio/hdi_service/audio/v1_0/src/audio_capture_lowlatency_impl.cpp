@@ -36,16 +36,17 @@ namespace Audio {
 namespace V1_0 {
 AudioCaptureLowLatencyImpl::AudioCaptureLowLatencyImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
     const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback)
-    : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
+    : AudioCaptureInterfaceImplBase(desc), adapterName_(adpName), devDesc_(desc),
+    devAttrs_(attrs), audioExtCallback_(callback)
 {
     devAttrs_.frameSize = CalculateFrameSize(attrs.sampleRate, attrs.channelCount, attrs.format, timeInterval_, true);
-    DHLOGI("Distributed audio capture constructed, id(%d). framesize(%d)", desc.pins, devAttrs_.frameSize);
+    DHLOGI("Distributed lowlatency capture constructed, id(%d). framesize(%d)", desc.pins, devAttrs_.frameSize);
 }
 
 AudioCaptureLowLatencyImpl::~AudioCaptureLowLatencyImpl()
 {
     UnInitAshmem();
-    DHLOGD("Distributed audio capture destructed, id(%d).", devDesc_.pins);
+    DHLOGD("Distributed lowlatency capture destructed, id(%d).", devDesc_.pins);
 }
 
 int32_t AudioCaptureLowLatencyImpl::InitAshmem(int32_t ashmemLength)
@@ -77,15 +78,6 @@ void AudioCaptureLowLatencyImpl::UnInitAshmem()
         ashmem_ = nullptr;
         DHLOGI("UnInitAshmem success.");
     }
-}
-
-int32_t AudioCaptureLowLatencyImpl::GetAshmemInfo(int &fd, int &ashmemLength, int &lengthPerTrans)
-{
-    fd = fd_;
-    ashmemLength = ashmemLength_;
-    lengthPerTrans = lengthPerTrans_;
-    DHLOGI("Get ashmemInfo. fd: %d, ashmemLength: %d, lengthPerTrans: %d", fd, ashmemLength, lengthPerTrans);
-    return HDF_SUCCESS;
 }
 
 int32_t AudioCaptureLowLatencyImpl::GetCapturePosition(uint64_t &frames, AudioTimeStamp &time)
@@ -309,6 +301,11 @@ int32_t AudioCaptureLowLatencyImpl::ReqMmapBuffer(int32_t reqSize, AudioMmapBuff
     desc.transferFrameSize = CalculateSampleNum(devAttrs_.sampleRate, timeInterval_);
     lengthPerTrans_ = desc.transferFrameSize * devAttrs_.channelCount * devAttrs_.format;
     desc.isShareable = false;
+    ret = audioExtCallback_->RefreshAshmemInfo(adapterName_, devDesc_.pins, fd_, ashmemLength_, lengthPerTrans_);
+    if (ret != HDF_SUCCESS) {
+        DHLOGE("Refresh ashmem info failed.");
+        return HDF_FAILURE;
+    }
     return HDF_SUCCESS;
 }
 
@@ -339,11 +336,6 @@ int32_t AudioCaptureLowLatencyImpl::GetFrameBufferSize(uint64_t &bufferSize)
     DHLOGI("Get frame buffer size, not support yet.");
     (void)bufferSize;
     return HDF_SUCCESS;
-}
-
-const AudioDeviceDescriptor &AudioCaptureLowLatencyImpl::GetCaptureDesc()
-{
-    return devDesc_;
 }
 } // V1_0
 } // Audio

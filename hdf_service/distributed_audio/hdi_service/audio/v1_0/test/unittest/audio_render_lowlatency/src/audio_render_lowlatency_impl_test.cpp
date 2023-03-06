@@ -74,7 +74,6 @@ HWTEST_F(AudioRenderLowlatencyImplTest, InitAshmem_001, TestSize.Level1)
     EXPECT_EQ(HDF_SUCCESS, audioRenderlatencyImpl_->SetVolume(speed));
     EXPECT_EQ(HDF_SUCCESS, audioRenderlatencyImpl_->GetVolume(speed));
     EXPECT_EQ(HDF_SUCCESS, audioRenderlatencyImpl_->AudioDevDump(ashmemLength, fd));
-    EXPECT_EQ(HDF_SUCCESS, audioRenderlatencyImpl_->GetAshmemInfo(fd, ashmemLength, lengthPerTrans));
     EXPECT_EQ(HDF_SUCCESS, audioRenderlatencyImpl_->GetMmapPosition(replyBytes, time));
 }
 

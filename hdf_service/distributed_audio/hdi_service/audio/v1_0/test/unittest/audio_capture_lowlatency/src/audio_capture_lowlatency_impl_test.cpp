@@ -86,7 +86,6 @@ HWTEST_F(AudioCaptureLowlatencyImplTest, Start_001, TestSize.Level1)
     AudioTimeStamp time;
     std::vector<int8_t> frame;
     uint64_t requestBytes = 1024;
-    EXPECT_EQ(HDF_SUCCESS, audioCapturelatencyImpl_->GetAshmemInfo(fd, ashmemLength, lengthPerTrans));
     EXPECT_EQ(HDF_SUCCESS, audioCapturelatencyImpl_->GetCapturePosition(frames, time));
     EXPECT_EQ(HDF_SUCCESS, audioCapturelatencyImpl_->CaptureFrame(frame, requestBytes));
     EXPECT_EQ(HDF_SUCCESS, audioCapturelatencyImpl_->Pause());

@@ -26,6 +26,7 @@
 
 #include "ashmem.h"
 #include "audio_capture_interface_impl.h"
+#include "audio_capture_interface_impl_base.h"
 
 namespace OHOS {
 namespace HDI {
@@ -36,8 +37,7 @@ using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
-
-class AudioCaptureLowLatencyImpl : public IAudioCapture {
+class AudioCaptureLowLatencyImpl : public AudioCaptureInterfaceImplBase {
 public:
     AudioCaptureLowLatencyImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
         const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
@@ -74,8 +74,6 @@ public:
     int32_t TurnStandbyMode() override;
     int32_t AudioDevDump(int32_t range, int32_t fd) override;
     int32_t IsSupportsPauseAndResume(bool &supportPause, bool &supportResume) override;
-    const AudioDeviceDescriptor &GetCaptureDesc();
-    int32_t GetAshmemInfo(int &fd, int &ashememLength, int &lengthPerTrans);
 
 private:
     int32_t InitAshmem(int32_t ashmemLength);

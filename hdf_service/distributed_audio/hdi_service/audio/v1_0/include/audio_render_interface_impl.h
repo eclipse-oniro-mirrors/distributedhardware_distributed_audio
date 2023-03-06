@@ -20,6 +20,8 @@
 #include <string>
 #include <cmath>
 
+#include "audio_render_interface_impl_base.h"
+
 #include <v1_0/audio_types.h>
 #include <v1_0/iaudio_render.h>
 #include <v1_0/id_audio_manager.h>
@@ -44,7 +46,7 @@ typedef enum {
     RENDER_STATUS_PAUSE,
 } AudioRenderStatus;
 
-class AudioRenderInterfaceImpl : public IAudioRender {
+class AudioRenderInterfaceImpl : public AudioRenderInterfaceImplBase {
 public:
     AudioRenderInterfaceImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
         const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
@@ -90,12 +92,6 @@ public:
     int32_t AudioDevDump(int32_t range, int32_t fd) override;
     int32_t IsSupportsPauseAndResume(bool &supportPause, bool &supportResume) override;
 
-    const AudioDeviceDescriptor &GetRenderDesc();
-    void SetVolumeInner(const uint32_t vol);
-    void SetVolumeRangeInner(const uint32_t volMax, const uint32_t volMin);
-    uint32_t GetVolumeInner();
-    uint32_t GetMaxVolumeInner();
-    uint32_t GetMinVolumeInner();
 private:
     float GetFadeRate(uint32_t currentIndex, const uint32_t durationIndex);
     int32_t FadeInProcess(const uint32_t durationFrame, int8_t* frameData, const size_t frameLength);
@@ -107,10 +103,6 @@ private:
 
     uint32_t timeInterval_ = 5;
     float renderSpeed_ = 0;
-    std::mutex volMtx_;
-    uint32_t vol_ = 0;
-    uint32_t volMax_ = 0;
-    uint32_t volMin_ = 0;
     uint32_t currentFrame_ = 0;
     std::mutex renderMtx_;
     AudioChannelMode channelMode_ = AUDIO_CHANNEL_NORMAL;

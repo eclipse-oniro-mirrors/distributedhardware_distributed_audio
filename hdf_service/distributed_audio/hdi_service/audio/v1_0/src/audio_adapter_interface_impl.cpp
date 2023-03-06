@@ -96,8 +96,11 @@ int32_t AudioAdapterInterfaceImpl::CreateRender(const AudioDeviceDescriptor &des
             return HDF_FAILURE;
         }
     }
-    if (attrs.type != AUDIO_MMAP_NOIRQ) {
-        renderFlags_ = 0;
+    if (attrs.type == AUDIO_MMAP_NOIRQ) {
+        renderFlags_ = MMAP_FLAG;
+        audioRender_ = new AudioRenderLowLatencyImpl(adpDescriptor_.adapterName, desc, attrs, extSpeakerCallback_);
+    } else {
+        renderFlags_ = NORMAL_FLAG;
         audioRender_ = new AudioRenderInterfaceImpl(adpDescriptor_.adapterName, desc, attrs, extSpeakerCallback_);
     }
     if (audioRender_ == nullptr) {
@@ -150,7 +153,13 @@ int32_t AudioAdapterInterfaceImpl::CreateCapture(const AudioDeviceDescriptor &de
             return HDF_FAILURE;
         }
     }
-    audioCapture_ = new AudioCaptureInterfaceImpl(adpDescriptor_.adapterName, desc, attrs, extMicCallback_);
+    if (attrs.type == AUDIO_MMAP_NOIRQ) {
+        capturerFlags_ = MMAP_FLAG;
+        audioCapture_ = new AudioCaptureLowLatencyImpl(adpDescriptor_.adapterName, desc, attrs, extMicCallback_);
+    } else {
+        capturerFlags_ = NORMAL_FLAG;
+        audioCapture_ = new AudioCaptureInterfaceImpl(adpDescriptor_.adapterName, desc, attrs, extMicCallback_);
+    }
     if (audioCapture_ == nullptr) {
         DHLOGE("Create capture failed.");
         return HDF_FAILURE;
@@ -424,7 +433,7 @@ int32_t AudioAdapterInterfaceImpl::OpenRenderDevice(const AudioDeviceDescriptor 
     renderParam_.sampleRate = attrs.sampleRate;
     renderParam_.streamUsage = attrs.type;
     renderParam_.frameSize = CalculateFrameSize(attrs.sampleRate, attrs.channelCount, attrs.format,
-        timeInterval_, renderFlags_ == 1);
+        timeInterval_, renderFlags_ == MMAP_FLAG);
     renderParam_.renderFlags = renderFlags_;
 
     int32_t ret = extSpeakerCallback_->SetParameters(adpDescriptor_.adapterName, desc.pins, renderParam_);
@@ -487,7 +496,7 @@ int32_t AudioAdapterInterfaceImpl::OpenCaptureDevice(const AudioDeviceDescriptor
     captureParam_.sampleRate = attrs.sampleRate;
     captureParam_.streamUsage = attrs.type;
     captureParam_.frameSize = CalculateFrameSize(attrs.sampleRate, attrs.channelCount,
-        attrs.format, timeInterval_, capturerFlags_ == 1);
+        attrs.format, timeInterval_, capturerFlags_ == MMAP_FLAG);
     captureParam_.capturerFlags = capturerFlags_;
 
     int32_t ret = extMicCallback_->SetParameters(adpDescriptor_.adapterName, desc.pins, captureParam_);

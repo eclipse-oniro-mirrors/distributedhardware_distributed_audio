@@ -25,8 +25,10 @@
 #include <v1_0/audio_types.h>
 
 #include "audio_capture_interface_impl.h"
+#include "audio_capture_interface_impl_base.h"
 #include "audio_capture_lowlatency_impl.h"
 #include "audio_render_interface_impl.h"
+#include "audio_render_interface_impl_base.h"
 #include "audio_render_lowlatency_impl.h"
 
 namespace OHOS {
@@ -60,6 +62,11 @@ typedef enum {
     EVENT_GET_MAX_VOLUME = 3,
     EVENT_IS_STREAM_MUTE = 4,
 } VolumeEventType;
+
+typedef enum {
+    NORMAL_FLAG = 0,
+    MMAP_FLAG = 1,
+} RenderCaptureFlag;
 
 class AudioAdapterInterfaceImpl : public IAudioAdapter {
 public:
@@ -124,9 +131,9 @@ private:
     sptr<IDAudioCallback> extSpeakerCallback_ = nullptr;
     sptr<IDAudioCallback> extMicCallback_ = nullptr;
     sptr<IAudioCallback> paramCallback_ = nullptr;
-    sptr<AudioRenderInterfaceImpl> audioRender_ = nullptr;
+    sptr<AudioRenderInterfaceImplBase> audioRender_ = nullptr;
     AudioParameter renderParam_;
-    sptr<AudioCaptureInterfaceImpl> audioCapture_ = nullptr;
+    sptr<AudioCaptureInterfaceImplBase> audioCapture_ = nullptr;
     AudioParameter captureParam_;
 
     std::mutex devMapMtx_;

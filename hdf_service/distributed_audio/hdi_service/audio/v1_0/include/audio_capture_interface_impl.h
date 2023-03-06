@@ -19,6 +19,8 @@
 #include <mutex>
 #include <string>
 
+#include "audio_capture_interface_impl_base.h"
+
 #include <v1_0/iaudio_capture.h>
 #include <v1_0/id_audio_manager.h>
 
@@ -39,7 +41,7 @@ typedef enum {
     CAPTURE_STATUS_PAUSE,
 } AudioCaptureStatus;
 
-class AudioCaptureInterfaceImpl : public IAudioCapture {
+class AudioCaptureInterfaceImpl : public AudioCaptureInterfaceImplBase {
 public:
     AudioCaptureInterfaceImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
         const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
@@ -76,7 +78,6 @@ public:
     int32_t TurnStandbyMode() override;
     int32_t AudioDevDump(int32_t range, int32_t fd) override;
     int32_t IsSupportsPauseAndResume(bool &supportPause, bool &supportResume) override;
-    const AudioDeviceDescriptor &GetCaptureDesc();
 
 private:
     std::string adapterName_;

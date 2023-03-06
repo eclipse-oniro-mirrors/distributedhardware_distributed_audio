@@ -35,7 +35,8 @@ namespace Audio {
 namespace V1_0 {
 AudioCaptureInterfaceImpl::AudioCaptureInterfaceImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
     const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback)
-    : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
+    : AudioCaptureInterfaceImplBase(desc), adapterName_(adpName), devDesc_(desc),
+    devAttrs_(attrs), audioExtCallback_(callback)
 {
     devAttrs_.frameSize = CalculateFrameSize(attrs.sampleRate, attrs.channelCount, attrs.format, timeInterval_, false);
     DHLOGD("Distributed audio capture constructed, id(%d).", desc.pins);
@@ -290,11 +291,6 @@ int32_t AudioCaptureInterfaceImpl::GetFrameBufferSize(uint64_t &bufferSize)
     DHLOGI("Get frame buffer size, not support yet.");
     (void)bufferSize;
     return HDF_SUCCESS;
-}
-
-const AudioDeviceDescriptor &AudioCaptureInterfaceImpl::GetCaptureDesc()
-{
-    return devDesc_;
 }
 } // V1_0
 } // Audio

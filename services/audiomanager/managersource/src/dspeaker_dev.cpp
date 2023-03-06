@@ -274,7 +274,7 @@ int32_t DSpeakerDev::Stop()
     DHLOGI("Stop speaker device.");
     if (speakerTrans_ == nullptr) {
         DHLOGE("Speaker trans is null.");
-        return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
+        return DH_SUCCESS;
     }
 
     isOpened_.store(false);
@@ -298,7 +298,7 @@ int32_t DSpeakerDev::Release()
     }
     if (speakerTrans_ == nullptr) {
         DHLOGE("Speaker trans is null.");
-        return ERR_DH_AUDIO_SA_SPEAKER_TRANS_NULL;
+        return DH_SUCCESS;
     }
 
     int32_t ret = speakerTrans_->Release();

@@ -22,6 +22,8 @@
 
 #include "ashmem.h"
 #include "audio_render_interface_impl.h"
+#include "audio_render_interface_impl_base.h"
+
 #include <v1_0/audio_types.h>
 #include <v1_0/iaudio_render.h>
 #include <v1_0/id_audio_manager.h>
@@ -35,7 +37,7 @@ using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioData;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::AudioParameter;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::DAudioEvent;
 using OHOS::HDI::DistributedAudio::Audioext::V1_0::IDAudioCallback;
-class AudioRenderLowLatencyImpl : public IAudioRender {
+class AudioRenderLowLatencyImpl : public AudioRenderInterfaceImplBase {
 public:
     AudioRenderLowLatencyImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
         const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback);
@@ -81,14 +83,6 @@ public:
     int32_t AudioDevDump(int32_t range, int32_t fd) override;
     int32_t IsSupportsPauseAndResume(bool &supportPause, bool &supportResume) override;
 
-    const AudioDeviceDescriptor &GetRenderDesc();
-    void SetVolumeInner(const uint32_t vol);
-    void SetVolumeRangeInner(const uint32_t volMax, const uint32_t volMin);
-    uint32_t GetVolumeInner();
-    uint32_t GetMaxVolumeInner();
-    uint32_t GetMinVolumeInner();
-    int32_t GetAshmemInfo(int &fd, int &ashememLength, int &lengthPerTrans);
-
 private:
     float GetFadeRate(uint32_t currentIndex, const uint32_t durationIndex);
     int32_t FadeInProcess(const uint32_t durationFrame, int8_t* frameData, const size_t frameLength);
@@ -104,10 +98,6 @@ private:
     uint32_t minTimeInterval_ = 30;
     uint32_t maxTimeInterval_ = 80;
     float renderSpeed_ = 0;
-    std::mutex volMtx_;
-    uint32_t vol_ = 0;
-    uint32_t volMax_ = 0;
-    uint32_t volMin_ = 0;
     uint32_t currentFrame_ = 0;
     std::mutex renderMtx_;
     AudioChannelMode channelMode_ = AUDIO_CHANNEL_NORMAL;

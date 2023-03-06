@@ -35,16 +35,17 @@ namespace Audio {
 namespace V1_0 {
 AudioRenderLowLatencyImpl::AudioRenderLowLatencyImpl(const std::string &adpName, const AudioDeviceDescriptor &desc,
     const AudioSampleAttributes &attrs, const sptr<IDAudioCallback> &callback)
-    : adapterName_(adpName), devDesc_(desc), devAttrs_(attrs), audioExtCallback_(callback)
+    :  AudioRenderInterfaceImplBase(desc), adapterName_(adpName), devDesc_(desc),
+    devAttrs_(attrs), audioExtCallback_(callback)
 {
     devAttrs_.frameSize = CalculateFrameSize(attrs.sampleRate, attrs.channelCount, attrs.format, timeInterval_, true);
-    DHLOGI("Distributed audio render constructed, id(%d). framesize(%d)", desc.pins, devAttrs_.frameSize);
+    DHLOGI("Distributed lowlatency render constructed, id(%d). framesize(%d)", desc.pins, devAttrs_.frameSize);
 }
 
 AudioRenderLowLatencyImpl::~AudioRenderLowLatencyImpl()
 {
     UnInitAshmem();
-    DHLOGI("Distributed audio render destructed, id(%d).", devDesc_.pins);
+    DHLOGI("Distributed lowlatency render destructed, id(%d).", devDesc_.pins);
 }
 
 int32_t AudioRenderLowLatencyImpl::InitAshmem(int32_t ashmemLength)
@@ -77,15 +78,6 @@ void AudioRenderLowLatencyImpl::UnInitAshmem()
         ashmem_ = nullptr;
         DHLOGI("UnInitAshmem success.");
     }
-}
-
-int32_t AudioRenderLowLatencyImpl::GetAshmemInfo(int &fd, int &ashmemLength, int &lengthPerTrans)
-{
-    fd = fd_;
-    ashmemLength = ashmemLength_;
-    lengthPerTrans = lengthPerTrans_;
-    DHLOGI("Get ashmemInfo. fd: %d, ashmemLength: %d, lengthPerTrans: %d", fd, ashmemLength, lengthPerTrans);
-    return HDF_SUCCESS;
 }
 
 int32_t AudioRenderLowLatencyImpl::GetLatency(uint32_t &ms)
@@ -443,43 +435,6 @@ int32_t AudioRenderLowLatencyImpl::GetFrameBufferSize(uint64_t &bufferSize)
     DHLOGI("Get frame buffer size, not support yet.");
     (void)bufferSize;
     return HDF_SUCCESS;
-}
-
-const AudioDeviceDescriptor &AudioRenderLowLatencyImpl::GetRenderDesc()
-{
-    return devDesc_;
-}
-
-void AudioRenderLowLatencyImpl::SetVolumeInner(const uint32_t vol)
-{
-    std::lock_guard<std::mutex> volLck(volMtx_);
-    vol_ = vol;
-}
-
-
-void AudioRenderLowLatencyImpl::SetVolumeRangeInner(const uint32_t volMax, const uint32_t volMin)
-{
-    std::lock_guard<std::mutex> volLck(volMtx_);
-    volMin_ = volMin;
-    volMax_ = volMax;
-}
-
-uint32_t AudioRenderLowLatencyImpl::GetVolumeInner()
-{
-    std::lock_guard<std::mutex> volLck(volMtx_);
-    return vol_;
-}
-
-uint32_t AudioRenderLowLatencyImpl::GetMaxVolumeInner()
-{
-    std::lock_guard<std::mutex> volLck(volMtx_);
-    return volMax_;
-}
-
-uint32_t AudioRenderLowLatencyImpl::GetMinVolumeInner()
-{
-    std::lock_guard<std::mutex> volLck(volMtx_);
-    return volMin_;
 }
 } // V1_0
 } // Audio
