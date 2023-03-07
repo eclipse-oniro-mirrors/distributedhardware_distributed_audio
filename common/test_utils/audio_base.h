@@ -47,15 +47,15 @@ public:
     int32_t ReadWavFile(const std::string &path, AudioBufferInfo &info);
     int32_t ReadPcmFile(const std::string &path, AudioBufferInfo &info);
     int32_t SaveAudioData(const std::string &path);
-    std::shared_ptr<AudioBuffer> GetData()
+    std::shared_ptr<AudioBuffer> GetData() const
     {
         return data_;
     }
-    int32_t GetPeriod()
+    int32_t GetPeriod() const
     {
         return info_.period;
     }
-    std::vector<int64_t> GetBeepTime()
+    std::vector<int64_t> GetBeepTime() const
     {
         return beepTime_;
     }

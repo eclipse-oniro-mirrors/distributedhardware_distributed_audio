@@ -169,7 +169,7 @@ int32_t GetEnvNoise(const std::shared_ptr<AudioBuffer> &data)
 {
     int32_t max = 0;
     for (int32_t i = 0; i < data->GetInfo().size / (int32_t)sizeof(int16_t); i++) {
-        int16_t f = abs(((int16_t *)data->Data())[i]);
+        int16_t f = abs((reinterpret_cast<int16_t *>data->Data())[i]);
         if (f > max) {
             max = f;
         }
@@ -199,11 +199,11 @@ int64_t GetNowTimeUs()
 int64_t RecordBeepTime(const uint8_t *base, const AudioBufferInfo &info, bool &status)
 {
     int32_t threshhold = 10000;
-    if (IsFrameHigh((int16_t *)base, info.sizePerFrame / sizeof(int16_t), threshhold) == true &&
+    if (IsFrameHigh(reinterpret_cast<int16_t *>base, info.sizePerFrame / sizeof(int16_t), threshhold) == true &&
         status == true) {
         status = false;
         return GetNowTimeUs();
-    } else if (IsFrameHigh((int16_t *)base, info.sizePerFrame / sizeof(int16_t), threshhold) == false) {
+    } else if (IsFrameHigh(reinterpret_cast<int16_t *>base, info.sizePerFrame / sizeof(int16_t), threshhold) == false) {
         status = true;
     }
 

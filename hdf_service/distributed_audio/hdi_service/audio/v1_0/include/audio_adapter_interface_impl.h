@@ -156,8 +156,8 @@ private:
     uint32_t timeInterval_ = 5;
 
     // mmap param
-    int32_t renderFlags_ = 0;
-    int32_t capturerFlags_ = 0;
+    int32_t renderFlags_ = NORMAL_FLAG;
+    int32_t capturerFlags_ = NORMAL_FLAG;
 
     const std::string NOT_MUTE_STATUS = "0";
     const std::string IS_MUTE_STATUS = "1";

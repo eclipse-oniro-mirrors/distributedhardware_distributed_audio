@@ -34,8 +34,8 @@ namespace HDI {
 namespace DistributedAudio {
 namespace Audio {
 namespace V1_0 {
-AudioManagerInterfaceImpl *AudioManagerInterfaceImpl::mgr = nullptr;
-std::mutex AudioManagerInterfaceImpl::mutex_mgr;
+AudioManagerInterfaceImpl *AudioManagerInterfaceImpl::audioManager_ = nullptr;
+std::mutex AudioManagerInterfaceImpl::audioManagerMtx_;
 extern "C" IAudioManager *AudioManagerImplGetInstance(void)
 {
     return AudioManagerInterfaceImpl::GetAudioManager();

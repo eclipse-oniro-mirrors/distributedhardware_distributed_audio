@@ -50,7 +50,7 @@ static int32_t GetAudioManager()
         cout << "Open " << audioMgrPath << " failed." <<endl;
         return ERR_DH_AUDIO_FAILED;
     }
-    func = (struct AudioManager *(*)())(dlsym(g_handle, "GetAudioManagerFuncs"));
+    func = reinterpret_cast<struct AudioManager *(*)()>(dlsym(g_handle, "GetAudioManagerFuncs"));
     if (func == nullptr) {
         cout << "Dlsym GetAudioManagerFuncs failed." <<endl;
         return ERR_DH_AUDIO_FAILED;
@@ -314,7 +314,7 @@ void HDFAudioRenderObj::RunThread()
     auto data = std::make_unique<AudioBuffer>(dataSize);
     while (playIndex < info_.frames) {
         for (int32_t i = 0; i < info_.sizePerFrame; i++) {
-            ((int32_t *)data->Data())[i] = ((int16_t *)base)[i] * offset;
+            (reinterpret_cast<int32_t *>data->Data())[i] = ((int16_t *)base)[i] * offset;
         }
         g_audioRender->RenderFrame(g_audioRender, data->Data(), dataSize, &size);
         base += info_.sizePerFrame;

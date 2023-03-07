@@ -204,6 +204,7 @@ void DSpeakerDev::EnqueueThread()
 
         if (speakerTrans_ == nullptr) {
             DHLOGE("Write stream data, speaker trans is null.");
+            return;
         }
         int32_t ret = speakerTrans_->FeedAudioData(audioData);
         if (ret != DH_SUCCESS) {

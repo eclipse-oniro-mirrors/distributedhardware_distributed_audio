@@ -100,7 +100,7 @@ private:
     // Ashmem
     sptr<Ashmem> ashmem_ = nullptr;
     std::atomic<bool> isEnqueueRunning_ = false;
-    int32_t writeIndex_;
+    int32_t writeIndex_ = -1;
     int32_t ashmemLength_ = -1;
     int32_t lengthPerTrans_ = -1;
     std::thread enqueueDataThread_;

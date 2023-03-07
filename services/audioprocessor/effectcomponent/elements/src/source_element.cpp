@@ -108,7 +108,7 @@ int32_t SourceElement::PushData(std::shared_ptr<AudioData> &inData, std::shared_
             DHLOGE("Next node is null, type: %d.", GetType().c_str());
             return ERR_DH_AUDIO_NULLPTR;
         }
-        int32_t ret = obj->PushData(tmpData, outData);
+        ret = obj->PushData(tmpData, outData);
         if (ret != DH_SUCCESS) {
             DHLOGE("Current node release failed.");
             return ERR_DH_AUDIO_FAILED;

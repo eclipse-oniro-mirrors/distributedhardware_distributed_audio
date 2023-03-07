@@ -40,7 +40,7 @@ public:
 
     int32_t Size() const;
     uint8_t *Data() const;
-    AudioBufferInfo GetInfo()
+    AudioBufferInfo GetInfo() const
     {
         return param_;
     }
