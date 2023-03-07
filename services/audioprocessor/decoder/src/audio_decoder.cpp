@@ -167,11 +167,11 @@ int32_t AudioDecoder::StartAudioCodec()
 void AudioDecoder::StartInputThread()
 {
     DHLOGI("Start input thread.");
+    isDecoderRunning_.store(true);
     decodeThread_ = std::thread(&AudioDecoder::InputDecodeAudioData, this);
     if (pthread_setname_np(decodeThread_.native_handle(), DECODE_THREAD) != DH_SUCCESS) {
         DHLOGE("Decode thread setname failed.");
     }
-    isDecoderRunning_.store(true);
 }
 
 int32_t AudioDecoder::StopAudioCodec()
@@ -245,6 +245,7 @@ int32_t AudioDecoder::FeedAudioData(const std::shared_ptr<AudioData> &inputData)
 
 void AudioDecoder::InputDecodeAudioData()
 {
+    DHLOGI("Input decode audio data thread start.");
     while (isDecoderRunning_.load()) {
         std::shared_ptr<AudioData> audioData;
         int32_t bufferIndex = 0;
