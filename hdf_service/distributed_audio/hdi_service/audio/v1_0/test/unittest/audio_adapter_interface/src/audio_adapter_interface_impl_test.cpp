@@ -42,6 +42,32 @@ void AudioAdapterInterfaceImpTest::TearDown(void)
 }
 
 /**
+ * @tc.name: SetSpeakerCallback_001
+ * @tc.desc: Verify the SetSpeakerCallback function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, SetSpeakerCallback_001, TestSize.Level1)
+{
+    sptr<IDAudioCallback> speakerCallback = nullptr;
+    AdapterTest_->SetSpeakerCallback(speakerCallback);
+}
+
+/**
+ * @tc.name: SetMicCallback_001
+ * @tc.desc: Verify the SetMicCallback function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E6H
+ */
+HWTEST_F(AudioAdapterInterfaceImpTest, SetMicCallback_001, TestSize.Level1)
+{
+    sptr<IDAudioCallback> micCallback = nullptr;
+    AdapterTest_->SetMicCallback(micCallback);
+    micCallback = new MockIDAudioCallback();
+    AdapterTest_->SetMicCallback(micCallback);
+}
+
+/**
  * @tc.name: InitAllPorts_001
  * @tc.desc: Verify the InitAllPorts function.
  * @tc.type: FUNC
@@ -49,14 +75,6 @@ void AudioAdapterInterfaceImpTest::TearDown(void)
  */
 HWTEST_F(AudioAdapterInterfaceImpTest, InitAllPorts_001, TestSize.Level1)
 {
-    sptr<IDAudioCallback> speakerCallback = nullptr;
-    AdapterTest_->SetSpeakerCallback(speakerCallback);
-
-    sptr<IDAudioCallback> micCallback = nullptr;
-    AdapterTest_->SetMicCallback(micCallback);
-    micCallback = new MockIDAudioCallback();
-    AdapterTest_->SetMicCallback(micCallback);
-
     EXPECT_EQ(HDF_SUCCESS, AdapterTest_->InitAllPorts());
 }
 

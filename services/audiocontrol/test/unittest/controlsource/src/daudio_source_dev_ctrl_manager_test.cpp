@@ -155,10 +155,6 @@ HWTEST_F(DAudioSourceDevCtrlMgrTest, Release_002, TestSize.Level1)
  */
 HWTEST_F(DAudioSourceDevCtrlMgrTest, IsOpened_001, TestSize.Level1)
 {
-    AudioEvent event;
-    sourceDevCtrl_->audioEventCallback_ = std::make_shared<MockIAudioEventCallback>();
-    sourceDevCtrl_->OnEventReceived(event);
-
     sourceDevCtrl_->isOpened_ = true;
     bool actual = sourceDevCtrl_->IsOpened();
     EXPECT_EQ(true, actual);
@@ -172,9 +168,6 @@ HWTEST_F(DAudioSourceDevCtrlMgrTest, IsOpened_001, TestSize.Level1)
  */
 HWTEST_F(DAudioSourceDevCtrlMgrTest, SendAudioEvent_001, TestSize.Level1)
 {
-    int32_t type = static_cast<int32_t>(AudioEventType::CTRL_OPENED);
-    sourceDevCtrl_->OnStateChange(type);
-
     AudioEvent event;
     sourceDevCtrl_->audioCtrlTrans_ = nullptr;
     EXPECT_EQ(ERR_DH_AUDIO_SA_CTRL_TRANS_NULL, sourceDevCtrl_->SendAudioEvent(event));
@@ -188,14 +181,48 @@ HWTEST_F(DAudioSourceDevCtrlMgrTest, SendAudioEvent_001, TestSize.Level1)
  */
 HWTEST_F(DAudioSourceDevCtrlMgrTest, SendAudioEvent_002, TestSize.Level1)
 {
-    int32_t type = static_cast<int32_t>(AudioEventType::CTRL_OPENED);
-    sourceDevCtrl_->audioEventCallback_ = std::make_shared<MockIAudioEventCallback>();
-    sourceDevCtrl_->OnStateChange(type);
-
     std::string devId = "devId";
     AudioEvent event;
     sourceDevCtrl_->audioCtrlTrans_ = std::make_shared<MockIAudioCtrlTransport>(devId);
     EXPECT_EQ(DH_SUCCESS, sourceDevCtrl_->SendAudioEvent(event));
+}
+
+/**
+ * @tc.name: OnStateChange_001
+ * @tc.desc: Verify the OnStateChange function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSourceDevCtrlMgrTest, OnStateChange_001, TestSize.Level1)
+{
+    int32_t type = static_cast<int32_t>(AudioEventType::CTRL_OPENED);
+    sourceDevCtrl_->audioEventCallback_ = std::make_shared<MockIAudioEventCallback>();
+    sourceDevCtrl_->OnStateChange(type);
+}
+
+/**
+ * @tc.name: OnStateChange_002
+ * @tc.desc: Verify the OnStateChange function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSourceDevCtrlMgrTest, OnStateChange_002, TestSize.Level1)
+{
+    int32_t type = static_cast<int32_t>(AudioEventType::CTRL_OPENED);
+    sourceDevCtrl_->OnStateChange(type);
+}
+
+/**
+ * @tc.name: OnEventReceived_001
+ * @tc.desc: Verify the OnEventReceived function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5F
+ */
+HWTEST_F(DAudioSourceDevCtrlMgrTest, OnEventReceived_001, TestSize.Level1)
+{
+    AudioEvent event;
+    sourceDevCtrl_->audioEventCallback_ = std::make_shared<MockIAudioEventCallback>();
+    sourceDevCtrl_->OnEventReceived(event);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -59,13 +59,6 @@ HWTEST_F(AudioCtrlChannelTest, CreateSession_001, TestSize.Level1)
  */
 HWTEST_F(AudioCtrlChannelTest, OpenSession_002, TestSize.Level1)
 {
-    std::shared_ptr<IAudioChannelListener> listener = nullptr;
-    ctrlChannel_->channelListener_ = listener;
-    int32_t sessionId = 0;
-    int32_t result = 0;
-
-    ctrlChannel_->OnSessionOpened(sessionId, result);
-
     EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, ctrlChannel_->OpenSession());
     EXPECT_EQ(DH_SUCCESS, ctrlChannel_->CloseSession());
     ctrlChannel_->sessionId_ = 1;
@@ -80,13 +73,6 @@ HWTEST_F(AudioCtrlChannelTest, OpenSession_002, TestSize.Level1)
  */
 HWTEST_F(AudioCtrlChannelTest, SendData_002, TestSize.Level1)
 {
-    std::shared_ptr<IAudioChannelListener> listener = std::make_shared<MockIAudioChannelListener>();
-    ctrlChannel_->channelListener_ = listener;
-    int32_t sessionId = -1;
-    int32_t result = -1;
-
-    ctrlChannel_->OnSessionOpened(sessionId, result);
-
     size_t capacity = 2;
     std::shared_ptr<AudioData> data = std::make_shared<AudioData>(capacity);
     EXPECT_EQ(DH_SUCCESS, ctrlChannel_->SendData(data));
@@ -100,15 +86,56 @@ HWTEST_F(AudioCtrlChannelTest, SendData_002, TestSize.Level1)
  */
 HWTEST_F(AudioCtrlChannelTest, SendEvent_001, TestSize.Level1)
 {
+    AudioEvent event;
+    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, ctrlChannel_->SendEvent(event));
+}
+
+/**
+ * @tc.name: OnSessionOpened_001
+ * @tc.desc: Verify the OnSessionOpened function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(AudioCtrlChannelTest, OnSessionOpened_001, TestSize.Level1)
+{
     std::shared_ptr<IAudioChannelListener> listener = std::make_shared<MockIAudioChannelListener>();
     ctrlChannel_->channelListener_ = listener;
     int32_t sessionId = 0;
     int32_t result = 0;
 
     ctrlChannel_->OnSessionOpened(sessionId, result);
+}
 
-    AudioEvent event;
-    EXPECT_EQ(ERR_DH_AUDIO_TRANS_ERROR, ctrlChannel_->SendEvent(event));
+/**
+ * @tc.name: OnSessionOpened_002
+ * @tc.desc: Verify the OnSessionOpened function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(AudioCtrlChannelTest, OnSessionOpened_002, TestSize.Level1)
+{
+    std::shared_ptr<IAudioChannelListener> listener = std::make_shared<MockIAudioChannelListener>();
+    ctrlChannel_->channelListener_ = listener;
+    int32_t sessionId = -1;
+    int32_t result = -1;
+
+    ctrlChannel_->OnSessionOpened(sessionId, result);
+}
+
+/**
+ * @tc.name: OnSessionOpened_003
+ * @tc.desc: Verify the OnSessionOpened function.
+ * @tc.type: FUNC
+ * @tc.require: AR000H0E5U
+ */
+HWTEST_F(AudioCtrlChannelTest, OnSessionOpened_003, TestSize.Level1)
+{
+    std::shared_ptr<IAudioChannelListener> listener = nullptr;
+    ctrlChannel_->channelListener_ = listener;
+    int32_t sessionId = 0;
+    int32_t result = 0;
+
+    ctrlChannel_->OnSessionOpened(sessionId, result);
 }
 
 /**

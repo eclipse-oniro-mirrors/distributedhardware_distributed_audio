@@ -47,13 +47,13 @@ class AudioManagerInterfaceImpl : public IAudioManager {
 public:
     static AudioManagerInterfaceImpl *GetAudioManager()
     {
-        if (audioManager_ == nullptr) {
-            std::unique_lock<std::mutex> mgr_mutex(audioManagerMtx_);
-            if (audioManager_ == nullptr) {
-                audioManager_ = new AudioManagerInterfaceImpl();
+        if (mgr == nullptr) {
+            std::unique_lock<std::mutex> mgr_mutex(mutex_mgr);
+            if (mgr == nullptr) {
+                mgr = new AudioManagerInterfaceImpl();
             }
         }
-        return audioManager_;
+        return mgr;
     }
 
     ~AudioManagerInterfaceImpl() override;
@@ -78,16 +78,16 @@ private:
     public:
         ~Deletor()
         {
-            if (AudioManagerInterfaceImpl::audioManager_ != nullptr) {
-                delete AudioManagerInterfaceImpl::audioManager_;
+            if (AudioManagerInterfaceImpl::mgr != nullptr) {
+                delete AudioManagerInterfaceImpl::mgr;
             }
         };
     };
     static Deletor deletor;
 
 private:
-    static AudioManagerInterfaceImpl *audioManager_;
-    static std::mutex audioManagerMtx_;
+    static AudioManagerInterfaceImpl *mgr;
+    static std::mutex mutex_mgr;
     struct HdfDeviceObject *deviceObject_ = nullptr;
     std::mutex adapterMapMtx_;
     std::map<std::string, sptr<AudioAdapterInterfaceImpl>> mapAudioAdapter_;
