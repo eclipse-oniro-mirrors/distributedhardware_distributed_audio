@@ -50,6 +50,7 @@ ohos_unittest("HDIServiceDaudioExtTest") {
 
   external_deps = [
     "c_utils:utils",
+    "hdf_core:libhdf_host",
   ]
 }
 

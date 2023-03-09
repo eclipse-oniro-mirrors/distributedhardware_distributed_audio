@@ -51,6 +51,7 @@ ohos_fuzztest("RegisterAudioDeviceFuzzTest") {
 
   external_deps = [
     "c_utils:utils",
+    "hdf_core:libhdf_host",
   ]
 
   defines = [

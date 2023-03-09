@@ -49,6 +49,7 @@ ohos_unittest("HDIServiceManagerTest") {
 
   external_deps = [
     "c_utils:utils",
+    "hdf_core:libhdf_host",
   ]
 }
 

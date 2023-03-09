@@ -51,6 +51,7 @@ ohos_fuzztest("NotifyEventFuzzTest") {
 
   external_deps = [
     "c_utils:utils",
+    "hdf_core:libhdf_host",
   ]
 
   defines = [
