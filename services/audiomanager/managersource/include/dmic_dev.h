@@ -22,6 +22,7 @@
 #include "nlohmann/json.hpp"
 
 #include "audio_param.h"
+#include "audio_status.h"
 #include "ashmem.h"
 #include "daudio_hdi_handler.h"
 #include "iaudio_datatrans_callback.h"
@@ -75,7 +76,8 @@ private:
 
 private:
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;
-    static constexpr size_t DATA_QUEUE_MAX_SIZE = 3;
+    static constexpr size_t DATA_QUEUE_MAX_SIZE = 10;
+    static constexpr size_t DATA_QUEUE_HALF_SIZE = DATA_QUEUE_MAX_SIZE >> 1U;
     static constexpr int64_t periodNanoSec_ = 5000000;
     static constexpr int32_t CAPTURE_MMAP_FLAG = 1;
     static constexpr const char* ENQUEUE_THREAD = "micEnqueueTh";
@@ -92,6 +94,7 @@ private:
     std::shared_ptr<IAudioDataTransport> micTrans_ = nullptr;
     std::queue<std::shared_ptr<AudioData>> dataQueue_;
     std::set<int32_t> enabledPorts_;
+    AudioStatus curStatus_ = AudioStatus::STATUS_IDLE;
 
     // Mic capture parameters
     AudioParamHDF paramHDF_;

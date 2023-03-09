@@ -76,7 +76,7 @@ int32_t DSpeakerClient::SetUp(const AudioParam &param)
         DHLOGE("Failed to register volume key event callback.");
         return ret;
     }
-    clientStatus_ = CLIENT_STATUS_READY;
+    clientStatus_ = AudioStatus::STATUS_READY;
     return DH_SUCCESS;
 }
 
@@ -84,7 +84,7 @@ int32_t DSpeakerClient::Release()
 {
     DHLOGI("Release spk client.");
     std::lock_guard<std::mutex> lck(devMtx_);
-    if (clientStatus_ != CLIENT_STATUS_READY && clientStatus_ != CLIENT_STATUS_STOP) {
+    if (clientStatus_ != AudioStatus::STATUS_READY && clientStatus_ != AudioStatus::STATUS_STOP) {
         DHLOGE("Speaker status %d is wrong.", (int32_t)clientStatus_);
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
@@ -111,7 +111,7 @@ int32_t DSpeakerClient::Release()
         isSucess = false;
         audioRenderer_ = nullptr;
     }
-    clientStatus_ = CLIENT_STATUS_IDLE;
+    clientStatus_ = AudioStatus::STATUS_IDLE;
     return isSucess ? DH_SUCCESS : ERR_DH_AUDIO_CLIENT_RENDER_RELEASE_FAILED;
 }
 
@@ -119,7 +119,7 @@ int32_t DSpeakerClient::StartRender()
 {
     DHLOGI("Start spk client.");
     std::lock_guard<std::mutex> lck(devMtx_);
-    if (audioRenderer_ == nullptr || clientStatus_ != CLIENT_STATUS_READY) {
+    if (audioRenderer_ == nullptr || clientStatus_ != AudioStatus::STATUS_READY) {
         DHLOGE("Audio renderer init failed or spk status wrong, status: %d.", (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
             "daudio renderer init failed or spk status wrong.");
@@ -133,7 +133,7 @@ int32_t DSpeakerClient::StartRender()
     }
     isRenderReady_.store(true);
     renderDataThread_ = std::thread(&DSpeakerClient::PlayThreadRunning, this);
-    clientStatus_ = CLIENT_STATUS_START;
+    clientStatus_ = AudioStatus::STATUS_START;
     return DH_SUCCESS;
 }
 
@@ -141,7 +141,7 @@ int32_t DSpeakerClient::StopRender()
 {
     DHLOGI("Stop spk client.");
     std::lock_guard<std::mutex> lck(devMtx_);
-    if (clientStatus_ != CLIENT_STATUS_START || !isRenderReady_.load()) {
+    if (clientStatus_ != AudioStatus::STATUS_START || !isRenderReady_.load()) {
         DHLOGE("Renderer is not start or spk status wrong, status: %d.", (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
             "daudio renderer is not start or spk status wrong.");
@@ -164,7 +164,7 @@ int32_t DSpeakerClient::StopRender()
             "daudio renderer stop failed.");
         return ERR_DH_AUDIO_CLIENT_RENDER_STOP_FAILED;
     }
-    clientStatus_ = CLIENT_STATUS_STOP;
+    clientStatus_ = AudioStatus::STATUS_STOP;
     return DH_SUCCESS;
 }
 
@@ -405,7 +405,7 @@ void DSpeakerClient::Pause()
     if (audioRenderer_ != nullptr) {
         audioRenderer_->Flush();
     }
-    clientStatus_ = CLIENT_STATUS_START;
+    clientStatus_ = AudioStatus::STATUS_START;
     isRenderReady_.store(true);
 }
 
@@ -417,7 +417,7 @@ void DSpeakerClient::ReStart()
     }
     isRenderReady_.store(true);
     renderDataThread_ = std::thread(&DSpeakerClient::PlayThreadRunning, this);
-    clientStatus_ = CLIENT_STATUS_START;
+    clientStatus_ = AudioStatus::STATUS_START;
 }
 
 void DSpeakerClient::PlayStatusChange(const std::string &args)

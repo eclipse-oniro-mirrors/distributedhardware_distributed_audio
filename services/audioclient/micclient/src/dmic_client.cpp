@@ -96,7 +96,7 @@ int32_t DMicClient::SetUp(const AudioParam &param)
         DHLOGE("Mic trans setup failed.");
         return ret;
     }
-    clientStatus_ = CLIENT_STATUS_READY;
+    clientStatus_ = AudioStatus::STATUS_READY;
     return DH_SUCCESS;
 }
 
@@ -104,7 +104,8 @@ int32_t DMicClient::Release()
 {
     DHLOGI("Release mic client.");
     std::lock_guard<std::mutex> lck(devMtx_);
-    if ((clientStatus_ != CLIENT_STATUS_READY && clientStatus_ != CLIENT_STATUS_STOP) || micTrans_ == nullptr) {
+    if ((clientStatus_ != AudioStatus::STATUS_READY && clientStatus_ != AudioStatus::STATUS_STOP) ||
+        micTrans_ == nullptr) {
         DHLOGE("Mic status is wrong or mic trans is null, %d.", (int32_t)clientStatus_);
         return ERR_DH_AUDIO_SA_STATUS_ERR;
     }
@@ -119,7 +120,7 @@ int32_t DMicClient::Release()
         status = false;
     }
     micTrans_ = nullptr;
-    clientStatus_ = CLIENT_STATUS_IDLE;
+    clientStatus_ = AudioStatus::STATUS_IDLE;
     if (!status) {
         return ERR_DH_AUDIO_FAILED;
     }
@@ -130,7 +131,7 @@ int32_t DMicClient::StartCapture()
 {
     DHLOGI("Start capturer.");
     std::lock_guard<std::mutex> lck(devMtx_);
-    if (audioCapturer_ == nullptr || micTrans_ == nullptr || clientStatus_ != CLIENT_STATUS_READY) {
+    if (audioCapturer_ == nullptr || micTrans_ == nullptr || clientStatus_ != AudioStatus::STATUS_READY) {
         DHLOGE("Audio capturer init failed or mic status wrong, status: %d.", (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
             "daudio init failed or mic status wrong.");
@@ -152,7 +153,7 @@ int32_t DMicClient::StartCapture()
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ret, "daudio mic trans start failed.");
         return ret;
     }
-    clientStatus_ = CLIENT_STATUS_START;
+    clientStatus_ = AudioStatus::STATUS_START;
     return DH_SUCCESS;
 }
 
@@ -198,7 +199,7 @@ int32_t DMicClient::StopCapture()
 {
     DHLOGI("Stop capturer.");
     std::lock_guard<std::mutex> lck(devMtx_);
-    if (clientStatus_ != CLIENT_STATUS_START || !isCaptureReady_.load()) {
+    if (clientStatus_ != AudioStatus::STATUS_START || !isCaptureReady_.load()) {
         DHLOGE("Capturee is not start or mic status wrong, status: %d.", (int32_t)clientStatus_);
         DAudioHisysevent::GetInstance().SysEventWriteFault(DAUDIO_OPT_FAIL, ERR_DH_AUDIO_SA_STATUS_ERR,
             "daudio capturer is not start or mic status wrong.");
@@ -227,7 +228,7 @@ int32_t DMicClient::StopCapture()
         DHLOGE("Audio capturer stop failed.");
         status = false;
     }
-    clientStatus_ = CLIENT_STATUS_STOP;
+    clientStatus_ = AudioStatus::STATUS_STOP;
     if (!status) {
         return ERR_DH_AUDIO_FAILED;
     }

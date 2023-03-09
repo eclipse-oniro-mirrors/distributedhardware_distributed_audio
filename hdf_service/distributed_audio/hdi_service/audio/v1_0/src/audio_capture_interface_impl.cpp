@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,7 @@
 #include <securec.h>
 
 #include "daudio_constants.h"
+#include "daudio_events.h"
 #include "daudio_log.h"
 #include "daudio_utils.h"
 
@@ -109,6 +110,15 @@ int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<int8_t> &frame, uint
 int32_t AudioCaptureInterfaceImpl::Start()
 {
     DHLOGI("Start capture.");
+    DAudioEvent event = { HDF_AUDIO_EVENT_START, "" };
+    if (audioExtCallback_ == nullptr) {
+        DHLOGE("Callback is nullptr.");
+        return HDF_FAILURE;
+    }
+    if (audioExtCallback_->NotifyEvent(adapterName_, devDesc_.pins, event) != HDF_SUCCESS) {
+        DHLOGE("Notify start event failed.");
+        return HDF_FAILURE;
+    }
     std::lock_guard<std::mutex> captureLck(captureMtx_);
     captureStatus_ = CAPTURE_STATUS_START;
     frameIdx_ = 0;
@@ -119,6 +129,15 @@ int32_t AudioCaptureInterfaceImpl::Start()
 int32_t AudioCaptureInterfaceImpl::Stop()
 {
     DHLOGI("Stop capture.");
+    DAudioEvent event = { HDF_AUDIO_EVENT_STOP, "" };
+    if (audioExtCallback_ == nullptr) {
+        DHLOGE("Callback is nullptr.");
+        return HDF_FAILURE;
+    }
+    if (audioExtCallback_->NotifyEvent(adapterName_, devDesc_.pins, event) != HDF_SUCCESS) {
+        DHLOGE("Notify stop event failed.");
+        return HDF_FAILURE;
+    }
     std::lock_guard<std::mutex> captureLck(captureMtx_);
     captureStatus_ = CAPTURE_STATUS_STOP;
     return HDF_SUCCESS;

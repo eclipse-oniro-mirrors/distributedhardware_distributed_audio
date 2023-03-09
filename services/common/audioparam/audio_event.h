@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -67,6 +67,8 @@ typedef enum {
     MMAP_STOP = 82,
     MMAP_START_MIC = 83,
     MMAP_STOP_MIC = 84,
+    AUDIO_START = 85,
+    AUDIO_STOP = 86,
 } AudioEventType;
 
 typedef enum {
@@ -88,6 +90,8 @@ typedef enum {
     AUDIO_EVENT_MMAP_STOP = 15,
     AUDIO_EVENT_MIC_MMAP_START = 16,
     AUDIO_EVENT_MIC_MMAP_STOP = 17,
+    AUDIO_EVENT_START = 18,
+    AUDIO_EVENT_STOP = 19,
 } AudioEventHDF;
 class AudioEvent {
 public:

@@ -84,7 +84,7 @@ private:
     std::mutex devMtx_;
     std::queue<std::shared_ptr<AudioData>> dataQueue_;
     std::condition_variable dataQueueCond_;
-    AudioClientStatus clientStatus_ = CLIENT_STATUS_IDLE;
+    AudioStatus clientStatus_ = AudioStatus::STATUS_IDLE;
 
     std::unique_ptr<AudioStandard::AudioRenderer> audioRenderer_ = nullptr;
     std::shared_ptr<IAudioDataTransport> speakerTrans_ = nullptr;

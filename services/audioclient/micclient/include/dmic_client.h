@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -65,7 +65,7 @@ private:
     std::atomic<bool> isBlocking_ = false;
     std::atomic<bool> isCaptureReady_ = false;
     std::mutex devMtx_;
-    AudioClientStatus clientStatus_ = CLIENT_STATUS_IDLE;
+    AudioStatus clientStatus_ = AudioStatus::STATUS_IDLE;
 
     std::weak_ptr<IAudioEventCallback> eventCallback_;
     std::unique_ptr<AudioStandard::AudioCapturer> audioCapturer_ = nullptr;

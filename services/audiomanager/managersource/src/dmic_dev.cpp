@@ -155,11 +155,19 @@ int32_t DMicDev::SetParameters(const std::string &devId, const int32_t dhId, con
 
 int32_t DMicDev::NotifyEvent(const std::string &devId, const int32_t dhId, const AudioEvent &event)
 {
-    DHLOGI("Notify mic event.");
+    DHLOGI("Notify mic event, type: %d.", event.type);
     std::shared_ptr<IAudioEventCallback> cbObj = audioEventCallback_.lock();
     if (cbObj == nullptr) {
         DHLOGE("Event callback is null");
         return ERR_DH_AUDIO_SA_EVENT_CALLBACK_NULL;
+    }
+    if (event.type == AudioEventType::AUDIO_START) {
+        curStatus_ = AudioStatus::STATUS_START;
+        return DH_SUCCESS;
+    }
+    if (event.type == AudioEventType::AUDIO_STOP) {
+        curStatus_ = AudioStatus::STATUS_STOP;
+        return DH_SUCCESS;
     }
     AudioEvent audioEvent(event.type, event.content);
     cbObj->NotifyEvent(audioEvent);
@@ -316,6 +324,10 @@ int32_t DMicDev::WriteStreamData(const std::string& devId, const int32_t dhId, s
 
 int32_t DMicDev::ReadStreamData(const std::string &devId, const int32_t dhId, std::shared_ptr<AudioData> &data)
 {
+    if (curStatus_ != AudioStatus::STATUS_START) {
+        DHLOGE("Distributed audio is not starting status.");
+        return ERR_DH_AUDIO_FAILED;
+    }
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     if (dataQueue_.empty()) {
         DHLOGI("Data queue is empty.");
@@ -408,8 +420,10 @@ int32_t DMicDev::OnDecodeTransDataDone(const std::shared_ptr<AudioData> &audioDa
         return ERR_DH_AUDIO_NULLPTR;
     }
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
-    while (dataQueue_.size() > DATA_QUEUE_MAX_SIZE) {
-        DHLOGI("Data queue overflow. buf len: %d", dataQueue_.size());
+    size_t dataQueSize = curStatus_ != AudioStatus::STATUS_START ?
+                                       DATA_QUEUE_HALF_SIZE : DATA_QUEUE_MAX_SIZE;
+    while (dataQueue_.size() > dataQueSize) {
+        DHLOGI("Data queue overflow. buf current size: %d", dataQueue_.size());
         dataQueue_.pop();
     }
     dataQueue_.push(audioData);
