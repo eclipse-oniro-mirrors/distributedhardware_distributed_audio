@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,7 @@ int32_t GetDevTypeByDHId(int32_t dhId);
 uint32_t CalculateFrameSize(uint32_t sampleRate, uint32_t channelCount,
     int32_t format, uint32_t timeInterval, bool isMMAP);
 
-uint32_t CalculateSampleNum(uint32_t sampleRate, uint32_t timems);
+int32_t CalculateSampleNum(uint32_t sampleRate, uint32_t timems);
 
 int64_t GetCurNano();
 

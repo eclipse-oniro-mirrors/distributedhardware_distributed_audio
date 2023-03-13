@@ -369,8 +369,8 @@ int32_t AudioRenderLowLatencyImpl::GetExtraParams(std::string &keyValueList)
 int32_t AudioRenderLowLatencyImpl::ReqMmapBuffer(int32_t reqSize, AudioMmapBufferDescriptor &desc)
 {
     DHLOGI("Request mmap buffer.");
-    uint32_t minSize = CalculateSampleNum(devAttrs_.sampleRate, minTimeInterval_);
-    uint32_t maxSize = CalculateSampleNum(devAttrs_.sampleRate, maxTimeInterval_);
+    int32_t minSize = CalculateSampleNum(devAttrs_.sampleRate, minTimeInterval_);
+    int32_t maxSize = CalculateSampleNum(devAttrs_.sampleRate, maxTimeInterval_);
     int32_t realSize = reqSize;
     if (reqSize < minSize) {
         realSize = minSize;

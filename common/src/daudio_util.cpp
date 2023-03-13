@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -214,7 +214,7 @@ bool IsAudioParam(const json &jsonObj, const std::string &key)
         { KEY_SAMPLING_RATE, KEY_CHANNELS, KEY_FORMAT, KEY_SOURCE_TYPE, KEY_CONTENT_TYPE, KEY_STREAM_USAGE });
 }
 
-uint32_t CalculateSampleNum(uint32_t sampleRate, uint32_t timems)
+int32_t CalculateSampleNum(uint32_t sampleRate, uint32_t timems)
 {
     return sampleRate * timems / AUDIO_MS_PER_SECOND;
 }

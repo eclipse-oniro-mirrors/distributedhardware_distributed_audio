@@ -214,7 +214,7 @@ void DSpeakerDev::EnqueueThread()
         if (readIndex_ >= ashmemLength_) {
             readIndex_ = 0;
         }
-        readNum_ += CalculateSampleNum(param_.comParam.sampleRate, timeInterval_);
+        readNum_ += static_cast<uint64_t>(CalculateSampleNum(param_.comParam.sampleRate, timeInterval_));
         readTimeStamp_ = 0;
         readCount++;
         AbsoluteSleep(startTime + readCount * periodNanoSec_);
