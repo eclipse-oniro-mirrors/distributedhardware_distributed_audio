@@ -39,7 +39,7 @@ DAudioSourceManager::~DAudioSourceManager()
     if (devClearThread_.joinable()) {
         devClearThread_.join();
     }
-    DHLOGI("Distributed audio source manager deconstructed.");
+    DHLOGI("Distributed audio source manager destructed.");
 }
 
 int32_t DAudioSourceManager::Init(const sptr<IDAudioIpcCallback> &callback)
@@ -49,15 +49,13 @@ int32_t DAudioSourceManager::Init(const sptr<IDAudioIpcCallback> &callback)
         DHLOGE("Callback is nullptr.");
         return ERR_DH_AUDIO_NULLPTR;
     }
-    int32_t ret = DAudioHdiHandler::GetInstance().InitHdiHandler();
-    if (ret != DH_SUCCESS) {
+    if (DAudioHdiHandler::GetInstance().InitHdiHandler() != DH_SUCCESS) {
         DHLOGE("Init Hdi handler failed.");
-        return ret;
+        return ERR_DH_AUDIO_FAILED;
     }
-    ret = GetLocalDeviceNetworkId(localDevId_);
-    if (ret != DH_SUCCESS) {
+    if (GetLocalDeviceNetworkId(localDevId_) != DH_SUCCESS) {
         DHLOGE("Get local network id failed.");
-        return ret;
+        return ERR_DH_AUDIO_FAILED;
     }
 
     ipcCallback_ = callback;
@@ -84,10 +82,9 @@ int32_t DAudioSourceManager::UnInit()
 
     ipcCallback_ = nullptr;
     daudioMgrCallback_ = nullptr;
-    int32_t ret = DAudioHdiHandler::GetInstance().UninitHdiHandler();
-    if (ret != DH_SUCCESS) {
+    if (DAudioHdiHandler::GetInstance().UninitHdiHandler() != DH_SUCCESS) {
         DHLOGE("Uninit Hdi handler failed.");
-        return ret;
+        return ERR_DH_AUDIO_FAILED;
     }
     return DH_SUCCESS;
 }
@@ -120,7 +117,7 @@ int32_t DAudioSourceManager::DisableDAudio(const std::string &devId, const std::
     }
     if (audioDevMap_[devId].dev == nullptr) {
         DHLOGE("Audio device is null.");
-        return ERR_DH_AUDIO_NULLPTR;
+        return DH_SUCCESS;
     }
     audioDevMap_[devId].ports[dhId] = reqId;
     return audioDevMap_[devId].dev->DisableDAudio(dhId);

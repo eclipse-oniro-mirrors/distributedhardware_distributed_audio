@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,36 +36,24 @@ namespace V1_0 {
 AudioAdapterInterfaceImpl::AudioAdapterInterfaceImpl(const AudioAdapterDescriptor &desc)
     : adpDescriptor_(desc)
 {
-    renderParam_.format = 0;
-    renderParam_.channelCount = 0;
-    renderParam_.sampleRate = 0;
-    renderParam_.period = 0;
-    renderParam_.frameSize = 0;
-    renderParam_.streamUsage = 0;
-
-    captureParam_.format = 0;
-    captureParam_.channelCount = 0;
-    captureParam_.sampleRate = 0;
-    captureParam_.period = 0;
-    captureParam_.frameSize = 0;
-    captureParam_.streamUsage = 0;
+    renderParam_ = { 0, 0, 0, 0, 0, 0 };
+    captureParam_ = { 0, 0, 0, 0, 0, 0 };
     DHLOGD("Distributed audio adapter constructed, name(%s).", GetAnonyString(desc.adapterName).c_str());
 }
 
 AudioAdapterInterfaceImpl::~AudioAdapterInterfaceImpl()
 {
-    DHLOGD("Distributed audio adapter destructed, name(%s).",
-        GetAnonyString(adpDescriptor_.adapterName).c_str());
+    DHLOGD("Distributed audio adapter destructed, name(%s).", GetAnonyString(adpDescriptor_.adapterName).c_str());
 }
 
 
-void AudioAdapterInterfaceImpl::SetSpeakerCallback(const sptr<IDAudioCallback> &speakerCallback)
+void AudioAdapterInterfaceImpl::SetSpeakerCallback(const sptr<IDAudioCallback> &spkCallback)
 {
-    if (speakerCallback == nullptr) {
+    if (spkCallback == nullptr) {
         DHLOGE("Callback is nullptr.");
         return;
     }
-    extSpeakerCallback_ = speakerCallback;
+    extSpkCallback_ = spkCallback;
 }
 
 void AudioAdapterInterfaceImpl::SetMicCallback(const sptr<IDAudioCallback> &micCallback)
@@ -86,8 +74,8 @@ int32_t AudioAdapterInterfaceImpl::InitAllPorts()
 int32_t AudioAdapterInterfaceImpl::CreateRender(const AudioDeviceDescriptor &desc,
     const AudioSampleAttributes &attrs, sptr<IAudioRender> &render)
 {
-    DHLOGI("Create distributed audio render, {pin: %zu, sampleRate: %zu, channel: %zu, formats: %zu}.",
-        desc.pins, attrs.sampleRate, attrs.channelCount, attrs.format);
+    DHLOGI("Create distributed audio render, {pin: %zu, sampleRate: %zu, channel: %zu, formats: %zu, type: %d}.",
+        desc.pins, attrs.sampleRate, attrs.channelCount, attrs.format, static_cast<int32_t>(attrs.type));
     render = nullptr;
     {
         std::lock_guard<std::mutex> devLck(devMapMtx_);
@@ -98,10 +86,10 @@ int32_t AudioAdapterInterfaceImpl::CreateRender(const AudioDeviceDescriptor &des
     }
     if (attrs.type == AUDIO_MMAP_NOIRQ) {
         renderFlags_ = MMAP_FLAG;
-        audioRender_ = new AudioRenderLowLatencyImpl(adpDescriptor_.adapterName, desc, attrs, extSpeakerCallback_);
+        audioRender_ = new AudioRenderLowLatencyImpl(adpDescriptor_.adapterName, desc, attrs, extSpkCallback_);
     } else {
         renderFlags_ = NORMAL_FLAG;
-        audioRender_ = new AudioRenderInterfaceImpl(adpDescriptor_.adapterName, desc, attrs, extSpeakerCallback_);
+        audioRender_ = new AudioRenderInterfaceImpl(adpDescriptor_.adapterName, desc, attrs, extSpkCallback_);
     }
     if (audioRender_ == nullptr) {
         DHLOGE("Create render failed.");
@@ -264,8 +252,7 @@ int32_t AudioAdapterInterfaceImpl::SetVoiceVolume(float volume)
 int32_t AudioAdapterInterfaceImpl::SetExtraParams(AudioExtParamKey key, const std::string &condition,
     const std::string &value)
 {
-    DHLOGI("Set audio parameters, key = %d, condition: %s value: %s.", key, condition.c_str(),
-        value.c_str());
+    DHLOGI("Set audio parameters, key = %d, condition: %s value: %s.", key, condition.c_str(), value.c_str());
     int32_t ret = ERR_DH_AUDIO_HDF_FAIL;
     switch (key) {
         case AudioExtParamKey::AUDIO_EXT_PARAM_KEY_VOLUME:
@@ -436,12 +423,12 @@ int32_t AudioAdapterInterfaceImpl::OpenRenderDevice(const AudioDeviceDescriptor 
         timeInterval_, renderFlags_ == MMAP_FLAG);
     renderParam_.renderFlags = renderFlags_;
 
-    int32_t ret = extSpeakerCallback_->SetParameters(adpDescriptor_.adapterName, desc.pins, renderParam_);
+    int32_t ret = extSpkCallback_->SetParameters(adpDescriptor_.adapterName, desc.pins, renderParam_);
     if (ret != HDF_SUCCESS) {
         DHLOGE("Set render parameters failed.");
         return ERR_DH_AUDIO_HDF_SET_PARAM_FAIL;
     }
-    ret = extSpeakerCallback_->OpenDevice(adpDescriptor_.adapterName, desc.pins);
+    ret = extSpkCallback_->OpenDevice(adpDescriptor_.adapterName, desc.pins);
     if (ret != HDF_SUCCESS) {
         DHLOGE("Open render device failed.");
         return ERR_DH_AUDIO_HDF_OPEN_DEVICE_FAIL;
@@ -465,7 +452,7 @@ int32_t AudioAdapterInterfaceImpl::CloseRenderDevice(const AudioDeviceDescriptor
         return DH_SUCCESS;
     }
     renderParam_ = {};
-    int32_t ret = extSpeakerCallback_->CloseDevice(adpDescriptor_.adapterName, desc.pins);
+    int32_t ret = extSpkCallback_->CloseDevice(adpDescriptor_.adapterName, desc.pins);
     if (ret != HDF_SUCCESS) {
         DHLOGE("Close audio device failed.");
         return ERR_DH_AUDIO_HDF_CLOSE_DEVICE_FAIL;
@@ -551,6 +538,7 @@ uint32_t AudioAdapterInterfaceImpl::GetVolumeGroup(const uint32_t devId)
     auto caps = mapAudioDevice_.find(devId);
     if (caps == mapAudioDevice_.end()) {
         DHLOGE("Can not find caps of dev:%u.", devId);
+        return volGroup;
     }
 
     int32_t ret = GetAudioParamUInt(caps->second, VOLUME_GROUP_ID, volGroup);
@@ -579,7 +567,7 @@ uint32_t AudioAdapterInterfaceImpl::GetInterruptGroup(const uint32_t devId)
 
 int32_t AudioAdapterInterfaceImpl::SetAudioVolume(const std::string& condition, const std::string &param)
 {
-    if (extSpeakerCallback_ == nullptr) {
+    if (extSpkCallback_ == nullptr) {
         DHLOGE("Callback is nullptr.");
         return ERR_DH_AUDIO_HDF_NULLPTR;
     }
@@ -609,7 +597,7 @@ int32_t AudioAdapterInterfaceImpl::SetAudioVolume(const std::string& condition, 
     }
     DAudioEvent event = { eventType, content };
     int32_t ret =
-        extSpeakerCallback_->NotifyEvent(adpDescriptor_.adapterName, audioRender_->GetRenderDesc().pins, event);
+        extSpkCallback_->NotifyEvent(adpDescriptor_.adapterName, audioRender_->GetRenderDesc().pins, event);
     if (ret != HDF_SUCCESS) {
         DHLOGE("NotifyEvent failed.");
         return ERR_DH_AUDIO_HDF_FAIL;

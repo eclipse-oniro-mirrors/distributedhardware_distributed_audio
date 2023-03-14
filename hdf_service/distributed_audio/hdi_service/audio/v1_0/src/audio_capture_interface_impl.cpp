@@ -66,11 +66,12 @@ int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<int8_t> &frame, uint
         return HDF_FAILURE;
     }
 
-    AudioData audioData;
     if (audioExtCallback_ == nullptr) {
         DHLOGE("Callback is nullptr.");
         return HDF_FAILURE;
     }
+
+    AudioData audioData;
     int32_t ret = audioExtCallback_->ReadStreamData(adapterName_, devDesc_.pins, audioData);
     if (ret != HDF_SUCCESS) {
         DHLOGE("Read stream data failed.");

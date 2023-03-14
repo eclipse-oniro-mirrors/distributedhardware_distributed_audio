@@ -128,7 +128,7 @@ private:
     AudioAdapterDescriptor adpDescriptor_;
     AudioAdapterStatus status_ = STATUS_OFFLINE;
 
-    sptr<IDAudioCallback> extSpeakerCallback_ = nullptr;
+    sptr<IDAudioCallback> extSpkCallback_ = nullptr;
     sptr<IDAudioCallback> extMicCallback_ = nullptr;
     sptr<IAudioCallback> paramCallback_ = nullptr;
     sptr<AudioRenderInterfaceImplBase> audioRender_ = nullptr;

@@ -314,7 +314,7 @@ void HDFAudioRenderObj::RunThread()
     auto data = std::make_unique<AudioBuffer>(dataSize);
     while (playIndex < info_.frames) {
         for (int32_t i = 0; i < info_.sizePerFrame; i++) {
-            (reinterpret_cast<int32_t *>data->Data())[i] = ((int16_t *)base)[i] * offset;
+            (reinterpret_cast<int32_t *>(data->Data()))[i] = (reinterpret_cast<int16_t *>(base))[i] * offset;
         }
         g_audioRender->RenderFrame(g_audioRender, data->Data(), dataSize, &size);
         base += info_.sizePerFrame;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,8 +63,7 @@ int32_t AudioManagerInterfaceImpl::GetAllAdapters(std::vector<AudioAdapterDescri
     return HDF_SUCCESS;
 }
 
-int32_t AudioManagerInterfaceImpl::LoadAdapter(const AudioAdapterDescriptor &desc,
-    sptr<IAudioAdapter> &adapter)
+int32_t AudioManagerInterfaceImpl::LoadAdapter(const AudioAdapterDescriptor &desc, sptr<IAudioAdapter> &adapter)
 {
     DHLOGI("Load distributed audio adapter: %s.", GetAnonyString(desc.adapterName).c_str());
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
@@ -125,11 +124,10 @@ int32_t AudioManagerInterfaceImpl::AddAudioDevice(const std::string &adpName, co
             return ERR_DH_AUDIO_HDF_FAIL;
         }
     }
-
     adp = mapAudioAdapter_.find(adpName);
-    if (adp == mapAudioAdapter_.end()) {
-        DHLOGE("Can not find adapter. device name: %s", GetAnonyString(adpName).c_str());
-        return ERR_DH_AUDIO_HDF_FAIL;
+    if (adp == mapAudioAdapter_.end() || adp->second == nullptr) {
+        DHLOGE("Audio device has not been created  or is null ptr.");
+        return ERR_DH_AUDIO_HDF_INVALID_OPERATION;
     }
     switch (GetDevTypeByDHId(devId)) {
         case AUDIO_DEVICE_TYPE_SPEAKER:
@@ -169,15 +167,15 @@ int32_t AudioManagerInterfaceImpl::RemoveAudioDevice(const std::string &adpName,
     DHLOGI("Remove audio device name: %s, device: %d.", GetAnonyString(adpName).c_str(), devId);
     std::lock_guard<std::mutex> adpLck(adapterMapMtx_);
     auto adp = mapAudioAdapter_.find(adpName);
-    if (adp == mapAudioAdapter_.end()) {
-        DHLOGE("Audio device has not been created.");
+    if (adp == mapAudioAdapter_.end() || adp->second == nullptr) {
+        DHLOGE("Audio device has not been created  or is null ptr.");
         return ERR_DH_AUDIO_HDF_INVALID_OPERATION;
     }
 
     int32_t ret = adp->second->RemoveAudioDevice(devId);
     if (ret != DH_SUCCESS) {
         DHLOGE("Remove audio device failed, adapter return: %d.", ret);
-        return ERR_DH_AUDIO_HDF_FAIL;
+        return ret;
     }
 
     DAudioDevEvent event = { adpName, devId, HDF_AUDIO_DEVICE_REMOVE, 0, 0, 0 };

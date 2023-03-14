@@ -217,7 +217,7 @@ int32_t DAudioManagerCallback::ReadStreamData(const std::string &adpName, int32_
         data.param.channelCount, data.param.format, data.param.frameSize);
     std::shared_ptr<AudioData> audioData = nullptr;
     int32_t ret = callback_->ReadStreamData(adpName, devId, audioData);
-    if (ret != DH_SUCCESS) {
+    if (ret != DH_SUCCESS || audioData == nullptr) {
         DHLOGE("Read stream data failed.");
         return HDF_FAILURE;
     }

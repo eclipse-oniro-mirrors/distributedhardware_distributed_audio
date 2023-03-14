@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,13 +33,13 @@ class DAudioManagerInterfaceImpl : public IDAudioManager {
 public:
     static DAudioManagerInterfaceImpl *GetDAudioManager()
     {
-        if (dmgr == nullptr) {
-            std::unique_lock<std::mutex> mgr_mutex(mutex_dmgr);
-            if (dmgr == nullptr) {
-                dmgr = new DAudioManagerInterfaceImpl();
+        if (dAudioMgr_ == nullptr) {
+            std::unique_lock<std::mutex> mgr_mutex(mgrMtx_);
+            if (dAudioMgr_ == nullptr) {
+                dAudioMgr_ = new DAudioManagerInterfaceImpl();
             }
         }
-        return dmgr;
+        return dAudioMgr_;
     }
 
     ~DAudioManagerInterfaceImpl() override;
@@ -63,17 +63,17 @@ private:
     public:
         ~Deletor()
         {
-            if (DAudioManagerInterfaceImpl::dmgr != nullptr) {
-                delete DAudioManagerInterfaceImpl::dmgr;
+            if (DAudioManagerInterfaceImpl::dAudioMgr_ != nullptr) {
+                delete DAudioManagerInterfaceImpl::dAudioMgr_;
             }
         };
     };
     static Deletor deletor;
 
 private:
-    OHOS::HDI::DistributedAudio::Audio::V1_0::AudioManagerInterfaceImpl *audiomgr_;
-    static DAudioManagerInterfaceImpl *dmgr;
-    static std::mutex mutex_dmgr;
+    OHOS::HDI::DistributedAudio::Audio::V1_0::AudioManagerInterfaceImpl *audioMgr_;
+    static DAudioManagerInterfaceImpl *dAudioMgr_;
+    static std::mutex mgrMtx_;
 };
 } // V1_0
 } // AudioExt

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,8 +32,8 @@ namespace HDI {
 namespace DistributedAudio {
 namespace Audioext {
 namespace V1_0 {
-DAudioManagerInterfaceImpl *DAudioManagerInterfaceImpl::dmgr = nullptr;
-std::mutex DAudioManagerInterfaceImpl::mutex_dmgr;
+DAudioManagerInterfaceImpl *DAudioManagerInterfaceImpl::dAudioMgr_ = nullptr;
+std::mutex DAudioManagerInterfaceImpl::mgrMtx_;
 extern "C" IDAudioManager *DAudioManagerImplGetInstance(void)
 {
     return DAudioManagerInterfaceImpl::GetDAudioManager();
@@ -42,7 +42,7 @@ extern "C" IDAudioManager *DAudioManagerImplGetInstance(void)
 DAudioManagerInterfaceImpl::DAudioManagerInterfaceImpl()
 {
     DHLOGI("Distributed audio ext manager constructed.");
-    audiomgr_ = AudioManagerInterfaceImpl::GetAudioManager();
+    audioMgr_ = AudioManagerInterfaceImpl::GetAudioManager();
 }
 
 DAudioManagerInterfaceImpl::~DAudioManagerInterfaceImpl()
@@ -54,12 +54,12 @@ int32_t DAudioManagerInterfaceImpl::RegisterAudioDevice(const std::string &adpNa
     const std::string &capability, const sptr<IDAudioCallback> &callbackObj)
 {
     DHLOGI("Register audio device, name: %s, device: %d.", GetAnonyString(adpName).c_str(), devId);
-    if (audiomgr_ == nullptr) {
+    if (audioMgr_ == nullptr) {
         DHLOGE("Audio manager is null.");
         return HDF_FAILURE;
     }
 
-    int32_t ret = audiomgr_->AddAudioDevice(adpName, devId, capability, callbackObj);
+    int32_t ret = audioMgr_->AddAudioDevice(adpName, devId, capability, callbackObj);
     if (ret != DH_SUCCESS) {
         DHLOGE("Register audio device failed, ret = %d", ret);
         return HDF_FAILURE;
@@ -72,12 +72,12 @@ int32_t DAudioManagerInterfaceImpl::RegisterAudioDevice(const std::string &adpNa
 int32_t DAudioManagerInterfaceImpl::UnRegisterAudioDevice(const std::string &adpName, int32_t devId)
 {
     DHLOGI("UnRegister audio device, name: %s, device: %d.", GetAnonyString(adpName).c_str(), devId);
-    if (audiomgr_ == nullptr) {
+    if (audioMgr_ == nullptr) {
         DHLOGE("Audio manager is null.");
         return HDF_FAILURE;
     }
 
-    int32_t ret = audiomgr_->RemoveAudioDevice(adpName, devId);
+    int32_t ret = audioMgr_->RemoveAudioDevice(adpName, devId);
     if (ret != DH_SUCCESS) {
         DHLOGE("UnRegister audio devcie failed. ret = %d", ret);
         return HDF_FAILURE;
@@ -89,12 +89,12 @@ int32_t DAudioManagerInterfaceImpl::UnRegisterAudioDevice(const std::string &adp
 
 int32_t DAudioManagerInterfaceImpl::NotifyEvent(const std::string &adpName, int32_t devId, const DAudioEvent &event)
 {
-    if (audiomgr_ == nullptr) {
+    if (audioMgr_ == nullptr) {
         DHLOGE("Audio manager is null.");
         return HDF_FAILURE;
     }
     DHLOGI("Notify event. event type = %d", event.type);
-    int32_t ret = audiomgr_->Notify(adpName, devId, event);
+    int32_t ret = audioMgr_->Notify(adpName, devId, event);
     if (ret != DH_SUCCESS) {
         DHLOGE("Notify audio event failed. ret = %d", ret);
         return HDF_FAILURE;
