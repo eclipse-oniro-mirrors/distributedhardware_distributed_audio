@@ -39,6 +39,9 @@ AudioCaptureInterfaceImpl::AudioCaptureInterfaceImpl(const std::string &adpName,
     devAttrs_(attrs), audioExtCallback_(callback)
 {
     devAttrs_.frameSize = CalculateFrameSize(attrs.sampleRate, attrs.channelCount, attrs.format, timeInterval_, false);
+    framePeriodNs_ = devAttrs_.frameSize * AUDIO_NS_PER_SECOND / (attrs.sampleRate * attrs.channelCount * attrs.format);
+    DHLOGD("Distributed audio capture constructed, period(%d),frameSize(%d), framePeriodNs_(%d).",
+        attrs.period, devAttrs_.frameSize, framePeriodNs_);
     DHLOGD("Distributed audio capture constructed, id(%d).", desc.pins);
 }
 
@@ -55,11 +58,24 @@ int32_t AudioCaptureInterfaceImpl::GetCapturePosition(uint64_t &frames, AudioTim
     return HDF_SUCCESS;
 }
 
+int64_t AudioCaptureInterfaceImpl::CalculateOffset(int64_t count)
+{
+    const int64_t gapTime = AUDIO_OFFSET_FRAME_NUM * framePeriodNs_;
+    int64_t totalOffset = GetCurNano() - startTime_;
+    return totalOffset - count * gapTime;
+}
+
 int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<int8_t> &frame, uint64_t requestBytes)
 {
     DHLOGI("Capture frame[sampleRate: %d, channelCount: %d, format: %d, frameSize: %d].", devAttrs_.sampleRate,
         devAttrs_.channelCount, devAttrs_.format, devAttrs_.frameSize);
-
+    int64_t timeOffset = 0;
+    if (frameIdx_ == 0) {
+        startTime_ = GetCurNano();
+    } else if (frameIdx_ % AUDIO_OFFSET_FRAME_NUM == 0) {
+        timeOffset = CalculateOffset(frameIdx_ / AUDIO_OFFSET_FRAME_NUM);
+        DHLOGI("Capture frameIdx_: %d, timeOffset: %d.", frameIdx_, timeOffset);
+    }
     std::lock_guard<std::mutex> captureLck(captureMtx_);
     if (captureStatus_ != CAPTURE_STATUS_START) {
         DHLOGE("Capture status wrong, return false.");
@@ -84,7 +100,8 @@ int32_t AudioCaptureInterfaceImpl::CaptureFrame(std::vector<int8_t> &frame, uint
         DHLOGE("Copy capture frame failed, error code %d.", ret);
         return HDF_FAILURE;
     }
-
+    ++frameIdx_;
+    AbsoluteSleep(startTime_ + frameIdx_ * framePeriodNs_ - timeOffset);
     DHLOGI("Capture audio frame success.");
     return HDF_SUCCESS;
 }
@@ -94,6 +111,8 @@ int32_t AudioCaptureInterfaceImpl::Start()
     DHLOGI("Start capture.");
     std::lock_guard<std::mutex> captureLck(captureMtx_);
     captureStatus_ = CAPTURE_STATUS_START;
+    frameIdx_ = 0;
+    startTime_ = 0;
     return HDF_SUCCESS;
 }
 

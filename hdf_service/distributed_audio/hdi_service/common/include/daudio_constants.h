@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,6 +66,7 @@ constexpr uint32_t AUDIO_FORMAT_DEFAULT = 16;
 
 constexpr int32_t MILLISECOND_PER_SECOND = 1000;
 constexpr uint32_t DEFAULT_AUDIO_DATA_SIZE = 4096;
+constexpr int32_t AUDIO_OFFSET_FRAME_NUM = 10;
 
 constexpr uint32_t AUDIO_DEFAULT_MAX_VOLUME_LEVEL = 15;
 constexpr uint32_t AUDIO_DEFAULT_MIN_VOLUME_LEVEL = 0;
