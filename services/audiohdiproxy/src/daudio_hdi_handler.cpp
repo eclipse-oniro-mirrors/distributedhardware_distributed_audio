@@ -118,6 +118,7 @@ int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, const in
         if (call == mapAudioMgrCallback_.end()) {
             const sptr<DAudioManagerCallback> callbackptr(new DAudioManagerCallback(callbackObjParam));
             mapAudioMgrCallback_.emplace(searchKey, callbackptr);
+            call = mapAudioMgrCallback_.find(searchKey);
         }
         auto dhIds = mapAudioMgrDhIds_.find(devId);
         if (dhIds != mapAudioMgrDhIds_.end()) {
@@ -127,14 +128,12 @@ int32_t DAudioHdiHandler::RegisterAudioDevice(const std::string &devId, const in
             newDhIds.insert(dhId);
             mapAudioMgrDhIds_.emplace(devId, newDhIds);
         }
-    }
-
-    auto iter = mapAudioMgrCallback_.find(searchKey);
-    if (iter != mapAudioMgrCallback_.end()) {
-        int32_t res = audioSrvHdf_->RegisterAudioDevice(devId, dhId, capability, iter->second);
-        if (res != HDF_SUCCESS) {
-            DHLOGE("Call hdf proxy register failed, res: %{public}d", res);
-            return ERR_DH_AUDIO_HDI_CALL_FAILED;
+        if (call != mapAudioMgrCallback_.end()) {
+            int32_t res = audioSrvHdf_->RegisterAudioDevice(devId, dhId, capability, call->second);
+            if (res != HDF_SUCCESS) {
+                DHLOGE("Call hdf proxy register failed, res: %{public}d", res);
+                return ERR_DH_AUDIO_HDI_CALL_FAILED;
+            }
         }
     }
     return DH_SUCCESS;

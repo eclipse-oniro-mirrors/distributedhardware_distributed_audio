@@ -494,6 +494,14 @@ int32_t DMicDev::Stop()
     return DH_SUCCESS;
 }
 
+void DMicDev::ReleaseAvsync()
+{
+    std::lock_guard<std::mutex> avsyncLock(avSyncMutex_);
+    AVsyncDeintAshmem();
+    avSyncParam_.fd = -1;
+    avSyncParam_.sharedMemLen = 0;
+}
+
 int32_t DMicDev::Release()
 {
     DHLOGI("Release mic device.");
@@ -503,9 +511,7 @@ int32_t DMicDev::Release()
         ashmem_ = nullptr;
         DHLOGI("UnInit ashmem success.");
     }
-    AVsyncDeintAshmem();
-    avSyncParam_.fd = -1;
-    avSyncParam_.sharedMemLen = 0;
+    ReleaseAvsync();
     DHLOGI("AVsync mode closed");
     {
         std::lock_guard<std::mutex> lock(dataQueueMtx_);
@@ -559,12 +565,15 @@ int32_t DMicDev::WriteStreamData(const int32_t streamId, std::shared_ptr<AudioDa
 
 int32_t DMicDev::ReadTimeStampFromAVsync(int64_t &timePts)
 {
-    CHECK_AND_RETURN_RET_LOG(!IsAVsync() || avsyncAshmem_ == nullptr, DH_SUCCESS,
-        "Ashmem is nullptr or IsAVsync is false.");
+    std::lock_guard<std::mutex> lock(avSyncMutex_);
+    if (!avSyncParam_.isAVsync || avsyncAshmem_ == nullptr) {
+        DHLOGE("Ashmem is nullptr or IsAVsync is false.");
+        return DH_SUCCESS;
+    }
     auto syncData = avsyncAshmem_->ReadFromAshmem(avSyncParam_.sharedMemLen, 0);
     CHECK_AND_RETURN_RET_LOG(syncData == nullptr, ERR_DH_AUDIO_FAILED, "syncData is null.");
     AVsyncShareData *readSyncShareData = reinterpret_cast<AVsyncShareData *>(const_cast<void *>(syncData));
-    while (!readSyncShareData->lock && IsAVsync()) {
+    while (!readSyncShareData->lock && avSyncParam_.isAVsync) {
         DHLOGE("AVsync lock is false");
         syncData = avsyncAshmem_->ReadFromAshmem(avSyncParam_.sharedMemLen, 0);
         CHECK_AND_RETURN_RET_LOG(syncData == nullptr, ERR_DH_AUDIO_FAILED, "syncData is null.");
@@ -584,12 +593,15 @@ int32_t DMicDev::ReadTimeStampFromAVsync(int64_t &timePts)
 
 int32_t DMicDev::WriteTimeStampToAVsync(const int64_t timePts)
 {
-    CHECK_AND_RETURN_RET_LOG(!IsAVsync() || avsyncAshmem_ == nullptr, DH_SUCCESS,
-        "Ashmem is nullptr or IsAVsync is false.");
+    std::lock_guard<std::mutex> lock(avSyncMutex_);
+    if (!avSyncParam_.isAVsync || avsyncAshmem_ == nullptr) {
+        DHLOGE("Ashmem is nullptr or IsAVsync is false.");
+        return DH_SUCCESS;
+    }
     auto syncData = avsyncAshmem_->ReadFromAshmem(avSyncParam_.sharedMemLen, 0);
     CHECK_AND_RETURN_RET_LOG(syncData == nullptr, ERR_DH_AUDIO_FAILED, "syncData is null.");
     AVsyncShareData *readSyncShareData = reinterpret_cast<AVsyncShareData *>(const_cast<void *>(syncData));
-    while (!readSyncShareData->lock && IsAVsync()) {
+    while (!readSyncShareData->lock && avSyncParam_.isAVsync) {
         DHLOGE("AVsync lock is false");
         syncData = avsyncAshmem_->ReadFromAshmem(avSyncParam_.sharedMemLen, 0);
         CHECK_AND_RETURN_RET_LOG(syncData == nullptr, ERR_DH_AUDIO_FAILED, "syncData is null.");

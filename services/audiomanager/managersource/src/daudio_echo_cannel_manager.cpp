@@ -55,8 +55,8 @@ int32_t DAudioEchoCannelManager::SetUp(const AudioCommonParam param,
 
     if (!isCircuitStartRunning_.load()) {
         isCircuitStartRunning_.store(true);
-        circuitStartThread_ = std::thread([this]() { this->CircuitStart(); });
-        circuitStartThread_.detach();
+        auto self = shared_from_this();
+        circuitStartThread_ = std::thread([self]() { self->CircuitStart(); });
         DHLOGI("circuitStartThread_ is on.");
     }
     DumpFileUtil::OpenDumpFile(DUMP_SERVER_PARA, DUMP_DAUDIO_AEC_REFERENCE_FILENAME, &dumpFileRef_);
@@ -108,6 +108,10 @@ int32_t DAudioEchoCannelManager::Stop()
 int32_t DAudioEchoCannelManager::Release()
 {
     DHLOGI("Release EchoCannel.");
+    isCircuitStartRunning_.store(false);
+    if (circuitStartThread_.joinable()) {
+        circuitStartThread_.join();
+    }
     int32_t ret = AudioCaptureRelease();
     CHECK_AND_RETURN_RET_LOG(ret != DH_SUCCESS, ret, "Release Get Reference error. ret: %{public}d.", ret);
 
@@ -119,7 +123,6 @@ int32_t DAudioEchoCannelManager::Release()
     DumpFileUtil::CloseDumpFile(&dumpFileAft_);
     DumpFileUtil::CloseDumpFile(&dumpFileCir_);
     isStarted.store(false);
-    isCircuitStartRunning_.store(false);
     return DH_SUCCESS;
 }
 

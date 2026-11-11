@@ -110,6 +110,7 @@ private:
     bool IsAVsync();
     int32_t AVsyncMacthScene(std::shared_ptr<AudioData> &data);
     void ParseTriggerFirstTokenIdFromExt(const std::string &ext);
+    void ReleaseAvsync();
 
 private:
     static constexpr uint8_t CHANNEL_WAIT_SECONDS = 5;

@@ -89,6 +89,7 @@ private:
     std::map<std::string, AudioDevice> audioDevMap_;
     std::mutex remoteSvrMutex_;
     std::mutex ipcCallbackMutex_;
+    std::mutex devClearMtx_;
     std::map<std::string, sptr<IDAudioSink>> sinkServiceMap_;
     sptr<IDAudioIpcCallback> ipcCallback_ = nullptr;
     std::shared_ptr<DAudioSourceMgrCallback> daudioMgrCallback_ = nullptr;
