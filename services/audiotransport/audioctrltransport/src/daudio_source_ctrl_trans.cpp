@@ -43,6 +43,7 @@ int32_t DaudioSourceCtrlTrans::Release()
     SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, devId_);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, devId_);
     chnCreateSuccess_.store(false);
+    ctrlTransCallback_.reset();
     return DH_SUCCESS;
 }
 

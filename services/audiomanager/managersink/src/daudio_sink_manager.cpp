@@ -148,10 +148,13 @@ int32_t DAudioSinkManager::UnInit()
 void DAudioSinkManager::OnSinkDevReleased(const std::string &devId)
 {
     DHLOGI("Release audio device devId: %{public}s.", GetAnonyString(devId).c_str());
-    if (devClearThread_.joinable()) {
-        devClearThread_.join();
+    {
+        std::lock_guard<std::mutex> lock(devClearMtx_);
+        if (devClearThread_.joinable()) {
+            devClearThread_.join();
+        }
+        devClearThread_ = std::thread([devId]() { DAudioSinkManager::GetInstance().ClearAudioDev(devId); });
     }
-    devClearThread_ = std::thread([devId]() { DAudioSinkManager::GetInstance().ClearAudioDev(devId); });
     if (pthread_setname_np(devClearThread_.native_handle(), DEVCLEAR_THREAD) != DH_SUCCESS) {
         DHLOGE("Dev clear thread setname failed.");
     }
@@ -200,7 +203,12 @@ int32_t DAudioSinkManager::CreateAudioDevice(const std::string &devId)
             DHLOGD("Audio sink dev in map. devId: %{public}s.", GetAnonyString(devId).c_str());
             dev = audioDevMap_[devId];
         } else {
-            dev = std::make_shared<DAudioSinkDev>(devId, ipcSinkCallback_);
+            sptr<IDAudioSinkIpcCallback> ipcCallback;
+            {
+                std::lock_guard<std::mutex> ipcLock(ipcCallbackMutex_);
+                ipcCallback = ipcSinkCallback_;
+            }
+            dev = std::make_shared<DAudioSinkDev>(devId, ipcCallback);
             audioDevMap_.emplace(devId, dev);
         }
     }
