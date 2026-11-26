@@ -19,6 +19,9 @@ group("fuzztest") {
   testonly = true
 
   deps = [
+    "${services_path}/audiomanager/test/fuzztest/sinkconfigloader_fuzzer:fuzztest",
+    "${services_path}/audiomanager/test/fuzztest/sinkdevtask_fuzzer:fuzztest",
+    "${services_path}/audiomanager/test/fuzztest/sinkmanagerdev_fuzzer:fuzztest",
     "${services_path}/audiomanager/test/fuzztest/sinkservicedaudionotify_fuzzer:fuzztest",
     "${services_path}/audiomanager/test/fuzztest/sinkserviceinitsink_fuzzer:fuzztest",
     "${services_path}/audiomanager/test/fuzztest/sinkserviceinit_fuzzer:fuzztest",
